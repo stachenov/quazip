@@ -196,8 +196,10 @@ void QuaZipFile::close()
   setZipError(unzCloseCurrentFile(zip->getUnzFile()));
   if(zipError==UNZ_OK) setOpenMode(QIODevice::NotOpen);
   else return;
-  zip->close();
-  setZipError(zip->getZipError());
+  if(internal) {
+    zip->close();
+    setZipError(zip->getZipError());
+  }
 }
 
 qint64 QuaZipFile::readData(char *data, qint64 maxSize)
