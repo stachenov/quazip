@@ -134,9 +134,10 @@ class QuaZip {
     /** Argument \a ioApi specifies IO function set for ZIP/UNZIP
      * package to use. See unzip.h, zip.h and ioapi.h for details. By
      * passing NULL (the default) you just tell package to use the
-     * default API which works just fine on UNIX platforms. In the
-     * future versions the meaning of the NULL \a ioApi may change to
-     * use the default API on UNIX and Win32 API on Windows.
+     * default API which works just fine on UNIX platforms. I have tried
+     * it on win32-g++ platform too and it seems it works fine there
+     * too, so I see no reason to use win32 IO API included in original
+     * ZIP/UNZIP package.
      *
      * ZIP archive file name will be converted to 8-bit encoding using
      * Qt's QFile::encodeName() function before passing it to the

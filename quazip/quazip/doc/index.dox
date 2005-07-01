@@ -35,10 +35,11 @@
  * - linux-g++
  * - freebsd-g++
  * - hpux-acc
+ * - win32-g++ (MinGW)
  * 
- * Non-UNIX systems are not supported. Of course, patches to make it
- * work on any platform that it currently does not work on are always
- * welcome!
+ * No testing has been done on other systems. Of course, patches to
+ * make it work on any platform that it currently does not work on are
+ * always welcome!
  *
  * \section getting Getting latest version of QuaZIP
  *
@@ -147,14 +148,14 @@ $ make install
  * patch to increase this stupid limit to something acceptable.
  *
  * Also, my first Web project, which can be of any interest to you only
- * if you can read Russian and you are crazy. This is a web site with
+ * if you can read Russian and you are crazy ^_- This is a web site with
  * the main topic of it being The Delirium. It is totally meaningless
  * and it was purposely made to be such. Do not ask me why - I do not
- * know either. I just did that, period. If you are interested, then
- * welcome to <a href="http://brededor.narod.ru/">The Brededor</a>. It
- * does not get updated lately because I have become even lazier than I
- * ever was. But I do not plan to destroy The Brededor no matter what,
- * because I think it is fun.
+ * know either. I just did that. If you are interested, then welcome to
+ * <a href="http://brededor.narod.ru/">The Brededor</a>. It does not get
+ * updated lately because I have become even lazier than I ever was. But
+ * I do not plan to destroy The Brededor no matter what, because I think
+ * it is fun.
  *
  * Copyright (C) 2005 Sergey A. Tachenov
  **/
