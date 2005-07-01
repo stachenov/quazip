@@ -42,12 +42,13 @@ bool testRead()
       qWarning("testRead(): file.open(): %d", file.getZipError());
       return false;
     }
-    name=file.getFileName();
+    name=file.getActualFileName();
     if(file.getZipError()!=UNZ_OK) {
       qWarning("testRead(): file.getFileName(): %d", file.getZipError());
       return false;
     }
     out.setFileName("out/"+name);
+    // this will fail if "name" contains subdirectories, but we don't mind that
     out.open(QIODevice::WriteOnly);
     // Slow like hell (on GNU/Linux at least), but it is not my fault.
     // Not ZIP/UNZIP package's fault either.
