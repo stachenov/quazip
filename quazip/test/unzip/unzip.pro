@@ -3,11 +3,12 @@
 ######################################################################
 
 TEMPLATE = app
-CONFIG += qt warn_on release
+CONFIG += qt warn_on release console
 QT -= gui
 DEPENDPATH += .
 INCLUDEPATH += . ../..
-LIBS += -L../../quazip -lquazip
+unix:LIBS += -L../../quazip -lquazip
+win32:LIBS += -L../../quazip/release -lquazip
 
 # Input
 SOURCES += main.cpp
