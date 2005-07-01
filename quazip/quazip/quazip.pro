@@ -15,6 +15,7 @@ SOURCES += ioapi.c quazip.cpp quazipfile.cpp unzip.c zip.c
 
 unix {
   OBJECTS_DIR=.obj
+  MOC_DIR=.moc
 }
 
 # UNIX installation
