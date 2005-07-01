@@ -1,6 +1,9 @@
 /**
  * \mainpage QuaZIP - Qt/C++ wrapper for ZIP/UNZIP package
  *
+\htmlonly
+<a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=142688&amp;type=7" style="width:210; height:62; border:none; float:right;" alt="Powered by SourceForge.net" /></a>
+\endhtmlonly
  * \section overview Overview
  * 
  * QuaZIP is a simple C++ wrapper over <a
