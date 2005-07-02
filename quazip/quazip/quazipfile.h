@@ -363,10 +363,10 @@ class QuaZipFile: public QIODevice {
     qint64 usize()const;
     /// Gets information about current file.
     /** This function does the same thing as calling
-     * QuaZip::getCurrentFileInfo() on the associated QuaZip object
-     * except that you can not call getCurrentFileInfo() if the
-     * associated QuaZip is internal (because you do not have access to
-     * it), but you still can call this function in that case.
+     * QuaZip::getCurrentFileInfo() on the associated QuaZip object,
+     * but you can not call getCurrentFileInfo() if the associated
+     * QuaZip is internal (because you do not have access to it), while
+     * you still can call this function in that case.
      *
      * Returns \c false in the case of an error. This includes the case
      * when QuaZip is internal and you did not open this QuaZipFile yet.
@@ -375,10 +375,7 @@ class QuaZipFile: public QIODevice {
      **/
     bool getFileInfo(QuaZipFileInfo *info);
     /// Closes the file.
-    /** Clears the error on success. Otherwise, getError() call will
-     * return either QuaZipFile::errWrongMode (if attempting to close
-     * not open file or a file in not open ZIP archive) or
-     * QuaZipFile::errZip (if ZIP/UNZIP API call returned).
+    /** Call getZipError() to determine if the close was successful.
      **/
     virtual void close();
     /// Returns the error code returned by the last ZIP/UNZIP API call.
