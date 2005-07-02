@@ -77,8 +77,79 @@ bool testRead()
   return true;
 }
 
+// test pos(), size(), csize(), usize(), ungetChar(), bytesAvailable()
+bool testPos()
+{
+  QuaZip zip("test.zip");
+  if(!zip.open(QuaZip::mdUnzip)) {
+    qWarning("testPos(): zip.open(): %d", zip.getZipError());
+    return false;
+  }
+  if(!zip.goToFirstFile()) {
+    qWarning("testPos(): zip.goToFirstFile(): %d", zip.getZipError());
+    return false;
+  }
+  QuaZipFile file(&zip);
+  int method;
+  if(!file.open(QIODevice::ReadOnly, &method, NULL, true)) {
+    qWarning("testPos(): file.open(raw): %d", file.getZipError());
+    return false;
+  }
+  QByteArray array=file.readAll();
+  if(array.isEmpty()) {
+    qWarning("testPos(): file.readAll(): %d", file.getZipError());
+    return false;
+  }
+  qint64 pos=file.pos();
+  if(pos!=file.size()||file.size()!=file.csize()) {
+    qWarning("testPos(): pos=%Ld, file.size()=%Ld, file.csize()=%Ld", pos, file.size(), file.csize());
+    return false;
+  }
+  char last=array.at(array.size()-1);
+  file.ungetChar(last);
+  char next;
+  if(!file.getChar(&next)) {
+    qWarning("testPos(): file.getChar(): %d", file.getZipError());
+    return false;
+  }
+  if(last!=next) {
+    qWarning("testPos(): ungot %d, got %d", (int)(uchar)last, (int)(uchar)next);
+    return false;
+  }
+  if(file.pos()!=pos) { // position should not change
+    qWarning("testPos(): position changed: old pos=%Ld, new pos=%Ld", pos, file.pos());
+    return false;
+  }
+  file.close();
+  if(zip.getZipError()!=UNZ_OK) {
+    qWarning("testPos(): file.close(raw): %d", file.getZipError());
+    return false;
+  }
+  if(!file.open(QIODevice::ReadOnly, &method, NULL, false)) {
+    qWarning("testPos(): file.open(): %d", file.getZipError());
+    return false;
+  }
+  array=file.readAll();
+  pos=file.pos();
+  if(pos!=file.size()||file.size()!=file.usize()) {
+    qWarning("testPos(): pos=%Ld, file.size()=%Ld, file.usize()=%Ld", pos, file.size(), file.usize());
+    return false;
+  }
+  file.close();
+  if(zip.getZipError()!=UNZ_OK) {
+    qWarning("testPos(): file.close(): %d", file.getZipError());
+    return false;
+  }
+  zip.close();
+  if(zip.getZipError()!=UNZ_OK) {
+    qWarning("testPos(): zip.close(): %d", zip.getZipError());
+    return false;
+  }
+  return true;
+}
+
 // test unicode-aware case sensitivity
-// change the name below before compiling
+// change the name and file name codec below before compiling
 bool testCase()
 {
   QString name=QString::fromUtf8("01_КАФЕ НА ТРОТУАРЕ.OGG");
@@ -106,6 +177,7 @@ bool testCase()
 int main()
 {
   if(!testRead()) return 1;
+  if(!testPos()) return 1;
   if(!testCase()) return 1;
   return 0;
 }

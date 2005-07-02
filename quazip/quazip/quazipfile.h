@@ -35,6 +35,23 @@
  * this class or pass ZIP archive file name to this class, in which case
  * it will create internal QuaZip object. See constructors' descriptions
  * for details.
+ *
+ * \section quazipfile-sequential Sequential or random-access?
+ *
+ * At the first thought, QuaZipFile has fixed size, the start and the
+ * end and should be therefore considered random-access device. But
+ * there is one major obstacle to making it random-access: ZIP/UNZIP API
+ * does not support seek() operation and the only way to implement it is
+ * through reopening the file and re-reading to the required position,
+ * but this is prohibitely slow.
+ *
+ * Therefore, QuaZipFile is considered to be a sequential device. This
+ * has advantage of availability of the ungetChar() operation (QIODevice
+ * does not implement it properly for non-sequential devices unless they
+ * support seek()). Disadvantage is a somewhat strange behaviour of the
+ * size() and pos() functions. This should be kept in mind while using
+ * this class.
+ *
  **/
 class QuaZipFile: public QIODevice {
   Q_OBJECT
@@ -42,6 +59,7 @@ class QuaZipFile: public QIODevice {
     QuaZip *zip;
     QString fileName;
     QuaZip::CaseSensitivity caseSensitivity;
+    bool raw;
     bool internal;
     int zipError;
     // these are not supported nor implemented
@@ -219,6 +237,12 @@ class QuaZipFile: public QIODevice {
      * first.
      **/
     void setZipName(const QString& zipName);
+    /// Returns \c true if the file was opened in raw mode.
+    /** If the file is not open, the returned value is undefined.
+     *
+     * \sa open(OpenMode,int*,int*,bool,const char*)
+     **/
+    bool isRaw()const {return raw;}
     /// Binds to the existing QuaZip instance.
     /** This function destroys internal QuaZip object, if any, and makes
      * this QuaZipFile to use current file in the \a zip object for any
@@ -271,11 +295,22 @@ class QuaZipFile: public QIODevice {
      * don't want to know the compression level.
      **/
     bool open(OpenMode mode, int *method, int *level, bool raw, const char *password =NULL);
-    /// Return current position in the file.
-    /** In the case of error returns negative value. This means that you
-     * called this function on either not open file, or a file in the not
-     * open archive or even on a QuaZipFile instance that does not even
-     * have QuaZip instance associated.
+    /// Returns \c true, but \ref quazipfile-sequential "beware"!
+    virtual bool isSequential()const;
+    /// Returns current position in the file.
+    /** Implementation of the QIODevice::pos(). This function is a
+     * wrapper to the ZIP/UNZIP unztell(), therefore it is unable to
+     * keep track of the ungetChar() calls (which is non-virtual and
+     * therefore is dangerous to reimplement). So if you are using
+     * ungetChar() feature of the QIODevice, this function reports
+     * incorrect value until you get back characters which you ungot.
+     *
+     * \note Although
+     * \ref quazipfile-sequential "QuaZipFile is a sequential device"
+     * and therefore pos() should always return zero, it does not,
+     * because it would be misguiding. Keep this in mind.
+     *
+     * This function returns -1 if the file or archive is not open.
      *
      * Error code returned by getZipError() is not affected by this
      * function call.
@@ -296,6 +331,49 @@ class QuaZipFile: public QIODevice {
      * function call.
      **/
     virtual bool atEnd()const;
+    /// Returns file size.
+    /** This function returns csize() if the file is open in raw mode
+     * and usize() if it is open in normal mode. If the file is not open
+     * at all, the behaviour is undefined. Do not do that.
+     *
+     * Returns -1 on error, call getZipError() to get error code.
+     *
+     * \note This function returns file size despite that
+     * \ref quazipfile-sequential "QuaZipFile is considered to be sequential device",
+     * for which size() should return bytesAvailable() instead. But its
+     * name would be very misguiding otherwise, so just keep in mind
+     * this inconsistence.
+     **/
+    virtual qint64 size()const;
+    /// Returns compressed file size.
+    /** Equivalent to calling getFileInfo() and then getting
+     * compressedSize field, but more convenient and faster. See
+     * getFileInfo() for a warning.
+     *
+     * Returns -1 on error, call getZipError() to get error code.
+     **/
+    virtual qint64 csize()const;
+    /// Returns uncompressed file size.
+    /** Equivalent to calling getFileInfo() and then getting
+     * uncompressedSize field, but more convenient and faster. See
+     * getFileInfo() for a warning.
+     *
+     * Returns -1 on error, call getZipError() to get error code.
+     **/
+    virtual qint64 usize()const;
+    /// Gets information about current file.
+    /** This function does the same thing as calling
+     * QuaZip::getCurrentFileInfo() on the associated QuaZip object
+     * except that you can not call getCurrentFileInfo() if the
+     * associated QuaZip is internal (because you do not have access to
+     * it), but you still can call this function in that case.
+     *
+     * Returns \c false in the case of an error. This includes the case
+     * when QuaZip is internal and you did not open this QuaZipFile yet.
+     * To avoid potential bugs, it is better to not use this function at
+     * all if the file is not open.
+     **/
+    bool getFileInfo(QuaZipFileInfo *info);
     /// Closes the file.
     /** Clears the error on success. Otherwise, getError() call will
      * return either QuaZipFile::errWrongMode (if attempting to close

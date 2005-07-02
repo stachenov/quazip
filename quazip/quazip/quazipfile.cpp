@@ -156,15 +156,21 @@ bool QuaZipFile::open(OpenMode mode, int *method, int *level, bool raw, const ch
           (int)mode, (int)zip->getMode());
       return false;
     }
-    setZipError(unzOpenCurrentFile3(zip->getUnzFile(), method, level, raw, password));
+    setZipError(unzOpenCurrentFile3(zip->getUnzFile(), method, level, (int)raw, password));
     if(zipError==UNZ_OK) {
       setOpenMode(mode);
+      this->raw=raw;
       return true;
     } else
       return false;
   }
   qWarning("QuaZipFile::open(): open mode %d not supported", (int)mode);
   return false;
+}
+
+bool QuaZipFile::isSequential()const
+{
+  return true;
 }
 
 qint64 QuaZipFile::pos()const
@@ -183,6 +189,33 @@ bool QuaZipFile::atEnd()const
     return false;
   }
   return unzeof(zip->getUnzFile())==1;
+}
+
+qint64 QuaZipFile::size()const
+{
+  return raw?csize():usize();
+}
+
+qint64 QuaZipFile::csize()const
+{
+  unz_file_info info_z;
+  setZipError(UNZ_OK);
+  if(zip==NULL||zip->getMode()!=QuaZip::mdUnzip) return -1;
+  setZipError(unzGetCurrentFileInfo(zip->getUnzFile(), &info_z, NULL, 0, NULL, 0, NULL, 0));
+  if(zipError!=UNZ_OK)
+    return -1;
+  return info_z.compressed_size;
+}
+
+qint64 QuaZipFile::usize()const
+{
+  unz_file_info info_z;
+  setZipError(UNZ_OK);
+  if(zip==NULL||zip->getMode()!=QuaZip::mdUnzip) return -1;
+  setZipError(unzGetCurrentFileInfo(zip->getUnzFile(), &info_z, NULL, 0, NULL, 0, NULL, 0));
+  if(zipError!=UNZ_OK)
+    return -1;
+  return info_z.uncompressed_size;
 }
 
 void QuaZipFile::close()
@@ -204,7 +237,10 @@ void QuaZipFile::close()
 
 qint64 QuaZipFile::readData(char *data, qint64 maxSize)
 {
-  return unzReadCurrentFile(zip->getUnzFile(), data, (unsigned)maxSize);
+  setZipError(UNZ_OK);
+  qint64 bytesRead=unzReadCurrentFile(zip->getUnzFile(), data, (unsigned)maxSize);
+  if(bytesRead<0) setZipError((int)bytesRead);
+  return bytesRead;
 }
 
 qint64 QuaZipFile::writeData(const char*, qint64)
