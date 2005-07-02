@@ -352,7 +352,7 @@ class QuaZipFile: public QIODevice {
      *
      * Returns -1 on error, call getZipError() to get error code.
      **/
-    virtual qint64 csize()const;
+    qint64 csize()const;
     /// Returns uncompressed file size.
     /** Equivalent to calling getFileInfo() and then getting
      * uncompressedSize field, but more convenient and faster. See
@@ -360,7 +360,7 @@ class QuaZipFile: public QIODevice {
      *
      * Returns -1 on error, call getZipError() to get error code.
      **/
-    virtual qint64 usize()const;
+    qint64 usize()const;
     /// Gets information about current file.
     /** This function does the same thing as calling
      * QuaZip::getCurrentFileInfo() on the associated QuaZip object
