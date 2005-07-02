@@ -52,7 +52,14 @@
  *
  * Just zlib and Qt 4. Well, Qt 4 depends on zlib anyway.
  *
- * \section building Building and installing
+ * \section building Building, testing and installing
+ *
+ * \note Instructions given in this section assume that you are
+ * using some UNIX dialect, but the build process should be very similar
+ * on win32-g++ platform too. Sorry, but other platforms are
+ * undocumented. I do not think it is a big deal, though - it is
+ * standard usage of the Qt's qmake, so you most probably already know
+ * everything that is required.
  *
  * To build it on some UNIX dialect:
 \verbatim
@@ -77,6 +84,28 @@ $ make
 $ qmake LIBS+=-L/usr/local/zlib/lib INCLUDEPATH+=/usr/local/zlib/include
 \endverbatim
  * (note abscence of "-I" before include path)
+ *
+ * To check if QuaZIP's basic features work ok on your platform, you may
+ * wish to compile simple test program provided in test/unzip directory.
+ * It requires "test.zip" archive and writable directory "out" to be
+ * present in the test/unzip directory. So here what it looks like:
+\verbatim
+$ cd /wherever/quazip/source/is/quazip-x.y.z/test/unzip
+$ qmake
+$ make
+$ cp /some/path/to/some-small.zip ./test.zip
+$ mkdir out
+$ ./unzip
+\endverbatim
+ *
+ * You should see the zip contents with details as the output. Ignore
+ * message saying you should check the file name for testCase() if
+ * you do not want to test
+ * \link QuaZip::CaseSensitivity locale-aware case-insensitivity\endlink.
+ * Otherwise, see the sources. In any case, this message appearing means
+ * that everything else was fine. Otherwise, you will get some other error
+ * message instead. Investigate it or send bug report including message,
+ * platform and QuaZIP version used.
  *
  * To install compiled library:
 \verbatim
@@ -111,7 +140,7 @@ $ make install
  *
  * \section contacts Authors and contacts
  *
- * This wrapper has been written by Sergey A. Tachenov aka Alqualos.
+ * This wrapper has been written by Sergey A. Tachenov, AKA Alqualos.
  * This is my first open source project, so it may suck, but I did not
  * find anything like that, so I just had no other choice but to write
  * it.
