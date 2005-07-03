@@ -123,11 +123,7 @@ $ make install
  *
  * \section using Using
  *
- * Read the documentation of the QuaZip and QuaZipFile classes. Also,
- * reading comments in the zip.h and unzip.h files (taken from the
- * original ZIP/UNZIP package) is always a good idea too. After all,
- * QuaZIP is just a wrapper with a few convenience extensions and
- * reimplementations.
+ * See \ref usage "usage page".
  * 
  * \section bugs Bugs
  *
