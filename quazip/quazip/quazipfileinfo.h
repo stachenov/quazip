@@ -51,12 +51,7 @@ struct QuaZipFileInfo {
   /// External file attributes.
   quint32 externalAttr;
   /// Comment.
-  /** This field is not decoded. That is because I do not know whether
-   * comment can contain arbitrary binary data. And even if it can not,
-   * I do not think that messing with the codecs is worth it because
-   * comments are not used very often.
-   **/
-  QByteArray comment;
+  QString comment;
   /// Extra field.
   QByteArray extra;
 };

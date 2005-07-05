@@ -108,8 +108,9 @@ class QuaZip {
       csInsensitive=2 ///< Case insensitive.
     };
   private:
-    QTextCodec *fileNameCodec;
+    QTextCodec *fileNameCodec, *commentCodec;
     QString zipName;
+    QByteArray comment;
     Mode mode;
     union {
       unzFile unzFile_f;
@@ -145,10 +146,16 @@ class QuaZip {
      *
      * Returns \c true if successful, \c false otherwise.
      *
+     * Argument \a mode specifies open mode of the ZIP archive. See Mode
+     * for details. Note that there is zipOpen2() function in the
+     * ZIP/UNZIP API which accepts \a globalcomment argument, but it
+     * does not use it anywhere, so this open() function does not have this
+     * argument. See setComment() if you need to set global comment.
+     *
      * \note ZIP/UNZIP API open calls do not return error code - they
      * just return \c NULL indicating an error. But to make things
      * easier, quazip.h header defines additional error code \c
-     * UNZ_ERROROPEN and getZipError() will return it if the unzOpen() call
+     * UNZ_ERROROPEN and getZipError() will return it if the open call
      * of the ZIP/UNZIP API returns \c NULL.
      **/
     bool open(Mode mode, zlib_filefunc_def *ioApi =NULL);
@@ -165,12 +172,25 @@ class QuaZip {
     {this->fileNameCodec=fileNameCodec;}
     /// Sets the codec used to encode/decode file names inside archive.
     /** \overload
-     * Equivalent to calling setCodec(QTextCodec::codecForName(codecName));
+     * Equivalent to calling setFileNameCodec(QTextCodec::codecForName(codecName));
      **/
     void setFileNameCodec(const char *fileNameCodecName)
     {fileNameCodec=QTextCodec::codecForName(fileNameCodecName);}
-    /// Returns the codec used to encode/decode file names inside archive.
+    /// Returns the codec used to encode/decode comments inside archive.
     QTextCodec* getFileNameCodec()const {return fileNameCodec;}
+    /// Sets the codec used to encode/decode comments inside archive.
+    /** This codec defaults to locale codec, which is probably ok.
+     **/
+    void setCommentCodec(QTextCodec *fileNameCodec)
+    {this->commentCodec=commentCodec;}
+    /// Sets the codec used to encode/decode comments inside archive.
+    /** \overload
+     * Equivalent to calling setCommentCodec(QTextCodec::codecForName(codecName));
+     **/
+    void setCommentCodec(const char *commentCodecName)
+    {commentCodec=QTextCodec::codecForName(commentCodecName);}
+    /// Returns the codec used to encode/decode comments inside archive.
+    QTextCodec* getCommentCodec()const {return commentCodec;}
     /// Returns the name of the ZIP file.
     /** Returns null string if no ZIP file name has been set.
      * \sa setZipName()
@@ -211,6 +231,12 @@ class QuaZip {
      * Call getZipError() to find out if there was an error.
      **/
     QByteArray getComment()const;
+    /// Sets global comment in the ZIP file.
+    /** Comment will be written to the archive on close operation.
+     *
+     * \sa open()
+     **/
+    void setComment(const QByteArray& comment) {this->comment=comment;}
     /// Sets the current file to the first file in the archive.
     /** Returns \c true on success, \c false otherwise. Call
      * getZipError() to get the error code.

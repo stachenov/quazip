@@ -10,8 +10,21 @@ DEPENDPATH += .
 INCLUDEPATH += .
 
 # Input
-HEADERS += crypt.h ioapi.h quazip.h quazipfile.h quazipfileinfo.h unzip.h zip.h
-SOURCES += ioapi.c quazip.cpp quazipfile.cpp unzip.c zip.c
+HEADERS += crypt.h \
+           ioapi.h \
+           quazip.h \
+           quazipfile.h \
+           quazipfileinfo.h \
+           quazipnewinfo.h \
+           unzip.h \
+           zip.h
+
+SOURCES += ioapi.c \
+           quazip.cpp \
+           quazipfile.cpp \
+           quazipnewinfo.cpp \
+           unzip.c \
+           zip.c
 
 unix {
   OBJECTS_DIR=.obj

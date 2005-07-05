@@ -1,2 +1,2 @@
 TEMPLATE=subdirs
-SUBDIRS=quazip test/unzip
+SUBDIRS=quazip test/unzip test/zip

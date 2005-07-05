@@ -21,7 +21,9 @@
  **/
 
 #include <QIODevice>
+
 #include "quazip.h"
+#include "quazipnewinfo.h"
 
 /// A file inside ZIP archive.
 /** \class QuaZipFile quazipfile.h <quazip/quazipfile.h>
@@ -266,7 +268,7 @@ class QuaZipFile: public QIODevice {
      * \sa QuaZip::setCurrentFile
      **/
     void setFileName(const QString& fileName, QuaZip::CaseSensitivity cs =QuaZip::csDefault);
-    /// Opens a file.
+    /// Opens a file for reading.
     /** Returns \c true on success, \c false otherwise.
      * Call getZipError() to get error code.
      *
@@ -275,14 +277,14 @@ class QuaZipFile: public QIODevice {
      * QIODevice::Unbuffered flag in \a mode, or open will fail.
      **/
     virtual bool open(OpenMode mode);
-    /// Opens a file.
+    /// Opens a file for reading.
     /** \overload
      * Argument \a password specifies a password to decrypt the file. If
      * it is NULL then this function behaves just like open(OpenMode).
      **/
     bool open(OpenMode mode, const char *password)
     {return open(mode, NULL, NULL, false, password);}
-    /// Opens a file.
+    /// Opens a file for reading.
     /** \overload
      * Argument \a password specifies a password to decrypt the file.
      *
@@ -295,6 +297,31 @@ class QuaZipFile: public QIODevice {
      * don't want to know the compression level.
      **/
     bool open(OpenMode mode, int *method, int *level, bool raw, const char *password =NULL);
+    /// Opens a file for writing.
+    /** \a info argument specifies information about file. It should at
+     * least specify a correct file name. Also, it is a good idea to
+     * specify correct timestamp (by default, current time will be
+     * used). See QuaZipNewInfo.
+     *
+     * Arguments \a password and \a crc provide necessary information
+     * for crypting. Note that you should specify both of them if you
+     * need crypting. If you do not, pass \c NULL as password, but you
+     * still need to specify \a crc if you are going to use raw mode
+     * (see below).
+     *
+     * Arguments \a method and \a level specify compression method and
+     * level.
+     *
+     * If \a raw is \c true, no compression is performed. In this case,
+     * \a crc is required.
+     *
+     * Arguments \a windowBits, \a memLevel, \a strategy provide zlib
+     * algorithms tuning. See deflateInit2() in zlib.
+     **/
+    bool open(OpenMode mode, const QuaZipNewInfo& info,
+        const char *password =NULL, quint32 crc =0,
+        int method =Z_DEFLATED, int level =Z_DEFAULT_COMPRESSION, bool raw =false,
+        int windowBits =-MAX_WBITS, int memLevel =DEF_MEM_LEVEL, int strategy =Z_DEFAULT_STRATEGY);
     /// Returns \c true, but \ref quazipfile-sequential "beware"!
     virtual bool isSequential()const;
     /// Returns current position in the file.

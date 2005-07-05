@@ -37,7 +37,7 @@ bool testRead()
         info.dateTime.toString(Qt::ISODate).toLocal8Bit().constData(),
         info.crc, info.compressedSize, info.uncompressedSize, info.diskNumberStart,
         info.internalAttr, info.externalAttr,
-        info.comment.constData(), info.extra.constData());
+        info.comment.toLocal8Bit().constData(), info.extra.constData());
     if(!file.open(QIODevice::ReadOnly)) {
       qWarning("testRead(): file.open(): %d", file.getZipError());
       return false;

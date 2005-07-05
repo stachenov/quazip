@@ -151,10 +151,20 @@ bool QuaZipFile::open(OpenMode mode, int *method, int *level, bool raw, const ch
         zip->close();
         return false;
       }
-    } else if(zip->getMode()!=QuaZip::mdUnzip) {
-      qWarning("QuaZipFile::open(): file open mode %d incompatible with ZIP open mode %d",
-          (int)mode, (int)zip->getMode());
-      return false;
+    } else {
+      if(zip==NULL) {
+        qWarning("QuaZipFile::open(): zip is NULL");
+        return false;
+      }
+      if(zip->getMode()!=QuaZip::mdUnzip) {
+        qWarning("QuaZipFile::open(): file open mode %d incompatible with ZIP open mode %d",
+            (int)mode, (int)zip->getMode());
+        return false;
+      }
+      if(!zip->hasCurrentFile()) {
+        qWarning("QuaZipFile::open(): zip does not have current file");
+        return false;
+      }
     }
     setZipError(unzOpenCurrentFile3(zip->getUnzFile(), method, level, (int)raw, password));
     if(zipError==UNZ_OK) {
@@ -164,7 +174,60 @@ bool QuaZipFile::open(OpenMode mode, int *method, int *level, bool raw, const ch
     } else
       return false;
   }
-  qWarning("QuaZipFile::open(): open mode %d not supported", (int)mode);
+  qWarning("QuaZipFile::open(): open mode %d not supported by this function", (int)mode);
+  return false;
+}
+
+bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
+    const char *password, quint32 crc,
+    int method, int level, bool raw,
+    int windowBits, int memLevel, int strategy)
+{
+  zip_fileinfo info_z;
+  tm_zip dateTime_z;
+  resetZipError();
+  if(isOpen()) {
+    qWarning("QuaZipFile::open(): already opened");
+    return false;
+  }
+  if((mode&WriteOnly)&&!(mode&ReadOnly)) {
+    if(internal) {
+      qWarning("QuaZipFile::open(): write mode is incompatible with internal QuaZip approach");
+      return false;
+    }
+    if(zip==NULL) {
+      qWarning("QuaZipFile::open(): zip is NULL");
+      return false;
+    }
+    if(zip->getMode()!=QuaZip::mdCreate&&zip->getMode()!=QuaZip::mdAppend&&zip->getMode()!=QuaZip::mdAdd) {
+      qWarning("QuaZipFile::open(): file open mode %d incompatible with ZIP open mode %d",
+          (int)mode, (int)zip->getMode());
+      return false;
+    }
+    dateTime_z.tm_year=info.dateTime.date().year();
+    dateTime_z.tm_mon=info.dateTime.date().month();
+    dateTime_z.tm_mday=info.dateTime.date().day();
+    dateTime_z.tm_hour=info.dateTime.time().hour();
+    dateTime_z.tm_min=info.dateTime.time().minute();
+    dateTime_z.tm_sec=info.dateTime.time().second();
+    info_z.internal_fa=(uLong)info.internalAttr;
+    info_z.external_fa=(uLong)info.externalAttr;
+    setZipError(zipOpenNewFileInZip3(zip->getZipFile(),
+          zip->getFileNameCodec()->fromUnicode(info.name).constData(), &info_z,
+          info.extraLocal.constData(), info.extraLocal.length(),
+          info.extraGlobal.constData(), info.extraGlobal.length(),
+          zip->getCommentCodec()->fromUnicode(info.comment).constData(),
+          method, level, (int)raw,
+          windowBits, memLevel, strategy,
+          password, (uLong)crc));
+    if(zipError==UNZ_OK) {
+      setOpenMode(mode);
+      this->raw=raw;
+      return true;
+    } else
+      return false;
+  }
+  qWarning("QuaZipFile::open(): open mode %d not supported by this function", (int)mode);
   return false;
 }
 
@@ -221,12 +284,20 @@ qint64 QuaZipFile::usize()const
 void QuaZipFile::close()
 {
   resetZipError();
-  if(zip->getMode()!=QuaZip::mdUnzip) return;
+  if(zip==NULL||!zip->isOpen()) return;
   if(!isOpen()) {
     qWarning("QuaZipFile::close(): file isn't open");
     return;
   }
-  setZipError(unzCloseCurrentFile(zip->getUnzFile()));
+  if(openMode()&ReadOnly)
+    setZipError(unzCloseCurrentFile(zip->getUnzFile()));
+  else if(openMode()&WriteOnly)
+    if(isRaw()) ;//setZipError(zipCloseFileInZipRaw(
+    else zipCloseFileInZip(zip->getZipFile());
+  else {
+    qWarning("Wrong open mode: %d", (int)openMode());
+    return;
+  }
   if(zipError==UNZ_OK) setOpenMode(QIODevice::NotOpen);
   else return;
   if(internal) {
@@ -238,13 +309,23 @@ void QuaZipFile::close()
 qint64 QuaZipFile::readData(char *data, qint64 maxSize)
 {
   setZipError(UNZ_OK);
+  if(zip==NULL) {
+    qWarning("QuaZipFile::readData(): zip is NULL");
+    return -1;
+  }
   qint64 bytesRead=unzReadCurrentFile(zip->getUnzFile(), data, (unsigned)maxSize);
   if(bytesRead<0) setZipError((int)bytesRead);
   return bytesRead;
 }
 
-qint64 QuaZipFile::writeData(const char*, qint64)
+qint64 QuaZipFile::writeData(const char* data, qint64 maxSize)
 {
-  qWarning("Write mode not supported");
-  return -1;
+  setZipError(ZIP_OK);
+  if(zip==NULL) {
+    qWarning("QuaZipFile::readData(): zip is NULL");
+    return -1;
+  }
+  setZipError(zipWriteInFileInZip(zip->getZipFile(), data, (uint)maxSize));
+  if(zipError!=ZIP_OK) return -1;
+  else return maxSize;
 }
