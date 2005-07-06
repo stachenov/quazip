@@ -62,6 +62,9 @@ class QuaZipFile: public QIODevice {
     QString fileName;
     QuaZip::CaseSensitivity caseSensitivity;
     bool raw;
+    // these two are for writing raw files
+    ulong uncompressedSize;
+    quint32 crc;
     bool internal;
     int zipError;
     // these are not supported nor implemented
@@ -313,7 +316,7 @@ class QuaZipFile: public QIODevice {
      * level.
      *
      * If \a raw is \c true, no compression is performed. In this case,
-     * \a crc is required.
+     * \a crc and uncompressedSize field of the \a info are required.
      *
      * Arguments \a windowBits, \a memLevel, \a strategy provide zlib
      * algorithms tuning. See deflateInit2() in zlib.

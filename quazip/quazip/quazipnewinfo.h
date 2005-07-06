@@ -54,6 +54,11 @@ struct QuaZipNewInfo {
   QByteArray extraLocal;
   /// File global extra field.
   QByteArray extraGlobal;
+  /// Uncompressed file size.
+  /** This is only needed if you are using raw file zipping mode, i. e.
+   * adding precompressed file in the zip archive.
+   **/
+  ulong uncompressedSize;
   /// Constructs QuaZipNewInfo instance.
   /** Initializes name with \a name, dateTime with current date and
    * time. Attributes are initialized with zeros, comment and extra

@@ -223,6 +223,10 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
     if(zipError==UNZ_OK) {
       setOpenMode(mode);
       this->raw=raw;
+      if(raw) {
+        this->crc=crc;
+        this->uncompressedSize=info.uncompressedSize;
+      }
       return true;
     } else
       return false;
@@ -292,8 +296,8 @@ void QuaZipFile::close()
   if(openMode()&ReadOnly)
     setZipError(unzCloseCurrentFile(zip->getUnzFile()));
   else if(openMode()&WriteOnly)
-    if(isRaw()) ;//setZipError(zipCloseFileInZipRaw(
-    else zipCloseFileInZip(zip->getZipFile());
+    if(isRaw()) setZipError(zipCloseFileInZipRaw(zip->getZipFile(), uncompressedSize, crc));
+    else setZipError(zipCloseFileInZip(zip->getZipFile()));
   else {
     qWarning("Wrong open mode: %d", (int)openMode());
     return;

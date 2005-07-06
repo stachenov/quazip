@@ -25,8 +25,8 @@
  * API, and - yes! - that means that you can also use QTextStream,
  * QDataStream or whatever you would like to use on your zipped files.
  *
- * Currently QuaZIP does not support writing to archives - only reading
- * files from archive.
+ * QuaZIP provides complete abstraction of the ZIP/UNZIP API, for both
+ * reading from and writing to ZIP archives.
  *
  * \section platforms Platforms supported
  *
@@ -41,6 +41,10 @@
  * make it work on any platform that it currently does not work on are
  * always welcome!
  *
+ * \section whats-new What is new in this version of QuaZIP?
+ *
+ * See NEWS file supplied with the distribution.
+ *
  * \section getting Getting latest version of QuaZIP
  *
  * Check <a href="http://sourceforge.net/projects/quazip/">QuaZIP
@@ -50,7 +54,8 @@
  *
  * \section Requirements
  *
- * Just zlib and Qt 4. Well, Qt 4 depends on zlib anyway.
+ * Just <a href="http://www.zlib.org/">zlib</a> and Qt 4. Well, Qt 4
+ * depends on zlib anyway.
  *
  * \section building Building, testing and installing
  *
@@ -86,21 +91,25 @@ $ qmake LIBS+=-L/usr/local/zlib/lib INCLUDEPATH+=/usr/local/zlib/include
  * (note abscence of "-I" before include path)
  *
  * To check if QuaZIP's basic features work ok on your platform, you may
- * wish to compile simple test program provided in test/unzip directory.
- * It requires "test.zip" archive and writable directory "out" to be
- * present in the test/unzip directory. So here what it looks like:
+ * wish to compile simple test programs provided in test directory.
+ * Look in the sources of the tests to find out about their
+ * requirements. Typically, the test looks something like this:
 \verbatim
-$ cd /wherever/quazip/source/is/quazip-x.y.z/test/unzip
+$ cd /wherever/quazip/source/is/quazip-x.y.z/test/zip
 $ qmake
 $ make
-$ cp /some/path/to/some-small.zip ./test.zip
+$ ./zip
+$ cd ../unzip
+$ cp ../zip/test.zip ./test.zip
 $ mkdir out
+$ qmake
+$ make
 $ ./unzip
 \endverbatim
  *
- * You should see the zip contents with details as the output. Ignore
- * message saying you should check the file name for testCase() if
- * you do not want to test
+ * You should see the zip contents with details as the output of the
+ * "./unzip". Ignore message saying you should check the file name for
+ * testCase() if you do not want to test
  * \link QuaZip::CaseSensitivity locale-aware case-insensitivity\endlink.
  * Otherwise, see the sources. In any case, this message appearing means
  * that everything else was fine. Otherwise, you will get some other error
@@ -130,9 +139,6 @@ $ make install
  * QuaZIP is currently at the initial development stage. Therefore,
  * there are may be plenty of bugs and other bad things. Bug reports and
  * patches are always welcome (see "contacts" below).
- *
- * Also, as mentioned above, writing to the ZIP archives is not
- * implemented at all yet, though ZIP/UNZIP package supports it.
  *
  * \section contacts Authors and contacts
  *
