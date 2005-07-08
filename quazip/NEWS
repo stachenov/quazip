@@ -1,0 +1,9 @@
+QuaZIP changes
+
+* 2005-07-08 0.2
+        * Write support.
+        * Extended QuaZipFile API, including size(), *pos() functions.
+        * Support for comments encoding/decoding.
+
+* 2005-07-01 0.1
+        * Initial version.
