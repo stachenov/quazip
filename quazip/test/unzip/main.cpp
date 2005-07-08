@@ -19,7 +19,7 @@ bool testRead()
   }
   zip.setFileNameCodec("IBM866");
   printf("%d entries\n", zip.getEntriesCount());
-  printf("Global comment: %s\n", zip.getComment().constData());
+  printf("Global comment: %s\n", zip.getComment().toLocal8Bit().constData());
   QuaZipFileInfo info;
   printf("name\tcver\tnver\tflags\tmethod\tctime\tCRC\tcsize\tusize\tdisknum\tIA\tEA\tcomment\textra\n");
   QuaZipFile file(&zip);
