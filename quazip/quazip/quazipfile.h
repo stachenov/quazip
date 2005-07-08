@@ -36,7 +36,7 @@
  * You can either use existing QuaZip instance to create instance of
  * this class or pass ZIP archive file name to this class, in which case
  * it will create internal QuaZip object. See constructors' descriptions
- * for details.
+ * for details. Writing is only possible with the existing instance.
  *
  * \section quazipfile-sequential Sequential or random-access?
  *
@@ -62,6 +62,7 @@ class QuaZipFile: public QIODevice {
     QString fileName;
     QuaZip::CaseSensitivity caseSensitivity;
     bool raw;
+    qint64 writePos;
     // these two are for writing raw files
     ulong uncompressedSize;
     quint32 crc;
@@ -77,20 +78,18 @@ class QuaZipFile: public QIODevice {
     /// Implementation of the QIODevice::readData().
     qint64 readData(char *data, qint64 maxSize);
     /// Implementation of the QIODevice::writeData().
-    /** Currenlty always returns -1 (because ZIP is not supported yet).
-     **/
     qint64 writeData(const char *data, qint64 maxSize);
   public:
     /// Constructs a QuaZipFile instance.
-    /** You should use setZipName() and setFileName() before trying to
-     * call open() on the constructed object.
+    /** You should use setZipName() and setFileName() or setZip() before
+     * trying to call open() on the constructed object.
      **/
     QuaZipFile();
     /// Constructs a QuaZipFile instance.
     /** \a parent argument specifies this object's parent object.
      *
-     * You should use setZipName() and setFileName() before trying to
-     * call open() on the constructed object.
+     * You should use setZipName() and setFileName() or setZip() before
+     * trying to call open() on the constructed object.
      **/
     QuaZipFile(QObject *parent);
     /// Constructs a QuaZipFile instance.
@@ -99,12 +98,18 @@ class QuaZipFile: public QIODevice {
      *
      * You should use setFileName() before trying to call open() on the
      * constructed object.
+     *
+     * QuaZipFile constructed by this constructor can be used for read
+     * only access. Use QuaZipFile(QuaZip*,QObject*) for writing.
      **/
     QuaZipFile(const QString& zipName, QObject *parent =NULL);
     /// Constructs a QuaZipFile instance.
     /** \a parent argument specifies this object's parent object, \a
      * zipName specifies ZIP archive file name and \a fileName and \a cs
      * specify a name of the file to open inside archive.
+     *
+     * QuaZipFile constructed by this constructor can be used for read
+     * only access. Use QuaZipFile(QuaZip*,QObject*) for writing.
      *
      * \sa QuaZip::setCurrentFile()
      **/
@@ -114,11 +119,11 @@ class QuaZipFile: public QIODevice {
     /** \a parent argument specifies this object's parent object.
      *
      * \a zip is the pointer to the existing QuaZip object. This
-     * QuaZipFile object then can be used to access current file in the
-     * \a zip.
+     * QuaZipFile object then can be used to read current file in the
+     * \a zip or to write to the file inside it.
      *
-     * \warning Using this constructor can be tricky. Let's take the
-     * following example:
+     * \warning Using this constructor for reading current file can be
+     * tricky. Let's take the following example:
      * \code
      * QuaZip zip("archive.zip");
      * zip.open(QuaZip::mdUnzip);
@@ -328,12 +333,16 @@ class QuaZipFile: public QIODevice {
     /// Returns \c true, but \ref quazipfile-sequential "beware"!
     virtual bool isSequential()const;
     /// Returns current position in the file.
-    /** Implementation of the QIODevice::pos(). This function is a
-     * wrapper to the ZIP/UNZIP unztell(), therefore it is unable to
-     * keep track of the ungetChar() calls (which is non-virtual and
-     * therefore is dangerous to reimplement). So if you are using
-     * ungetChar() feature of the QIODevice, this function reports
-     * incorrect value until you get back characters which you ungot.
+    /** Implementation of the QIODevice::pos(). When reading, this
+     * function is a wrapper to the ZIP/UNZIP unztell(), therefore it is
+     * unable to keep track of the ungetChar() calls (which is
+     * non-virtual and therefore is dangerous to reimplement). So if you
+     * are using ungetChar() feature of the QIODevice, this function
+     * reports incorrect value until you get back characters which you
+     * ungot.
+     *
+     * When writing, pos() returns number of bytes already written
+     * (uncompressed unless you use raw mode).
      *
      * \note Although
      * \ref quazipfile-sequential "QuaZipFile is a sequential device"
@@ -357,14 +366,17 @@ class QuaZipFile: public QIODevice {
      * as "there is no file open to check for end of file and there is
      * no end of file therefore".
      *
+     * When writing, this function always returns \c true (because you
+     * are always writing to the end of file).
+     *
      * Error code returned by getZipError() is not affected by this
      * function call.
      **/
     virtual bool atEnd()const;
     /// Returns file size.
-    /** This function returns csize() if the file is open in raw mode
-     * and usize() if it is open in normal mode. If the file is not open
-     * at all, the behaviour is undefined. Do not do that.
+    /** This function returns csize() if the file is open for reading in
+     * raw mode, usize() if it is open for reading in normal mode and
+     * pos() if it is open for writing.
      *
      * Returns -1 on error, call getZipError() to get error code.
      *
@@ -377,8 +389,9 @@ class QuaZipFile: public QIODevice {
     virtual qint64 size()const;
     /// Returns compressed file size.
     /** Equivalent to calling getFileInfo() and then getting
-     * compressedSize field, but more convenient and faster. See
-     * getFileInfo() for a warning.
+     * compressedSize field, but more convenient and faster.
+     *
+     * File must be open for reading before calling this function.
      *
      * Returns -1 on error, call getZipError() to get error code.
      **/
@@ -387,6 +400,8 @@ class QuaZipFile: public QIODevice {
     /** Equivalent to calling getFileInfo() and then getting
      * uncompressedSize field, but more convenient and faster. See
      * getFileInfo() for a warning.
+     *
+     * File must be open for reading before calling this function.
      *
      * Returns -1 on error, call getZipError() to get error code.
      **/
@@ -398,10 +413,9 @@ class QuaZipFile: public QIODevice {
      * QuaZip is internal (because you do not have access to it), while
      * you still can call this function in that case.
      *
-     * Returns \c false in the case of an error. This includes the case
-     * when QuaZip is internal and you did not open this QuaZipFile yet.
-     * To avoid potential bugs, it is better to not use this function at
-     * all if the file is not open.
+     * File must be open for reading before calling this function.
+     *
+     * Returns \c false in the case of an error.
      **/
     bool getFileInfo(QuaZipFileInfo *info);
     /// Closes the file.

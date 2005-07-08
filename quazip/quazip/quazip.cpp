@@ -94,7 +94,7 @@ void QuaZip::close()
     case mdCreate:
     case mdAppend:
     case mdAdd:
-      zipError=zipClose(zipFile_f, comment.constData());
+      zipError=zipClose(zipFile_f, commentCodec->fromUnicode(comment).constData());
       break;
     default:
       qWarning("QuaZip::close(): unknown mode: %d", (int)mode);
@@ -126,22 +126,22 @@ int QuaZip::getEntriesCount()const
   return (int)globalInfo.number_entry;
 }
 
-QByteArray QuaZip::getComment()const
+QString QuaZip::getComment()const
 {
   QuaZip *fakeThis=(QuaZip*)this; // non-const
   fakeThis->zipError=UNZ_OK;
   if(mode!=mdUnzip) {
     qWarning("QuaZip::getComment(): ZIP is not open in mdUnzip mode");
-    return QByteArray();
+    return QString();
   }
   unz_global_info globalInfo;
   QByteArray comment;
   if((fakeThis->zipError=unzGetGlobalInfo(unzFile_f, &globalInfo))!=UNZ_OK)
-    return QByteArray();
+    return QString();
   comment.resize(globalInfo.size_comment);
   if((fakeThis->zipError=unzGetGlobalComment(unzFile_f, comment.data(), comment.size()))!=UNZ_OK)
-    return QByteArray();
-  return comment;
+    return QString();
+  return commentCodec->toUnicode(comment);
 }
 
 bool QuaZip::setCurrentFile(const QString& fileName, CaseSensitivity cs)

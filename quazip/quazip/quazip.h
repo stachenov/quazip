@@ -110,7 +110,7 @@ class QuaZip {
   private:
     QTextCodec *fileNameCodec, *commentCodec;
     QString zipName;
-    QByteArray comment;
+    QString comment;
     Mode mode;
     union {
       unzFile unzFile_f;
@@ -226,17 +226,13 @@ class QuaZip {
      **/
     int getEntriesCount()const;
     /// Returns global comment in the ZIP file.
-    /** Does not decode comment. Use Qt's QTextCodec class to do it
-     * yourself. Returns empty array on error or if there is no comment.
-     * Call getZipError() to find out if there was an error.
-     **/
-    QByteArray getComment()const;
+    QString getComment()const;
     /// Sets global comment in the ZIP file.
     /** Comment will be written to the archive on close operation.
      *
      * \sa open()
      **/
-    void setComment(const QByteArray& comment) {this->comment=comment;}
+    void setComment(const QString& comment) {this->comment=comment;}
     /// Sets the current file to the first file in the archive.
     /** Returns \c true on success, \c false otherwise. Call
      * getZipError() to get the error code.
@@ -245,6 +241,8 @@ class QuaZip {
     /// Sets the current file to the next file in the archive.
     /** Returns \c true on success, \c false otherwise. Call
      * getZipError() to determine if there was an error.
+     *
+     * Should be used only in QuaZip::mdUnzip mode.
      *
      * \note If the end of file was reached, getZipError() will return
      * \c UNZ_OK instead of \c UNZ_END_OF_LIST_OF_FILE. This is to make
@@ -279,6 +277,8 @@ class QuaZip {
      * file first if it is open! See
      * QuaZipFile::QuaZipFile(QuaZip*,QObject*) for the details.
      *
+     * Should be used only in QuaZip::mdUnzip mode.
+     *
      * \sa setFileNameCodec(), CaseSensitivity
      **/
     bool setCurrentFile(const QString& fileName, CaseSensitivity cs =csDefault);
@@ -289,6 +289,8 @@ class QuaZip {
      * success, \c false otherwise. In the latter case structure pointed
      * by \a info remains untouched. If there was an error,
      * getZipError() returns error code.
+     *
+     * Should be used only in QuaZip::mdUnzip mode.
      *
      * Does nothing and returns \c false in any of the following cases.
      * - ZIP is not open;
@@ -303,6 +305,8 @@ class QuaZip {
     /** Equivalent to calling getCurrentFileInfo() and then getting \c
      * name field of the QuaZipFileInfo structure, but faster and more
      * convenient.
+     *
+     * Should be used only in QuaZip::mdUnzip mode.
      **/
     QString getCurrentFileName()const;
     /// Returns \c unzFile handle.
@@ -328,10 +332,6 @@ class QuaZip {
     /** You can use this handle to directly call ZIP part of the
      * ZIP/UNZIP package functions (see zip.h). Warnings about the
      * getUnzFile() function also apply to this function.
-     *
-     * \note Since QuaZIP does not currently provide interface to ZIP
-     * part of the ZIP/UNZIP package, this function is meaningless in
-     * this version of QuaZIP.
      **/
     zipFile getZipFile() {return zipFile_f;}
 };
