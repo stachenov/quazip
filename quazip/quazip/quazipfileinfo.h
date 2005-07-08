@@ -24,7 +24,8 @@
 #include <QDateTime>
 
 /// Information about a file inside archive.
-/** Call QuaZip::getCurrentFileInfo() to fill this structure. */
+/** Call QuaZip::getCurrentFileInfo() or QuaZipFile::getFileInfo() to
+ * fill this structure. */
 struct QuaZipFileInfo {
   /// File name.
   QString name;
