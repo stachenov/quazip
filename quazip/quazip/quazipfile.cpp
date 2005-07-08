@@ -140,6 +140,10 @@ bool QuaZipFile::open(OpenMode mode, int *method, int *level, bool raw, const ch
     qWarning("QuaZipFile::open(): already opened");
     return false;
   }
+  if(mode&Unbuffered) {
+    qWarning("QuaZipFile::open(): Unbuffered mode is not supported");
+    return false;
+  }
   if((mode&ReadOnly)&&!(mode&WriteOnly)) {
     if(internal) {
       if(!zip->open(QuaZip::mdUnzip)) {
