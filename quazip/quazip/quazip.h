@@ -81,7 +81,6 @@ class QuaZip {
                                  unzip.c. */
     };
     /// Open mode of the ZIP file.
-    /** Currently only mdNotOpen and mdUnzip modes are used. */
     enum Mode {
       mdNotOpen, ///< ZIP file is not open. This is the initial mode.
       mdUnzip, ///< ZIP file is open for reading files inside it.
