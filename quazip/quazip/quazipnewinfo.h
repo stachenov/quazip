@@ -46,7 +46,7 @@ struct QuaZipNewInfo {
   quint16 internalAttr;
   /// File external attributes.
   quint32 externalAttr;
-  /// File commment.
+  /// File comment.
   /** Will be encoded using QuaZip::getCommentCodec().
    **/
   QString comment;
