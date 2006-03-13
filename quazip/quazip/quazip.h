@@ -180,7 +180,7 @@ class QuaZip {
     /// Sets the codec used to encode/decode comments inside archive.
     /** This codec defaults to locale codec, which is probably ok.
      **/
-    void setCommentCodec(QTextCodec *fileNameCodec)
+    void setCommentCodec(QTextCodec *commentCodec)
     {this->commentCodec=commentCodec;}
     /// Sets the codec used to encode/decode comments inside archive.
     /** \overload
