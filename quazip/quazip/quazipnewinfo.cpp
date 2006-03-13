@@ -12,12 +12,17 @@ QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
   name(name), internalAttr(0), externalAttr(0)
 {
   QFileInfo info(file);
-  if(!info.exists()) dateTime=QDateTime::currentDateTime();
-  else dateTime=info.lastModified();
+  QDateTime lm = info.lastModified();
+  if (!info.exists())
+    dateTime = QDateTime::currentDateTime();
+  else
+    dateTime = lm;
 }
 
 void QuaZipNewInfo::setFileDateTime(const QString& file)
 {
   QFileInfo info(file);
-  if(info.exists()) dateTime=info.lastModified();
+  QDateTime lm = info.lastModified();
+  if (info.exists())
+    dateTime = lm;
 }
