@@ -188,7 +188,6 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
     int windowBits, int memLevel, int strategy)
 {
   zip_fileinfo info_z;
-  tm_zip dateTime_z;
   resetZipError();
   if(isOpen()) {
     qWarning("QuaZipFile::open(): already opened");
@@ -208,12 +207,13 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
           (int)mode, (int)zip->getMode());
       return false;
     }
-    dateTime_z.tm_year=info.dateTime.date().year();
-    dateTime_z.tm_mon=info.dateTime.date().month();
-    dateTime_z.tm_mday=info.dateTime.date().day();
-    dateTime_z.tm_hour=info.dateTime.time().hour();
-    dateTime_z.tm_min=info.dateTime.time().minute();
-    dateTime_z.tm_sec=info.dateTime.time().second();
+    info_z.tmz_date.tm_year=info.dateTime.date().year();
+    info_z.tmz_date.tm_mon=info.dateTime.date().month() - 1;
+    info_z.tmz_date.tm_mday=info.dateTime.date().day();
+    info_z.tmz_date.tm_hour=info.dateTime.time().hour();
+    info_z.tmz_date.tm_min=info.dateTime.time().minute();
+    info_z.tmz_date.tm_sec=info.dateTime.time().second();
+    info_z.dosDate = 0;
     info_z.internal_fa=(uLong)info.internalAttr;
     info_z.external_fa=(uLong)info.externalAttr;
     setZipError(zipOpenNewFileInZip3(zip->getZipFile(),
