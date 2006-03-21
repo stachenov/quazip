@@ -1,5 +1,12 @@
 QuaZIP changes
 
+* 2006-03-21 0.2.1
+        * Fixed setCommentCodec() bug.
+        * Fixed bug that set month 1-12 instead of 0-11, as specified in
+          zip.h.
+        * Added workaround for Qt's bug that caused wrong timestamps.
+        * Few documentation fixes and cosmetic changes.
+
 * 2005-07-08 0.2
         * Write support.
         * Extended QuaZipFile API, including size(), *pos() functions.

@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = lib
-CONFIG += staticlib qt warn_on debug
+CONFIG += staticlib qt warn_on release
 QT -= gui
 LIBS += -lz
 DEPENDPATH += .
