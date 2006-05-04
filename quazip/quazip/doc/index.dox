@@ -148,13 +148,13 @@ $ make install
  * it.
  *
  * If you have anything to say to me about QuaZIP library, feel free to
- * do so. I can not promise, though, that I fix all the bugs you report
- * in, add any features you want, or respond to your critics, or respond
- * to your feedback at all. I may be busy, I may be tired of working on
- * QuaZIP, I may be even dead already (you never know...). But
- * regardless of this remark, any feedback is always welcome. This may
- * seem like a paradox to you, but you do not have to understand it to
- * write feedback.
+ * do so (read the \ref faq first, though). I can not promise,
+ * though, that I fix all the bugs you report in, add any features you
+ * want, or respond to your critics, or respond to your feedback at all.
+ * I may be busy, I may be tired of working on QuaZIP, I may be even
+ * dead already (you never know...). But regardless of this remark, any
+ * feedback is always welcome. This may seem like a paradox to you, but
+ * you do not have to understand it to write feedback.
  *
  * To report bugs or to post ideas about what should be done, use
  * SourceForge.net's <a
