@@ -3,7 +3,7 @@
 
 /*
  * QuaZIP - a Qt/C++ wrapper for the ZIP/UNZIP package
- * Copyright (C) 2005 Sergey A. Tachenov
+ * Copyright (C) 2005-2007 Sergey A. Tachenov
  * 
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
