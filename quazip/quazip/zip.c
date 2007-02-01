@@ -189,13 +189,14 @@ local void init_linkedlist(ll)
     ll->first_block = ll->last_block = NULL;
 }
 
+#if 0 // unused
 local void free_linkedlist(ll)
     linkedlist_data* ll;
 {
     free_datablock(ll->first_block);
     ll->first_block = ll->last_block = NULL;
 }
-
+#endif
 
 local int add_data_in_datablock(ll,buf,len)
     linkedlist_data* ll;
@@ -319,6 +320,7 @@ local uLong ziplocal_TmzDateToDosDate(ptm,dosDate)
     const tm_zip* ptm;
     uLong dosDate;
 {
+    (void) dosDate; /* avoid "unused parameter" warning */
     uLong year = (uLong)ptm->tm_year;
     if (year>1980)
         year-=1980;
