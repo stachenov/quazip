@@ -269,7 +269,7 @@ bool QuaZipFile::atEnd()const
   }
   if(!isOpen()) {
     qWarning("QuaZipFile::atEnd(): file is not open");
-    return -1;
+    return false;
   }
   if(openMode()&ReadOnly)
     return unzeof(zip->getUnzFile())==1;
