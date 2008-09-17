@@ -1,5 +1,8 @@
 QuaZIP changes
 
+* 2008-09-17 0.2.3
+        * Fixed license notices in sources.
+
 * SVN
         * Fixed a small bug in QuaZipFile::atEnd().
 
