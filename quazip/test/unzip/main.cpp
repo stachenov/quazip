@@ -1,3 +1,4 @@
+#include <QDir>
 #include <QFile>
 
 #include <quazip/quazip.h>
@@ -47,13 +48,29 @@ bool testRead()
       qWarning("testRead(): file.getFileName(): %d", file.getZipError());
       return false;
     }
-    out.setFileName("out/"+name);
-    // this will fail if "name" contains subdirectories, but we don't mind that
+    QString dirn = "out/" + name;
+    if (name.contains('/')) { // subdirectory support
+      // there must be a more elegant way of doing this
+      // but I couldn't find anything useful in QDir
+      dirn.chop(dirn.length() - dirn.lastIndexOf("/"));
+      QDir().mkpath(dirn);
+    }
+    out.setFileName("out/" + name);
     out.open(QIODevice::WriteOnly);
-    // Slow like hell (on GNU/Linux at least), but it is not my fault.
-    // Not ZIP/UNZIP package's fault either.
-    // The slowest thing here is out.putChar(c).
-    while(file.getChar(&c)) out.putChar(c);
+    char buf[4096];
+    int len = 0;
+    while (file.getChar(&c)) {
+      // we could just do this, but it's about 40% slower:
+      // out.putChar(c);
+      buf[len++] = c;
+      if (len >= 4096) {
+        out.write(buf, len);
+        len = 0;
+      }
+    }
+    if (len > 0) {
+      out.write(buf, len);
+    }
     out.close();
     if(file.getZipError()!=UNZ_OK) {
       qWarning("testRead(): file.getFileName(): %d", file.getZipError());
