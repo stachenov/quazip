@@ -16,6 +16,7 @@ bool testCreate()
     qWarning("testCreate(): zip.open(): %d", zip.getZipError());
     return false;
   }
+  zip.setComment("Test comment");
   QFileInfoList files=QDir().entryInfoList();
   QFile inFile;
   QuaZipFile outFile(&zip);

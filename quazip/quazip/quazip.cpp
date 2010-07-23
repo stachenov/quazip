@@ -152,8 +152,9 @@ QString QuaZip::getComment()const
   if((fakeThis->zipError=unzGetGlobalInfo(unzFile_f, &globalInfo))!=UNZ_OK)
     return QString();
   comment.resize(globalInfo.size_comment);
-  if((fakeThis->zipError=unzGetGlobalComment(unzFile_f, comment.data(), comment.size()))!=UNZ_OK)
+  if((fakeThis->zipError=unzGetGlobalComment(unzFile_f, comment.data(), comment.size())) < 0)
     return QString();
+  fakeThis->zipError = UNZ_OK;
   return commentCodec->toUnicode(comment);
 }
 
