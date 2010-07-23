@@ -35,7 +35,7 @@
 /* compile with -Dlocal if your debugger can't find static symbols */
 
 #ifndef VERSIONMADEBY
-# define VERSIONMADEBY   (0x0) /* platform depedent */
+# define VERSIONMADEBY   (0x031e) /* best for standard pkware crypt */
 #endif
 
 #ifndef Z_BUFSIZE
@@ -86,6 +86,7 @@ const char zip_copyright[] =
 #define SIZEDATA_INDATABLOCK (4096-(4*4))
 
 #define LOCALHEADERMAGIC    (0x04034b50)
+#define DESCRIPTORHEADERMAGIC    (0x08074b50)
 #define CENTRALHEADERMAGIC  (0x02014b50)
 #define ENDHEADERMAGIC      (0x06054b50)
 
@@ -765,8 +766,10 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
     if ((level==1))
       zi->ci.flag |= 6;
     if (password != NULL)
+    {
       zi->ci.flag |= 1;
-
+    }
+    zi->ci.flag |= 8;
     zi->ci.crc32 = 0;
     zi->ci.method = method;
     zi->ci.encrypt = 0;
@@ -884,6 +887,8 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
         zi->ci.encrypt = 1;
         zi->ci.pcrc_32_tab = get_crc_table();
         /*init_keys(password,zi->ci.keys,zi->ci.pcrc_32_tab);*/
+
+        crcForCrypting = (uLong)zi->ci.dosDate << 16; // ATTANTION! Without this row, you don't unpack your password protected archive in other app.
 
         sizeHead=crypthead(password,bufHead,RAND_HEAD_LEN,zi->ci.keys,zi->ci.pcrc_32_tab,crcForCrypting);
         zi->ci.crypt_header_size = sizeHead;
@@ -1118,6 +1123,21 @@ extern int ZEXPORT zipCloseFileInZipRaw (file, uncompressed_size, crc32)
         if (ZSEEK(zi->z_filefunc,zi->filestream,
                   cur_pos_inzip,ZLIB_FILEFUNC_SEEK_SET)!=0)
             err = ZIP_ERRNO;
+
+        /* Write local Descriptor after file data */
+        if (err==ZIP_OK)
+            err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,(uLong)DESCRIPTORHEADERMAGIC,4);
+
+        if (err==ZIP_OK)
+            err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
+
+        if (err==ZIP_OK) /* compressed size, unknown */
+            err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
+
+        if (err==ZIP_OK) /* uncompressed size, unknown */
+            err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
+
+
     }
 
     zi->number_entry ++;
