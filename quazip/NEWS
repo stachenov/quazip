@@ -1,5 +1,15 @@
 QuaZIP changes
 
+* 2010-07-23 0.3
+        * Fixed getComment() for global comments.
+        * Added some useful classes for calculating checksums (thanks to
+        Adam Walczak).
+        * Added some utility classes for working with whole directories
+        (thanks to Roberto Pompermaier). It would be nice if someone
+        documents these in English, though.
+        * Probably fixed some problems with passwords (thanks to Vasiliy
+        Sorokin). I didn't test it, though.
+
 * 2008-09-17 0.2.3
         * Fixed license notices in sources.
 
