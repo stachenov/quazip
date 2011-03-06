@@ -1,14 +1,14 @@
+
+include (../../includes.pri)
+
 TEMPLATE = app
-CONFIG += qt warn_on debug console
+CONFIG += qt warn_on console
+
 QT -= gui
 DEPENDPATH += .
-INCLUDEPATH += . ../..
-unix:LIBS += -L../../quazip -lquazip
-win32:LIBS += -L../../quazip/release -lquazip
+INCLUDEPATH += . ../../
+
+LIBS += -L../../bin -lquazip
 
 # Input
 SOURCES += main.cpp
-
-unix {
-  OBJECTS_DIR=.obj
-}

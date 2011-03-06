@@ -36,10 +36,12 @@ QuaZIP as long as you respect either GPL or LGPL for QuaZIP code.
 #include <QByteArray>
 #include <QDateTime>
 
+#include "quazip_global.h"
+
 /// Information about a file inside archive.
 /** Call QuaZip::getCurrentFileInfo() or QuaZipFile::getFileInfo() to
  * fill this structure. */
-struct QuaZipFileInfo {
+struct QUAZIP_EXPORT QuaZipFileInfo {
   /// File name.
   QString name;
   /// Version created by.

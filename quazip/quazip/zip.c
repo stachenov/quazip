@@ -16,6 +16,7 @@
 #include <time.h>
 #include "zlib.h"
 #include "zip.h"
+#include "quazip_global.h"
 
 #ifdef STDC
 #  include <stddef.h>
@@ -319,9 +320,8 @@ local void ziplocal_putValue_inmemory (dest, x, nbByte)
 
 local uLong ziplocal_TmzDateToDosDate(ptm,dosDate)
     const tm_zip* ptm;
-    uLong dosDate;
+    uLong dosDate UNUSED;
 {
-    (void) dosDate; /* avoid "unused parameter" warning */
     uLong year = (uLong)ptm->tm_year;
     if (year>1980)
         year-=1980;

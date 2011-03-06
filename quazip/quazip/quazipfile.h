@@ -35,6 +35,7 @@ QuaZIP as long as you respect either GPL or LGPL for QuaZIP code.
 
 #include <QIODevice>
 
+#include "quazip_global.h"
 #include "quazip.h"
 #include "quazipnewinfo.h"
 
@@ -68,7 +69,7 @@ QuaZIP as long as you respect either GPL or LGPL for QuaZIP code.
  * this class.
  *
  **/
-class QuaZipFile: public QIODevice {
+class QUAZIP_EXPORT QuaZipFile: public QIODevice {
   Q_OBJECT
   private:
     QuaZip *zip;

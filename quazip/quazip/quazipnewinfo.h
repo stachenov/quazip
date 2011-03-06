@@ -36,13 +36,15 @@ QuaZIP as long as you respect either GPL or LGPL for QuaZIP code.
 #include <QDateTime>
 #include <QString>
 
+#include "quazip_global.h"
+
 /// Information about a file to be created.
 /** This structure holds information about a file to be created inside
  * ZIP archive. At least name should be set to something correct before
  * passing this structure to
  * QuaZipFile::open(OpenMode,const QuaZipNewInfo&,int,int,bool).
  **/
-struct QuaZipNewInfo {
+struct QUAZIP_EXPORT QuaZipNewInfo {
   /// File name.
   /** This field holds file name inside archive, including path relative
    * to archive root.

@@ -9,7 +9,7 @@
 #include <QFileInfo>
 #include <QFile>
 
-class JlCompress {
+class QUAZIP_EXPORT JlCompress {
 private:
     static bool compressFile(QuaZip* zip, QString fileName, QString fileDest);
     static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive = true);
