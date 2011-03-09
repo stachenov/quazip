@@ -1,16 +1,3 @@
-
-include (../includes.pri)
-
-
-win32 {
-    DESTDIR=..\\bin
-    LIBS += -L$$DESTDIR
-}
-
-unix {
-	DESTDIR=../bin
-}
-
 TEMPLATE = lib
 CONFIG += qt warn_on
 QT -= gui
