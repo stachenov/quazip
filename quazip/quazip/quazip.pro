@@ -28,7 +28,7 @@ win32 {
     INSTALLS += headers target
 
     LIBS += -lzlib
-    QMAKE_LFLAGS += /IMPLIB:$$DESTDIR\\quazip.lib
+#QMAKE_LFLAGS += /IMPLIB:$$DESTDIR\\quazip.lib
 }
 
 DEFINES += QUAZIP_BUILD

@@ -32,7 +32,25 @@ bool testCreate()
       qWarning("testCreate(): outFile.open(): %d", outFile.getZipError());
       return false;
     }
-    while(inFile.getChar(&c)&&outFile.putChar(c));
+    qint64 len = file.size();
+    qint64 pos = 0;
+    while (inFile.getChar(&c)&&outFile.putChar(c)) {
+      char buf[4096];
+      qint64 l = inFile.read(buf, 4096);
+      if (l < 0) {
+        qWarning("read(): %s", inFile.errorString().toUtf8().constData());
+        break;
+      }
+      if (l == 0)
+        break;
+      if (outFile.write(buf, l) != l) {
+        qWarning("write(): %d", outFile.getZipError());
+        break;
+      }
+      pos += l;
+      if (pos % 1048576 == 0)
+        qDebug("%.1f", (float) pos / len * 100.0f);
+    }
     if(outFile.getZipError()!=UNZ_OK) {
       qWarning("testCreate(): outFile.putChar(): %d", outFile.getZipError());
       return false;

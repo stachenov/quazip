@@ -1,6 +1,3 @@
-
-include (../../includes.pri)
-
 TEMPLATE = app
 CONFIG += qt warn_on console
 
