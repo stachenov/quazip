@@ -499,8 +499,8 @@ local uLong ziplocal_SearchCentralDir(pzlib_filefunc_def,filestream)
 #endif /* !NO_ADDFILEINEXISTINGZIP*/
 
 /************************************************************/
-extern zipFile ZEXPORT zipOpen2 (pathname, append, globalcomment, pzlib_filefunc_def)
-    const char *pathname;
+extern zipFile ZEXPORT zipOpen2 (file, append, globalcomment, pzlib_filefunc_def)
+    voidpf file;
     int append;
     zipcharpc* globalcomment;
     zlib_filefunc_def* pzlib_filefunc_def;
@@ -511,13 +511,13 @@ extern zipFile ZEXPORT zipOpen2 (pathname, append, globalcomment, pzlib_filefunc
 
 
     if (pzlib_filefunc_def==NULL)
-        fill_fopen_filefunc(&ziinit.z_filefunc);
+        fill_qiodevice_filefunc(&ziinit.z_filefunc);
     else
         ziinit.z_filefunc = *pzlib_filefunc_def;
 
     ziinit.filestream = (*(ziinit.z_filefunc.zopen_file))
                  (ziinit.z_filefunc.opaque,
-                  pathname,
+                  file,
                   (append == APPEND_STATUS_CREATE) ?
                   (ZLIB_FILEFUNC_MODE_READ | ZLIB_FILEFUNC_MODE_WRITE | ZLIB_FILEFUNC_MODE_CREATE) :
                     (ZLIB_FILEFUNC_MODE_READ | ZLIB_FILEFUNC_MODE_WRITE | ZLIB_FILEFUNC_MODE_EXISTING));
@@ -683,11 +683,11 @@ extern zipFile ZEXPORT zipOpen2 (pathname, append, globalcomment, pzlib_filefunc
     }
 }
 
-extern zipFile ZEXPORT zipOpen (pathname, append)
-    const char *pathname;
+extern zipFile ZEXPORT zipOpen (file, append)
+    voidpf file;
     int append;
 {
-    return zipOpen2(pathname,append,NULL,NULL);
+    return zipOpen2(file,append,NULL,NULL);
 }
 
 extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
@@ -1106,7 +1106,7 @@ extern int ZEXPORT zipCloseFileInZipRaw (file, uncompressed_size, crc32)
 
     if (err==ZIP_OK)
     {
-        long cur_pos_inzip = ZTELL(zi->z_filefunc,zi->filestream);
+        uLong cur_pos_inzip = ZTELL(zi->z_filefunc,zi->filestream);
         if (ZSEEK(zi->z_filefunc,zi->filestream,
                   zi->ci.pos_local_header + 14,ZLIB_FILEFUNC_SEEK_SET)!=0)
             err = ZIP_ERRNO;

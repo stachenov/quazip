@@ -13,7 +13,8 @@
 // test reading archive
 bool testRead()
 {
-  QuaZip zip("test.zip");
+  QFile zipFile("test.zip");
+  QuaZip zip(&zipFile);
   if(!zip.open(QuaZip::mdUnzip)) {
     qWarning("testRead(): zip.open(): %d", zip.getZipError());
     return false;

@@ -27,12 +27,14 @@
    Encryption is not supported.
 */
 
+#include "quazip_global.h"
+
 #define CRC32(c, b) ((*(pcrc_32_tab+(((int)(c) ^ (b)) & 0xff))) ^ ((c) >> 8))
 
 /***********************************************************************
  * Return the next byte in the pseudo-random sequence
  */
-static int decrypt_byte(unsigned long* pkeys, const unsigned long* pcrc_32_tab)
+static int decrypt_byte(unsigned long* pkeys, const unsigned long* pcrc_32_tab UNUSED)
 {
     //(void) pcrc_32_tab; /* avoid "unused parameter" warning */
     unsigned temp;  /* POTENTIAL BUG:  temp*(temp^1) may overflow in an

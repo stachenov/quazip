@@ -11,7 +11,8 @@
 // test creating archive
 bool testCreate()
 {
-  QuaZip zip("test.zip");
+  QFile zipFile("test.zip");
+  QuaZip zip(&zipFile);
   if(!zip.open(QuaZip::mdCreate)) {
     qWarning("testCreate(): zip.open(): %d", zip.getZipError());
     return false;
