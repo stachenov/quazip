@@ -149,6 +149,12 @@ class QUAZIP_EXPORT QuaZip {
      * does not use it anywhere, so this open() function does not have this
      * argument. See setComment() if you need to set global comment.
      *
+     * If the ZIP file is accessed via explicitly set QIODevice, then
+     * this device is opened in the necessary mode. If the device was
+     * already opened by some other means, then the behaviour is defined by
+     * the device implementation, but generally it is not a very good
+     * idea. For example, QFile will at least issue a warning.
+     *
      * \return \c true if successful, \c false otherwise.
      *
      * \note ZIP/UNZIP API open calls do not return error code - they
@@ -174,7 +180,9 @@ class QUAZIP_EXPORT QuaZip {
      **/
     bool open(Mode mode, zlib_filefunc_def *ioApi =NULL);
     /// Closes ZIP file.
-    /** Call getZipError() to determine if the close was successful. */
+    /** Call getZipError() to determine if the close was successful. The
+     * underlying QIODevice is also closed, regardless of whether it was
+     * set explicitly or not. */
     void close();
     /// Sets the codec used to encode/decode file names inside archive.
     /** This is necessary to access files in the ZIP archive created

@@ -1,5 +1,17 @@
 QuaZIP changes
 
+* 2011-05-23 0.4
+        * QuaZip and QuaZipFile classes now use the Pimpl idiom. This
+        means that future releases will probably be binary compatible
+        with this one, but it also means that this one is binary
+        incompatible with the old ones.
+        * IO API has been rewritten using QIODevice instead of standard
+        C library. Among other things it means that QuaZip now supports
+        files up to 4 GB in size instead of 2 GB.
+        * Added QuaZip methods allowing access to ZIP files represented
+        by any seekable QIODevice implementation (QBuffer is a good
+        example).
+
 * 2010-07-23 0.3
         * Fixed getComment() for global comments.
         * Added some useful classes for calculating checksums (thanks to
