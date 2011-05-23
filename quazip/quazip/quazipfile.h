@@ -39,6 +39,8 @@ QuaZIP as long as you respect either GPL or LGPL for QuaZIP code.
 #include "quazip.h"
 #include "quazipnewinfo.h"
 
+class QuaZipFilePrivate;
+
 /// A file inside ZIP archive.
 /** \class QuaZipFile quazipfile.h <quazip/quazipfile.h>
  * This is the most interesting class. Not only it provides C++
@@ -70,24 +72,13 @@ QuaZIP as long as you respect either GPL or LGPL for QuaZIP code.
  *
  **/
 class QUAZIP_EXPORT QuaZipFile: public QIODevice {
+  friend class QuaZipFilePrivate;
   Q_OBJECT
   private:
-    QuaZip *zip;
-    QString fileName;
-    QuaZip::CaseSensitivity caseSensitivity;
-    bool raw;
-    qint64 writePos;
-    // these two are for writing raw files
-    ulong uncompressedSize;
-    quint32 crc;
-    bool internal;
-    int zipError;
+    QuaZipFilePrivate *p;
     // these are not supported nor implemented
     QuaZipFile(const QuaZipFile& that);
     QuaZipFile& operator=(const QuaZipFile& that);
-    void resetZipError()const {setZipError(UNZ_OK);}
-    // const, but sets zipError!
-    void setZipError(int zipError)const;
   protected:
     /// Implementation of the QIODevice::readData().
     qint64 readData(char *data, qint64 maxSize);
@@ -213,7 +204,7 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      * 
      * \sa getActualFileName
      **/
-    QString getFileName()const {return fileName;}
+    QString getFileName() const;
     /// Returns case sensitivity of the file name.
     /** This function returns case sensitivity argument you passed to
      * this object either by using
@@ -226,7 +217,7 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      *
      * \sa getFileName
      **/
-    QuaZip::CaseSensitivity getCaseSensitivity()const {return caseSensitivity;}
+    QuaZip::CaseSensitivity getCaseSensitivity() const;
     /// Returns the actual file name in the archive.
     /** This is \em not a ZIP archive file name, but a name of file inside
      * archive. It is not necessary the same name that you have passed
@@ -266,7 +257,7 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      *
      * \sa open(OpenMode,int*,int*,bool,const char*)
      **/
-    bool isRaw()const {return raw;}
+    bool isRaw() const;
     /// Binds to the existing QuaZip instance.
     /** This function destroys internal QuaZip object, if any, and makes
      * this QuaZipFile to use current file in the \a zip object for any
@@ -304,7 +295,7 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      * Argument \a password specifies a password to decrypt the file. If
      * it is NULL then this function behaves just like open(OpenMode).
      **/
-    bool open(OpenMode mode, const char *password)
+    inline bool open(OpenMode mode, const char *password)
     {return open(mode, NULL, NULL, false, password);}
     /// Opens a file for reading.
     /** \overload
@@ -437,7 +428,7 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      **/
     virtual void close();
     /// Returns the error code returned by the last ZIP/UNZIP API call.
-    int getZipError()const {return zipError;}
+    int getZipError() const;
 };
 
 #endif
