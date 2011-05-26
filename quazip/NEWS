@@ -1,5 +1,11 @@
 QuaZIP changes
 
+* 2011-05-26 0.4.1
+        * License statement updated to avoid confusion. GPL license
+        removed for the very same reason.
+        * Parts of original package are now clearly marked as modified,
+        just as their license requires.
+
 * 2011-05-23 0.4
         * QuaZip and QuaZipFile classes now use the Pimpl idiom. This
         means that future releases will probably be binary compatible
