@@ -89,12 +89,13 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
 
     // Per ogni file nella cartella
     QFileInfoList files = directory.entryInfoList(QDir::Files);
+    QDir origDirectory(origDir);
     foreach (QFileInfo file, files) {
         // Se non è un file o è il file compresso che sto creando
         if(!file.isFile()||file.absoluteFilePath()==zip->getZipName()) continue;
 
         // Creo il nome relativo da usare all'interno del file compresso
-        QString filename = file.absoluteFilePath().remove(QDir(origDir).absolutePath());
+        QString filename = origDirectory.relativeFilePath(file.absoluteFilePath());
 
         // Comprimo il file
         if (!compressFile(zip,file.absoluteFilePath(),filename)) return false;
@@ -402,13 +403,15 @@ QStringList JlCompress::extractDir(QString fileCompressed, QString dir) {
     // Estraggo i file
     QStringList lst = getFileList(fileCompressed);
 
+    QDir directory(dir);
     for (int i=0; i<lst.count(); i++) {
-        if (!extractFile(zip, lst.at(i), QDir(dir).absolutePath() + lst.at(i))) {
+        QString absFilePath = directory.absoluteFilePath(lst.at(i));
+        if (!extractFile(zip, lst.at(i), absFilePath)) {
             delete zip;
             removeFile(lst);
             return QStringList();
         }
-        lst[i] = QDir(dir).absolutePath() + lst.at(i);
+        lst[i] = absFilePath;
     }
 
     // Chiudo il file zip
