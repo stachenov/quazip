@@ -1,5 +1,11 @@
 QuaZIP changes
 
+* 2011-08-10 0.4.2
+        * Cmake patch (thanks to Bernhard Rosenkraenzer).
+        * Symbian patch (thanks to Hamish Willee).
+        * Documented the multiple files limitation of QuaZipFile.
+        * Fixed relative paths handling in JlCompress.
+
 * 2011-05-26 0.4.1
         * License statement updated to avoid confusion. GPL license
         removed for the very same reason.
