@@ -5,6 +5,7 @@ QuaZIP changes
         * Symbian patch (thanks to Hamish Willee).
         * Documented the multiple files limitation of QuaZipFile.
         * Fixed relative paths handling in JlCompress.
+        * Fixed linking to MinGW zlib.
 
 * 2011-05-26 0.4.1
         * License statement updated to avoid confusion. GPL license
