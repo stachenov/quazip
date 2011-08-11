@@ -40,7 +40,8 @@ win32 {
     target.path=$$PREFIX/lib
     INSTALLS += headers target
 
-    LIBS += -lzlib
+    *-g++*: LIBS += -lz.dll
+    *-msvc*: LIBS += -lzlib
     *-msvc*: QMAKE_LFLAGS += /IMPLIB:$$DESTDIR\\quazip.lib
 }
 
