@@ -720,6 +720,7 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
     uInt size_comment;
     uInt i;
     int err = ZIP_OK;
+    uLong version_to_extract = (method == 0 ? 10 : 20);
 
 #    ifdef NOCRYPT
     if (password != NULL)
@@ -786,7 +787,7 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
     ziplocal_putValue_inmemory(zi->ci.central_header,(uLong)CENTRALHEADERMAGIC,4);
     /* version info */
     ziplocal_putValue_inmemory(zi->ci.central_header+4,(uLong)VERSIONMADEBY,2);
-    ziplocal_putValue_inmemory(zi->ci.central_header+6,(uLong)20,2);
+    ziplocal_putValue_inmemory(zi->ci.central_header+6,(uLong)version_to_extract,2);
     ziplocal_putValue_inmemory(zi->ci.central_header+8,(uLong)zi->ci.flag,2);
     ziplocal_putValue_inmemory(zi->ci.central_header+10,(uLong)zi->ci.method,2);
     ziplocal_putValue_inmemory(zi->ci.central_header+12,(uLong)zi->ci.dosDate,4);
@@ -827,7 +828,7 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
     err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,(uLong)LOCALHEADERMAGIC,4);
 
     if (err==ZIP_OK)
-        err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,(uLong)20,2);/* version needed to extract */
+        err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,(uLong)version_to_extract,2);
     if (err==ZIP_OK)
         err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,(uLong)zi->ci.flag,2);
 

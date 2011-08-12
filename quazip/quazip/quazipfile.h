@@ -315,14 +315,17 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      * specify correct timestamp (by default, current time will be
      * used). See QuaZipNewInfo.
      *
-     * Arguments \a password and \a crc provide necessary information
-     * for crypting. Note that you should specify both of them if you
-     * need crypting. If you do not, pass \c NULL as password, but you
-     * still need to specify \a crc if you are going to use raw mode
-     * (see below).
+     * The \a password argument specifies the password for crypting. Pass NULL
+     * if you don't need any crypting. The \a crc argument was supposed
+     * to be used for crypting too, but then it turned out that it's
+     * false information, so you need to set it to 0 unless you want to
+     * use the raw mode (see below).
      *
      * Arguments \a method and \a level specify compression method and
-     * level.
+     * level. The only method supported is Z_DEFLATED, but you may also
+     * specify 0 for no compression. If all of the files in the archive
+     * use method 0, then the resulting archive is supposed to be
+     * compatible with the 1.0 ZIP format version, should you need that.
      *
      * If \a raw is \c true, no compression is performed. In this case,
      * \a crc and uncompressedSize field of the \a info are required.
