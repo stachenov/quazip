@@ -4,6 +4,9 @@ QT -= gui
 DEPENDPATH += .
 INCLUDEPATH += .
 
+DEFINES += QUAZIP_BUILD
+CONFIG(staticlib): DEFINES += QUAZIP_STATIC
+
 # Input
 HEADERS += \
     crypt.h\
@@ -71,7 +74,3 @@ symbian {
         BLD_INF_RULES.prj_exports += "$$header $$exportheaders.path/$$basename(header)"
     }
 }
-
-
-
-DEFINES += QUAZIP_BUILD

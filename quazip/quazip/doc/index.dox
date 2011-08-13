@@ -28,6 +28,12 @@
  * QuaZIP provides complete abstraction of the ZIP/UNZIP API, for both
  * reading from and writing to ZIP archives.
  *
+ * \section download Download QuaZIP
+ *
+ * Downloads are available from <a
+ * href="http://sourceforge.net/projects/quazip/">QuaZIP project's page
+ * at SourceForge.net</a>.
+ *
  * \section platforms Platforms supported
  *
  * QuaZIP has been currently tested with Qt 4.0.0 on the following
@@ -43,14 +49,7 @@
  *
  * \section whats-new What is new in this version of QuaZIP?
  *
- * See NEWS file supplied with the distribution.
- *
- * \section getting Getting latest version of QuaZIP
- *
- * Check <a href="http://sourceforge.net/projects/quazip/">QuaZIP
- * project's page at SourceForge.net</a>. Also, you may wish to read
- * latest version documentation available at the <a
- * href="http://quazip.sourceforge.net/">QuaZIP web site</a>.
+ * See the NEWS file supplied with the distribution.
  *
  * \section Requirements
  *
@@ -167,26 +166,5 @@ $ make install
  * with the SourceForge.net's bug report system has that advantage that
  * it is visible to public.
  *
- * \section other-projects My other projects
- *
- * As of this moment, I did not write any other useful open source
- * software (well, I am too lazy to do it) except for one little thing:
- *
- * <a href="http://brededor.narod.ru/progs/arcanum50patch.htm">Arcanum
- * universal cap remover</a>. Arcanum is the old but very good game,
- * which has one stupid limit: your character maximum level is 50, which
- * is too low for many players including me. So I wrote this simple
- * patch to increase this stupid limit to something acceptable.
- *
- * Also, my first Web project, which can be of any interest to you only
- * if you can read Russian and you are crazy ^_- This is a web site with
- * the main topic of it being The Delirium. It is totally meaningless
- * and it was purposely made to be such. Do not ask me why - I do not
- * know either. I just did that. If you are interested, then welcome to
- * <a href="http://brededor.narod.ru/">The Brededor</a>. It does not get
- * updated lately because I have become even lazier than I ever was. But
- * I do not plan to destroy The Brededor no matter what, because I think
- * it is fun.
- *
- * Copyright (C) 2005-2007 Sergey A. Tachenov
+ * Copyright (C) 2005-2011 Sergey A. Tachenov
  **/

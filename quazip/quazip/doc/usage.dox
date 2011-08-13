@@ -16,8 +16,8 @@
  * difference) is just one class in it.
  *
  * "ZIP/UNZIP API" means the original API of the Gilles Vollant's
- * ZIP/UNZIP package. I did not alter it in any way to make it easier to
- * port to the future ZIP/UNZIP versions.
+ * ZIP/UNZIP package. It was slightly modified to better integrate with
+ * Qt.
  *
  * "ZIP", "ZIP archive" or "ZIP file" means any ZIP archive. Typically
  * this is a plain file with ".zip" (or ".ZIP") file name suffix.
