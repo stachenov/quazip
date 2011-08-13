@@ -120,25 +120,22 @@ $ ./unzip
 $ make install
 \endverbatim
  *
- * By default, QuaZIP compiles as static library, but you have other
+ * By default, QuaZIP compiles as a DLL, but you have other
  * options:
- * - Just copy appropriate source files to your project and use them;
- * - Compile QuaZIP as shared library by changing "staticlib" in
- *   quazip/quazip.pro to "dll".
+ * - Just copy appropriate source files to your project and use them,
+ * but you need to define QUAZIP_STATIC before including any QuaZIP
+ * headers (best done as a compiler option). This will save you from
+ * possile side effects of importing/exporting QuaZIP symbols.
+ * - Compile it as a static library using CONFIG += staticlib qmake
+ * option. QUAZIP_STATIC is defined automatically by qmake in this case.
  *
- * Latter is not recommended because future versions of QuaZIP most
- * probably will be binary incompatible.
+ * Binary compatibility isn't guaranteed even between minor releases,
+ * but usually it's preserved, thanks to the Pimpl idiom.
  *
  * \section using Using
  *
  * See \ref usage "usage page".
  * 
- * \section bugs Bugs
- *
- * QuaZIP is currently at the initial development stage. Therefore,
- * there are may be plenty of bugs and other bad things. Bug reports and
- * patches are always welcome (see "contacts" below).
- *
  * \section contacts Authors and contacts
  *
  * This wrapper has been written by Sergey A. Tachenov, AKA Alqualos.
@@ -151,20 +148,20 @@ $ make install
  * though, that I fix all the bugs you report in, add any features you
  * want, or respond to your critics, or respond to your feedback at all.
  * I may be busy, I may be tired of working on QuaZIP, I may be even
- * dead already (you never know...). But regardless of this remark, any
- * feedback is always welcome. This may seem like a paradox to you, but
- * you do not have to understand it to write feedback.
+ * dead already (you never know...).
  *
  * To report bugs or to post ideas about what should be done, use
  * SourceForge.net's <a
  * href="http://sourceforge.net/tracker/?group_id=142688">trackers</a>.
  * If you want to send me a private message, use my e-mail address
- * laerel at yandex dot ru (but do not you dare to put it somewhere on
- * the Web or wherever).
+ * stachenov@gmail.com.
  *
  * Do not use e-mail to report bugs, please. Reporting bugs and problems
  * with the SourceForge.net's bug report system has that advantage that
- * it is visible to public.
+ * it is visible to public, and I can always search for open tickets
+ * that were created long ago. It is highly unlikely that I will search
+ * my mail for that kind of stuff, so if a bug reported by mail isn't
+ * fixed immediately, it will likely be forgotten forever.
  *
  * Copyright (C) 2005-2011 Sergey A. Tachenov
  **/
