@@ -324,8 +324,10 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      * Arguments \a method and \a level specify compression method and
      * level. The only method supported is Z_DEFLATED, but you may also
      * specify 0 for no compression. If all of the files in the archive
-     * use method 0, then the resulting archive is supposed to be
-     * compatible with the 1.0 ZIP format version, should you need that.
+     * use both method 0 and level 0 (explicitly specified), then the
+     * resulting archive is supposed to be compatible with the 1.0 ZIP
+     * format version, should you need that. Except for this, \a level
+     * has no other effects with method 0.
      *
      * If \a raw is \c true, no compression is performed. In this case,
      * \a crc and uncompressedSize field of the \a info are required.

@@ -720,7 +720,7 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
     uInt size_comment;
     uInt i;
     int err = ZIP_OK;
-    uLong version_to_extract = (method == 0 ? 10 : 20);
+    uLong version_to_extract = (method == 0 && level == 0 ? 10 : 20);
 
 #    ifdef NOCRYPT
     if (password != NULL)
@@ -772,7 +772,8 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
     {
       zi->ci.flag |= 1;
     }
-    zi->ci.flag |= 8;
+    if (version_to_extract >= 20)
+        zi->ci.flag |= 8;
     zi->ci.crc32 = 0;
     zi->ci.method = method;
     zi->ci.encrypt = 0;
@@ -1127,18 +1128,20 @@ extern int ZEXPORT zipCloseFileInZipRaw (file, uncompressed_size, crc32)
                   cur_pos_inzip,ZLIB_FILEFUNC_SEEK_SET)!=0)
             err = ZIP_ERRNO;
 
-        /* Write local Descriptor after file data */
-        if (err==ZIP_OK)
-            err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,(uLong)DESCRIPTORHEADERMAGIC,4);
+        if ((zi->ci.flag & 8) != 0) {
+            /* Write local Descriptor after file data */
+            if (err==ZIP_OK)
+                err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,(uLong)DESCRIPTORHEADERMAGIC,4);
 
-        if (err==ZIP_OK)
-            err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
+            if (err==ZIP_OK)
+                err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
 
-        if (err==ZIP_OK) /* compressed size, unknown */
-            err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
+            if (err==ZIP_OK) /* compressed size, unknown */
+                err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
 
-        if (err==ZIP_OK) /* uncompressed size, unknown */
-            err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
+            if (err==ZIP_OK) /* uncompressed size, unknown */
+                err = ziplocal_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
+        }
 
 
     }
