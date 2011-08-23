@@ -5,11 +5,11 @@
  *
  * La funzione fallisce se:
  * * zip==NULL;
- * * l'oggetto zip è stato aperto in una modalità non compatibile con l'aggiunta di file;
- * * non è possibile aprire il file d'origine;
- * * non è possibile creare il file all'interno dell'oggetto zip;
- * * si è rilevato un errore nella copia dei dati;
- * * non è stato possibile chiudere il file all'interno dell'oggetto zip;
+ * * l'oggetto zip e stato aperto in una modalita non compatibile con l'aggiunta di file;
+ * * non e possibile aprire il file d'origine;
+ * * non e possibile creare il file all'interno dell'oggetto zip;
+ * * si e rilevato un errore nella copia dei dati;
+ * * non e stato possibile chiudere il file all'interno dell'oggetto zip;
  */
 bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
     // zip: oggetto dove aggiungere il file
@@ -45,15 +45,15 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
 }
 
 /**OK
- * Comprime la cartella dir nel file fileCompressed, se recursive è true allora
+ * Comprime la cartella dir nel file fileCompressed, se recursive e true allora
  * comprime anche le sotto cartelle. I nomi dei file preceduti dal path creato
  * togliendo il pat della cartella origDir al path della cartella dir.
- * Se la funzione fallisce restituisce false e cancella il file che si è tentato
+ * Se la funzione fallisce restituisce false e cancella il file che si e tentato
  * di creare.
  *
  * La funzione fallisce se:
  * * zip==NULL;
- * * l'oggetto zip è stato aperto in una modalità non compatibile con l'aggiunta di file;
+ * * l'oggetto zip e stato aperto in una modalita non compatibile con l'aggiunta di file;
  * * la cartella dir non esiste;
  * * la compressione di una sotto cartella fallisce (1);
  * * la compressione di un file fallisce;
@@ -81,7 +81,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
     if (recursive) {
         // Per ogni sotto cartella
         QFileInfoList files = directory.entryInfoList(QDir::AllDirs|QDir::NoDotAndDotDot);
-        foreach (QFileInfo file, files) {
+        Q_FOREACH (QFileInfo file, files) {
             // Comprimo la sotto cartella
             if(!compressSubDir(zip,file.absoluteFilePath(),origDir,recursive)) return false;
         }
@@ -90,8 +90,8 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
     // Per ogni file nella cartella
     QFileInfoList files = directory.entryInfoList(QDir::Files);
     QDir origDirectory(origDir);
-    foreach (QFileInfo file, files) {
-        // Se non è un file o è il file compresso che sto creando
+    Q_FOREACH (QFileInfo file, files) {
+        // Se non e un file o e il file compresso che sto creando
         if(!file.isFile()||file.absoluteFilePath()==zip->getZipName()) continue;
 
         // Creo il nome relativo da usare all'interno del file compresso
@@ -106,15 +106,15 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
 
 /**OK
  * Estrae il file fileName, contenuto nell'oggetto zip, con il nome fileDest.
- * Se la funzione fallisce restituisce false e cancella il file che si è tentato di estrarre.
+ * Se la funzione fallisce restituisce false e cancella il file che si e tentato di estrarre.
  *
  * La funzione fallisce se:
  * * zip==NULL;
- * * l'oggetto zip è stato aperto in una modalità non compatibile con l'estrazione di file;
- * * non è possibile aprire il file all'interno dell'oggetto zip;
- * * non è possibile creare il file estratto;
- * * si è rilevato un errore nella copia dei dati (1);
- * * non è stato possibile chiudere il file all'interno dell'oggetto zip (1);
+ * * l'oggetto zip e stato aperto in una modalita non compatibile con l'estrazione di file;
+ * * non e possibile aprire il file all'interno dell'oggetto zip;
+ * * non e possibile creare il file estratto;
+ * * si e rilevato un errore nella copia dei dati (1);
+ * * non e stato possibile chiudere il file all'interno dell'oggetto zip (1);
  *
  * (1): prima di uscire dalla funzione cancella il file estratto.
  */
@@ -160,9 +160,9 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
 }
 
 /**
- * Rimuove i file il cui nome è specificato all'interno di listFile.
+ * Rimuove i file il cui nome e specificato all'interno di listFile.
  * Restituisce true se tutti i file sono stati cancellati correttamente, attenzione
- * perchè può restituire false anche se alcuni file non esistevano e si è tentato
+ * perche puo restituire false anche se alcuni file non esistevano e si e tentato
  * di cancellarli.
  */
 bool JlCompress::removeFile(QStringList listFile) {
@@ -179,7 +179,7 @@ bool JlCompress::removeFile(QStringList listFile) {
 ////////////////////////////////////////////////////////////////////////////////
 /**OK
  * Comprime il file fileName nel file fileCompressed.
- * Se la funzione fallisce restituisce false e cancella il file che si è tentato
+ * Se la funzione fallisce restituisce false e cancella il file che si e tentato
  * di creare.
  *
  * La funzione fallisce se:
@@ -218,7 +218,7 @@ bool JlCompress::compressFile(QString fileCompressed, QString file) {
 
 /**OK
  * Comprime i file specificati in files nel file fileCompressed.
- * Se la funzione fallisce restituisce false e cancella il file che si è tentato
+ * Se la funzione fallisce restituisce false e cancella il file che si e tentato
  * di creare.
  *
  * La funzione fallisce se:
@@ -238,7 +238,7 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
 
     // Comprimo i file
     QFileInfo info;
-    foreach (QString file, files) {
+    Q_FOREACH (QString file, files) {
         info.setFile(file);
         if (!info.exists() || !compressFile(zip,file,info.fileName())) {
             delete zip;
@@ -260,9 +260,9 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
 }
 
 /**OK
- * Comprime la cartella dir nel file fileCompressed, se recursive è true allora
+ * Comprime la cartella dir nel file fileCompressed, se recursive e true allora
  * comprime anche le sotto cartelle.
- * Se la funzione fallisce restituisce false e cancella il file che si è tentato
+ * Se la funzione fallisce restituisce false e cancella il file che si e tentato
  * di creare.
  *
  * La funzione fallisce se:
@@ -303,9 +303,9 @@ bool JlCompress::compressDir(QString fileCompressed, QString dir, bool recursive
 ////////////////////////////////////////////////////////////////////////////////
 /**OK
  * Estrae il file fileName, contenuto nel file fileCompressed, con il nome fileDest.
- * Se fileDest = "" allora il file viene estratto con lo stesso nome con cui è
+ * Se fileDest = "" allora il file viene estratto con lo stesso nome con cui e
  * stato compresso.
- * Se la funzione fallisce cancella il file che si è tentato di estrarre.
+ * Se la funzione fallisce cancella il file che si e tentato di estrarre.
  * Restituisce il nome assoluto del file estratto.
  *
  * La funzione fallisce se:
@@ -343,7 +343,7 @@ QString JlCompress::extractFile(QString fileCompressed, QString fileName, QStrin
  * Estrae i file specificati in files, contenuti nel file fileCompressed, nella
  * cartella dir. La struttura a cartelle del file compresso viene rispettata.
  * Se dir = "" allora il file viene estratto nella cartella corrente.
- * Se la funzione fallisce cancella i file che si è tentato di estrarre.
+ * Se la funzione fallisce cancella i file che si e tentato di estrarre.
  * Restituisce i nomi assoluti dei file estratti.
  *
  * La funzione fallisce se:
@@ -384,7 +384,7 @@ QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, 
 /**OK
  * Estrae il file fileCompressed nella cartella dir.
  * Se dir = "" allora il file viene estratto nella cartella corrente.
- * Se la funzione fallisce cancella i file che si è tentato di estrarre.
+ * Se la funzione fallisce cancella i file che si e tentato di estrarre.
  * Restituisce i nomi assoluti dei file estratti.
  *
  * La funzione fallisce se:
