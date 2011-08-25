@@ -153,6 +153,7 @@ typedef struct
 #ifndef NO_ADDFILEINEXISTINGZIP
     char *globalcomment;
 #endif
+    unsigned flags;
 } zip_internal;
 
 
@@ -531,6 +532,7 @@ extern zipFile ZEXPORT zipOpen2 (file, append, globalcomment, pzlib_filefunc_def
     ziinit.ci.stream_initialised = 0;
     ziinit.number_entry = 0;
     ziinit.add_position_when_writting_offset = 0;
+    ziinit.flags = ZIP_WRITE_DATA_DESCRIPTOR;
     init_linkedlist(&(ziinit.central_dir));
 
 
@@ -720,7 +722,7 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
     uInt size_comment;
     uInt i;
     int err = ZIP_OK;
-    uLong version_to_extract = (method == 0 && level == 0 ? 10 : 20);
+    uLong version_to_extract;
 
 #    ifdef NOCRYPT
     if (password != NULL)
@@ -739,6 +741,16 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
         err = zipCloseFileInZip (file);
         if (err != ZIP_OK)
             return err;
+    }
+
+    if (method == 0
+            && (level == 0 || (zi->flags & ZIP_WRITE_DATA_DESCRIPTOR) == 0))
+    {
+        version_to_extract = 10;
+    }
+    else
+    {
+        version_to_extract = 20;
     }
 
 
@@ -772,7 +784,8 @@ extern int ZEXPORT zipOpenNewFileInZip3 (file, filename, zipfi,
     {
       zi->ci.flag |= 1;
     }
-    if (version_to_extract >= 20)
+    if (version_to_extract >= 20
+            && (zi->flags & ZIP_WRITE_DATA_DESCRIPTOR) != 0)
         zi->ci.flag |= 8;
     zi->ci.crc32 = 0;
     zi->ci.method = method;
@@ -1244,4 +1257,24 @@ extern int ZEXPORT zipClose (file, global_comment)
     TRYFREE(zi);
 
     return err;
+}
+
+extern int ZEXPORT zipSetFlags(zipFile file, unsigned flags)
+{
+    zip_internal* zi;
+    if (file == NULL)
+        return ZIP_PARAMERROR;
+    zi = (zip_internal*)file;
+    zi->flags |= flags;
+    return ZIP_OK;
+}
+
+extern int ZEXPORT zipClearFlags(zipFile file, unsigned flags)
+{
+    zip_internal* zi;
+    if (file == NULL)
+        return ZIP_PARAMERROR;
+    zi = (zip_internal*)file;
+    zi->flags &= ~flags;
+    return ZIP_OK;
 }

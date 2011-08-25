@@ -324,7 +324,9 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      * Arguments \a method and \a level specify compression method and
      * level. The only method supported is Z_DEFLATED, but you may also
      * specify 0 for no compression. If all of the files in the archive
-     * use both method 0 and level 0 (explicitly specified), then the
+     * use both method 0 and either level 0 is explicitly specified or
+     * data descriptor writing is disabled with
+     * QuaZip::setDataDescriptorWritingEnabled(), then the
      * resulting archive is supposed to be compatible with the 1.0 ZIP
      * format version, should you need that. Except for this, \a level
      * has no other effects with method 0.

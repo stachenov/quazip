@@ -354,6 +354,36 @@ class QUAZIP_EXPORT QuaZip {
      * getUnzFile() function also apply to this function.
      **/
     zipFile getZipFile();
+    /// Changes the data descriptor writing mode.
+    /**
+      According to the ZIP format specification, a file inside archive
+      may have a data descriptor immediately following the file
+      data. This is reflected by a special flag in the local file header
+      and in the central directory. By default, QuaZIP sets this flag
+      and writes the data descriptor unless both method and level were
+      set to 0, in which case it operates in 1.0-compatible mode and
+      never writes data descriptors.
+
+      By setting this flag to false, it is possible to disable data
+      descriptor writing, thus increasing compatibility with archive
+      readers that don't understand this feature of the ZIP file format.
+
+      Setting this flag affects all the QuaZipFile instances that are
+      opened after this flag is set.
+
+      The data descriptor writing mode is enabled by default.
+
+      \param enabled If \c true, enable local descriptor writing,
+      disable it otherwise.
+
+      \sa QuaZipFile::setDataDescriptorWritingEnabled()
+      */
+    void setDataDescriptorWritingEnabled(bool enabled);
+    /// Returns the data descriptor default writing mode.
+    /**
+      \sa setDataDescriptorWritingEnabled()
+      */
+    bool isDataDescriptorWritingEnabled() const;
 };
 
 #endif

@@ -22,6 +22,7 @@ quazip/(un)zip.h files for details, basically it's zlib license.
  **/
 
 #include <QFile>
+#include <QFlags>
 
 #include "quazip.h"
 
@@ -39,13 +40,15 @@ class QuaZipPrivate {
     };
     bool hasCurrentFile_f;
     int zipError;
+    bool dataDescriptorWritingEnabled;
     inline QuaZipPrivate():
       fileNameCodec(QTextCodec::codecForLocale()),
       commentCodec(QTextCodec::codecForLocale()),
       ioDevice(NULL),
       mode(QuaZip::mdNotOpen),
       hasCurrentFile_f(false),
-      zipError(UNZ_OK) {}
+      zipError(UNZ_OK),
+      dataDescriptorWritingEnabled(true) {}
     inline QuaZipPrivate(const QString &zipName):
       fileNameCodec(QTextCodec::codecForLocale()),
       commentCodec(QTextCodec::codecForLocale()),
@@ -53,14 +56,16 @@ class QuaZipPrivate {
       ioDevice(NULL),
       mode(QuaZip::mdNotOpen),
       hasCurrentFile_f(false),
-      zipError(UNZ_OK) {}
+      zipError(UNZ_OK),
+      dataDescriptorWritingEnabled(true) {}
     inline QuaZipPrivate(QIODevice *ioDevice):
       fileNameCodec(QTextCodec::codecForLocale()),
       commentCodec(QTextCodec::codecForLocale()),
       ioDevice(ioDevice),
       mode(QuaZip::mdNotOpen),
       hasCurrentFile_f(false),
-      zipError(UNZ_OK) {}
+      zipError(UNZ_OK),
+      dataDescriptorWritingEnabled(true) {}
 };
 
 QuaZip::QuaZip():
@@ -424,4 +429,14 @@ unzFile QuaZip::getUnzFile()
 zipFile QuaZip::getZipFile()
 {
   return p->zipFile_f;
+}
+
+void QuaZip::setDataDescriptorWritingEnabled(bool enabled)
+{
+    p->dataDescriptorWritingEnabled = enabled;
+}
+
+bool QuaZip::isDataDescriptorWritingEnabled() const
+{
+    return p->dataDescriptorWritingEnabled;
 }

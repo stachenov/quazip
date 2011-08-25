@@ -76,6 +76,8 @@ typedef voidp zipFile;
 #define ZIP_BADZIPFILE                  (-103)
 #define ZIP_INTERNALERROR               (-104)
 
+#define ZIP_WRITE_DATA_DESCRIPTOR 0x8u
+
 #ifndef DEF_MEM_LEVEL
 #  if MAX_MEM_LEVEL >= 8
 #    define DEF_MEM_LEVEL 8
@@ -229,6 +231,12 @@ extern int ZEXPORT zipClose OF((zipFile file,
 /*
   Close the zipfile
 */
+
+/*
+   Added by Sergey A. Tachenov to tweak zipping behaviour.
+   */
+extern int ZEXPORT zipSetFlags(zipFile file, unsigned flags);
+extern int ZEXPORT zipClearFlags(zipFile file, unsigned flags);
 
 #ifdef __cplusplus
 }
