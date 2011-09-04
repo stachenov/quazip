@@ -10,7 +10,7 @@
  * This class wrappers the adler32 function with the QuaChecksum32 interface.
  * See QuaChecksum32 for more info.
  */
-class QuaAdler32 : public QuaChecksum32
+class QUAZIP_EXPORT QuaAdler32 : public QuaChecksum32
 {
 
 public:
