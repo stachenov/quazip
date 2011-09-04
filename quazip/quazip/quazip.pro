@@ -44,7 +44,7 @@ win32 {
     INSTALLS += headers target
 
     *-g++*: LIBS += -lz.dll
-    *-msvc*: LIBS += -lzlib
+    *-msvc*: LIBS += -lzlibwapi
     *-msvc*: QMAKE_LFLAGS += /IMPLIB:$$DESTDIR\\quazip.lib
 }
 
