@@ -32,8 +32,16 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
     if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, inFile.fileName()))) return false;
 
     // Copio i dati
-    char c;
-    while(inFile.getChar(&c)&&outFile.putChar(c));
+    for (qint64 pos = 0, len = inFile.size(); pos < len; ) {
+        char buf[4096];
+        qint64 readLen = qMin((qint64) 4096, len - pos);
+        if (inFile.read(buf, readLen) != readLen)
+            return false;
+        if (outFile.write(buf, readLen) != readLen)
+            return false;
+        pos += readLen;
+    }
+
     if(outFile.getZipError()!=UNZ_OK) return false;
 
     // Chiudo i file
