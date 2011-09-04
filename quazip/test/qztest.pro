@@ -7,11 +7,13 @@ INCLUDEPATH += . ..
 LIBS += -lquazip
 
 # Input
-HEADERS += testquazipfile.h \
+HEADERS += testquazip.h \
+           testquazipfile.h \
            testquachecksum32.h \
            testjlcompress.h \
            qztest.h
-SOURCES += testquazipfile.cpp \
+SOURCES += testquazip.cpp \
+           testquazipfile.cpp \
            testquachecksum32.cpp \
            testjlcompress.cpp \
            qztest.cpp

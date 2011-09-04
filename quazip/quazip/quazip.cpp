@@ -29,6 +29,7 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 class QuaZipPrivate {
   friend class QuaZip;
   private:
+  QuaZip *q;
     QTextCodec *fileNameCodec, *commentCodec;
     QString zipName;
     QIODevice *ioDevice;
@@ -41,7 +42,8 @@ class QuaZipPrivate {
     bool hasCurrentFile_f;
     int zipError;
     bool dataDescriptorWritingEnabled;
-    inline QuaZipPrivate():
+    inline QuaZipPrivate(QuaZip *q):
+        q(q),
       fileNameCodec(QTextCodec::codecForLocale()),
       commentCodec(QTextCodec::codecForLocale()),
       ioDevice(NULL),
@@ -49,7 +51,8 @@ class QuaZipPrivate {
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
       dataDescriptorWritingEnabled(true) {}
-    inline QuaZipPrivate(const QString &zipName):
+    inline QuaZipPrivate(QuaZip *q, const QString &zipName):
+        q(q),
       fileNameCodec(QTextCodec::codecForLocale()),
       commentCodec(QTextCodec::codecForLocale()),
       zipName(zipName),
@@ -58,7 +61,8 @@ class QuaZipPrivate {
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
       dataDescriptorWritingEnabled(true) {}
-    inline QuaZipPrivate(QIODevice *ioDevice):
+    inline QuaZipPrivate(QuaZip *q, QIODevice *ioDevice):
+        q(q),
       fileNameCodec(QTextCodec::codecForLocale()),
       commentCodec(QTextCodec::codecForLocale()),
       ioDevice(ioDevice),
@@ -66,20 +70,22 @@ class QuaZipPrivate {
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
       dataDescriptorWritingEnabled(true) {}
+    template<typename TFileInfo>
+        bool getFileInfoList(QList<TFileInfo> *result) const;
 };
 
 QuaZip::QuaZip():
-  p(new QuaZipPrivate())
+  p(new QuaZipPrivate(this))
 {
 }
 
 QuaZip::QuaZip(const QString& zipName):
-  p(new QuaZipPrivate(zipName))
+  p(new QuaZipPrivate(this, zipName))
 {
 }
 
 QuaZip::QuaZip(QIODevice *ioDevice):
-  p(new QuaZipPrivate(ioDevice))
+  p(new QuaZipPrivate(this, ioDevice))
 {
 }
 
@@ -439,4 +445,75 @@ void QuaZip::setDataDescriptorWritingEnabled(bool enabled)
 bool QuaZip::isDataDescriptorWritingEnabled() const
 {
     return p->dataDescriptorWritingEnabled;
+}
+
+template<typename TFileInfo>
+static TFileInfo getFileInfo(QuaZip *zip, bool *ok);
+
+template<>
+QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok)
+{
+    QuaZipFileInfo info;
+    *ok = zip->getCurrentFileInfo(&info);
+    return info;
+}
+
+template<>
+QString getFileInfo(QuaZip *zip, bool *ok)
+{
+    QString name = zip->getCurrentFileName();
+    *ok = !name.isEmpty();
+    return name;
+}
+
+template<typename TFileInfo>
+bool QuaZipPrivate::getFileInfoList(QList<TFileInfo> *result) const
+{
+  QuaZipPrivate *fakeThis=const_cast<QuaZipPrivate*>(this);
+  fakeThis->zipError=UNZ_OK;
+  if (mode!=QuaZip::mdUnzip) {
+    qWarning("QuaZip::getFileNameList/getFileInfoList(): "
+            "ZIP is not open in mdUnzip mode");
+    return false;
+  }
+  QString currentFile;
+  if (q->hasCurrentFile()) {
+      currentFile = q->getCurrentFileName();
+  }
+  if (q->goToFirstFile()) {
+      do {
+          bool ok;
+          result->append(getFileInfo<TFileInfo>(q, &ok));
+          if (!ok)
+              return false;
+      } while (q->goToNextFile());
+  }
+  if (zipError != UNZ_OK)
+      return false;
+  if (currentFile.isEmpty()) {
+      if (!q->setCurrentFile(currentFile))
+          return false;
+  } else {
+      if (!q->goToFirstFile())
+          return false;
+  }
+  return true;
+}
+
+QStringList QuaZip::getFileNameList() const
+{
+    QStringList list;
+    if (p->getFileInfoList(&list))
+        return list;
+    else
+        return QStringList();
+}
+
+QList<QuaZipFileInfo> QuaZip::getFileInfoList() const
+{
+    QList<QuaZipFileInfo> list;
+    if (p->getFileInfoList(&list))
+        return list;
+    else
+        return QList<QuaZipFileInfo>();
 }

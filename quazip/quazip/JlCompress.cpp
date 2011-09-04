@@ -1,5 +1,19 @@
 #include "JlCompress.h"
 #include <QDebug>
+
+static bool copyData(QIODevice &inFile, QIODevice &outFile)
+{
+    while (!inFile.atEnd()) {
+        char buf[4096];
+        qint64 readLen = inFile.read(buf, 4096);
+        if (readLen <= 0)
+            return false;
+        if (outFile.write(buf, readLen) != readLen)
+            return false;
+    }
+    return true;
+}
+
 /**OK
  * Comprime il file fileName, nell'oggetto zip, con il nome fileDest.
  *
@@ -32,17 +46,9 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
     if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, inFile.fileName()))) return false;
 
     // Copio i dati
-    for (qint64 pos = 0, len = inFile.size(); pos < len; ) {
-        char buf[4096];
-        qint64 readLen = qMin((qint64) 4096, len - pos);
-        if (inFile.read(buf, readLen) != readLen)
-            return false;
-        if (outFile.write(buf, readLen) != readLen)
-            return false;
-        pos += readLen;
+    if (!copyData(inFile, outFile) || outFile.getZipError()!=UNZ_OK) {
+        return false;
     }
-
-    if(outFile.getZipError()!=UNZ_OK) return false;
 
     // Chiudo i file
     outFile.close();
@@ -149,9 +155,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
     if(!outFile.open(QIODevice::WriteOnly)) return false;
 
     // Copio i dati
-    char c;
-    while(inFile.getChar(&c)) outFile.putChar(c);
-    if (inFile.getZipError()!=UNZ_OK) {
+    if (!copyData(inFile, outFile) || inFile.getZipError()!=UNZ_OK) {
         removeFile(QStringList(fileDest));
         return false;
     }

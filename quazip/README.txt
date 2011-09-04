@@ -18,7 +18,7 @@ You must make sure that:
 * "qmake" command runs Qt 4's qmake, not some other version (you'll have
   to type full path to qmake otherwise).
 
-To install compiled static library, just type:
+To install compiled shared library, just type:
 
 $ make install
 
@@ -32,6 +32,15 @@ project and use them.
 
 See doc/html or, if you do not have a browser, quazip/*.h and
 quazip/doc/* files for the more detailed documentation.
+
+For Windows, it's essentially the same, but you may have to adjust
+settings for different environments.
+
+If you want to include QuaZIP sources directly into your project or if
+you want to use QuaZIP compiled as a static library using
+"qmake CONFIG+=statliclib", you have to define the QUAZIP_STATIC macro,
+otherwise you're likely to run into problems as QuaZIP symbols will be
+marked as dllimported.
 
 Copyright notice:
 

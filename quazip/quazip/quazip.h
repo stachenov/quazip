@@ -25,6 +25,7 @@ quazip/(un)zip.h files for details, basically it's zlib license.
  **/
 
 #include <QString>
+#include <QStringList>
 #include <QTextCodec>
 
 #include "zip.h"
@@ -384,6 +385,22 @@ class QUAZIP_EXPORT QuaZip {
       \sa setDataDescriptorWritingEnabled()
       */
     bool isDataDescriptorWritingEnabled() const;
+    /// Returns a list of files inside the archive.
+    /**
+      \return A list of file names or an empty list if there
+      was an error or if the archive is empty (call getZipError() to
+      figure out which).
+      \sa getFileInfoList()
+      */
+    QStringList getFileNameList() const;
+    /// Returns information list about all files inside the archive.
+    /**
+      \return A list of QuaZipFileInfo objects or an empty list if there
+      was an error or if the archive is empty (call getZipError() to
+      figure out which).
+      \sa getFileNameList()
+      */
+    QList<QuaZipFileInfo> getFileInfoList() const;
 };
 
 #endif

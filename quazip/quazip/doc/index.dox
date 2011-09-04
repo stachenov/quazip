@@ -60,12 +60,11 @@
  *
  * \note Instructions given in this section assume that you are
  * using some UNIX dialect, but the build process should be very similar
- * on win32-g++ platform too. Sorry, but other platforms are
- * undocumented. I do not think it is a big deal, though - it is
- * standard usage of the Qt's qmake, so you most probably already know
- * everything that is required.
+ * on win32-g++ platform too. On other platforms it's essentially the
+ * same process, maybe with some qmake adjustments not specific to
+ * QuaZIP itself.
  *
- * To build it on some UNIX dialect:
+ * To build the library, run:
 \verbatim
 $ cd /wherever/quazip/source/is/quazip-x.y.z/quazip
 $ qmake [PREFIX=where-to-install]

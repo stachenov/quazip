@@ -1,3 +1,4 @@
+#include "testquazip.h"
 #include "testquazipfile.h"
 #include "testquachecksum32.h"
 #include "testjlcompress.h"
@@ -54,6 +55,8 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     int err = 0;
+    TestQuaZip testQuaZip;
+    err = qMax(err, QTest::qExec(&testQuaZip, app.arguments()));
     TestQuaZipFile testQuaZipFile;
     err = qMax(err, QTest::qExec(&testQuaZipFile, app.arguments()));
     TestQuaChecksum32 testQuaChecksum32;
