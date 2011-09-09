@@ -55,6 +55,8 @@ void TestQuaZip::getFileList()
     }
     // test that we didn't mess up the current file
     QCOMPARE(testZip.getCurrentFileName(), firstFile);
+    testZip.close();
+    // clean up
     removeTestFiles(fileNames);
-    curDir.remove(zipName);
+    QVERIFY(curDir.remove(zipName));
 }

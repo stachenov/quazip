@@ -34,6 +34,7 @@ void TestJlCompress::compressFile()
     QCOMPARE(fileList.count(), 1);
     QVERIFY(fileList[0] == fileName);
     removeTestFiles(QStringList() << fileName);
+    curDir.remove(zipName);
 }
 
 void TestJlCompress::compressFiles_data()
@@ -69,6 +70,7 @@ void TestJlCompress::compressFiles()
     QStringList fileList = JlCompress::getFileList(zipName);
     QCOMPARE(fileList, shortNamesList);
     removeTestFiles(fileNames);
+    curDir.remove(zipName);
 }
 
 void TestJlCompress::compressDir_data()
@@ -99,6 +101,7 @@ void TestJlCompress::compressDir()
     qSort(fileNames);
     QCOMPARE(fileList, fileNames);
     removeTestFiles(fileNames);
+    curDir.remove(zipName);
 }
 
 void TestJlCompress::extractFile_data()
@@ -137,6 +140,7 @@ void TestJlCompress::extractFile()
     curDir.remove("jlext/jlfile/" + destName);
     curDir.rmpath("jlext/jlfile");
     removeTestFiles(fileNames);
+    curDir.remove(zipName);
 }
 
 void TestJlCompress::extractFiles_data()
@@ -175,6 +179,7 @@ void TestJlCompress::extractFiles()
     }
     curDir.rmpath("jlext/jlfiles");
     removeTestFiles(fileNames);
+    curDir.remove(zipName);
 }
 
 void TestJlCompress::extractDir_data()
@@ -209,4 +214,5 @@ void TestJlCompress::extractDir()
     }
     curDir.rmpath("jlext/jldir");
     removeTestFiles(fileNames);
+    curDir.remove(zipName);
 }

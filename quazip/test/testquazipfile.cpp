@@ -2,11 +2,13 @@
 
 #include "qztest.h"
 
+#include <quazip/jlcompress.h>
 #include <quazip/quazipfile.h>
 #include <quazip/quazip.h>
 
 #include <QFile>
 #include <QString>
+#include <QStringList>
 
 #include <QtTest/QtTest>
 
@@ -90,4 +92,114 @@ void TestQuaZipFile::zipUnzip()
     QCOMPARE(testUnzip.getZipError(), UNZ_OK);
     // clean up
     removeTestFiles(fileNames);
+    testFile.remove();
+}
+
+void TestQuaZipFile::bytesAvailable_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QStringList>("fileNames");
+    QTest::newRow("simple") << "test.zip" << (
+            QStringList() << "test0.txt" << "testdir1/test1.txt"
+            << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt");
+}
+
+void TestQuaZipFile::bytesAvailable()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QStringList, fileNames);
+    QDir curDir;
+    if (!createTestFiles(fileNames)) {
+        QFAIL("Couldn't create test files");
+    }
+    if (!JlCompress::compressDir(zipName, "tmp")) {
+        QFAIL("Couldn't create test archive");
+    }
+    QuaZip testZip(zipName);
+    QVERIFY(testZip.open(QuaZip::mdUnzip));
+    foreach (QString fileName, fileNames) {
+        QFileInfo fileInfo("tmp/" + fileName);
+        QVERIFY(testZip.setCurrentFile(fileName));
+        QuaZipFile zipFile(&testZip);
+        QVERIFY(zipFile.open(QIODevice::ReadOnly));
+        QCOMPARE(zipFile.bytesAvailable(), fileInfo.size());
+        QCOMPARE(zipFile.read(1).size(), 1);
+        QCOMPARE(zipFile.bytesAvailable(), fileInfo.size() - 1);
+        QCOMPARE(zipFile.read(fileInfo.size() - 1).size(),
+                static_cast<int>(fileInfo.size() - 1));
+        QCOMPARE(zipFile.bytesAvailable(), (qint64) 0);
+    }
+    removeTestFiles(fileNames);
+    testZip.close();
+    curDir.remove(zipName);
+}
+
+void TestQuaZipFile::atEnd_data()
+{
+    bytesAvailable_data();
+}
+
+void TestQuaZipFile::atEnd()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QStringList, fileNames);
+    QDir curDir;
+    if (!createTestFiles(fileNames)) {
+        QFAIL("Couldn't create test files");
+    }
+    if (!JlCompress::compressDir(zipName, "tmp")) {
+        QFAIL("Couldn't create test archive");
+    }
+    QuaZip testZip(zipName);
+    QVERIFY(testZip.open(QuaZip::mdUnzip));
+    foreach (QString fileName, fileNames) {
+        QFileInfo fileInfo("tmp/" + fileName);
+        QVERIFY(testZip.setCurrentFile(fileName));
+        QuaZipFile zipFile(&testZip);
+        QVERIFY(zipFile.open(QIODevice::ReadOnly));
+        QCOMPARE(zipFile.atEnd(), false);
+        QCOMPARE(zipFile.read(1).size(), 1);
+        QCOMPARE(zipFile.atEnd(), false);
+        QCOMPARE(zipFile.read(fileInfo.size() - 1).size(),
+                static_cast<int>(fileInfo.size() - 1));
+        QCOMPARE(zipFile.atEnd(), true);
+    }
+    removeTestFiles(fileNames);
+    testZip.close();
+    curDir.remove(zipName);
+}
+
+void TestQuaZipFile::pos_data()
+{
+    bytesAvailable_data();
+}
+
+void TestQuaZipFile::pos()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QStringList, fileNames);
+    QDir curDir;
+    if (!createTestFiles(fileNames)) {
+        QFAIL("Couldn't create test files");
+    }
+    if (!JlCompress::compressDir(zipName, "tmp")) {
+        QFAIL("Couldn't create test archive");
+    }
+    QuaZip testZip(zipName);
+    QVERIFY(testZip.open(QuaZip::mdUnzip));
+    foreach (QString fileName, fileNames) {
+        QFileInfo fileInfo("tmp/" + fileName);
+        QVERIFY(testZip.setCurrentFile(fileName));
+        QuaZipFile zipFile(&testZip);
+        QVERIFY(zipFile.open(QIODevice::ReadOnly));
+        QCOMPARE(zipFile.pos(), (qint64) 0);
+        QCOMPARE(zipFile.read(1).size(), 1);
+        QCOMPARE(zipFile.pos(), (qint64) 1);
+        QCOMPARE(zipFile.read(fileInfo.size() - 1).size(),
+                static_cast<int>(fileInfo.size() - 1));
+        QCOMPARE(zipFile.pos(), fileInfo.size());
+    }
+    removeTestFiles(fileNames);
+    testZip.close();
+    curDir.remove(zipName);
 }

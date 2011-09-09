@@ -302,7 +302,10 @@ qint64 QuaZipFile::pos()const
     return -1;
   }
   if(openMode()&ReadOnly)
-    return unztell(p->zip->getUnzFile());
+      // QIODevice::pos() is broken for sequential devices,
+      // but thankfully bytesAvailable() returns the number of
+      // bytes buffered, so we know how far ahead we are.
+    return unztell(p->zip->getUnzFile()) - QIODevice::bytesAvailable();
   else
     return p->writePos;
 }
@@ -318,7 +321,9 @@ bool QuaZipFile::atEnd()const
     return false;
   }
   if(openMode()&ReadOnly)
-    return unzeof(p->zip->getUnzFile())==1;
+      // the same problem as with pos()
+    return QIODevice::bytesAvailable() == 0
+        && unzeof(p->zip->getUnzFile())==1;
   else
     return true;
 }
@@ -427,4 +432,9 @@ bool QuaZipFile::isRaw() const
 int QuaZipFile::getZipError() const
 {
   return p->zipError;
+}
+
+qint64 QuaZipFile::bytesAvailable() const
+{
+    return size() - pos();
 }

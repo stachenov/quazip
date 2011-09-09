@@ -435,6 +435,8 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
     virtual void close();
     /// Returns the error code returned by the last ZIP/UNZIP API call.
     int getZipError() const;
+    /// Returns the number of bytes available for reading.
+    virtual qint64 bytesAvailable() const;
 };
 
 #endif

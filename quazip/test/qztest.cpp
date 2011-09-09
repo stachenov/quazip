@@ -1,3 +1,4 @@
+#include "qztest.h"
 #include "testquazip.h"
 #include "testquazipfile.h"
 #include "testquachecksum32.h"
@@ -12,11 +13,11 @@
 
 #include <QtTest/QtTest>
 
-bool createTestFiles(const QStringList &fileNames)
+bool createTestFiles(const QStringList &fileNames, const QString &dir)
 {
     QDir curDir;
     foreach (QString fileName, fileNames) {
-        QDir testDir = QFileInfo("tmp/" + fileName).dir();
+        QDir testDir = QFileInfo(QDir(dir).filePath(fileName)).dir();
         if (!testDir.exists()) {
             if (!curDir.mkpath(testDir.path())) {
                 qWarning("Couldn't mkpath %s",
@@ -24,7 +25,7 @@ bool createTestFiles(const QStringList &fileNames)
                 return false;
             }
         }
-        QFile testFile("tmp/" + fileName);
+        QFile testFile(QDir(dir).filePath(fileName));
         if (!testFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
             qWarning("Couldn't create %s",
                     fileName.toUtf8().constData());
@@ -36,14 +37,14 @@ bool createTestFiles(const QStringList &fileNames)
     return true;
 }
 
-void removeTestFiles(const QStringList &fileNames)
+void removeTestFiles(const QStringList &fileNames, const QString &dir)
 {
     QDir curDir;
     foreach (QString fileName, fileNames) {
-        curDir.remove("tmp/" + fileName);
+        curDir.remove(QDir(dir).filePath(fileName));
     }
     foreach (QString fileName, fileNames) {
-        QDir fileDir = QFileInfo("tmp/" + fileName).dir();
+        QDir fileDir = QFileInfo(QDir(dir).filePath(fileName)).dir();
         if (fileDir.exists()) {
             // Non-empty dirs won't get removed, and that's good.
             !curDir.rmpath(fileDir.path());
