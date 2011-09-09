@@ -38,8 +38,6 @@ voidpf ZCALLBACK qiodevice_open_file_func (
    int mode)
 {
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(file);
-    if(iodevice->isSequential())
-        return NULL;
     if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
         iodevice->open(QIODevice::ReadOnly);
     else
@@ -49,9 +47,14 @@ voidpf ZCALLBACK qiodevice_open_file_func (
     if (mode & ZLIB_FILEFUNC_MODE_CREATE)
         iodevice->open(QIODevice::WriteOnly);
 
-    if(iodevice->isOpen())
-        return iodevice;
-    else
+    if (iodevice->isOpen()) {
+        if (iodevice->isSequential()) {
+            iodevice->close();
+            return NULL;
+        } else {
+            return iodevice;
+        }
+    } else
         return NULL;
 }
 
