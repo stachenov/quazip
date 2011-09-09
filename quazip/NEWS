@@ -1,5 +1,17 @@
 QuaZIP changes
 
+* 2011-09-09 0.4.3
+        * New test suite using QTestLib.
+        * Fixed bytesAvailable(), pos() and atEnd().
+        * Added ZIP v1.0 support and disabling data descriptor for
+          compatibility with some older software.
+        * Fixed DLL export/import issues for some symbols.
+        * Added QUAZIP_STATIC macro for compiling as a static library or
+          directly including the source.
+        * Added getFileNameList() and getFileInfoList() convenience
+          functions.
+        * Added some buffering to JlCompress to improve performance.
+
 * 2011-08-10 0.4.2
         * Cmake patch (thanks to Bernhard Rosenkraenzer).
         * Symbian patch (thanks to Hamish Willee).
