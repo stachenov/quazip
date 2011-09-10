@@ -34,7 +34,6 @@ unix:!symbian {
 	OBJECTS_DIR=.obj
 	MOC_DIR=.moc
 	
-	LIBS += -lz
 }
 
 win32 {
@@ -43,9 +42,6 @@ win32 {
     target.path=$$PREFIX/lib
     INSTALLS += headers target
 
-    *-g++*: LIBS += -lz.dll
-    *-msvc*: LIBS += -lzlibwapi
-    *-msvc*: QMAKE_LFLAGS += /IMPLIB:$$DESTDIR\\quazip.lib
 }
 
 
