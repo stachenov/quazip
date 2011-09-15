@@ -91,16 +91,16 @@ void TestJlCompress::compressDir()
         if (!curDir.remove(zipName))
             QFAIL("Can't remove zip file");
     }
-    if (!createTestFiles(fileNames)) {
+    if (!createTestFiles(fileNames, "compressDir_tmp")) {
         QFAIL("Can't create test files");
     }
-    QVERIFY(JlCompress::compressDir(zipName, "tmp"));
+    QVERIFY(JlCompress::compressDir(zipName, "compressDir_tmp"));
     // get the file list and check it
     QStringList fileList = JlCompress::getFileList(zipName);
     qSort(fileList);
     qSort(fileNames);
     QCOMPARE(fileList, fileNames);
-    removeTestFiles(fileNames);
+    removeTestFiles(fileNames, "compressDir_tmp");
     curDir.remove(zipName);
 }
 
@@ -189,6 +189,8 @@ void TestJlCompress::extractDir_data()
     QTest::newRow("simple") << "jlextdir.zip" << (
             QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt");
+    QTest::newRow("separate dir") << "sepdir.zip" << (
+            QStringList() << "laj/" << "laj/lajfile.txt");
 }
 
 void TestJlCompress::extractDir()
@@ -202,7 +204,7 @@ void TestJlCompress::extractDir()
     if (!createTestFiles(fileNames)) {
         QFAIL("Couldn't create test files");
     }
-    if (!JlCompress::compressDir(zipName, "tmp")) {
+    if (!createTestArchive(zipName, fileNames)) {
         QFAIL("Couldn't create test archive");
     }
     QVERIFY(!JlCompress::extractDir(zipName, "jlext/jldir").isEmpty());

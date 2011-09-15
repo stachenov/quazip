@@ -4,7 +4,8 @@
 #include "testquachecksum32.h"
 #include "testjlcompress.h"
 
-#include <quazip/jlcompress.h>
+#include <quazip/quazip.h>
+#include <quazip/quazipfile.h>
 
 #include <QCoreApplication>
 #include <QDir>
@@ -17,7 +18,8 @@ bool createTestFiles(const QStringList &fileNames, const QString &dir)
 {
     QDir curDir;
     foreach (QString fileName, fileNames) {
-        QDir testDir = QFileInfo(QDir(dir).filePath(fileName)).dir();
+        QString filePath = QDir(dir).filePath(fileName);
+        QDir testDir = QFileInfo(filePath).dir();
         if (!testDir.exists()) {
             if (!curDir.mkpath(testDir.path())) {
                 qWarning("Couldn't mkpath %s",
@@ -25,15 +27,71 @@ bool createTestFiles(const QStringList &fileNames, const QString &dir)
                 return false;
             }
         }
-        QFile testFile(QDir(dir).filePath(fileName));
-        if (!testFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            qWarning("Couldn't create %s",
-                    fileName.toUtf8().constData());
+        if (fileName.endsWith('/')) {
+            if (!curDir.mkpath(filePath)) {
+                qWarning("Couldn't mkpath %s", fileName);
+                return false;
+            }
+        } else {
+            QFile testFile(filePath);
+            if (!testFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                qWarning("Couldn't create %s",
+                        fileName.toUtf8().constData());
+                return false;
+            }
+            QTextStream testStream(&testFile);
+            testStream << "This is a test file named " << fileName << endl;
+        }
+    }
+    return true;
+}
+
+bool createTestArchive(const QString &zipName, 
+                       const QStringList &fileNames,
+                       const QString &dir) {
+    QuaZip zip(zipName);
+    if (!zip.open(QuaZip::mdCreate)) {
+        qWarning("Couldn't open %s", zipName.toUtf8().constData());
+        return false;
+    }
+    foreach (QString fileName, fileNames) {
+        QuaZipFile zipFile(&zip);
+        QString filePath = QDir(dir).filePath(fileName);
+        QFileInfo fileInfo(filePath);
+        if (!zipFile.open(QIODevice::WriteOnly, 
+                QuaZipNewInfo(fileName, filePath), NULL, 0, 
+                fileInfo.isDir() ? 0 : 8)) {
+            qWarning("Couldn't open %s in %s", fileName.toUtf8()
+                .constData(), zipName.toUtf8().constData());
             return false;
         }
-        QTextStream testStream(&testFile);
-        testStream << "This is a test file named " << fileName << endl;
+        if (!fileInfo.isDir()) {
+            QFile file(filePath);
+            if (!file.open(QIODevice::ReadOnly)) {
+                qWarning("Couldn't open %s", filePath.toUtf8()
+                    .constData());
+                return false;
+            }
+            while (!file.atEnd()) {
+                char buf[4096];
+                qint64 l = file.read(buf, 4096);
+                if (l <= 0) {
+                    qWarning("Couldn't read %s", filePath.toUtf8()
+                        .constData());
+                    return false;
+                }
+                if (zipFile.write(buf, l) != l) {
+                    qWarning("Couldn't write to %s in %s", 
+                        filePath.toUtf8().constData(),
+                        zipName.toUtf8().constData());
+                    return false;
+                }
+            }
+            file.close();
+        }
+        zipFile.close();
     }
+    zip.close();
     return true;
 }
 

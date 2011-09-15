@@ -147,7 +147,13 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
     if(!inFile.open(QIODevice::ReadOnly) || inFile.getZipError()!=UNZ_OK) return false;
 
     // Controllo esistenza cartella file risultato
-    QDir().mkpath(QFileInfo(fileDest).absolutePath());
+    QDir curDir;
+    if (!curDir.mkpath(QFileInfo(fileDest).absolutePath())) {
+        return false;
+    }
+
+    if (QFileInfo(fileDest).isDir())
+        return true;
 
     // Apro il file risultato
     QFile outFile;

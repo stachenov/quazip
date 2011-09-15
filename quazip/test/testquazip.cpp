@@ -33,7 +33,7 @@ void TestQuaZip::getFileList()
     if (!createTestFiles(fileNames)) {
         QFAIL("Can't create test file");
     }
-    if (!JlCompress::compressDir(zipName, "tmp")) {
+    if (!createTestArchive(zipName, fileNames)) {
         QFAIL("Can't create test archive");
     }
     QuaZip testZip(zipName);
@@ -58,5 +58,5 @@ void TestQuaZip::getFileList()
     testZip.close();
     // clean up
     removeTestFiles(fileNames);
-    QVERIFY(curDir.remove(zipName));
+    curDir.remove(zipName);
 }
