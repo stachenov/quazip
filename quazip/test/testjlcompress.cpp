@@ -7,7 +7,7 @@
 
 #include <QtTest/QtTest>
 
-#include <quazip/jlcompress.h>
+#include <quazip/JlCompress.h>
 
 void TestJlCompress::compressFile_data()
 {

@@ -2,7 +2,7 @@
 
 #include "qztest.h"
 
-#include <quazip/jlcompress.h>
+#include <quazip/JlCompress.h>
 #include <quazip/quazipfile.h>
 #include <quazip/quazip.h>
 

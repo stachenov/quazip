@@ -9,7 +9,7 @@
 #include <QtTest/QtTest>
 
 #include <quazip/quazip.h>
-#include <quazip/jlcompress.h>
+#include <quazip/JlCompress.h>
 
 void TestQuaZip::getFileList_data()
 {
