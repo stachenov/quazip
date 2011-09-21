@@ -29,7 +29,8 @@ bool createTestFiles(const QStringList &fileNames, const QString &dir)
         }
         if (fileName.endsWith('/')) {
             if (!curDir.mkpath(filePath)) {
-                qWarning("Couldn't mkpath %s", fileName);
+                qWarning("Couldn't mkpath %s",
+				fileName.toUtf8().constData());
                 return false;
             }
         } else {
