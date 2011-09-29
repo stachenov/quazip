@@ -8,6 +8,7 @@ class TestQuaZip: public QObject {
 private slots:
     void getFileList_data();
     void getFileList();
+    void getZip();
 };
 
 #endif // QUAZIP_TEST_QUAZIP_H

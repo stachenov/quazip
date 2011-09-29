@@ -123,5 +123,8 @@ int main(int argc, char **argv)
     err = qMax(err, QTest::qExec(&testQuaChecksum32, app.arguments()));
     TestJlCompress testJlCompress;
     err = qMax(err, QTest::qExec(&testJlCompress, app.arguments()));
+    if (err != 0) {
+        qWarning("There were errors in some of the tests above.");
+    }
     return err;
 }

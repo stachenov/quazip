@@ -15,6 +15,7 @@ private slots:
     void atEnd();
     void pos_data();
     void pos();
+    void getZip();
 };
 
 #endif // QUAZIP_TEST_QUAZIPFILE_H

@@ -203,3 +203,12 @@ void TestQuaZipFile::pos()
     testZip.close();
     curDir.remove(zipName);
 }
+
+void TestQuaZipFile::getZip()
+{
+    QuaZip testZip;
+    QuaZipFile f1(&testZip);
+    QCOMPARE(f1.getZip(), &testZip);
+    QuaZipFile f2("doesntexist.zip", "someFile");
+    QCOMPARE(f2.getZip(), static_cast<QuaZip*>(NULL));
+}

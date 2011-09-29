@@ -108,6 +108,11 @@ QString QuaZipFile::getZipName() const
   return p->zip==NULL ? QString() : p->zip->getZipName();
 }
 
+QuaZip *QuaZipFile::getZip() const
+{
+    return p->internal ? NULL : p->zip;
+}
+
 QString QuaZipFile::getActualFileName()const
 {
   p->setZipError(UNZ_OK);
