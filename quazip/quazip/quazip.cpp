@@ -173,8 +173,10 @@ void QuaZip::close()
       return;
   }
   // opened by name, need to delete the internal IO device
-  if (!p->zipName.isEmpty())
-    delete p->ioDevice;
+  if (!p->zipName.isEmpty()) {
+      delete p->ioDevice;
+      p->ioDevice = NULL;
+  }
   if(p->zipError==UNZ_OK)
     p->mode=mdNotOpen;
 }
