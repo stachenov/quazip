@@ -213,14 +213,14 @@ void TestJlCompress::extractDir()
     foreach (QString fileName, fileNames) {
         QString fullName = "jlext/jldir/" + fileName;
         QFileInfo fileInfo(fullName);
-        if (!fullName.endsWith('/'))
+        if (!fileInfo.isDir())
             QCOMPARE(fileInfo.size(), QFileInfo("tmp/" + fileName).size());
         curDir.remove(fullName);
         curDir.rmpath(fileInfo.dir().path());
-        if (fullName.endsWith('/'))
-            QVERIFY(extracted.contains(fileInfo.absoluteFilePath() + '/'));
-        else
-            QVERIFY(extracted.contains(fileInfo.absoluteFilePath()));
+	QString absolutePath = fileInfo.absoluteFilePath();
+        if (fileInfo.isDir() && !absolutePath.endsWith('/'))
+	    absolutePath += '/';
+	QVERIFY(extracted.contains(absolutePath));
     }
     curDir.rmpath("jlext/jldir");
     removeTestFiles(fileNames);
