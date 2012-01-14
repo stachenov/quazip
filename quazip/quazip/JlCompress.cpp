@@ -162,9 +162,11 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
 
     // Copio i dati
     if (!copyData(inFile, outFile) || inFile.getZipError()!=UNZ_OK) {
+        outFile.close();
         removeFile(QStringList(fileDest));
         return false;
     }
+    outFile.close();
 
     // Chiudo i file
     inFile.close();
@@ -172,7 +174,6 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
         removeFile(QStringList(fileDest));
         return false;
     }
-    outFile.close();
 
     return true;
 }
@@ -378,25 +379,27 @@ QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, 
     }
 
     // Estraggo i file
+    QStringList extracted;
     for (int i=0; i<files.count(); i++) {
-        if (!extractFile(zip, files.at(i), QDir(dir).absoluteFilePath(files.at(i)))) {
+        QString absPath = QDir(dir).absoluteFilePath(files.at(i));
+        if (!extractFile(zip, files.at(i), absPath)) {
             delete zip;
-            removeFile(files);
+            removeFile(extracted);
             return QStringList();
         }
-        files[i] = QDir(dir).absoluteFilePath(files.at(i));
+        extracted.append(absPath);
     }
 
     // Chiudo il file zip
     zip->close();
     if(zip->getZipError()!=0) {
         delete zip;
-        removeFile(files);
+        removeFile(extracted);
         return QStringList();
     }
     delete zip;
 
-    return files;
+    return extracted;
 }
 
 /**OK
@@ -422,26 +425,27 @@ QStringList JlCompress::extractDir(QString fileCompressed, QString dir) {
     QStringList lst = getFileList(fileCompressed);
 
     QDir directory(dir);
+    QStringList extracted;
     for (int i=0; i<lst.count(); i++) {
         QString absFilePath = directory.absoluteFilePath(lst.at(i));
         if (!extractFile(zip, lst.at(i), absFilePath)) {
             delete zip;
-            removeFile(lst);
+            removeFile(extracted);
             return QStringList();
         }
-        lst[i] = absFilePath;
+        extracted.append(absFilePath);
     }
 
     // Chiudo il file zip
     zip->close();
     if(zip->getZipError()!=0) {
         delete zip;
-        removeFile(lst);
+        removeFile(extracted);
         return QStringList();
     }
     delete zip;
 
-    return lst;
+    return extracted;
 }
 
 /**OK
