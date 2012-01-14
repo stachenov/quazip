@@ -31,7 +31,7 @@ PROJECT_NAME           = QuaZIP
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
-PROJECT_NUMBER         = quazip-0-4-3
+PROJECT_NUMBER         = quazip-0-4-4
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer
@@ -645,7 +645,8 @@ RECURSIVE              = YES
 EXCLUDE                = quazip/unzip.h \
                          quazip/zip.h \
                          quazip/ioapi.h \
-                         quazip/crypt.h
+                         quazip/crypt.h \
+                         test/
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -659,7 +660,7 @@ EXCLUDE_SYMLINKS       = NO
 # against the file with absolute path, so to exclude all test directories
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = */.moc/* */release/* */debug/*
+EXCLUDE_PATTERNS       = */.moc/* */release/* */debug/* */moc_*.cpp
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the

@@ -207,12 +207,20 @@ void TestJlCompress::extractDir()
     if (!createTestArchive(zipName, fileNames)) {
         QFAIL("Couldn't create test archive");
     }
-    QVERIFY(!JlCompress::extractDir(zipName, "jlext/jldir").isEmpty());
+    QStringList extracted;
+    QCOMPARE((extracted = JlCompress::extractDir(zipName, "jlext/jldir"))
+        .count(), fileNames.count());
     foreach (QString fileName, fileNames) {
-        QFileInfo fileInfo("jlext/jldir/" + fileName);
-        QCOMPARE(fileInfo.size(), QFileInfo("tmp/" + fileName).size());
-        curDir.remove("jlext/jldir/" + fileName);
+        QString fullName = "jlext/jldir/" + fileName;
+        QFileInfo fileInfo(fullName);
+        if (!fullName.endsWith('/'))
+            QCOMPARE(fileInfo.size(), QFileInfo("tmp/" + fileName).size());
+        curDir.remove(fullName);
         curDir.rmpath(fileInfo.dir().path());
+        if (fullName.endsWith('/'))
+            QVERIFY(extracted.contains(fileInfo.absoluteFilePath() + '/'));
+        else
+            QVERIFY(extracted.contains(fileInfo.absoluteFilePath()));
     }
     curDir.rmpath("jlext/jldir");
     removeTestFiles(fileNames);

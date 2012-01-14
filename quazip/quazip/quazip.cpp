@@ -26,22 +26,44 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include "quazip.h"
 
+/// All the internal stuff for the QuaZip class.
+/**
+  \internal
+
+  This class keeps all the private stuff for the QuaZip class so it can
+  be changed without breaking binary compatibility, according to the
+  Pimpl idiom.
+  */
 class QuaZipPrivate {
   friend class QuaZip;
   private:
-  QuaZip *q;
-    QTextCodec *fileNameCodec, *commentCodec;
+    /// The pointer to the corresponding QuaZip instance.
+    QuaZip *q;
+    /// The codec for file names.
+    QTextCodec *fileNameCodec;
+    /// The codec for comments.
+    QTextCodec *commentCodec;
+    /// The archive file name.
     QString zipName;
+    /// The device to access the archive.
     QIODevice *ioDevice;
+    /// The global comment.
     QString comment;
+    /// The open mode.
     QuaZip::Mode mode;
     union {
+      /// The internal handle for UNZIP modes.
       unzFile unzFile_f;
+      /// The internal handle for ZIP modes.
       zipFile zipFile_f;
     };
+    /// Whether a current file is set.
     bool hasCurrentFile_f;
+    /// The last error.
     int zipError;
+    /// Whether \ref QuaZip::setDataDescriptorWritingEnabled() "the data descriptor writing mode" is enabled.
     bool dataDescriptorWritingEnabled;
+    /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q):
         q(q),
       fileNameCodec(QTextCodec::codecForLocale()),
@@ -51,6 +73,7 @@ class QuaZipPrivate {
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
       dataDescriptorWritingEnabled(true) {}
+    /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q, const QString &zipName):
         q(q),
       fileNameCodec(QTextCodec::codecForLocale()),
@@ -61,6 +84,7 @@ class QuaZipPrivate {
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
       dataDescriptorWritingEnabled(true) {}
+    /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q, QIODevice *ioDevice):
         q(q),
       fileNameCodec(QTextCodec::codecForLocale()),
@@ -70,6 +94,7 @@ class QuaZipPrivate {
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
       dataDescriptorWritingEnabled(true) {}
+    /// Returns either a list of file names or a list of QuaZipFileInfo.
     template<typename TFileInfo>
         bool getFileInfoList(QList<TFileInfo> *result) const;
 };

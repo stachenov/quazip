@@ -1,5 +1,20 @@
 QuaZIP changes
 
+* 2012-01-14 0.4.4
+        * Fixed isSequential() test that was causing open() failures on
+          Unix.
+        * Fixed sub-directory compressing in JlCompress.
+        * Added MS VS 2008 solution, compatible with the binary Qt
+          distribution (tested on MS VS 2008 Express, had to run MOC
+          manually due to the lack of plugin in Express).
+        * Fixed extracting directories in JlCompress.
+        * Fixed JlCompress.h includes in the test suite, which used
+          lowercase names thus breaking on case-sensitive systems.
+        * Implemented missing QuaZipFile::getZip() that was only
+          declared.
+        * Fixed reopening closed files.
+        * Fixed possible memory leak in case of open error.
+
 * 2011-09-09 0.4.3
         * New test suite using QTestLib.
         * Fixed bytesAvailable(), pos() and atEnd().
