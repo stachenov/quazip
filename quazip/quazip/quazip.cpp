@@ -478,7 +478,7 @@ template<typename TFileInfo>
 static TFileInfo getFileInfo(QuaZip *zip, bool *ok);
 
 template<>
-QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok)
+static QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok)
 {
     QuaZipFileInfo info;
     *ok = zip->getCurrentFileInfo(&info);
@@ -486,7 +486,7 @@ QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok)
 }
 
 template<>
-QString getFileInfo(QuaZip *zip, bool *ok)
+static QString getFileInfo(QuaZip *zip, bool *ok)
 {
     QString name = zip->getCurrentFileName();
     *ok = !name.isEmpty();
@@ -518,10 +518,10 @@ bool QuaZipPrivate::getFileInfoList(QList<TFileInfo> *result) const
   if (zipError != UNZ_OK)
       return false;
   if (currentFile.isEmpty()) {
-      if (!q->setCurrentFile(currentFile))
+      if (!q->goToFirstFile())
           return false;
   } else {
-      if (!q->goToFirstFile())
+      if (!q->setCurrentFile(currentFile))
           return false;
   }
   return true;

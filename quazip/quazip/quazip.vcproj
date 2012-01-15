@@ -200,6 +200,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\quazipdir.h"
+				>
+			</File>
+			<File
 				RelativePath=".\quazipfile.h"
 				>
 			</File>
@@ -253,6 +257,10 @@
 			</File>
 			<File
 				RelativePath=".\quazip.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\quazipdir.cpp"
 				>
 			</File>
 			<File
