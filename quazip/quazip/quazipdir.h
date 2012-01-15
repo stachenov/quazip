@@ -9,7 +9,7 @@ class QuaZipDirPrivate;
 #include <QList>
 #include <QSharedDataPointer>
 
-class QuaZipDir {
+class QUAZIP_EXPORT QuaZipDir {
 private:
     QSharedDataPointer<QuaZipDirPrivate> d;
 public:

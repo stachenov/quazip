@@ -3,6 +3,7 @@
 #include "testquazipfile.h"
 #include "testquachecksum32.h"
 #include "testjlcompress.h"
+#include "testquazipdir.h"
 
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
@@ -115,14 +116,26 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     int err = 0;
-    TestQuaZip testQuaZip;
-    err = qMax(err, QTest::qExec(&testQuaZip, app.arguments()));
-    TestQuaZipFile testQuaZipFile;
-    err = qMax(err, QTest::qExec(&testQuaZipFile, app.arguments()));
-    TestQuaChecksum32 testQuaChecksum32;
-    err = qMax(err, QTest::qExec(&testQuaChecksum32, app.arguments()));
-    TestJlCompress testJlCompress;
-    err = qMax(err, QTest::qExec(&testJlCompress, app.arguments()));
+    {
+        TestQuaZip testQuaZip;
+        err = qMax(err, QTest::qExec(&testQuaZip, app.arguments()));
+    }
+    {
+        TestQuaZipFile testQuaZipFile;
+        err = qMax(err, QTest::qExec(&testQuaZipFile, app.arguments()));
+    }
+    {
+        TestQuaChecksum32 testQuaChecksum32;
+        err = qMax(err, QTest::qExec(&testQuaChecksum32, app.arguments()));
+    }
+    {
+        TestJlCompress testJlCompress;
+        err = qMax(err, QTest::qExec(&testJlCompress, app.arguments()));
+    }
+    {
+        TestQuaZipDir testQuaZipDir;
+        err = qMax(err, QTest::qExec(&testQuaZipDir, app.arguments()));
+    }
     if (err != 0) {
         qWarning("There were errors in some of the tests above.");
     }

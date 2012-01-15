@@ -165,7 +165,7 @@
 	<References>
 		<ProjectReference
 			ReferencedProjectIdentifier="{E4AC5F56-B711-4F0E-BC83-CDE8B6CD53AD}"
-			RelativePathToProject="..\quazip\quazip.vcproj"
+			RelativePathToProject=".\quazip\quazip.vcproj"
 		/>
 	</References>
 	<Files>
@@ -188,6 +188,10 @@
 			</File>
 			<File
 				RelativePath=".\testquazip.h"
+				>
+			</File>
+			<File
+				RelativePath=".\testquazipdir.h"
 				>
 			</File>
 			<File
@@ -219,6 +223,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\moc_testquazipdir.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\moc_testquazipfile.cpp"
 				>
 			</File>
@@ -239,16 +247,20 @@
 				>
 			</File>
 			<File
+				RelativePath=".\testquazipdir.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\testquazipfile.cpp"
 				>
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\release\BuildLog.htm"
+			RelativePath=".\debug\BuildLog.htm"
 			>
 		</File>
 		<File
-			RelativePath=".\debug\BuildLog.htm"
+			RelativePath=".\release\BuildLog.htm"
 			>
 		</File>
 	</Files>

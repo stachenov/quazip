@@ -1,5 +1,6 @@
 #include "quazipdir.h"
 
+#include <QSet>
 #include <QSharedData>
 
 class QuaZipDirPrivate: public QSharedData {
@@ -81,22 +82,40 @@ QString QuaZipDir::dirName() const
 // copied from quazip.cpp
 
 template<typename TFileInfo>
-static TFileInfo getFileInfo(QuaZip *zip, bool *ok);
+static TFileInfo getFileInfo(QuaZip *zip, bool *ok,
+                             const QString &relativeName,
+                             bool isReal);
 
 template<>
-static QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok)
+static QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok, 
+                                  const QString &relativeName,
+                                  bool isReal)
 {
     QuaZipFileInfo info;
-    *ok = zip->getCurrentFileInfo(&info);
+    if (isReal) {
+        *ok = zip->getCurrentFileInfo(&info);
+    } else {
+        info.compressedSize = 0;
+        info.crc = 0;
+        info.diskNumberStart = 0;
+        info.externalAttr = 0;
+        info.flags = 0;
+        info.internalAttr = 0;
+        info.method = 0;
+        info.uncompressedSize = 0;
+        info.versionCreated = info.versionNeeded = 0;
+    }
+    info.name = relativeName;
     return info;
 }
 
 template<>
-static QString getFileInfo(QuaZip *zip, bool *ok)
+static QString getFileInfo(QuaZip *zip, bool *ok,
+                           const QString &relativeName,
+                           bool isReal)
 {
-    QString name = zip->getCurrentFileName();
-    *ok = !name.isEmpty();
-    return name;
+    *ok = true;
+    return relativeName;
 }
 
 // utility class to restore the current file
@@ -117,7 +136,9 @@ template<typename TFileInfo>
 bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters, 
     QDir::Filters filter, QDir::SortFlags sort, QList<TFileInfo> *result) const
 {
-    QString basePath = simplePath() + "/";
+    QString basePath = simplePath();
+    if (!basePath.isEmpty())
+        basePath += "/";
     int baseLength = basePath.length();
     result->clear();
     QuaZipDirRestoreCurrent saveCurrent(zip);
@@ -132,21 +153,33 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
     QStringList nmfltr = nameFilters;
     if (nmfltr.isEmpty())
         nmfltr = nameFilters;
+    QSet<QString> dirsFound;
     do {
         QString name = zip->getCurrentFileName();
         if (!name.startsWith(basePath))
             continue;
         QString relativeName = name.mid(baseLength);
-        if (relativeName.contains('/'))
+        bool isDir = false;
+        bool isReal = true;
+        if (relativeName.contains('/')) {
+            int indexOfSlash = relativeName.indexOf('/');
+            // something like "subdir/"
+            isReal = indexOfSlash == relativeName.length() - 1;
+            relativeName = relativeName.left(indexOfSlash);
+            if (dirsFound.contains(relativeName))
+                continue;
+            isDir = true;
+        }
+        dirsFound.insert(relativeName);
+        if ((fltr & QDir::Dirs) == 0 && isDir)
             continue;
-        if ((fltr & QDir::Dirs) == 0 && relativeName.endsWith('/'))
-            continue;
-        if ((fltr & QDir::Files) == 0 && !relativeName.endsWith('/'))
+        if ((fltr & QDir::Files) == 0 && !isDir)
             continue;
         if (!nmfltr.isEmpty() && QDir::match(nmfltr, relativeName))
             continue;
         bool ok;
-        TFileInfo info = getFileInfo<TFileInfo>(zip, &ok);
+        TFileInfo info = getFileInfo<TFileInfo>(zip, &ok, relativeName,
+            isReal);
         if (!ok) {
             return false;
         }
