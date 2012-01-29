@@ -4,6 +4,8 @@
 #include "testquachecksum32.h"
 #include "testjlcompress.h"
 #include "testquazipdir.h"
+#include "testquagzipfile.h"
+#include "testquaziodevice.h"
 
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
@@ -135,6 +137,14 @@ int main(int argc, char **argv)
     {
         TestQuaZipDir testQuaZipDir;
         err = qMax(err, QTest::qExec(&testQuaZipDir, app.arguments()));
+    }
+    {
+        TestQuaZIODevice testQuaZIODevice;
+        err = qMax(err, QTest::qExec(&testQuaZIODevice, app.arguments()));
+    }
+    {
+        TestQuaGzipFile testQuaGzipFile;
+        err = qMax(err, QTest::qExec(&testQuaGzipFile, app.arguments()));
     }
     if (err != 0) {
         qWarning("There were errors in some of the tests above.");

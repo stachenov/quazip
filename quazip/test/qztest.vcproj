@@ -187,6 +187,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\testquagzipfile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\testquaziodevice.h"
+				>
+			</File>
+			<File
 				RelativePath=".\testquazip.h"
 				>
 			</File>
@@ -219,6 +227,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\moc_testquagzipfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\moc_testquaziodevice.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\moc_testquazip.cpp"
 				>
 			</File>
@@ -243,6 +259,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\testquagzipfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\testquaziodevice.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\testquazip.cpp"
 				>
 			</File>
@@ -256,11 +280,11 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\debug\BuildLog.htm"
+			RelativePath=".\release\BuildLog.htm"
 			>
 		</File>
 		<File
-			RelativePath=".\release\BuildLog.htm"
+			RelativePath=".\debug\BuildLog.htm"
 			>
 		</File>
 	</Files>

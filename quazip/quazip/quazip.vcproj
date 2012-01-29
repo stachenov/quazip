@@ -192,6 +192,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\quagzipfile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\quaziodevice.h"
+				>
+			</File>
+			<File
 				RelativePath=".\quazip.h"
 				>
 			</File>
@@ -240,6 +248,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\moc_quagzipfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\moc_quaziodevice.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\moc_quazipfile.cpp"
 				>
 			</File>
@@ -253,6 +269,14 @@
 			</File>
 			<File
 				RelativePath=".\quacrc32.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\quagzipfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\quaziodevice.cpp"
 				>
 			</File>
 			<File
