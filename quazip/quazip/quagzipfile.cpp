@@ -11,20 +11,18 @@ class QuaGzipFilePrivate {
         fileName(fileName), gzd(NULL) {}
     template<typename FileId> bool open(FileId id, 
         QIODevice::OpenMode mode, QString &error);
-    template<typename FileId> gzFile open(FileId id, 
-        const char *modeString);
+    gzFile open(int fd, const char *modeString);
+    gzFile open(const QString &name, const char *modeString);
 };
 
-template<> // const QString& doesn't work in MSVS 2008 for some reason
-gzFile QuaGzipFilePrivate::open(QString id, const char *modeString)
+gzFile QuaGzipFilePrivate::open(const QString &name, const char *modeString)
 {
-    return gzopen(QFile::encodeName(id).constData(), modeString);
+    return gzopen(QFile::encodeName(name).constData(), modeString);
 }
 
-template<>
-gzFile QuaGzipFilePrivate::open(int id, const char *modeString)
+gzFile QuaGzipFilePrivate::open(int fd, const char *modeString)
 {
-    return gzdopen(id, modeString);
+    return gzdopen(fd, modeString);
 }
 
 template<typename FileId>
