@@ -95,6 +95,7 @@ bool createTestArchive(const QString &zipName,
         }
         zipFile.close();
     }
+    zip.setComment(QString("This is the %1 archive").arg(zipName));
     zip.close();
     return true;
 }

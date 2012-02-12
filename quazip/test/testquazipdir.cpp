@@ -12,7 +12,7 @@ void TestQuaZipDir::entryList_data()
     // QDir::Filters type breaks Qt meta type system on MSVC
     QTest::addColumn<int>("filter");
     QTest::addColumn<QStringList>("entries");
-    QTest::newRow("simple") << "jlextdir.zip" << (
+    QTest::newRow("simple") << "simple.zip" << (
             QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
             << "testdir2" << static_cast<int>(QDir::NoFilter) <<
@@ -21,11 +21,11 @@ void TestQuaZipDir::entryList_data()
             QStringList() << "laj/" << "laj/lajfile.txt")
             << "" << static_cast<int>(QDir::NoFilter)
             << (QStringList() << "laj");
-    QTest::newRow("dirs only") << "sepdir.zip" << (
+    QTest::newRow("dirs only") << "dirsonly.zip" << (
             QStringList() << "file" << "dir/")
             << "" << static_cast<int>(QDir::Dirs)
             << (QStringList() << "dir");
-    QTest::newRow("files only") << "sepdir.zip" << (
+    QTest::newRow("files only") << "filesonly.zip" << (
             QStringList() << "file1" << "parent/dir/" << "parent/file2")
             << "parent" << static_cast<int>(QDir::Files)
             << (QStringList() << "file2");
@@ -53,6 +53,7 @@ void TestQuaZipDir::entryList()
     QVERIFY(zip.open(QuaZip::mdUnzip));
     QuaZipDir dir(&zip, dirName);
     QCOMPARE(dir.entryList(filters), entries);
+    zip.close();
     curDir.rmpath("jlext/jldir");
     removeTestFiles(fileNames);
     curDir.remove(zipName);

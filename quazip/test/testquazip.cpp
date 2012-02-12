@@ -60,3 +60,59 @@ void TestQuaZip::getFileList()
     removeTestFiles(fileNames);
     curDir.remove(zipName);
 }
+
+void TestQuaZip::add_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QStringList>("fileNames");
+    QTest::addColumn<QStringList>("fileNamesToAdd");
+    QTest::newRow("simple") << "qzadd.zip" << (
+            QStringList() << "test0.txt" << "testdir1/test1.txt"
+            << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+            << (QStringList() << "testAdd.txt");
+}
+
+void TestQuaZip::add()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QStringList, fileNames);
+    QFETCH(QStringList, fileNamesToAdd);
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    if (!createTestFiles(fileNames)) {
+        QFAIL("Can't create test file");
+    }
+    if (!createTestArchive(zipName, fileNames)) {
+        QFAIL("Can't create test archive");
+    }
+    if (!createTestFiles(fileNamesToAdd)) {
+        QFAIL("Can't create test files to add");
+    }
+    QuaZip testZip(zipName);
+    QVERIFY(testZip.open(QuaZip::mdUnzip));
+    // according to the bug #3485459 the global is lost, so we test it
+    QString globalComment = testZip.getComment();
+    testZip.close();
+    QVERIFY(testZip.open(QuaZip::mdAdd));
+    foreach (QString fileName, fileNamesToAdd) {
+        QuaZipFile testFile(&testZip);
+        QVERIFY(testFile.open(QIODevice::WriteOnly, 
+            QuaZipNewInfo(fileName, "tmp/" + fileName)));
+        QFile inFile("tmp/" + fileName);
+        QVERIFY(inFile.open(QIODevice::ReadOnly));
+        testFile.write(inFile.readAll());
+        inFile.close();
+        testFile.close();
+    }
+    testZip.close();
+    QVERIFY(testZip.open(QuaZip::mdUnzip));
+    QCOMPARE(testZip.getFileNameList(), fileNames + fileNamesToAdd);
+    QCOMPARE(testZip.getComment(), globalComment);
+    testZip.close();
+    removeTestFiles(fileNames);
+    removeTestFiles(fileNamesToAdd);
+    curDir.remove(zipName);
+}
