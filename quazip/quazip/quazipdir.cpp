@@ -79,15 +79,13 @@ QString QuaZipDir::dirName() const
     return QDir(d->dir).dirName();
 }
 
-// copied from quazip.cpp
-
 template<typename TFileInfo>
-static TFileInfo getFileInfo(QuaZip *zip, bool *ok,
+TFileInfo QuaZipDir_getFileInfo(QuaZip *zip, bool *ok,
                              const QString &relativeName,
                              bool isReal);
 
 template<>
-static QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok, 
+QuaZipFileInfo QuaZipDir_getFileInfo(QuaZip *zip, bool *ok, 
                                   const QString &relativeName,
                                   bool isReal)
 {
@@ -110,9 +108,9 @@ static QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok,
 }
 
 template<>
-static QString getFileInfo(QuaZip *zip, bool *ok,
+QString QuaZipDir_getFileInfo(QuaZip *, bool *ok,
                            const QString &relativeName,
-                           bool isReal)
+                           bool)
 {
     *ok = true;
     return relativeName;
@@ -178,7 +176,7 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
         if (!nmfltr.isEmpty() && QDir::match(nmfltr, relativeName))
             continue;
         bool ok;
-        TFileInfo info = getFileInfo<TFileInfo>(zip, &ok, relativeName,
+        TFileInfo info = QuaZipDir_getFileInfo<TFileInfo>(zip, &ok, relativeName,
             isReal);
         if (!ok) {
             return false;

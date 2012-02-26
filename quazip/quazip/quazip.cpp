@@ -477,10 +477,10 @@ bool QuaZip::isDataDescriptorWritingEnabled() const
 }
 
 template<typename TFileInfo>
-static TFileInfo getFileInfo(QuaZip *zip, bool *ok);
+TFileInfo QuaZip_getFileInfo(QuaZip *zip, bool *ok);
 
 template<>
-static QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok)
+QuaZipFileInfo QuaZip_getFileInfo(QuaZip *zip, bool *ok)
 {
     QuaZipFileInfo info;
     *ok = zip->getCurrentFileInfo(&info);
@@ -488,7 +488,7 @@ static QuaZipFileInfo getFileInfo(QuaZip *zip, bool *ok)
 }
 
 template<>
-static QString getFileInfo(QuaZip *zip, bool *ok)
+QString QuaZip_getFileInfo(QuaZip *zip, bool *ok)
 {
     QString name = zip->getCurrentFileName();
     *ok = !name.isEmpty();
@@ -512,7 +512,7 @@ bool QuaZipPrivate::getFileInfoList(QList<TFileInfo> *result) const
   if (q->goToFirstFile()) {
       do {
           bool ok;
-          result->append(getFileInfo<TFileInfo>(q, &ok));
+          result->append(QuaZip_getFileInfo<TFileInfo>(q, &ok));
           if (!ok)
               return false;
       } while (q->goToNextFile());
