@@ -1,7 +1,40 @@
-find_package(Qt4)
-find_path(QuaZip_INCLUDE_DIR quazip.h ${CMAKE_INSTALL_PREFIX}/include/quazip ${CMAKE_INSTALL_PREFIX}/include /usr/include/quazip /usr/local/include/quazip ${QT_INCLUDE_DIR}/quazip ${QT_INCLUDE_DIR} ${QUAZIP_DIR}/include/quazip ${QUAZIP_DIR}/quazip ${QUAZIP_DIR}/include)
-find_library(QuaZip_LIBRARY NAMES quazip PATHS ${CMAKE_INSTALL_PREFIX}/lib64 ${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_INSTALL_PREFIX}/Library/Frameworks ${QUAZIP_DIR}/lib64 ${QUAZIP_DIR}/lib ${QUAZIP_DIR}/quazip ${QUAZIP_DIR})
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(quazip DEFAULT_MSG QuaZip_LIBRARY QuaZip_INCLUDE_DIR)
-set(QuaZip_LIBRARIES ${QuaZip_LIBRARY})
-mark_as_advanced(QuaZip_LIBRARY QuaZip_INCLUDE_DIR)
+# QUAZIP_FOUND               - QuaZip library was found
+# QUAZIP_INCLUDE_DIR         - Path to QuaZip include dir
+# QUAZIP_INCLUDE_DIRS        - Path to QuaZip and zlib include dir (combined from QUAZIP_INCLUDE_DIR + ZLIB_INCLUDE_DIR)
+# QUAZIP_LIBRARIES           - List of QuaZip libraries
+# QUAZIP_ZLIB_INCLUDE_DIR    - The include dir of zlib headers
+
+
+IF (QUAZIP_INCLUDE_DIRS AND QUAZIP_LIBRARIES)
+	# in cache already
+	SET(QUAZIP_FOUND TRUE)
+ELSE (QUAZIP_INCLUDE_DIRS AND QUAZIP_LIBRARIES)
+	IF (WIN32)
+		FIND_PATH(QUAZIP_LIBRARY_DIR
+			WIN32_DEBUG_POSTFIX d
+			NAMES libquazip.dll
+			HINTS "C:/Programme/" "C:/Program Files"
+			PATH_SUFFIXES QuaZip/lib
+		)
+		FIND_LIBRARY(QUAZIP_LIBRARIES NAMES libquazip.dll HINTS ${QUAZIP_LIBRARY_DIR})
+		FIND_PATH(QUAZIP_INCLUDE_DIR NAMES quazip.h HINTS ${QUAZIP_LIBRARY_DIR}/../ PATH_SUFFIXES include/quazip)
+		FIND_PATH(QUAZIP_ZLIB_INCLUDE_DIR NAMES zlib.h)
+	ELSE(WIN32)
+		FIND_PACKAGE(PkgConfig)
+#     pkg_check_modules(PC_QCA2 QUIET qca2)
+		pkg_check_modules(PC_QUAZIP quazip)
+		FIND_LIBRARY(QUAZIP_LIBRARIES
+			WIN32_DEBUG_POSTFIX d
+			NAMES quazip
+			HINTS /usr/lib /usr/lib64
+		)
+		FIND_PATH(QUAZIP_INCLUDE_DIR quazip.h
+			HINTS /usr/include /usr/local/include
+			PATH_SUFFIXES quazip
+		)
+		FIND_PATH(QUAZIP_ZLIB_INCLUDE_DIR zlib.h HINTS /usr/include /usr/local/include)
+	ENDIF (WIN32)
+	INCLUDE(FindPackageHandleStandardArgs)
+	SET(QUAZIP_INCLUDE_DIRS ${QUAZIP_INCLUDE_DIR} ${QUAZIP_ZLIB_INCLUDE_DIR})
+	find_package_handle_standard_args(QUAZIP DEFAULT_MSG  QUAZIP_LIBRARIES QUAZIP_INCLUDE_DIR QUAZIP_ZLIB_INCLUDE_DIR QUAZIP_INCLUDE_DIRS)
+ENDIF (QUAZIP_INCLUDE_DIRS AND QUAZIP_LIBRARIES)
