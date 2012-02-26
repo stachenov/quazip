@@ -128,7 +128,8 @@ int ZCALLBACK qiodevice_error_file_func (
    voidpf opaque UNUSED,
    voidpf stream)
 {
-    return !((QIODevice*)stream)->errorString().isEmpty();
+    // can't check for error due to the QIODevice API limitation
+    return 0;
 }
 
 void fill_qiodevice_filefunc (
