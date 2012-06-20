@@ -1,12 +1,12 @@
-QuaZIP is the C++ wrapper for the Gilles Vollant's ZIP/UNZIP package
+QuaZIP is the C++ wrapper for Gilles Vollant's ZIP/UNZIP package
 using Trolltech's Qt library.
 
-It contains original ZIP/UNZIP package C code and therefore depends on
-zlib library.
+It uses existing ZIP/UNZIP package C code and therefore depends on
+the zlib library.
 
 Also, it depends on Qt 4.
 
-To comile it on UNIX dialect:
+To compile it on UNIX dialect:
 
 $ cd quazip
 $ qmake
@@ -24,7 +24,7 @@ $ make install
 
 By default, it installs in /usr/local, but you may change it using
 
-$ qmake PREFIX=/wherever/you/whant/to/install
+$ qmake PREFIX=/wherever/you/want/to/install
 
 You do not have to compile and install QuaZIP to use it. You can just
 (and sometimes it may be the best way) add QuaZIP's source files to your
@@ -36,7 +36,7 @@ quazip/doc/* files for the more detailed documentation.
 For Windows, it's essentially the same, but you may have to adjust
 settings for different environments.
 
-If you want to include QuaZIP sources directly into your project or if
+If you want to include QuaZIP sources directly in your project or if
 you want to use QuaZIP compiled as a static library using
 "qmake CONFIG+=statliclib", you have to define the QUAZIP_STATIC macro,
 otherwise you're likely to run into problems as QuaZIP symbols will be
@@ -44,7 +44,7 @@ marked as dllimported.
 
 Copyright notice:
 
-Copyright (C) 2005-2011 Sergey A. Tachenov
+Copyright (C) 2005-2010 Sergey A. Tachenov
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License as published by
