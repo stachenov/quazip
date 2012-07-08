@@ -440,7 +440,10 @@ qint64 QuaZipFile::readData(char *data, qint64 maxSize)
 {
   p->setZipError(UNZ_OK);
   qint64 bytesRead=unzReadCurrentFile(p->zip->getUnzFile(), data, (unsigned)maxSize);
-  if(bytesRead<0) p->setZipError((int)bytesRead);
+  if (bytesRead < 0) {
+    p->setZipError((int) bytesRead);
+    return -1;
+  }
   return bytesRead;
 }
 
