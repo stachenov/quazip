@@ -12,13 +12,12 @@ void TestQuaZIODevice::read()
     zouts.zfree = (free_func) NULL;
     zouts.opaque = NULL;
     deflateInit(&zouts, Z_DEFAULT_COMPRESSION);
-    zouts.next_in = reinterpret_cast<Bytef*>("test");
+    zouts.next_in = reinterpret_cast<Bytef*>(const_cast<char*>("test"));
     zouts.avail_in = 4;
     zouts.next_out = reinterpret_cast<Bytef*>(buf.data());
     zouts.avail_out = buf.size();
     deflate(&zouts, Z_FINISH);
     deflateEnd(&zouts);
-    int size = buf.size() - zouts.avail_out;
     QBuffer testBuffer(&buf);
     testBuffer.open(QIODevice::ReadOnly);
     QuaZIODevice testDevice(&testBuffer);
@@ -54,5 +53,5 @@ void TestQuaZIODevice::write()
     int size = 5 - zins.avail_out;
     QCOMPARE(size, 4);
     outBuf[4] = '\0';
-    QCOMPARE(outBuf, "test");
+    QCOMPARE(static_cast<const char*>(outBuf), "test");
 }

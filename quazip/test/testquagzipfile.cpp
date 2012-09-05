@@ -18,7 +18,7 @@ void TestQuaGzipFile::read()
     QCOMPARE(testFile.read(buf, 5), static_cast<qint64>(4));
     testFile.close();
     QVERIFY(!testFile.isOpen());
-    QCOMPARE(buf, "test");
+    QCOMPARE(static_cast<const char*>(buf), "test");
     curDir.remove("tmp/test.gz");
     curDir.rmdir("tmp");
 }
@@ -37,7 +37,7 @@ void TestQuaGzipFile::write()
     buf[4] = '\0';
     QCOMPARE(gzread(gzFile, buf, 5), 4);
     gzclose(gzFile);
-    QCOMPARE(buf, "test");
+    QCOMPARE(static_cast<const char*>(buf), "test");
     curDir.remove("tmp/test.gz");
     curDir.rmdir("tmp");
 }
