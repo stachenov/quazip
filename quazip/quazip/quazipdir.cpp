@@ -145,12 +145,12 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
     }
     QDir::Filters fltr = filter;
     if (fltr == QDir::NoFilter)
-        fltr = filter;
+        fltr = this->filter;
     if (fltr == QDir::NoFilter)
         fltr = QDir::AllEntries;
     QStringList nmfltr = nameFilters;
     if (nmfltr.isEmpty())
-        nmfltr = nameFilters;
+        nmfltr = this->nameFilters;
     QSet<QString> dirsFound;
     do {
         QString name = zip->getCurrentFileName();
