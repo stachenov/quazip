@@ -1,5 +1,21 @@
 QuaZIP changes
 
+* 2012-09-07 0.5
+        * Added run_moc.bat files for building under Windows in case Qt
+          integration is not available (e. g. VS 2008 Express).
+        * Added the QuaZipDir class to simplify ZIP navigation in terms
+          of directories.
+        * Added the QuaGzipFile class for working with GZIP archives. It
+          was added as a bonus since it has nothing to do with the main
+          purpose of the library. It probably won't get any major
+          improvements, although minor bug fixes are possible.
+        * Added the QuaZIODevice class for working with zlib
+          compression. It has nothing to do with the ZIP format, and
+          therefore the same notice as for the QuaGzipFile applies.
+        * The global comment is no longer erased when adding files to
+          an archive.
+        * Many bug fixes.
+
 * 2012-01-14 0.4.4
         * Fixed isSequential() test that was causing open() failures on
           Unix.
