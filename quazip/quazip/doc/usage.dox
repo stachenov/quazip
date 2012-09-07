@@ -2,25 +2,28 @@
  * 
  * This page provides general information on QuaZIP usage. See classes
  * QuaZip and QuaZipFile for the detailed documentation on what can
- * QuaZIP do and what can not. Also, reading comments in the zip.h and
+ * QuaZIP do and what it can not. Also, reading comments in the zip.h and
  * unzip.h files (taken from the original ZIP/UNZIP package) is always a
  * good idea too. After all, QuaZIP is just a wrapper with a few
  * convenience extensions and reimplementations.
  *
  * QuaZip is a class representing ZIP archive, QuaZipFile represents a
- * file inside archive and subclasses QIODevice as well.
+ * file inside archive and subclasses QIODevice as well. One limitation
+ * is that there can be only one instance of QuaZipFile per QIODevice.
  *
  * \section terminology Terminology
  *
- * "QuaZIP" means whole this library, while "QuaZip" (not case
- * difference) is just one class in it.
+ * "QuaZIP" means whole this library, while "QuaZip" (note the
+ * lower case) is just one class in it.
  *
- * "ZIP/UNZIP API" means the original API of the Gilles Vollant's
- * ZIP/UNZIP package. It was slightly modified to better integrate with
- * Qt.
+ * "ZIP/UNZIP API" or "minizip" means the original API of the Gilles
+ * Vollant's ZIP/UNZIP package. It was slightly modified to better
+ * integrate with Qt.
  *
  * "ZIP", "ZIP archive" or "ZIP file" means any ZIP archive. Typically
- * this is a plain file with ".zip" (or ".ZIP") file name suffix.
+ * this is a plain file with ".zip" (or ".ZIP") file name suffix, but it
+ * can also be any seekable QIODevice (say, QBuffer, but not
+ * QTcpSocket).
  *
  * "A file inside archive", "a file inside ZIP" or something like that
  * means file either being read or written from/to some ZIP archive.
@@ -51,7 +54,7 @@
  *   other hand, \em do access ZIP archive, but do not reset or set
  *   error code. For example, QuaZipFile::pos() function. Such functions
  *   are explicitly marked in the documentation.
- * - Most functions have its own way to report errors, by returning a
+ * - Most functions have their own way to report errors, by returning a
  *   null string, negative value or \c false. If such a function returns
  *   error value, call getZipError() to get more information about
  *   error. See "zip.h" and "unzip.h" of the ZIP/UNZIP package for error
@@ -59,7 +62,7 @@
  * - If the function returns error-stating value (like \c false), but
  *   getZipError() returns UNZ_OK, it means that you did something
  *   obviously wrong. For example, tried to write in the archive open
- *   for reading or not open at all. You better just do not do that!
+ *   for reading or not open at all. You better just not do that!
  *   Most functions also issue a warning using qWarning() function in
  *   such cases. See documentation for a specific function for details
  *   on when it should not be called.

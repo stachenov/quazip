@@ -36,12 +36,14 @@
  *
  * \section platforms Platforms supported
  *
- * QuaZIP has been currently tested with Qt 4.0.0 on the following
- * platforms:
- * - linux-g++
- * - freebsd-g++
- * - hpux-acc
+ * QuaZIP has been currently tested on the following platforms:
+ * - linux-g++ (Ubuntu 11.10, Qt 4.7.4)
+ * - freebsd-g++ (Qt 4.0.0
+ * - hpux-acc (HP-UX 11.11)
+ * - hpux-g++ (HP-UX 11.11)
  * - win32-g++ (MinGW)
+ * - win32-msvc2008 (MS VS 2008 Express, Qt 4.8.1)
+ * - some Symbian version, reportedly
  * 
  * No testing has been done on other systems. Of course, patches to
  * make it work on any platform that it currently does not work on are
@@ -49,12 +51,13 @@
  *
  * \section whats-new What is new in this version of QuaZIP?
  *
- * See the NEWS file supplied with the distribution.
+ * See the NEWS.txt file supplied with the distribution.
  *
  * \section Requirements
  *
  * Just <a href="http://www.zlib.org/">zlib</a> and Qt 4. Well, Qt 4
- * depends on zlib anyway.
+ * depends on zlib anyway, but you will need zlib headers to compile
+ * QuaZIP.
  *
  * \section building Building, testing and installing
  *
@@ -86,33 +89,8 @@ $ make
 \verbatim
 $ qmake LIBS+=-L/usr/local/zlib/lib INCLUDEPATH+=/usr/local/zlib/include
 \endverbatim
- * (note abscence of "-I" before include path)
- *
- * To check if QuaZIP's basic features work ok on your platform, you may
- * wish to compile simple test programs provided in test directory.
- * Look in the sources of the tests to find out about their
- * requirements. Typically, the test looks something like this:
-\verbatim
-$ cd /wherever/quazip/source/is/quazip-x.y.z/test/zip
-$ qmake
-$ make
-$ ./zip
-$ cd ../unzip
-$ cp ../zip/test.zip ./test.zip
-$ mkdir out
-$ qmake
-$ make
-$ ./unzip
-\endverbatim
- *
- * You should see the zip contents with details as the output of the
- * "./unzip". Ignore message saying you should check the file name for
- * testCase() if you do not want to test
- * \link QuaZip::CaseSensitivity locale-aware case-insensitivity\endlink.
- * Otherwise, see the sources. In any case, this message appearing means
- * that everything else was fine. Otherwise, you will get some other error
- * message instead. Investigate it or send bug report including message,
- * platform and QuaZIP version used.
+ * (note abscence of "-I" before the include path and the presence of "-L"
+ * before the lib path)
  *
  * To install compiled library:
 \verbatim
@@ -130,6 +108,30 @@ $ make install
  *
  * Binary compatibility isn't guaranteed even between minor releases,
  * but usually it's preserved, thanks to the Pimpl idiom.
+ *
+ * \section test Testing
+ *
+ * To check if QuaZIP's basic features work ok on your platform, you may
+ * wish to compile the test suite provided in test directory:
+\verbatim
+$ cd /wherever/quazip/source/is/quazip-x.y.z/test
+$ qmake
+$ make
+$ ./qztest
+\endverbatim
+ *
+ * Note that the test suite looks for the quazip library in the "quazip"
+ * folder of the project ("../quazip"), but you may wish to use LIBS
+ * for some systems (Windows often puts the library in the separate
+ * "debug" or "release" directory). If you wish to use the quazip
+ * version that's already installed, provide the appropriate path.
+ *
+ * On some systems you may need to set PATH, LD_LIBRARY_PATH or
+ * SHLIB_PATH to get "qztest" to actually run.
+ *
+ * If everything went fine, the test suite should report a lot of PASS
+ * messages. If something goes wrong, it will provide details and a
+ * warning that some tests failed.
  *
  * \section using Using
  *
@@ -162,5 +164,5 @@ $ make install
  * my mail for that kind of stuff, so if a bug reported by mail isn't
  * fixed immediately, it will likely be forgotten forever.
  *
- * Copyright (C) 2005-2011 Sergey A. Tachenov
+ * Copyright (C) 2005-2012 Sergey A. Tachenov and contributors
  **/
