@@ -4,6 +4,7 @@ CONFIG += qtestlib
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += . ..
+LIBS += -L../quazip
 LIBS += -lquazip
 
 # Input
