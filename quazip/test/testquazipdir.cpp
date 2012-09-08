@@ -118,6 +118,10 @@ void TestQuaZipDir::cd_data()
             QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/subdir2/subdir3/test2sub.txt")
             << "testdir2/subdir" << "subdir2/subdir3" << "testdir2/subdir/subdir2/subdir3";
+    QTest::newRow("cdRoot") << "cdup.zip" << (
+            QStringList() << "test0.txt" << "testdir1/test1.txt"
+            << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+            << "testdir1" << "/" << "";
 }
 
 void TestQuaZipDir::cd()
