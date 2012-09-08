@@ -29,8 +29,8 @@ QuaZipDir::QuaZipDir(const QuaZipDir &that):
 QuaZipDir::QuaZipDir(QuaZip *zip, const QString &dir):
     d(new QuaZipDirPrivate(zip, dir))
 {
-    if (d->dir == "/")
-        d->dir = "";
+    if (d->dir.startsWith('/'))
+        d->dir = d->dir.mid(1);
 }
 
 QuaZipDir::~QuaZipDir()
@@ -60,14 +60,14 @@ QuaZip::CaseSensitivity QuaZipDir::caseSensitivity() const
 
 bool QuaZipDir::cd(const QString &directoryName)
 {
+    if (directoryName == "/") {
+        d->dir = "";
+        return true;
+    }
     QString dirName = directoryName;
     if (dirName.endsWith('/'))
         dirName.chop(1);
     if (dirName.contains('/')) {
-        if (dirName == "/") {
-            d->dir = "";
-            return true;
-        }
         QuaZipDir dir(*this);
         if (dirName.startsWith('/')) {
 #ifdef QUAZIP_QUAZIPDIR_DEBUG
@@ -387,12 +387,12 @@ QStringList QuaZipDir::entryList(QDir::Filters filters,
 
 bool QuaZipDir::exists(const QString &filePath) const
 {
+    if (filePath == "/")
+        return true;
     QString fileName = filePath;
     if (fileName.endsWith('/'))
         fileName.chop(1);
     if (fileName.contains('/')) {
-        if (fileName == "/")
-            return true;
         QFileInfo fileInfo(fileName);
 #ifdef QUAZIP_QUAZIPDIR_DEBUG
         qDebug("QuaZipDir::exists(): fileName=%s, fileInfo.fileName()=%s, "
@@ -484,7 +484,16 @@ void QuaZipDir::setNameFilters(const QStringList &nameFilters)
 
 void QuaZipDir::setPath(const QString &path)
 {
-    d->dir = path;
+    QString newDir = path;
+    if (newDir == "/") {
+        d->dir = "";
+    } else {
+        if (newDir.endsWith('/'))
+            newDir.chop(1);
+        if (newDir.startsWith('/'))
+            newDir = newDir.mid(1);
+        d->dir = newDir;
+    }
 }
 
 void QuaZipDir::setSorting(QDir::SortFlags sort)

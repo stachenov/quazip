@@ -15,7 +15,16 @@ class QuaZipDirPrivate;
 * features for ZIP archives.
 *
 * The only significant difference from QDir is that the root path is not
-* '/', but an empty string, therefore the path never starts with '/'.
+* '/', but an empty string since that's how the file paths are stored in
+* the archive. However, QuaZipDir understands the paths starting with
+* '/'. It is important in a few places:
+*
+* - In the cd() function.
+* - In the constructor.
+* - In the exists() function.
+*
+* Note that since ZIP uses '/' on all platforms, the '\' separator is
+* not supported.
 */
 class QUAZIP_EXPORT QuaZipDir {
 private:
@@ -26,6 +35,7 @@ public:
     /// Constructs a QuaZipDir instance pointing to the specified directory.
     /**
        If \a dir is not specified, points to the root of the archive.
+       The same happens if the \a dir is &quot;/&quot;.
      */
     QuaZipDir(QuaZip *zip, const QString &dir = QString());
     /// Destructor.
@@ -48,7 +58,16 @@ public:
     QString operator[](int pos) const;
     /// Returns the current case sensitivity mode.
     QuaZip::CaseSensitivity caseSensitivity() const;
-    /// Goes down into the specified directory.
+    /// Changes the 'current' directory.
+    /**
+      * If the path starts with '/', it is interpreted as an absolute
+      * path from the root of the archive. Otherwise, it is interpreted
+      * as a path relative to the current directory as was set by the
+      * previous cd() or the constructor.
+      * 
+      * Note that the subsequent path() call will not return a path
+      * starting with '/' in all cases.
+      */
     bool cd(const QString &dirName);
     /// Goes up.
     bool cdUp();
@@ -95,6 +114,12 @@ public:
     QStringList entryList(QDir::Filters filters = QDir::NoFilter,
         QDir::SortFlags sort = QDir::NoSort) const;
     /// Returns \c true if the entry with the specified name exists.
+    /**
+      The &quot;..&quot; is considered to exist if the current directory
+      is not root. The &quot;.&quot; and &quot;/&quot; are considered to
+      always exist. Paths starting with &quot;/&quot; are relative to
+      the archive root, other paths are relative to the current dir.
+      */
     bool exists(const QString &fileName) const;
     /// Return \c true if the directory pointed by this QuaZipDir exists.
     bool exists() const;
@@ -114,7 +139,8 @@ public:
     QStringList nameFilters() const;
     /// Returns the path to the current dir.
     /**
-      The path never starts with '/'
+      The path never starts with '/', and the root path is an empty
+      string.
       */
     QString path() const;
     /// Returns the path to the specified file relative to the current dir.
@@ -130,6 +156,10 @@ public:
       The difference from cd() is that this function never checks if the
       path actually exists and doesn't use relative paths, so it's
       possible to go to the root directory with setPath(&quot;&quot;).
+
+      Note that this function still chops the trailing and/or leading
+      '/' and treats a single '/' as the root path (path() will still
+      return an empty string).
       */
     void setPath(const QString &path);
     /// Sets the default sorting mode.
