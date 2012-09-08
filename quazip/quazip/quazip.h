@@ -115,6 +115,7 @@ class QUAZIP_EXPORT QuaZip {
       csSensitive=1, ///< Case sensitive.
       csInsensitive=2 ///< Case insensitive.
     };
+    static Qt::CaseSensitivity convertCaseSensitivity(CaseSensitivity);
   private:
     QuaZipPrivate *p;
     // not (and will not be) implemented

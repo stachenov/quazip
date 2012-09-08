@@ -89,6 +89,8 @@ class QuaZipFilePrivate {
       {
         zip=new QuaZip(zipName);
         this->fileName=fileName;
+        if (this->fileName.startsWith('/'))
+            this->fileName = this->fileName.mid(1);
         this->caseSensitivity=cs;
       }
     /// The constructor for the QuaZipFile constructor accepting a file name.
@@ -200,6 +202,8 @@ void QuaZipFile::setFileName(const QString& fileName, QuaZip::CaseSensitivity cs
     return;
   }
   p->fileName=fileName;
+  if (p->fileName.startsWith('/'))
+      p->fileName = p->fileName.mid(1);
   p->caseSensitivity=cs;
 }
 

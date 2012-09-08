@@ -281,14 +281,7 @@ bool QuaZip::setCurrentFile(const QString& fileName, CaseSensitivity cs)
     p->zipError=UNZ_PARAMERROR;
     return false;
   }
-  bool sens;
-  if(cs==csDefault) {
-#ifdef Q_WS_WIN
-    sens=false;
-#else
-    sens=true;
-#endif
-  } else sens=cs==csSensitive;
+  bool sens = convertCaseSensitivity(cs) == Qt::CaseSensitive;
   QString lower, current;
   if(!sens) lower=fileName.toLower();
   p->hasCurrentFile_f=false;
@@ -545,4 +538,17 @@ QList<QuaZipFileInfo> QuaZip::getFileInfoList() const
         return list;
     else
         return QList<QuaZipFileInfo>();
+}
+
+Qt::CaseSensitivity QuaZip::convertCaseSensitivity(QuaZip::CaseSensitivity cs)
+{
+  if (cs == csDefault) {
+#ifdef Q_WS_WIN
+      return Qt::CaseInsensitive;
+#else
+      return Qt::CaseSensitive;
+#endif
+  } else {
+      return cs == csSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive;
+  }
 }
