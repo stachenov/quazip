@@ -24,6 +24,11 @@ void TestQuaZipDir::entryList_data()
             << "" << static_cast<int>(QDir::NoFilter)
             << static_cast<int>(QDir::Unsorted)
             << (QStringList() << "laj/");
+    QTest::newRow("separate dir (subdir listing)") << "sepdirsub.zip" << (
+            QStringList() << "laj/" << "laj/lajfile.txt")
+            << "laj" << static_cast<int>(QDir::NoFilter)
+            << static_cast<int>(QDir::Unsorted)
+            << (QStringList() << "lajfile.txt");
     QTest::newRow("dirs only") << "dirsonly.zip" << (
             QStringList() << "file" << "dir/")
             << "" << static_cast<int>(QDir::Dirs)

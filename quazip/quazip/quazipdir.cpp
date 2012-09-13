@@ -306,6 +306,8 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
         if (!name.startsWith(basePath))
             continue;
         QString relativeName = name.mid(baseLength);
+        if (relativeName.isEmpty())
+            continue;
         bool isDir = false;
         bool isReal = true;
         if (relativeName.contains('/')) {
