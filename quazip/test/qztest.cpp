@@ -107,7 +107,7 @@ bool createTestArchive(const QString &zipName,
     }
     zip.setComment(QString("This is the %1 archive").arg(zipName));
     zip.close();
-    return true;
+    return QFileInfo(zipName).exists();
 }
 
 void removeTestFiles(const QStringList &fileNames, const QString &dir)
