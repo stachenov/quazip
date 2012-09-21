@@ -126,7 +126,7 @@ int ZCALLBACK qiodevice_close_file_func (
 
 int ZCALLBACK qiodevice_error_file_func (
    voidpf opaque UNUSED,
-   voidpf stream)
+   voidpf stream UNUSED)
 {
     // can't check for error due to the QIODevice API limitation
     return 0;
