@@ -8,6 +8,7 @@ DEPENDPATH += .
 INCLUDEPATH += . ..
 LIBS += -L../quazip
 LIBS += -lquazip
+!win32: LIBS += -lz
 
 # Input
 HEADERS += qztest.h \
