@@ -1,6 +1,8 @@
 TEMPLATE = app
 QT -= gui
 CONFIG += qtestlib
+CONFIG += console
+CONFIG -= app_bundle
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += . ..
