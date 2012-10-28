@@ -138,7 +138,10 @@ void TestJlCompress::extractFile()
             fileToExtract);
     QCOMPARE(destInfo.size(), srcInfo.size());
     curDir.remove("jlext/jlfile/" + destName);
-    curDir.rmpath("jlext/jlfile");
+    curDir.mkdir("jlext/jlfile/" + destName);
+    QVERIFY(JlCompress::extractFile(zipName, fileToExtract,
+                "jlext/jlfile/" + destName).isEmpty());
+    curDir.rmpath("jlext/jlfile/" + destName);
     removeTestFiles(fileNames);
     curDir.remove(zipName);
 }

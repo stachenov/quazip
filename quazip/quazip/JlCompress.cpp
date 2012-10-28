@@ -153,7 +153,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
         return false;
     }
 
-    if (QFileInfo(fileDest).isDir())
+    if (fileDest.endsWith('/') && QFileInfo(fileDest).isDir())
         return true;
 
     // Apro il file risultato
