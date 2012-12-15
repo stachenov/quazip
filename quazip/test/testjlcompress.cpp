@@ -137,6 +137,7 @@ void TestJlCompress::extractFile()
     QFileInfo destInfo("jlext/jlfile/" + destName), srcInfo("tmp/" +
             fileToExtract);
     QCOMPARE(destInfo.size(), srcInfo.size());
+    QCOMPARE(destInfo.permissions(), srcInfo.permissions());
     curDir.remove("jlext/jlfile/" + destName);
     curDir.mkdir("jlext/jlfile/" + destName);
     QVERIFY(JlCompress::extractFile(zipName, fileToExtract,
@@ -176,7 +177,9 @@ void TestJlCompress::extractFiles()
                 "jlext/jlfiles").isEmpty());
     foreach (QString fileName, filesToExtract) {
         QFileInfo fileInfo("jlext/jlfiles/" + fileName);
-        QCOMPARE(fileInfo.size(), QFileInfo("tmp/" + fileName).size());
+        QFileInfo extInfo("tmp/" + fileName);
+        QCOMPARE(fileInfo.size(), extInfo.size());
+        QCOMPARE(fileInfo.permissions(), extInfo.permissions());
         curDir.remove("jlext/jlfiles/" + fileName);
         curDir.rmpath(fileInfo.dir().path());
     }
@@ -216,8 +219,10 @@ void TestJlCompress::extractDir()
     foreach (QString fileName, fileNames) {
         QString fullName = "jlext/jldir/" + fileName;
         QFileInfo fileInfo(fullName);
+        QFileInfo extInfo("tmp/" + fileName);
         if (!fileInfo.isDir())
-            QCOMPARE(fileInfo.size(), QFileInfo("tmp/" + fileName).size());
+            QCOMPARE(fileInfo.size(), extInfo.size());
+        QCOMPARE(fileInfo.permissions(), extInfo.permissions());
         curDir.remove(fullName);
         curDir.rmpath(fileInfo.dir().path());
         QString absolutePath = fileInfo.absoluteFilePath();
