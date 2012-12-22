@@ -5,9 +5,7 @@ CONFIG += console
 CONFIG -= app_bundle
 TARGET = 
 DEPENDPATH += .
-INCLUDEPATH += . ..
-LIBS += -L../quazip
-LIBS += -lquazip
+INCLUDEPATH += .
 !win32: LIBS += -lz
 
 # Input
@@ -31,3 +29,10 @@ testquazipfile.cpp
 
 OBJECTS_DIR = .obj
 MOC_DIR = .moc
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../quazip/release/ -lquazip
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/debug/ -lquazip
+else:unix: LIBS += -L$$OUT_PWD/../quazip/ -lquazip
+
+INCLUDEPATH += $$PWD/../quazip
+DEPENDPATH += $$PWD/../quazip
