@@ -3,10 +3,13 @@ QT -= gui
 CONFIG += qtestlib
 CONFIG += console
 CONFIG -= app_bundle
-TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .
 !win32: LIBS += -lz
+win32 {
+    # workaround for qdatetime.h macro bug
+    DEFINES += NOMINMAX
+}
 
 # Input
 HEADERS += qztest.h \

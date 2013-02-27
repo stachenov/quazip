@@ -45,7 +45,8 @@ win32 {
     headers.files=$$HEADERS
     target.path=$$PREFIX/lib
     INSTALLS += headers target
-
+    # workaround for qdatetime.h macro bug
+    DEFINES += NOMINMAX
 }
 
 
