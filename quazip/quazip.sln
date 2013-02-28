@@ -1,9 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "quazip", "quazip\quazip.vcproj", "{E4AC5F56-B711-4F0E-BC83-CDE8B6CD53AD}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C++ Express 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "quazip", "quazip\quazip.vcxproj", "{E4AC5F56-B711-4F0E-BC83-CDE8B6CD53AD}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qztest", "qztest\qztest.vcproj", "{7632B767-D089-4F15-8B1E-C4B3F9EBF592}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "qztest", "qztest\qztest.vcxproj", "{7632B767-D089-4F15-8B1E-C4B3F9EBF592}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
