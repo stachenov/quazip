@@ -99,9 +99,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="JlCompress.cpp" />
-    <ClCompile Include="moc_quagzipfile.cpp" />
-    <ClCompile Include="moc_quaziodevice.cpp" />
-    <ClCompile Include="moc_quazipfile.cpp" />
+    <ClCompile Include="moc\moc_quagzipfile.cpp" />
+    <ClCompile Include="moc\moc_quaziodevice.cpp" />
+    <ClCompile Include="moc\moc_quazipfile.cpp" />
     <ClCompile Include="qioapi.cpp" />
     <ClCompile Include="quaadler32.cpp" />
     <ClCompile Include="quacrc32.cpp" />

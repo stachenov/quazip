@@ -100,13 +100,13 @@
     <ClInclude Include="testquazipfile.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="moc_testjlcompress.cpp" />
-    <ClCompile Include="moc_testquachecksum32.cpp" />
-    <ClCompile Include="moc_testquagzipfile.cpp" />
-    <ClCompile Include="moc_testquaziodevice.cpp" />
-    <ClCompile Include="moc_testquazip.cpp" />
-    <ClCompile Include="moc_testquazipdir.cpp" />
-    <ClCompile Include="moc_testquazipfile.cpp" />
+    <ClCompile Include="moc\moc_testjlcompress.cpp" />
+    <ClCompile Include="moc\moc_testquachecksum32.cpp" />
+    <ClCompile Include="moc\moc_testquagzipfile.cpp" />
+    <ClCompile Include="moc\moc_testquaziodevice.cpp" />
+    <ClCompile Include="moc\moc_testquazip.cpp" />
+    <ClCompile Include="moc\moc_testquazipdir.cpp" />
+    <ClCompile Include="moc\moc_testquazipfile.cpp" />
     <ClCompile Include="qztest.cpp" />
     <ClCompile Include="testjlcompress.cpp" />
     <ClCompile Include="testquachecksum32.cpp" />
