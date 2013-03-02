@@ -646,7 +646,7 @@ EXCLUDE                = quazip/unzip.h \
                          quazip/zip.h \
                          quazip/ioapi.h \
                          quazip/crypt.h \
-                         test/
+                         qztest/
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
