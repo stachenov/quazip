@@ -1,8 +1,6 @@
 TEMPLATE = lib
 CONFIG += qt warn_on
 QT -= gui
-DEPENDPATH += .
-INCLUDEPATH += .
 !win32:VERSION = 1.0.0
 
 DEFINES += QUAZIP_BUILD
