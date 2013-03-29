@@ -91,6 +91,17 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
     QDir directory(dir);
     if (!directory.exists()) return false;
 
+    QDir origDirectory(origDir);
+	if (dir != origDir) {
+		QuaZipFile dirZipFile(zip);
+		if (!dirZipFile.open(QIODevice::WriteOnly,
+			QuaZipNewInfo(origDirectory.relativeFilePath(dir) + "/", dir), 0, 0, 0)) {
+				return false;
+		}
+		dirZipFile.close();
+	}
+
+
     // Se comprimo anche le sotto cartelle
     if (recursive) {
         // Per ogni sotto cartella
@@ -103,7 +114,6 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
 
     // Per ogni file nella cartella
     QFileInfoList files = directory.entryInfoList(QDir::Files);
-    QDir origDirectory(origDir);
     Q_FOREACH (QFileInfo file, files) {
         // Se non e un file o e il file compresso che sto creando
         if(!file.isFile()||file.absoluteFilePath()==zip->getZipName()) continue;
