@@ -23,6 +23,7 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include <QFile>
 #include <QFlags>
+#include <QHash>
 
 #include "quazip.h"
 
@@ -65,17 +66,21 @@ class QuaZipPrivate {
     bool dataDescriptorWritingEnabled;
     /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q):
-        q(q),
+      q(q),
       fileNameCodec(QTextCodec::codecForLocale()),
       commentCodec(QTextCodec::codecForLocale()),
       ioDevice(NULL),
       mode(QuaZip::mdNotOpen),
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
-      dataDescriptorWritingEnabled(true) {}
+      dataDescriptorWritingEnabled(true)
+    {
+        lastMappedDirectoryEntry.num_of_file = 0;
+        lastMappedDirectoryEntry.pos_in_zip_directory = 0;
+    }
     /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q, const QString &zipName):
-        q(q),
+      q(q),
       fileNameCodec(QTextCodec::codecForLocale()),
       commentCodec(QTextCodec::codecForLocale()),
       zipName(zipName),
@@ -83,7 +88,11 @@ class QuaZipPrivate {
       mode(QuaZip::mdNotOpen),
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
-      dataDescriptorWritingEnabled(true) {}
+      dataDescriptorWritingEnabled(true)
+    {
+        lastMappedDirectoryEntry.num_of_file = 0;
+        lastMappedDirectoryEntry.pos_in_zip_directory = 0;
+    }
     /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q, QIODevice *ioDevice):
         q(q),
@@ -93,11 +102,71 @@ class QuaZipPrivate {
       mode(QuaZip::mdNotOpen),
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
-      dataDescriptorWritingEnabled(true) {}
+      dataDescriptorWritingEnabled(true)
+    {
+        lastMappedDirectoryEntry.num_of_file = 0;
+        lastMappedDirectoryEntry.pos_in_zip_directory = 0;
+    }
     /// Returns either a list of file names or a list of QuaZipFileInfo.
     template<typename TFileInfo>
         bool getFileInfoList(QList<TFileInfo> *result) const;
+
+    /// Stores map of filenames and file locations for unzipping
+      inline void clearDirectoryMap();
+      inline void addCurrentFileToDirectoryMap(const QString &fileName);
+      bool goToFirstUnmappedFile();
+      QHash<QString, unz_file_pos> directoryCaseSensitive;
+      QHash<QString, unz_file_pos> directoryCaseInsensitive;
+      unz_file_pos lastMappedDirectoryEntry;
 };
+
+void QuaZipPrivate::clearDirectoryMap()
+{
+    directoryCaseInsensitive.clear();
+    directoryCaseSensitive.clear();
+    lastMappedDirectoryEntry.num_of_file = 0;
+    lastMappedDirectoryEntry.pos_in_zip_directory = 0;
+}
+
+void QuaZipPrivate::addCurrentFileToDirectoryMap(const QString &fileName)
+{
+    if (!hasCurrentFile_f || fileName.isEmpty()) {
+        return;
+    }
+    // Adds current file to filename map as fileName
+    unz_file_pos fileDirectoryPos;
+    unzGetFilePos(unzFile_f, &fileDirectoryPos);
+    directoryCaseSensitive.insert(fileName, fileDirectoryPos);
+    // Only add lowercase to directory map if not already there
+    // ensures only map the first one seen
+    QString lower = fileName.toLower();
+    if (!directoryCaseInsensitive.contains(lower))
+        directoryCaseInsensitive.insert(lower, fileDirectoryPos);
+    // Mark last one
+    if (fileDirectoryPos.pos_in_zip_directory > lastMappedDirectoryEntry.pos_in_zip_directory)
+        lastMappedDirectoryEntry = fileDirectoryPos;
+}
+
+bool QuaZipPrivate::goToFirstUnmappedFile()
+{
+    zipError = UNZ_OK;
+    if (mode != QuaZip::mdUnzip) {
+        qWarning("QuaZipPrivate::goToNextUnmappedFile(): ZIP is not open in mdUnzip mode");
+        return false;
+    }
+    // If not mapped anything, go to beginning
+    if (lastMappedDirectoryEntry.pos_in_zip_directory == 0) {
+        unzGoToFirstFile(unzFile_f);
+    } else {
+        // Goto the last one mapped, plus one
+        unzGoToFilePos(unzFile_f, &lastMappedDirectoryEntry);
+        unzGoToNextFile(unzFile_f);
+    }
+    hasCurrentFile_f=zipError==UNZ_OK;
+    if(zipError==UNZ_END_OF_LIST_OF_FILE)
+      zipError=UNZ_OK;
+    return hasCurrentFile_f;
+}
 
 QuaZip::QuaZip():
   p(new QuaZipPrivate(this))
@@ -204,6 +273,7 @@ void QuaZip::close()
       delete p->ioDevice;
       p->ioDevice = NULL;
   }
+  p->clearDirectoryMap();
   if(p->zipError==UNZ_OK)
     p->mode=mdNotOpen;
 }
@@ -281,11 +351,33 @@ bool QuaZip::setCurrentFile(const QString& fileName, CaseSensitivity cs)
     p->zipError=UNZ_PARAMERROR;
     return false;
   }
+  // Find the file by name
   bool sens = convertCaseSensitivity(cs) == Qt::CaseSensitive;
   QString lower, current;
   if(!sens) lower=fileName.toLower();
   p->hasCurrentFile_f=false;
-  for(bool more=goToFirstFile(); more; more=goToNextFile()) {
+
+  // Check the appropriate Map
+  unz_file_pos fileDirPos;
+  fileDirPos.pos_in_zip_directory = 0;
+  if (sens) {
+      if (p->directoryCaseSensitive.contains(fileName))
+          fileDirPos = p->directoryCaseSensitive.value(fileName);
+  } else {
+      if (p->directoryCaseInsensitive.contains(lower))
+          fileDirPos = p->directoryCaseInsensitive.value(lower);
+  }
+
+  if (fileDirPos.pos_in_zip_directory != 0) {
+      p->zipError = unzGoToFilePos(p->unzFile_f, &fileDirPos);
+      p->hasCurrentFile_f = p->zipError == UNZ_OK;
+  }
+
+  if (p->hasCurrentFile_f)
+      return p->hasCurrentFile_f;
+
+  // Not mapped yet, start from where we have got to so far
+  for(bool more=p->goToFirstUnmappedFile(); more; more=goToNextFile()) {
     current=getCurrentFileName();
     if(current.isEmpty()) return false;
     if(sens) {
@@ -363,6 +455,8 @@ bool QuaZip::getCurrentFileInfo(QuaZipFileInfo *info)const
   info->dateTime=QDateTime(
       QDate(info_z.tmu_date.tm_year, info_z.tmu_date.tm_mon+1, info_z.tmu_date.tm_mday),
       QTime(info_z.tmu_date.tm_hour, info_z.tmu_date.tm_min, info_z.tmu_date.tm_sec));
+  // Add to directory map
+  p->addCurrentFileToDirectoryMap(info->name);
   return true;
 }
 
@@ -379,7 +473,12 @@ QString QuaZip::getCurrentFileName()const
   if((fakeThis->p->zipError=unzGetCurrentFileInfo(p->unzFile_f, NULL, fileName.data(), fileName.size(),
       NULL, 0, NULL, 0))!=UNZ_OK)
     return QString();
-  return p->fileNameCodec->toUnicode(fileName.constData());
+  QString result = p->fileNameCodec->toUnicode(fileName.constData());
+  if (result.isEmpty())
+      return result;
+  // Add to directory map
+  p->addCurrentFileToDirectoryMap(result);
+  return result;
 }
 
 void QuaZip::setFileNameCodec(QTextCodec *fileNameCodec)
