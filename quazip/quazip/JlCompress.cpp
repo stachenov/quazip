@@ -168,7 +168,8 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
         return false;
 
     if (fileDest.endsWith('/') && QFileInfo(fileDest).isDir()) {
-        return QFile(fileDest).setPermissions(info.getPermissions());
+        QFile(fileDest).setPermissions(info.getPermissions());
+        return true;
     }
 
     // Apro il file risultato
@@ -191,7 +192,8 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
         return false;
     }
 
-    return outFile.setPermissions(info.getPermissions());
+    outFile.setPermissions(info.getPermissions());
+    return true;
 }
 
 /**
