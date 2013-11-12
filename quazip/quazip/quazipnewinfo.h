@@ -25,6 +25,7 @@ quazip/(un)zip.h files for details, basically it's zlib license.
  **/
 
 #include <QDateTime>
+#include <QFile>
 #include <QString>
 
 #include "quazip_global.h"
