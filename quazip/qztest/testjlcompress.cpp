@@ -127,8 +127,10 @@ void TestJlCompress::extractFile_data()
         << "testdir2/test2.txt" << "test2.txt" << QByteArray();
     QTest::newRow("russian") << "jlextfilerus.zip" << (
             QStringList() << "test0.txt" << "testdir1/test1.txt"
-            << "testdir2/тест2.txt" << "testdir2/subdir/test2sub.txt")
-        << "testdir2/тест2.txt" << "тест2.txt" << QByteArray("IBM866");
+            << QString::fromUtf8("testdir2/тест2.txt")
+            << "testdir2/subdir/test2sub.txt")
+        << QString::fromUtf8("testdir2/тест2.txt")
+        << QString::fromUtf8("тест2.txt") << QByteArray("IBM866");
 }
 
 void TestJlCompress::extractFile()
