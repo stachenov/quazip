@@ -120,10 +120,15 @@ void TestJlCompress::extractFile_data()
     QTest::addColumn<QStringList>("fileNames");
     QTest::addColumn<QString>("fileToExtract");
     QTest::addColumn<QString>("destName");
+    QTest::addColumn<QByteArray>("encoding");
     QTest::newRow("simple") << "jlextfile.zip" << (
             QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
-        << "testdir2/test2.txt" << "test2.txt";
+        << "testdir2/test2.txt" << "test2.txt" << QByteArray();
+    QTest::newRow("russian") << "jlextfilerus.zip" << (
+            QStringList() << "test0.txt" << "testdir1/test1.txt"
+            << "testdir2/тест2.txt" << "testdir2/subdir/test2sub.txt")
+        << "testdir2/тест2.txt" << "тест2.txt" << QByteArray("IBM866");
 }
 
 void TestJlCompress::extractFile()
@@ -132,6 +137,7 @@ void TestJlCompress::extractFile()
     QFETCH(QStringList, fileNames);
     QFETCH(QString, fileToExtract);
     QFETCH(QString, destName);
+    QFETCH(QByteArray, encoding);
     QDir curDir;
     if (!curDir.mkpath("jlext/jlfile")) {
         QFAIL("Couldn't mkpath jlext/jlfile");
@@ -139,9 +145,11 @@ void TestJlCompress::extractFile()
     if (!createTestFiles(fileNames)) {
         QFAIL("Couldn't create test files");
     }
-    if (!JlCompress::compressDir(zipName, "tmp")) {
-        QFAIL("Couldn't create test archive");
+    if (!createTestArchive(zipName, fileNames,
+                           QTextCodec::codecForName(encoding))) {
+        QFAIL("Can't create test archive");
     }
+    QuaZip::setDefaultFileNameCodec(encoding);
     QVERIFY(!JlCompress::extractFile(zipName, fileToExtract,
                 "jlext/jlfile/" + destName).isEmpty());
     QFileInfo destInfo("jlext/jlfile/" + destName), srcInfo("tmp/" +

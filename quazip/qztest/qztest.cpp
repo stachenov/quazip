@@ -50,10 +50,20 @@ bool createTestFiles(const QStringList &fileNames, const QString &dir)
     return true;
 }
 
-bool createTestArchive(const QString &zipName, 
+bool createTestArchive(const QString &zipName,
                        const QStringList &fileNames,
                        const QString &dir) {
+    return createTestArchive(zipName, fileNames, NULL, dir);
+}
+
+bool createTestArchive(const QString &zipName,
+                              const QStringList &fileNames,
+                              QTextCodec *codec,
+                              const QString &dir) {
     QuaZip zip(zipName);
+    if (codec != NULL) {
+        zip.setFileNameCodec(codec);
+    }
     if (!zip.open(QuaZip::mdCreate)) {
         qWarning("Couldn't open %s", zipName.toUtf8().constData());
         return false;

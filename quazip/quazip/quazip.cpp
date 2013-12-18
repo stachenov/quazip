@@ -64,10 +64,18 @@ class QuaZipPrivate {
     int zipError;
     /// Whether \ref QuaZip::setDataDescriptorWritingEnabled() "the data descriptor writing mode" is enabled.
     bool dataDescriptorWritingEnabled;
+    inline QTextCodec *getDefaultFileNameCodec()
+    {
+        if (defaultFileNameCodec == NULL) {
+            return QTextCodec::codecForLocale();
+        } else {
+            return defaultFileNameCodec;
+        }
+    }
     /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q):
       q(q),
-      fileNameCodec(QTextCodec::codecForLocale()),
+      fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QTextCodec::codecForLocale()),
       ioDevice(NULL),
       mode(QuaZip::mdNotOpen),
@@ -81,7 +89,7 @@ class QuaZipPrivate {
     /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q, const QString &zipName):
       q(q),
-      fileNameCodec(QTextCodec::codecForLocale()),
+      fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QTextCodec::codecForLocale()),
       zipName(zipName),
       ioDevice(NULL),
@@ -96,7 +104,7 @@ class QuaZipPrivate {
     /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q, QIODevice *ioDevice):
         q(q),
-      fileNameCodec(QTextCodec::codecForLocale()),
+      fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QTextCodec::codecForLocale()),
       ioDevice(ioDevice),
       mode(QuaZip::mdNotOpen),
@@ -118,7 +126,10 @@ class QuaZipPrivate {
       QHash<QString, unz_file_pos> directoryCaseSensitive;
       QHash<QString, unz_file_pos> directoryCaseInsensitive;
       unz_file_pos lastMappedDirectoryEntry;
+      static QTextCodec *defaultFileNameCodec;
 };
+
+QTextCodec *QuaZipPrivate::defaultFileNameCodec = NULL;
 
 void QuaZipPrivate::clearDirectoryMap()
 {
@@ -650,4 +661,14 @@ Qt::CaseSensitivity QuaZip::convertCaseSensitivity(QuaZip::CaseSensitivity cs)
   } else {
       return cs == csSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive;
   }
+}
+
+void QuaZip::setDefaultFileNameCodec(QTextCodec *codec)
+{
+    QuaZipPrivate::defaultFileNameCodec = codec;
+}
+
+void QuaZip::setDefaultFileNameCodec(const char *codecName)
+{
+    setDefaultFileNameCodec(QTextCodec::codecForName(codecName));
 }

@@ -10,6 +10,8 @@ private slots:
     void getFileList();
     void add_data();
     void add();
+    void setFileNameCodec_data();
+    void setFileNameCodec();
 };
 
 #endif // QUAZIP_TEST_QUAZIP_H

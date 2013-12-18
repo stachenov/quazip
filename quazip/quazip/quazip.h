@@ -414,6 +414,43 @@ class QUAZIP_EXPORT QuaZip {
       \sa getFileNameList()
       */
     QList<QuaZipFileInfo> getFileInfoList() const;
+    /// Sets the default file name codec to use.
+    /**
+     * The default codec is used by the constructors, so calling this function
+     * won't affect the QuaZip instances already created at that moment.
+     *
+     * The codec specified here can be overriden by calling setFileNameCodec().
+     * If neither function is called, QTextCodec::codecForLocale() will be used
+     * to decode or encode file names. Use this function with caution if
+     * the application uses other libraries that depend on QuaZIP. Those
+     * libraries can either call this function by themselves, thus overriding
+     * your setting or can rely on the default encoding, thus failing
+     * mysteriously if you change it. For these reasons, it isn't recommended
+     * to use this function if you are developing a library, not an application.
+     * Instead, ask your library users to call it in case they need specific
+     * encoding.
+     *
+     * In most cases, using setFileNameCodec() instead is the right choice.
+     * However, if you depend on third-party code that uses QuaZIP, then the
+     * reasons stated above can actually become a reason to use this function
+     * in case the third-party code in question fails because it doesn't
+     * understand the encoding you need and doesn't provide a way to specify it.
+     * This applies to the JlCompress class as well, as it was contributed and
+     * doesn't support explicit encoding parameters.
+     *
+     * In short: use setFileNameCodec() when you can, resort to
+     * setDefaultFileNameCodec() when you don't have access to the QuaZip
+     * instance.
+     *
+     * @param codec The codec to use by default. If NULL, resets to default.
+     */
+    static void setDefaultFileNameCodec(QTextCodec *codec);
+    /**
+     * @overload
+     * Equivalent to calling
+     * setDefltFileNameCodec(QTextCodec::codecForName(codecName)).
+     */
+    static void setDefaultFileNameCodec(const char *codecName);
 };
 
 #endif

@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QHash>
+#include <QTextCodec>
 
 #include <QtTest/QtTest>
 
@@ -121,5 +122,49 @@ void TestQuaZip::add()
     testZip.close();
     removeTestFiles(fileNames);
     removeTestFiles(fileNamesToAdd);
+    curDir.remove(zipName);
+}
+
+void TestQuaZip::setFileNameCodec_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QStringList>("fileNames");
+    QTest::addColumn<QByteArray>("encoding");
+    QTest::newRow("russian") << QString::fromUtf8("russian.zip") << (
+        QStringList() << QString::fromUtf8("тест.txt")) << QByteArray("IBM866");
+}
+
+void TestQuaZip::setFileNameCodec()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QStringList, fileNames);
+    QFETCH(QByteArray, encoding);
+    qSort(fileNames);
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    if (!createTestFiles(fileNames)) {
+        QFAIL("Can't create test file");
+    }
+    if (!createTestArchive(zipName, fileNames,
+                           QTextCodec::codecForName(encoding))) {
+        QFAIL("Can't create test archive");
+    }
+    QuaZip testZip(zipName);
+    QVERIFY(testZip.open(QuaZip::mdUnzip));
+    QStringList fileList = testZip.getFileNameList();
+    qSort(fileList);
+    QVERIFY(fileList[0] != fileNames[0]);
+    testZip.close();
+    testZip.setFileNameCodec(encoding);
+    QVERIFY(testZip.open(QuaZip::mdUnzip));
+    fileList = testZip.getFileNameList();
+    qSort(fileList);
+    QCOMPARE(fileList, fileNames);
+    testZip.close();
+    // clean up
+    removeTestFiles(fileNames);
     curDir.remove(zipName);
 }
