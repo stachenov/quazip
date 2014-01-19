@@ -53,7 +53,7 @@ class QuaZipFilePrivate {
       */
     qint64 writePos;
     /// Uncompressed size to write along with a raw file.
-    ulong uncompressedSize;
+    quint64 uncompressedSize;
     /// CRC to write along with a raw file.
     quint32 crc;
     /// Whether \ref zip points to an internal QuaZip instance.
@@ -307,14 +307,14 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
     info_z.external_fa=(uLong)info.externalAttr;
     if (!p->zip->isDataDescriptorWritingEnabled())
         zipClearFlags(p->zip->getZipFile(), ZIP_WRITE_DATA_DESCRIPTOR);
-    p->setZipError(zipOpenNewFileInZip3(p->zip->getZipFile(),
+    p->setZipError(zipOpenNewFileInZip3_64(p->zip->getZipFile(),
           p->zip->getFileNameCodec()->fromUnicode(info.name).constData(), &info_z,
           info.extraLocal.constData(), info.extraLocal.length(),
           info.extraGlobal.constData(), info.extraGlobal.length(),
           p->zip->getCommentCodec()->fromUnicode(info.comment).constData(),
           method, level, (int)raw,
           windowBits, memLevel, strategy,
-          password, (uLong)crc));
+          password, (uLong)crc, p->zip->isZip64Enabled()));
     if(p->zipError==UNZ_OK) {
       p->writePos=0;
       setOpenMode(mode);
@@ -387,10 +387,10 @@ qint64 QuaZipFile::size()const
 
 qint64 QuaZipFile::csize()const
 {
-  unz_file_info info_z;
+  unz_file_info64 info_z;
   p->setZipError(UNZ_OK);
   if(p->zip==NULL||p->zip->getMode()!=QuaZip::mdUnzip) return -1;
-  p->setZipError(unzGetCurrentFileInfo(p->zip->getUnzFile(), &info_z, NULL, 0, NULL, 0, NULL, 0));
+  p->setZipError(unzGetCurrentFileInfo64(p->zip->getUnzFile(), &info_z, NULL, 0, NULL, 0, NULL, 0));
   if(p->zipError!=UNZ_OK)
     return -1;
   return info_z.compressed_size;
@@ -398,10 +398,10 @@ qint64 QuaZipFile::csize()const
 
 qint64 QuaZipFile::usize()const
 {
-  unz_file_info info_z;
+  unz_file_info64 info_z;
   p->setZipError(UNZ_OK);
   if(p->zip==NULL||p->zip->getMode()!=QuaZip::mdUnzip) return -1;
-  p->setZipError(unzGetCurrentFileInfo(p->zip->getUnzFile(), &info_z, NULL, 0, NULL, 0, NULL, 0));
+  p->setZipError(unzGetCurrentFileInfo64(p->zip->getUnzFile(), &info_z, NULL, 0, NULL, 0, NULL, 0));
   if(p->zipError!=UNZ_OK)
     return -1;
   return info_z.uncompressed_size;
@@ -426,7 +426,7 @@ void QuaZipFile::close()
   if(openMode()&ReadOnly)
     p->setZipError(unzCloseCurrentFile(p->zip->getUnzFile()));
   else if(openMode()&WriteOnly)
-    if(isRaw()) p->setZipError(zipCloseFileInZipRaw(p->zip->getZipFile(), p->uncompressedSize, p->crc));
+    if(isRaw()) p->setZipError(zipCloseFileInZipRaw64(p->zip->getZipFile(), p->uncompressedSize, p->crc));
     else p->setZipError(zipCloseFileInZip(p->zip->getZipFile()));
   else {
     qWarning("Wrong open mode: %d", (int)openMode());

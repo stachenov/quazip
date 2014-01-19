@@ -1,7 +1,6 @@
 #include "quazipfileinfo.h"
 
-QFile::Permissions QuaZipFileInfo::getPermissions() const
-{
+static QFile::Permissions permissionsFromExternalAttr(quint32 externalAttr) {
     quint32 uPerm = (externalAttr & 0xFFFF0000u) >> 16;
     QFile::Permissions perm = 0;
     if ((uPerm & 0400) != 0)
@@ -23,4 +22,15 @@ QFile::Permissions QuaZipFileInfo::getPermissions() const
     if ((uPerm & 0001) != 0)
         perm |= QFile::ExeOther;
     return perm;
+
+}
+
+QFile::Permissions QuaZipFileInfo::getPermissions() const
+{
+    return permissionsFromExternalAttr(externalAttr);
+}
+
+QFile::Permissions QuaZipFileInfo64::getPermissions() const
+{
+    return permissionsFromExternalAttr(externalAttr);
 }

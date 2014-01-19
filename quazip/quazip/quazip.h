@@ -174,7 +174,11 @@ class QUAZIP_EXPORT QuaZip {
      * by its file name. The default API (qioapi.cpp) just delegates
      * everything to the QIODevice API. Not only this allows to use a
      * QIODevice instead of file name, but also has a nice side effect
-     * of raising the file size limit from 2G to 4G.
+     * of raising the file size limit from 2G to 4G (in non-zip64 archives).
+     *
+     * \note If the zip64 support is needed, the ioApi argument \em must be NULL
+     * because due to the backwards compatibility issues it can be used to
+     * provide a 32-bit API only.
      *
      * In short: just forget about the \a ioApi argument and you'll be
      * fine.
@@ -330,13 +334,26 @@ class QUAZIP_EXPORT QuaZip {
      *
      * Does nothing and returns \c false in any of the following cases.
      * - ZIP is not open;
-     * - ZIP does not have current file;
-     * - \a info is \c NULL;
+     * - ZIP does not have current file.
      *
-     * In all these cases getZipError() returns \c UNZ_OK since there
+     * In both cases getZipError() returns \c UNZ_OK since there
      * is no ZIP/UNZIP API call.
+     *
+     * This overload doesn't support zip64.
+     *
+     * \sa getCurrentFileInfo(QuaZipFileInfo64* info)const
      **/
     bool getCurrentFileInfo(QuaZipFileInfo* info)const;
+    /// Retrieves information about the current file.
+    /** \overload
+     *
+     * This function supports zip64. If the archive doesn't use zip64, it is
+     * completely equivalent to getCurrentFileInfo(QuaZipFileInfo* info)
+     * except for the argument type.
+     *
+     * \sa
+     **/
+    bool getCurrentFileInfo(QuaZipFileInfo64* info)const;
     /// Returns the current file name.
     /** Equivalent to calling getCurrentFileInfo() and then getting \c
      * name field of the QuaZipFileInfo structure, but faster and more
@@ -414,6 +431,25 @@ class QUAZIP_EXPORT QuaZip {
       \sa getFileNameList()
       */
     QList<QuaZipFileInfo> getFileInfoList() const;
+    /// Enables the zip64 mode.
+    /**
+     * @param zip64 If \c true, the zip64 mode is enabled, disabled otherwise.
+     *
+     * Once this is enabled, all new files (until the mode is disabled again)
+     * will be created in the zip64 mode, thus enabling the ability to write
+     * files larger than 4 GB. By default, the zip64 mode is off due to
+     * compatibility reasons.
+     *
+     * \sa isZip64Enabled()
+     */
+    void setZip64Enabled(bool zip64);
+    /// Returns whether the zip64 mode is enabled.
+    /**
+     * @return \c true if and only if the zip64 mode is enabled.
+     *
+     * \sa setZip64Enabled()
+     */
+    bool isZip64Enabled() const;
     /// Sets the default file name codec to use.
     /**
      * The default codec is used by the constructors, so calling this function

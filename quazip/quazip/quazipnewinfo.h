@@ -35,6 +35,14 @@ quazip/(un)zip.h files for details, basically it's zlib license.
  * ZIP archive. At least name should be set to something correct before
  * passing this structure to
  * QuaZipFile::open(OpenMode,const QuaZipNewInfo&,int,int,bool).
+ *
+ * Zip64 support of this structure is slightly limited: in the raw mode (when
+ * a pre-compressed file is written into a ZIP file as-is), it is necessary
+ * to specify the uncompressed file size and the appropriate field is 32 bit.
+ * Since the raw mode is used extremely rare, there is no real need to have
+ * a separate QuaZipNewInfo64 structure like QuaZipFileInfo64. It may be added
+ * in the future though, if there is a demand for the raw mode with zip64
+ * archives.
  **/
 struct QUAZIP_EXPORT QuaZipNewInfo {
   /// File name.
