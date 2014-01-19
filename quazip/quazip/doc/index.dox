@@ -43,6 +43,7 @@
  * - win32-g++ (MinGW)
  * - win32-msvc2010 (MS VS 2010 Express, Qt 4.8.4)
  * - win32-msvc2010 (Qt Creator, Qt 5.0.1)
+ * - win32-msvc2012 (Qt Creator, Qt 5.2.0)
  * - some Symbian version, reportedly
  * 
  * No testing has been officially done on other systems. Of course, patches to
@@ -175,5 +176,5 @@ $ ./qztest
  * my mail for that kind of stuff, so if a bug reported by mail isn't
  * fixed immediately, it will likely be forgotten forever.
  *
- * Copyright (C) 2005-2012 Sergey A. Tachenov and contributors
+ * Copyright (C) 2005-2014 Sergey A. Tachenov and contributors
  **/
