@@ -50,17 +50,11 @@ bool createTestFiles(const QStringList &fileNames, const QString &dir)
     return true;
 }
 
-bool createTestArchive(const QString &zipName,
+bool createTestArchive(QuaZip &zip, const QString &zipName,
                        const QStringList &fileNames,
-                       const QString &dir) {
-    return createTestArchive(zipName, fileNames, NULL, dir);
-}
-
-bool createTestArchive(const QString &zipName,
-                              const QStringList &fileNames,
-                              QTextCodec *codec,
-                              const QString &dir) {
-    QuaZip zip(zipName);
+                       QTextCodec *codec,
+                       const QString &dir)
+{
     if (codec != NULL) {
         zip.setFileNameCodec(codec);
     }
@@ -81,8 +75,8 @@ bool createTestArchive(const QString &zipName,
             dt1 = newInfo.dateTime;
         else if (i == 2) // to test identical timestamps
             newInfo.dateTime = dt1;
-        if (!zipFile.open(QIODevice::WriteOnly, 
-                newInfo, NULL, 0, 
+        if (!zipFile.open(QIODevice::WriteOnly,
+                newInfo, NULL, 0,
                 fileInfo.isDir() ? 0 : 8)) {
             qWarning("Couldn't open %s in %s", fileName.toUtf8()
                 .constData(), zipName.toUtf8().constData());
@@ -104,7 +98,7 @@ bool createTestArchive(const QString &zipName,
                     return false;
                 }
                 if (zipFile.write(buf, l) != l) {
-                    qWarning("Couldn't write to %s in %s", 
+                    qWarning("Couldn't write to %s in %s",
                         filePath.toUtf8().constData(),
                         zipName.toUtf8().constData());
                     return false;
@@ -115,9 +109,36 @@ bool createTestArchive(const QString &zipName,
         zipFile.close();
         ++i;
     }
-    zip.setComment(QString("This is the %1 archive").arg(zipName));
+    zip.setComment(QString("This is the test archive"));
     zip.close();
-    return QFileInfo(zipName).exists();
+    if (zipName.startsWith("<")) { // something like "<QIODevice pointer>"
+        return true;
+    } else {
+        return QFileInfo(zipName).exists();
+    }
+}
+
+bool createTestArchive(const QString &zipName,
+                       const QStringList &fileNames,
+                       const QString &dir) {
+    return createTestArchive(zipName, fileNames, NULL, dir);
+}
+
+bool createTestArchive(QIODevice *ioDevice,
+                              const QStringList &fileNames,
+                              QTextCodec *codec,
+                              const QString &dir)
+{
+    QuaZip zip(ioDevice);
+    return createTestArchive(zip, "<QIODevice pointer>", fileNames, codec, dir);
+}
+
+bool createTestArchive(const QString &zipName,
+                              const QStringList &fileNames,
+                              QTextCodec *codec,
+                              const QString &dir) {
+    QuaZip zip(zipName);
+    return createTestArchive(zip, zipName, fileNames, codec, dir);
 }
 
 void removeTestFiles(const QStringList &fileNames, const QString &dir)

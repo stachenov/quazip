@@ -173,6 +173,11 @@ void TestQuaZip::setFileNameCodec()
 void TestQuaZip::setDataDescriptorWritingEnabled()
 {
     QString zipName = "zip10.zip";
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
     QuaZip testZip(zipName);
     testZip.setDataDescriptorWritingEnabled(false);
     QVERIFY(testZip.open(QuaZip::mdCreate));
@@ -193,6 +198,35 @@ void TestQuaZip::setDataDescriptorWritingEnabled()
     zipData >> versionNeeded;
     QCOMPARE(magic, static_cast<quint32>(0x04034b50));
     QCOMPARE(versionNeeded, static_cast<quint16>(10));
+    zipFile.close();
+    curDir.remove(zipName);
+}
+
+void TestQuaZip::testQIODeviceAPI()
+{
+    QString zipName = "qiodevice_api.zip";
+    QStringList fileNames;
+    fileNames << "test.txt";
     QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    if (!createTestFiles(fileNames)) {
+        QFAIL("Can't create test file");
+    }
+    if (!createTestArchive(zipName, fileNames)) {
+        QFAIL("Can't create test archive");
+    }
+    QBuffer buffer;
+    if (!createTestArchive(&buffer, fileNames, NULL)) {
+        QFAIL("Can't create test archive");
+    }
+    QFile diskFile(zipName);
+    QVERIFY(diskFile.open(QIODevice::ReadOnly));
+    QByteArray bufferArray = buffer.buffer();
+    QByteArray fileArray = diskFile.readAll();
+    QCOMPARE(bufferArray.size(), fileArray.size());
+    QCOMPARE(bufferArray, fileArray);
     curDir.remove(zipName);
 }

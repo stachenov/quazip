@@ -13,6 +13,7 @@ private slots:
     void setFileNameCodec_data();
     void setFileNameCodec();
     void setDataDescriptorWritingEnabled();
+    void testQIODeviceAPI();
 };
 
 #endif // QUAZIP_TEST_QUAZIP_H

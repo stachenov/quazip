@@ -1,6 +1,7 @@
 #ifndef QUAZIP_TEST_QZTEST_H
 #define QUAZIP_TEST_QZTEST_H
 
+#include <QIODevice>
 #include <QString>
 #include <QStringList>
 #include <QTextCodec>
@@ -13,6 +14,10 @@ extern bool createTestArchive(const QString &zipName,
                               const QStringList &fileNames, 
                               const QString &dir = "tmp");
 extern bool createTestArchive(const QString &zipName,
+                              const QStringList &fileNames,
+                              QTextCodec *codec,
+                              const QString &dir = "tmp");
+extern bool createTestArchive(QIODevice *ioDevice,
                               const QStringList &fileNames,
                               QTextCodec *codec,
                               const QString &dir = "tmp");
