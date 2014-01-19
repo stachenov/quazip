@@ -226,6 +226,7 @@ void TestQuaZip::testQIODeviceAPI()
     QVERIFY(diskFile.open(QIODevice::ReadOnly));
     QByteArray bufferArray = buffer.buffer();
     QByteArray fileArray = diskFile.readAll();
+    diskFile.close();
     QCOMPARE(bufferArray.size(), fileArray.size());
     QCOMPARE(bufferArray, fileArray);
     curDir.remove(zipName);
