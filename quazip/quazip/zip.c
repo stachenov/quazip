@@ -1768,15 +1768,20 @@ extern int ZEXPORT zipCloseFileInZipRaw64 (zipFile file, ZPOS64_T uncompressed_s
             /* Write local Descriptor after file data */
             if (err==ZIP_OK)
                 err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)DESCRIPTORHEADERMAGIC,4);
-
             if (err==ZIP_OK)
                 err = zip64local_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
+            if (zi->ci.zip64) {
+                if (err==ZIP_OK) /* compressed size, unknown */
+                    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,compressed_size,8);
 
-            if (err==ZIP_OK) /* compressed size, unknown */
-                err = zip64local_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
-
-            if (err==ZIP_OK) /* uncompressed size, unknown */
-                err = zip64local_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
+                if (err==ZIP_OK) /* uncompressed size, unknown */
+                    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,8);
+            } else {
+                if (err==ZIP_OK) /* compressed size, unknown */
+                    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
+                if (err==ZIP_OK) /* uncompressed size, unknown */
+                    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
+            }
         }
     }
 
