@@ -2,6 +2,7 @@
 
 #include "qztest.h"
 
+#include <QDataStream>
 #include <QDir>
 #include <QFileInfo>
 #include <QHash>
@@ -166,5 +167,32 @@ void TestQuaZip::setFileNameCodec()
     testZip.close();
     // clean up
     removeTestFiles(fileNames);
+    curDir.remove(zipName);
+}
+
+void TestQuaZip::setDataDescriptorWritingEnabled()
+{
+    QString zipName = "zip10.zip";
+    QuaZip testZip(zipName);
+    testZip.setDataDescriptorWritingEnabled(false);
+    QVERIFY(testZip.open(QuaZip::mdCreate));
+    QuaZipFile testZipFile(&testZip);
+    QVERIFY(testZipFile.open(QIODevice::WriteOnly,
+                             QuaZipNewInfo("vegetation_info.xml"), NULL, 0, 0));
+    testZipFile.write("<vegetation_info version=\"4096\" />\n");
+    testZipFile.close();
+    testZip.close();
+    QCOMPARE(QFileInfo(zipName).size(), 171);
+    QFile zipFile(zipName);
+    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    QDataStream zipData(&zipFile);
+    zipData.setByteOrder(QDataStream::LittleEndian);
+    quint32 magic = 0;
+    quint16 versionNeeded = 0;
+    zipData >> magic;
+    zipData >> versionNeeded;
+    QCOMPARE(magic, static_cast<quint32>(0x04034b50));
+    QCOMPARE(versionNeeded, static_cast<quint16>(10));
+    QDir curDir;
     curDir.remove(zipName);
 }
