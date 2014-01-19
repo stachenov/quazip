@@ -18,17 +18,21 @@ void TestQuaZipFile::zipUnzip_data()
     QTest::addColumn<QStringList>("fileNames");
     QTest::addColumn<QByteArray>("fileNameCodec");
     QTest::addColumn<QByteArray>("password");
+    QTest::addColumn<bool>("zip64");
     QTest::newRow("simple") << "simple.zip" << (
             QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
-        << QByteArray() << QByteArray();
+        << QByteArray() << QByteArray() << false;
     QTest::newRow("Cyrillic") << "cyrillic.zip" << (
             QStringList()
             << QString::fromUtf8("русское имя файла с пробелами.txt"))
-        << QByteArray("IBM866") << QByteArray();
+        << QByteArray("IBM866") << QByteArray() << false;
     QTest::newRow("password") << "password.zip" << (
             QStringList() << "test.txt")
-        << QByteArray() << QByteArray("PassPass");
+        << QByteArray() << QByteArray("PassPass") << false;
+    QTest::newRow("zip64") << "zip64.zip" << (
+            QStringList() << "test64.txt")
+        << QByteArray() << QByteArray() << true;
 }
 
 void TestQuaZipFile::zipUnzip()
@@ -37,6 +41,7 @@ void TestQuaZipFile::zipUnzip()
     QFETCH(QStringList, fileNames);
     QFETCH(QByteArray, fileNameCodec);
     QFETCH(QByteArray, password);
+    QFETCH(bool, zip64);
     QFile testFile(zipName);
     if (testFile.exists()) {
         if (!testFile.remove()) {
@@ -47,6 +52,7 @@ void TestQuaZipFile::zipUnzip()
         QFAIL("Couldn't create test files for zipping");
     }
     QuaZip testZip(&testFile);
+    testZip.setZip64Enabled(zip64);
     if (!fileNameCodec.isEmpty())
         testZip.setFileNameCodec(fileNameCodec);
     QVERIFY(testZip.open(QuaZip::mdCreate));
