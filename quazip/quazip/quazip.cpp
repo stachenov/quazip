@@ -219,7 +219,12 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
   }
   switch(mode) {
     case mdUnzip:
-      p->unzFile_f=unzOpen2(ioDevice, ioApi);
+      if (ioApi == NULL) {
+          p->unzFile_f=unzOpen2_64(ioDevice, NULL);
+      } else {
+          // QuaZIP pre-zip64 compatibility mode
+          p->unzFile_f=unzOpen2(ioDevice, ioApi);
+      }
       if(p->unzFile_f!=NULL) {
         p->mode=mode;
         p->ioDevice = ioDevice;
@@ -233,12 +238,21 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
     case mdCreate:
     case mdAppend:
     case mdAdd:
-      p->zipFile_f=zipOpen2(ioDevice,
-          mode==mdCreate?APPEND_STATUS_CREATE:
-          mode==mdAppend?APPEND_STATUS_CREATEAFTER:
-          APPEND_STATUS_ADDINZIP,
-          NULL,
-          ioApi);
+      if (ioApi == NULL) {
+          p->zipFile_f=zipOpen2_64(ioDevice,
+              mode==mdCreate?APPEND_STATUS_CREATE:
+              mode==mdAppend?APPEND_STATUS_CREATEAFTER:
+              APPEND_STATUS_ADDINZIP,
+              NULL, NULL);
+      } else {
+          // QuaZIP pre-zip64 compatibility mode
+          p->zipFile_f=zipOpen2(ioDevice,
+              mode==mdCreate?APPEND_STATUS_CREATE:
+              mode==mdAppend?APPEND_STATUS_CREATEAFTER:
+              APPEND_STATUS_ADDINZIP,
+              NULL,
+              ioApi);
+      }
       if(p->zipFile_f!=NULL) {
         p->mode=mode;
         p->ioDevice = ioDevice;
