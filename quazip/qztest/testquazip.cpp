@@ -200,6 +200,33 @@ void TestQuaZip::setDataDescriptorWritingEnabled()
     QCOMPARE(versionNeeded, static_cast<quint16>(10));
     zipFile.close();
     curDir.remove(zipName);
+    // now test 2.0
+    zipName = "zip20.zip";
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    QuaZip testZip20(zipName);
+    QVERIFY(testZip20.open(QuaZip::mdCreate));
+    QuaZipFile testZipFile20(&testZip20);
+    QVERIFY(testZipFile20.open(QIODevice::WriteOnly,
+                             QuaZipNewInfo("vegetation_info.xml"), NULL, 0, 0));
+    testZipFile20.write("<vegetation_info version=\"4096\" />\n");
+    testZipFile20.close();
+    testZip20.close();
+    QCOMPARE(QFileInfo(zipName).size(), 171 + 16); // 16 bytes = data descriptor
+    QFile zipFile20(zipName);
+    QVERIFY(zipFile20.open(QIODevice::ReadOnly));
+    QDataStream zipData20(&zipFile20);
+    zipData20.setByteOrder(QDataStream::LittleEndian);
+    magic = 0;
+    versionNeeded = 0;
+    zipData20 >> magic;
+    zipData20 >> versionNeeded;
+    QCOMPARE(magic, static_cast<quint32>(0x04034b50));
+    QCOMPARE(versionNeeded, static_cast<quint16>(20));
+    zipFile20.close();
+    curDir.remove(zipName);
 }
 
 void TestQuaZip::testQIODeviceAPI()
