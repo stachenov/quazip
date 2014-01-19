@@ -187,7 +187,7 @@ void TestQuaZip::setDataDescriptorWritingEnabled()
     testZipFile.write("<vegetation_info version=\"4096\" />\n");
     testZipFile.close();
     testZip.close();
-    QCOMPARE(QFileInfo(zipName).size(), 171);
+    QCOMPARE(QFileInfo(zipName).size(), static_cast<qint64>(171));
     QFile zipFile(zipName);
     QVERIFY(zipFile.open(QIODevice::ReadOnly));
     QDataStream zipData(&zipFile);
@@ -214,7 +214,8 @@ void TestQuaZip::setDataDescriptorWritingEnabled()
     testZipFile20.write("<vegetation_info version=\"4096\" />\n");
     testZipFile20.close();
     testZip20.close();
-    QCOMPARE(QFileInfo(zipName).size(), 171 + 16); // 16 bytes = data descriptor
+    QCOMPARE(QFileInfo(zipName).size(),
+            static_cast<qint64>(171 + 16)); // 16 bytes = data descriptor
     QFile zipFile20(zipName);
     QVERIFY(zipFile20.open(QIODevice::ReadOnly));
     QDataStream zipData20(&zipFile20);
