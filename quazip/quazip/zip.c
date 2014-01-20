@@ -1737,7 +1737,7 @@ extern int ZEXPORT zipCloseFileInZipRaw64 (zipFile file, ZPOS64_T uncompressed_s
         if (err==ZIP_OK)
             err = zip64local_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
 
-        if(uncompressed_size >= 0xffffffff)
+        if(uncompressed_size >= 0xffffffff || compressed_size >= 0xffffffff)
         {
           if(zi->ci.pos_zip64extrainfo > 0)
           {
