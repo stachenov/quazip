@@ -1,5 +1,11 @@
 QuaZIP changes
 
+* 2014-01-22 0.6
+        * Minizip updated to 1.1 (with all the necessary modifications
+          re-done), and that means that...
+        * the long-awaited zip64 support is now available!
+        * A few rather minor fixes.
+
 * 2014-01-19 0.5.2
         * Some minor bug fixes.
         * API to access file permissions subfield of the external

@@ -116,10 +116,7 @@ $ make install
  *
  * Binary compatibility is guaranteed between minor releases starting
  * with version 0.5, thanks to the Pimpl idiom. That is, the next binary
- * incompatible version will be 1.x, and if zip64 support is ever
- * introduced, then there will be a build option to compile either as
- * non-zip64 (binary compatible with the old releases) or as zip64
- * (which will be binary incompatible due to different file size types).
+ * incompatible version will be 1.x.
  *
  * \section test Testing
  *
