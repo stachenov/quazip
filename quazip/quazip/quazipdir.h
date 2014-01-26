@@ -22,6 +22,7 @@ class QuaZipDirPrivate;
 * - In the cd() function.
 * - In the constructor.
 * - In the exists() function.
+* - In the relativePath() function.
 *
 * Note that since ZIP uses '/' on all platforms, the '\' separator is
 * not supported.
@@ -163,6 +164,14 @@ public:
       */
     QString path() const;
     /// Returns the path to the specified file relative to the current dir.
+    /**
+     * This function is mostly useless, provided only for the sake of
+     *  completeness.
+     *
+     * @param fileName The path to the file, should start with &quot;/&quot;
+     *  if relative to the archive root.
+     * @return Path relative to the current dir.
+     */
     QString relativeFilePath(const QString &fileName) const;
     /// Sets the default case sensitivity mode.
     void setCaseSensitivity(QuaZip::CaseSensitivity caseSensitivity);

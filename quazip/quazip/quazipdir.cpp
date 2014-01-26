@@ -424,7 +424,7 @@ QStringList QuaZipDir::entryList(QDir::Filters filters,
 
 bool QuaZipDir::exists(const QString &filePath) const
 {
-    if (filePath == "/")
+    if (filePath == "/" || filePath.isEmpty())
         return true;
     QString fileName = filePath;
     if (fileName.endsWith('/'))
@@ -470,8 +470,7 @@ bool QuaZipDir::exists(const QString &filePath) const
 
 bool QuaZipDir::exists() const
 {
-    QDir thisDir(d->dir);
-    return QuaZipDir(d->zip, thisDir.filePath("..")).exists(thisDir.dirName());
+    return QuaZipDir(d->zip).exists(d->dir);
 }
 
 QString QuaZipDir::filePath(const QString &fileName) const
@@ -501,7 +500,7 @@ QString QuaZipDir::path() const
 
 QString QuaZipDir::relativeFilePath(const QString &fileName) const
 {
-    return QDir(d->dir).relativeFilePath(fileName);
+    return QDir("/" + d->dir).relativeFilePath(fileName);
 }
 
 void QuaZipDir::setCaseSensitivity(QuaZip::CaseSensitivity caseSensitivity)

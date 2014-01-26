@@ -131,9 +131,12 @@ void TestQuaZipDir::entryList()
     QuaZip zip(zipName);
     QVERIFY(zip.open(QuaZip::mdUnzip));
     QuaZipDir dir(&zip, dirName);
+    QVERIFY(dir.exists());
     if (caseSensitivity != -1) {
         dir.setCaseSensitivity(static_cast<QuaZip::CaseSensitivity>(
                                    caseSensitivity));
+        QCOMPARE(dir.caseSensitivity(), static_cast<QuaZip::CaseSensitivity>(
+                     caseSensitivity));
     }
     QCOMPARE(dir.entryList(nameFilters, filters, sorting), entries);
     // Test default sorting setting.
@@ -148,6 +151,7 @@ void TestQuaZipDir::entryList()
     dir.setFilter(filters);
     QCOMPARE(dir.filter(), filters);
     QCOMPARE(dir.entryList(), entries);
+    QCOMPARE(dir.entryList().count(), static_cast<int>(dir.count()));
     zip.close();
     curDir.remove(zipName);
 }
@@ -207,6 +211,27 @@ void TestQuaZipDir::cd()
     QuaZip zip(zipName);
     QVERIFY(zip.open(QuaZip::mdUnzip));
     QuaZipDir dir(&zip, dirName);
+    if (dirName.startsWith('/')) {
+        dirName = dirName.mid(1);
+    }
+    if (dirName.endsWith('/')) {
+        dirName.chop(1);
+    }
+    QCOMPARE(dir.path(), dirName);
+    {
+        int lastSlash = dirName.lastIndexOf('/');
+        if (lastSlash == -1) {
+            // dirName is just a single name
+            if (dirName.isEmpty()) {
+                QCOMPARE(dir.dirName(), QString::fromLatin1("."));
+            } else {
+                QCOMPARE(dir.dirName(), dirName);
+            }
+        } else {
+            // dirName is a sequence
+            QCOMPARE(dir.dirName(), dirName.mid(lastSlash + 1));
+        }
+    }
     if (targetDirName == "..") {
         QVERIFY(dir.cdUp());
     } else {
@@ -246,7 +271,7 @@ void TestQuaZipDir::operators()
 {
     QString zipName = "zipDirOperators.zip";
     QStringList fileNames;
-    fileNames << "dir/test.txt";
+    fileNames << "dir/test.txt" << "root.txt";
     if (!createTestFiles(fileNames)) {
         QFAIL("Couldn't create test files");
     }
@@ -265,7 +290,35 @@ void TestQuaZipDir::operators()
     QCOMPARE(dir.path(), QString::fromLatin1("dir"));
     dir2 = dir; // operator=()
     QCOMPARE(dir2.path(), QString::fromLatin1("dir"));
-    QVERIFY(dir2 == dir);
+    QVERIFY(dir2 == dir); // opertor==
+    dir.cd("/");
+    QCOMPARE(dir[0], QString::fromLatin1("dir/"));
+    QCOMPARE(dir[1], QString::fromLatin1("root.txt"));
+    zip.close();
+    curDir.remove(zipName);
+}
+
+void TestQuaZipDir::filePath()
+{
+    QString zipName = "entryInfoList.zip";
+    QStringList fileNames;
+    fileNames << "root.txt" << "dir/test.txt";
+    if (!createTestFiles(fileNames)) {
+        QFAIL("Couldn't create test files");
+    }
+    if (!createTestArchive(zipName, fileNames)) {
+        QFAIL("Couldn't create test archive");
+    }
+    removeTestFiles(fileNames);
+    QuaZip zip(zipName);
+    QDir curDir;
+    QVERIFY(zip.open(QuaZip::mdUnzip));
+    QuaZipDir dir(&zip);
+    QVERIFY(dir.cd("dir"));
+    QCOMPARE(dir.relativeFilePath("/root.txt"),
+             QString::fromLatin1("../root.txt"));
+    QCOMPARE(dir.filePath("test.txt"),
+             QString::fromLatin1("dir/test.txt"));
     zip.close();
     curDir.remove(zipName);
 }
