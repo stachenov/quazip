@@ -159,8 +159,14 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
 
     // Controllo esistenza cartella file risultato
     QDir curDir;
-    if (!curDir.mkpath(QFileInfo(fileDest).absolutePath())) {
-        return false;
+    if (fileDest.endsWith('/')) {
+        if (!curDir.mkpath(fileDest)) {
+            return false;
+        }
+    } else {
+        if (!curDir.mkpath(QFileInfo(fileDest).absolutePath())) {
+            return false;
+        }
     }
 
     QuaZipFileInfo info;
@@ -168,8 +174,10 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
         return false;
 
     QFile::Permissions srcPerm = info.getPermissions();
-    if (fileDest.endsWith('/') && QFileInfo(fileDest).isDir() && srcPerm != 0) {
-        QFile(fileDest).setPermissions(srcPerm);
+    if (fileDest.endsWith('/') && QFileInfo(fileDest).isDir()) {
+        if (srcPerm != 0) {
+            QFile(fileDest).setPermissions(srcPerm);
+        }
         return true;
     }
 
