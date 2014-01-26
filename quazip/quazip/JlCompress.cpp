@@ -169,7 +169,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
         }
     }
 
-    QuaZipFileInfo info;
+    QuaZipFileInfo64 info;
     if (!zip->getCurrentFileInfo(&info))
         return false;
 
@@ -474,7 +474,7 @@ QStringList JlCompress::getFileList(QString fileCompressed) {
 
     // Estraggo i nomi dei file
     QStringList lst;
-    QuaZipFileInfo info;
+    QuaZipFileInfo64 info;
     for(bool more=zip->goToFirstFile(); more; more=zip->goToNextFile()) {
       if(!zip->getCurrentFileInfo(&info)) {
           delete zip;

@@ -356,7 +356,7 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
         srt = sorting;
 #ifdef QUAZIP_QUAZIPDIR_DEBUG
     qDebug("QuaZipDirPrivate::entryInfoList(): before sort:");
-    foreach (QuaZipFileInfo info, list) {
+    foreach (QuaZipFileInfo64 info, list) {
         qDebug("%s\t%s", info.name.toUtf8().constData(),
                 info.dateTime.toString(Qt::ISODate).toUtf8().constData());
     }
