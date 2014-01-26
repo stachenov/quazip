@@ -18,6 +18,7 @@ private slots:
     void extractFiles();
     void extractDir_data();
     void extractDir();
+    void zeroPermissions();
 };
 
 #endif // QUAZIP_TEST_JLCOMPRESS_H

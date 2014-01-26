@@ -273,3 +273,20 @@ void TestJlCompress::extractDir()
     removeTestFiles(fileNames);
     curDir.remove(zipName);
 }
+
+void TestJlCompress::zeroPermissions()
+{
+    QuaZip zipCreator("zero.zip");
+    QVERIFY(zipCreator.open(QuaZip::mdCreate));
+    QuaZipFile zeroFile(&zipCreator);
+    QuaZipNewInfo newInfo("zero.txt");
+    newInfo.externalAttr = 0; // should be zero anyway, but just in case
+    QVERIFY(zeroFile.open(QIODevice::WriteOnly, newInfo));
+    zeroFile.close();
+    zipCreator.close();
+    QVERIFY(!JlCompress::extractFile("zero.zip", "zero.txt").isEmpty());
+    QVERIFY(QFile("zero.txt").permissions() != 0);
+    QDir curDir;
+    curDir.remove("zero.zip");
+    curDir.remove("zero.txt");
+}
