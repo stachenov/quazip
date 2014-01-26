@@ -305,6 +305,7 @@ void TestQuaZipFile::setFileName()
     QVERIFY(!testFile.open(QIODevice::ReadOnly));
 #endif
     testFile.setFileName(testFileName.toUpper(), QuaZip::csInsensitive);
+    QCOMPARE(testFile.getCaseSensitivity(), QuaZip::csInsensitive);
     QVERIFY(testFile.open(QIODevice::ReadOnly));
     QCOMPARE(testFile.getActualFileName(), testFileName);
     testFile.close();
