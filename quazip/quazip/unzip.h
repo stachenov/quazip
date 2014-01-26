@@ -38,6 +38,11 @@
 
         See header of unzip64.c
 
+  ---------------------------------------------------------------------------
+
+  As per the requirement above, this file is plainly marked as modified
+  by Sergey A. Tachenov. Most modifications include the I/O API redesign
+  to support QIODevice interface. Some improvements and small fixes were also made.
 */
 
 #ifndef _unz64_H

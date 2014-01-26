@@ -1,5 +1,12 @@
 QuaZIP changes
 
+* 2014-01-26 0.6.1
+        * Improved zip64 support.
+        * A LOT more tests thanks to g++ --coverage / lcov.
+        * JlCompress extraction methods now create files with default
+          permissions if they are zero in the original archive.
+        * Some QuaZipDir fixes (thanks to the new tests).
+
 * 2014-01-22 0.6
         * Minizip updated to 1.1 (with all the necessary modifications
           re-done), and that means that...

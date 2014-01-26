@@ -9,6 +9,9 @@
 
          For more info read MiniZip_info.txt
 
+         Modifications for QIODevice support and other QuaZIP fixes
+         Copyright (C) 2005-2014 Sergey A. Tachenov
+
          Changes
    Oct-2009 - Mathias Svensson - Remove old C style function prototypes
    Oct-2009 - Mathias Svensson - Added Zip64 Support when creating new file archives

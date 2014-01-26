@@ -35,6 +35,12 @@
 
         See header of zip.h
 
+        ---------------------------------------------------------------------------
+
+  As per the requirement above, this file is plainly marked as modified
+  by Sergey A. Tachenov. Most modifications include the I/O API redesign
+  to support QIODevice interface. Some improvements and small fixes were also made.
+
 */
 
 #ifndef _zip12_H
