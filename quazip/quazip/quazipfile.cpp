@@ -409,10 +409,21 @@ qint64 QuaZipFile::usize()const
 
 bool QuaZipFile::getFileInfo(QuaZipFileInfo *info)
 {
-  if(p->zip==NULL||p->zip->getMode()!=QuaZip::mdUnzip) return false;
-  p->zip->getCurrentFileInfo(info);
-  p->setZipError(p->zip->getZipError());
-  return p->zipError==UNZ_OK;
+    QuaZipFileInfo64 info64;
+    if (getFileInfo(&info64)) {
+        info64.toQuaZipFileInfo(*info);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool QuaZipFile::getFileInfo(QuaZipFileInfo64 *info)
+{
+    if(p->zip==NULL||p->zip->getMode()!=QuaZip::mdUnzip) return false;
+    p->zip->getCurrentFileInfo(info);
+    p->setZipError(p->zip->getZipError());
+    return p->zipError==UNZ_OK;
 }
 
 void QuaZipFile::close()

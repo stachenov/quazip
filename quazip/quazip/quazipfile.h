@@ -426,9 +426,22 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      *
      * File must be open for reading before calling this function.
      *
-     * Returns \c false in the case of an error.
+     * \return \c false in the case of an error.
+     *
+     * This function doesn't support zip64, but will still work fine on zip64
+     * archives if file sizes are below 4 GB, otherwise the values will be set
+     * as if converted using QuaZipFileInfo64::toQuaZipFileInfo().
+     *
+     * \sa getFileInfo(QuaZipFileInfo64*)
      **/
     bool getFileInfo(QuaZipFileInfo *info);
+    /// Gets information about current file with zip64 support.
+    /**
+     * @overload
+     *
+     * \sa getFileInfo(QuaZipFileInfo*)
+     */
+    bool getFileInfo(QuaZipFileInfo64 *info);
     /// Closes the file.
     /** Call getZipError() to determine if the close was successful.
      **/

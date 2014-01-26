@@ -431,9 +431,25 @@ class QUAZIP_EXPORT QuaZip {
       \return A list of QuaZipFileInfo objects or an empty list if there
       was an error or if the archive is empty (call getZipError() to
       figure out which).
+
+      This function doesn't support zip64, but will still work with zip64
+      archives, converting results using QuaZipFileInfo64::toQuaZipFileInfo().
+      If all file sizes are below 4 GB, it will work just fine.
+
       \sa getFileNameList()
+      \sa getFileInfoList64()
       */
     QList<QuaZipFileInfo> getFileInfoList() const;
+    /// Returns information list about all files inside the archive.
+    /**
+      \overload
+
+      This function supports zip64.
+
+      \sa getFileNameList()
+      \sa getFileInfoList()
+      */
+    QList<QuaZipFileInfo64> getFileInfoList64() const;
     /// Enables the zip64 mode.
     /**
      * @param zip64 If \c true, the zip64 mode is enabled, disabled otherwise.
