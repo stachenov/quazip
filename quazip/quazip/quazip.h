@@ -339,9 +339,12 @@ class QUAZIP_EXPORT QuaZip {
      * In both cases getZipError() returns \c UNZ_OK since there
      * is no ZIP/UNZIP API call.
      *
-     * This overload doesn't support zip64.
+     * This overload doesn't support zip64, but will work OK on zip64 archives
+     * except that if one of the sizes (compressed or uncompressed) is greater
+     * than 0xFFFFFFFFu, it will be set to exactly 0xFFFFFFFFu.
      *
      * \sa getCurrentFileInfo(QuaZipFileInfo64* info)const
+     * \sa QuaZipFileInfo64::toQuaZipFileInfo(QuaZipFileInfo&)const
      **/
     bool getCurrentFileInfo(QuaZipFileInfo* info)const;
     /// Retrieves information about the current file.

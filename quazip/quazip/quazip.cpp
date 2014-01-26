@@ -452,20 +452,7 @@ bool QuaZip::getCurrentFileInfo(QuaZipFileInfo *info)const
         return false;
     }
     if (getCurrentFileInfo(&info64)) {
-        info->versionCreated=info64.versionCreated;
-        info->versionNeeded=info64.versionNeeded;
-        info->flags=info64.flags;
-        info->method=info64.method;
-        info->crc=info64.crc;
-        info->compressedSize=static_cast<quint32>(info64.compressedSize);
-        info->uncompressedSize=static_cast<quint32>(info64.uncompressedSize);
-        info->diskNumberStart=info64.diskNumberStart;
-        info->internalAttr=info64.internalAttr;
-        info->externalAttr=info64.externalAttr;
-        info->name=info64.name;
-        info->comment=info64.comment;
-        info->extra=info64.extra;
-        info->dateTime=info64.dateTime;
+        info64.toQuaZipFileInfo(*info);
         return true;
     } else {
         return false;

@@ -138,11 +138,11 @@ QString QuaZipDir::dirName() const
     return QDir(d->dir).dirName();
 }
 
-QuaZipFileInfo QuaZipDir_getFileInfo(QuaZip *zip, bool *ok, 
+QuaZipFileInfo64 QuaZipDir_getFileInfo(QuaZip *zip, bool *ok,
                                   const QString &relativeName,
                                   bool isReal)
 {
-    QuaZipFileInfo info;
+    QuaZipFileInfo64 info;
     if (isReal) {
         *ok = zip->getCurrentFileInfo(&info);
     } else {
@@ -161,23 +161,33 @@ QuaZipFileInfo QuaZipDir_getFileInfo(QuaZip *zip, bool *ok,
     return info;
 }
 
-template<typename TFileInfoList>
-void QuaZipDir_convertInfoList(const QList<QuaZipFileInfo> &from, TFileInfoList &to);
-
-template<>
-void QuaZipDir_convertInfoList(const QList<QuaZipFileInfo> &from, QList<QuaZipFileInfo> &to)
+static void QuaZipDir_convertInfoList(const QList<QuaZipFileInfo64> &from,
+                                      QList<QuaZipFileInfo64> &to)
 {
     to = from;
 }
 
-template<>
-void QuaZipDir_convertInfoList(const QList<QuaZipFileInfo> &from, QStringList &to)
+static void QuaZipDir_convertInfoList(const QList<QuaZipFileInfo64> &from,
+                                      QStringList &to)
 {
     to.clear();
-    for (QList<QuaZipFileInfo>::const_iterator i = from.constBegin();
+    for (QList<QuaZipFileInfo64>::const_iterator i = from.constBegin();
             i != from.constEnd();
             ++i) {
         to.append(i->name);
+    }
+}
+
+static void QuaZipDir_convertInfoList(const QList<QuaZipFileInfo64> &from,
+                                      QList<QuaZipFileInfo> &to)
+{
+    to.clear();
+    for (QList<QuaZipFileInfo64>::const_iterator i = from.constBegin();
+            i != from.constEnd();
+            ++i) {
+        QuaZipFileInfo info32;
+        i->toQuaZipFileInfo(info32);
+        to.append(info32);
     }
 }
 
@@ -208,7 +218,7 @@ class QuaZipDirComparator
         int compareStrings(const QString &string1, const QString &string2);
     public:
         inline QuaZipDirComparator(QDir::SortFlags sort): sort(sort) {}
-        bool operator()(const QuaZipFileInfo &info1, const QuaZipFileInfo &info2);
+        bool operator()(const QuaZipFileInfo64 &info1, const QuaZipFileInfo64 &info2);
 };
 
 QString QuaZipDirComparator::getExtension(const QString &name)
@@ -236,8 +246,8 @@ int QuaZipDirComparator::compareStrings(const QString &string1,
     }
 }
 
-bool QuaZipDirComparator::operator()(const QuaZipFileInfo &info1,
-        const QuaZipFileInfo &info2)
+bool QuaZipDirComparator::operator()(const QuaZipFileInfo64 &info1,
+        const QuaZipFileInfo64 &info2)
 {
     QDir::SortFlags order = sort
         & (QDir::Name | QDir::Time | QDir::Size | QDir::Type);
@@ -307,7 +317,7 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
     if (nmfltr.isEmpty())
         nmfltr = this->nameFilters;
     QSet<QString> dirsFound;
-    QList<QuaZipFileInfo> list;
+    QList<QuaZipFileInfo64> list;
     do {
         QString name = zip->getCurrentFileName();
         if (!name.startsWith(basePath))
@@ -334,7 +344,7 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
         if (!nmfltr.isEmpty() && !QDir::match(nmfltr, relativeName))
             continue;
         bool ok;
-        QuaZipFileInfo info = QuaZipDir_getFileInfo(zip, &ok, relativeName,
+        QuaZipFileInfo64 info = QuaZipDir_getFileInfo(zip, &ok, relativeName,
             isReal);
         if (!ok) {
             return false;
@@ -378,6 +388,22 @@ QList<QuaZipFileInfo> QuaZipDir::entryInfoList(QDir::Filters filters,
     QDir::SortFlags sort) const
 {
     return entryInfoList(QStringList(), filters, sort);
+}
+
+QList<QuaZipFileInfo64> QuaZipDir::entryInfoList64(const QStringList &nameFilters,
+    QDir::Filters filters, QDir::SortFlags sort) const
+{
+    QList<QuaZipFileInfo64> result;
+    if (d->entryInfoList(nameFilters, filters, sort, result))
+        return result;
+    else
+        return QList<QuaZipFileInfo64>();
+}
+
+QList<QuaZipFileInfo64> QuaZipDir::entryInfoList64(QDir::Filters filters,
+    QDir::SortFlags sort) const
+{
+    return entryInfoList64(QStringList(), filters, sort);
 }
 
 QStringList QuaZipDir::entryList(const QStringList &nameFilters,

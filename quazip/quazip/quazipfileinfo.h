@@ -108,6 +108,18 @@ struct QUAZIP_EXPORT QuaZipFileInfo64 {
     QFile::Permissions.
     */
   QFile::Permissions getPermissions() const;
+  /// Converts to QuaZipFileInfo
+  /**
+    If any of the fields are greater than 0xFFFFFFFFu, they are set to
+    0xFFFFFFFFu exactly, not just truncated. This function should be mainly used
+    for compatibility with the old code expecting QuaZipFileInfo, in the cases
+    when it's impossible or otherwise unadvisable (due to ABI compatibility
+    reasons, for example) to modify that old code to use QuaZipFileInfo64.
+
+    \return \c true if all fields converted correctly, \c false if an overflow
+    occured.
+    */
+  bool toQuaZipFileInfo(QuaZipFileInfo &info) const;
 };
 
 #endif

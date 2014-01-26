@@ -34,3 +34,33 @@ QFile::Permissions QuaZipFileInfo64::getPermissions() const
 {
     return permissionsFromExternalAttr(externalAttr);
 }
+
+bool QuaZipFileInfo64::toQuaZipFileInfo(QuaZipFileInfo &info) const
+{
+    bool noOverflow = true;
+    info.name = name;
+    info.versionCreated = versionCreated;
+    info.versionNeeded = versionNeeded;
+    info.flags = flags;
+    info.method = method;
+    info.dateTime = dateTime;
+    info.crc = crc;
+    if (compressedSize > 0xFFFFFFFFu) {
+        info.compressedSize = 0xFFFFFFFFu;
+        noOverflow = false;
+    } else {
+        info.compressedSize = compressedSize;
+    }
+    if (uncompressedSize > 0xFFFFFFFFu) {
+        info.uncompressedSize = 0xFFFFFFFFu;
+        noOverflow = false;
+    } else {
+        info.uncompressedSize = uncompressedSize;
+    }
+    info.diskNumberStart = diskNumberStart;
+    info.internalAttr = internalAttr;
+    info.externalAttr = externalAttr;
+    info.comment = comment;
+    info.extra = extra;
+    return noOverflow;
+}

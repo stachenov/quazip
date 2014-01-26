@@ -97,6 +97,25 @@ public:
       */
     QList<QuaZipFileInfo> entryInfoList(QDir::Filters filters = QDir::NoFilter,
         QDir::SortFlags sort = QDir::NoSort) const;
+    /// Returns the list of the entries in the directory with zip64 support.
+    /**
+      \param nameFilters The list of file patterns to list, uses the same
+      syntax as QDir.
+      \param filters The entry type filters, only Files and Dirs are
+      accepted.
+      \param sort Sorting mode (not supported yet).
+      */
+    QList<QuaZipFileInfo64> entryInfoList64(const QStringList &nameFilters,
+        QDir::Filters filters = QDir::NoFilter,
+        QDir::SortFlags sort = QDir::NoSort) const;
+    /// Returns the list of the entries in the directory with zip64 support.
+    /**
+      \overload
+
+      The same as entryInfoList64(QStringList(), filters, sort).
+      */
+    QList<QuaZipFileInfo64> entryInfoList64(QDir::Filters filters = QDir::NoFilter,
+        QDir::SortFlags sort = QDir::NoSort) const;
     /// Returns the list of the entry names in the directory.
     /**
       The same as entryInfoList(nameFilters, filters, sort), but only
