@@ -62,6 +62,13 @@ void TestQuaZip::getFileList()
         QCOMPARE(static_cast<qint64>(destList[i].uncompressedSize),
                 srcInfo[destList[i].name].size());
     }
+    // Now test zip64
+    QList<QuaZipFileInfo64> destList64 = testZip.getFileInfoList64();
+    QCOMPARE(destList64.size(), srcInfo.size());
+    for (int i = 0; i < destList64.size(); i++) {
+        QCOMPARE(static_cast<qint64>(destList64[i].uncompressedSize),
+                srcInfo[destList64[i].name].size());
+    }
     // test that we didn't mess up the current file
     QCOMPARE(testZip.getCurrentFileName(), firstFile);
     testZip.close();
