@@ -243,6 +243,7 @@ void TestQuaZipFile::setZipName()
     QVERIFY(createTestArchive(testZipName, QStringList() << testFileName));
     QuaZipFile testFile;
     testFile.setZipName(testZipName);
+    QCOMPARE(testFile.getZipName(), testZipName);
     testFile.setFileName(testFileName);
     QVERIFY(testFile.open(QIODevice::ReadOnly));
     testFile.close();
@@ -305,9 +306,13 @@ void TestQuaZipFile::setFileName()
 #endif
     testFile.setFileName(testFileName.toUpper(), QuaZip::csInsensitive);
     QVERIFY(testFile.open(QIODevice::ReadOnly));
+    QCOMPARE(testFile.getActualFileName(), testFileName);
     testFile.close();
     testFile.setFileName(testFileName.toUpper(), QuaZip::csSensitive);
+    QCOMPARE(testFile.getFileName(), testFileName.toUpper());
+    QCOMPARE(testFile.getActualFileName(), QString());
     QVERIFY(!testFile.open(QIODevice::ReadOnly));
+    testFile.setFileName(testFileName);
     removeTestFiles(QStringList() << testFileName);
     QDir curDir;
     curDir.remove(testZipName);
