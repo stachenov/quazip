@@ -624,6 +624,14 @@ QuaZipFileInfo QuaZip_getFileInfo(QuaZip *zip, bool *ok)
 }
 
 template<>
+QuaZipFileInfo64 QuaZip_getFileInfo(QuaZip *zip, bool *ok)
+{
+    QuaZipFileInfo64 info;
+    *ok = zip->getCurrentFileInfo(&info);
+    return info;
+}
+
+template<>
 QString QuaZip_getFileInfo(QuaZip *zip, bool *ok)
 {
     QString name = zip->getCurrentFileName();
@@ -681,6 +689,15 @@ QList<QuaZipFileInfo> QuaZip::getFileInfoList() const
         return list;
     else
         return QList<QuaZipFileInfo>();
+}
+
+QList<QuaZipFileInfo64> QuaZip::getFileInfoList64() const
+{
+    QList<QuaZipFileInfo64> list;
+    if (p->getFileInfoList(&list))
+        return list;
+    else
+        return QList<QuaZipFileInfo64>();
 }
 
 Qt::CaseSensitivity QuaZip::convertCaseSensitivity(QuaZip::CaseSensitivity cs)
