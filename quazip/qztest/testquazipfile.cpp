@@ -312,3 +312,17 @@ void TestQuaZipFile::setFileName()
     QDir curDir;
     curDir.remove(testZipName);
 }
+
+void TestQuaZipFile::constructorDestructor()
+{
+    // Just test that all constructors and destructors are available.
+    // (So there are none that are declared but not defined.)
+    QuaZip testZip;
+    QuaZipFile *f1 = new QuaZipFile();
+    delete f1; // test D0 destructor
+    QObject parent;
+    QuaZipFile f2(&testZip, &parent);
+    QuaZipFile f3(&parent);
+    QuaZipFile f4("zipName.zip");
+    QuaZipFile f5("zipName.zip", "fileName.txt", QuaZip::csDefault, &parent);
+}

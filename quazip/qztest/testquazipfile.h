@@ -19,6 +19,7 @@ private slots:
     void setZipName();
     void getFileInfo();
     void setFileName();
+    void constructorDestructor();
 };
 
 #endif // QUAZIP_TEST_QUAZIPFILE_H
