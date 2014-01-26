@@ -10,6 +10,8 @@ private slots:
     void entryList();
     void cd_data();
     void cd();
+    void entryInfoList();
+    void operators();
 };
 
 #endif // QUAZIP_TEST_QUAZIPDIR_H

@@ -27,9 +27,12 @@ void TestQuaGzipFile::write()
 {
     QDir curDir;
     curDir.mkpath("tmp");
-    QuaGzipFile testFile("tmp/test.gz");
+    QuaGzipFile testFile;
+    testFile.setFileName("tmp/test.gz");
+    QCOMPARE(testFile.getFileName(), QString::fromLatin1("tmp/test.gz"));
     QVERIFY(testFile.open(QIODevice::WriteOnly));
     QCOMPARE(testFile.write("test", 4), static_cast<qint64>(4));
+    QVERIFY(testFile.flush());
     testFile.close();
     QVERIFY(!testFile.isOpen());
     gzFile file = gzopen("tmp/test.gz", "rb");
@@ -40,4 +43,13 @@ void TestQuaGzipFile::write()
     QCOMPARE(static_cast<const char*>(buf), "test");
     curDir.remove("tmp/test.gz");
     curDir.rmdir("tmp");
+}
+
+void TestQuaGzipFile::constructorDestructor()
+{
+    QuaGzipFile *f1 = new QuaGzipFile();
+    delete f1; // D0 destructor
+    QObject parent;
+    QuaGzipFile f2(&parent);
+    QuaGzipFile f3("test.gz", &parent);
 }

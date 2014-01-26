@@ -8,6 +8,7 @@ class TestQuaGzipFile: public QObject {
 private slots:
     void read();
     void write();
+    void constructorDestructor();
 };
 
 #endif // QUAZIP_TEST_QUAGZIPFILE_H

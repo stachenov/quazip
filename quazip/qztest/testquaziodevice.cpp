@@ -33,11 +33,12 @@ void TestQuaZIODevice::write()
     QByteArray buf(256, 0);
     QBuffer testBuffer(&buf);
     testBuffer.open(QIODevice::WriteOnly);
-    QuaZIODevice testDevice(&testBuffer);
-    QVERIFY(testDevice.open(QIODevice::WriteOnly));
-    QCOMPARE(testDevice.write("test", 4), static_cast<qint64>(4));
-    testDevice.close();
-    QVERIFY(!testDevice.isOpen());
+    QuaZIODevice *testDevice = new QuaZIODevice(&testBuffer);
+    QCOMPARE(testDevice->getIoDevice(), &testBuffer);
+    QVERIFY(testDevice->open(QIODevice::WriteOnly));
+    QCOMPARE(testDevice->write("test", 4), static_cast<qint64>(4));
+    testDevice->close();
+    QVERIFY(!testDevice->isOpen());
     z_stream zins;
     zins.zalloc = (alloc_func) NULL;
     zins.zfree = (free_func) NULL;
@@ -54,4 +55,5 @@ void TestQuaZIODevice::write()
     QCOMPARE(size, 4);
     outBuf[4] = '\0';
     QCOMPARE(static_cast<const char*>(outBuf), "test");
+    delete testDevice; // Test D0 destructor
 }

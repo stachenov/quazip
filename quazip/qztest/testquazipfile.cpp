@@ -332,3 +332,52 @@ void TestQuaZipFile::constructorDestructor()
     QuaZipFile f4("zipName.zip");
     QuaZipFile f5("zipName.zip", "fileName.txt", QuaZip::csDefault, &parent);
 }
+
+void TestQuaZipFile::setFileAttrs()
+{
+    QuaZip testZip("setFileAttrs.zip");
+    QVERIFY(testZip.open(QuaZip::mdCreate));
+    QuaZipFile zipFile(&testZip);
+    QuaZipNewInfo newInfo("testPerm.txt");
+    newInfo.setPermissions(QFile::ReadOwner);
+    QVERIFY(zipFile.open(QIODevice::WriteOnly, newInfo));
+    zipFile.close();
+    QString fileTestAttr = "testAttr.txt";
+    QStringList fileNames;
+    fileNames << fileTestAttr;
+    QVERIFY(createTestFiles(fileNames));
+    newInfo.name = fileTestAttr;
+    newInfo.setFileDateTime("tmp/" + fileTestAttr);
+    newInfo.setFilePermissions("tmp/" + fileTestAttr);
+    QVERIFY(zipFile.open(QIODevice::WriteOnly, newInfo));
+    zipFile.close();
+    testZip.close();
+    QuaZipFileInfo64 info;
+    {
+        QuaZipFile readFilePerm("setFileAttrs.zip", "testPerm.txt");
+        QVERIFY(readFilePerm.open(QIODevice::ReadOnly));
+        QVERIFY(readFilePerm.getFileInfo(&info));
+        QCOMPARE(info.getPermissions(), QFile::ReadOwner);
+        readFilePerm.close();
+    }
+    {
+        QuaZipFile readFileAttrs("setFileAttrs.zip", "testAttr.txt");
+        QVERIFY(readFileAttrs.open(QIODevice::ReadOnly));
+        QVERIFY(readFileAttrs.getFileInfo(&info));
+        QFileInfo srcInfo("tmp/" + fileTestAttr);
+        QFile::Permissions usedPermissions =
+                QFile::WriteOwner | QFile::ReadOwner | QFile::ExeOwner |
+                QFile::WriteGroup | QFile::ReadGroup | QFile::ExeGroup |
+                QFile::WriteOther | QFile::ReadOther | QFile::ExeOther;
+        QCOMPARE(info.getPermissions() & usedPermissions,
+                 srcInfo.permissions() & usedPermissions);
+        // I really hope Qt 6 will use quint64 for time_t!
+        quint64 newTime = info.dateTime.toTime_t();
+        quint64 oldTime = srcInfo.lastModified().toTime_t();
+        // ZIP uses weird format with 2 second precision
+        QCOMPARE(newTime / 2, oldTime / 2);
+        readFileAttrs.close();
+    }
+    removeTestFiles(fileNames);
+    QDir().remove(testZip.getZipName());
+}

@@ -84,7 +84,7 @@ public:
       syntax as QDir.
       \param filters The entry type filters, only Files and Dirs are
       accepted.
-      \param sort Sorting mode (not supported yet).
+      \param sort Sorting mode.
       */
     QList<QuaZipFileInfo> entryInfoList(const QStringList &nameFilters,
         QDir::Filters filters = QDir::NoFilter,
@@ -103,7 +103,7 @@ public:
       syntax as QDir.
       \param filters The entry type filters, only Files and Dirs are
       accepted.
-      \param sort Sorting mode (not supported yet).
+      \param sort Sorting mode.
       */
     QList<QuaZipFileInfo64> entryInfoList64(const QStringList &nameFilters,
         QDir::Filters filters = QDir::NoFilter,
