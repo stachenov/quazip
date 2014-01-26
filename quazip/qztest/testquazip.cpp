@@ -125,7 +125,9 @@ void TestQuaZip::add()
     }
     testZip.close();
     QVERIFY(testZip.open(QuaZip::mdUnzip));
-    QCOMPARE(testZip.getFileNameList(), fileNames + fileNamesToAdd);
+    QStringList allNames = fileNames + fileNamesToAdd;
+    QCOMPARE(testZip.getEntriesCount(), allNames.size());
+    QCOMPARE(testZip.getFileNameList(), allNames);
     QCOMPARE(testZip.getComment(), globalComment);
     testZip.close();
     removeTestFiles(fileNames);
@@ -265,4 +267,43 @@ void TestQuaZip::testQIODeviceAPI()
     QCOMPARE(bufferArray.size(), fileArray.size());
     QCOMPARE(bufferArray, fileArray);
     curDir.remove(zipName);
+}
+
+void TestQuaZip::setZipName()
+{
+    QuaZip zip;
+    zip.setZipName("testSetZipName.zip");
+    zip.open(QuaZip::mdCreate);
+    zip.close();
+    QVERIFY(QFileInfo(zip.getZipName()).exists());
+    QDir().remove(zip.getZipName());
+}
+
+void TestQuaZip::setIoDevice()
+{
+    QuaZip zip;
+    QFile file("testSetIoDevice.zip");
+    zip.setIoDevice(&file);
+    QCOMPARE(zip.getIoDevice(), &file);
+    zip.open(QuaZip::mdCreate);
+    zip.close();
+    QVERIFY(file.exists());
+    QDir().remove(file.fileName());
+}
+
+void TestQuaZip::setCommentCodec()
+{
+    QuaZip zip("commentCodec.zip");
+    QVERIFY(zip.open(QuaZip::mdCreate));
+    zip.setCommentCodec("WINDOWS-1251");
+    zip.setComment(QString::fromUtf8("Вопрос"));
+    QuaZipFile zipFile(&zip);
+    QVERIFY(zipFile.open(QIODevice::WriteOnly, QuaZipNewInfo("test.txt")));
+    zipFile.close();
+    zip.close();
+    QVERIFY(zip.open(QuaZip::mdUnzip));
+    zip.setCommentCodec(QTextCodec::codecForName("KOI8-R"));
+    QCOMPARE(zip.getComment(), QString::fromUtf8("бНОПНЯ"));
+    zip.close();
+    QDir().remove(zip.getZipName());
 }

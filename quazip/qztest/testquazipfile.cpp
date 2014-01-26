@@ -231,4 +231,84 @@ void TestQuaZipFile::getZip()
     QCOMPARE(f1.getZip(), &testZip);
     QuaZipFile f2("doesntexist.zip", "someFile");
     QCOMPARE(f2.getZip(), static_cast<QuaZip*>(NULL));
+    f2.setZip(&testZip);
+    QCOMPARE(f2.getZip(), &testZip);
+}
+
+void TestQuaZipFile::setZipName()
+{
+    QString testFileName = "testZipName.txt";
+    QString testZipName = "testZipName.zip";
+    QVERIFY(createTestFiles(QStringList() << testFileName));
+    QVERIFY(createTestArchive(testZipName, QStringList() << testFileName));
+    QuaZipFile testFile;
+    testFile.setZipName(testZipName);
+    testFile.setFileName(testFileName);
+    QVERIFY(testFile.open(QIODevice::ReadOnly));
+    testFile.close();
+    removeTestFiles(QStringList() << testFileName);
+    QDir curDir;
+    curDir.remove(testZipName);
+}
+
+void TestQuaZipFile::getFileInfo()
+{
+    QuaZipFileInfo info32;
+    QuaZipFileInfo64 info64;
+    QString testFileName = "testZipName.txt";
+    QStringList testFiles;
+    testFiles << testFileName;
+    QString testZipName = "testZipName.zip";
+    QVERIFY(createTestFiles(testFiles));
+    QVERIFY(createTestArchive(testZipName, testFiles));
+    QuaZipFile testFile;
+    testFile.setZipName(testZipName);
+    testFile.setFileName(testFileName);
+    QVERIFY(testFile.open(QIODevice::ReadOnly));
+    QVERIFY(testFile.getFileInfo(&info32));
+    QVERIFY(testFile.getFileInfo(&info64));
+    QCOMPARE(info32.name, info64.name);
+    QCOMPARE(info32.versionCreated, info64.versionCreated);
+    QCOMPARE(info32.versionNeeded, info64.versionNeeded);
+    QCOMPARE(info32.flags, info64.flags);
+    QCOMPARE(info32.method, info64.method);
+    QCOMPARE(info32.dateTime, info64.dateTime);
+    QCOMPARE(info32.crc, info64.crc);
+    QCOMPARE(info32.compressedSize,
+             static_cast<quint32>(info64.compressedSize));
+    QCOMPARE(info32.uncompressedSize,
+             static_cast<quint32>(info64.uncompressedSize));
+    QCOMPARE(info32.diskNumberStart, info64.diskNumberStart);
+    QCOMPARE(info32.internalAttr, info64.internalAttr);
+    QCOMPARE(info32.externalAttr, info64.externalAttr);
+    QCOMPARE(info32.comment, info64.comment);
+    QCOMPARE(info32.extra, info64.extra);
+    testFile.close();
+    removeTestFiles(testFiles);
+    QDir curDir;
+    curDir.remove(testZipName);
+}
+
+void TestQuaZipFile::setFileName()
+{
+    QString testFileName = "testZipName.txt";
+    QString testZipName = "testZipName.zip";
+    QVERIFY(createTestFiles(QStringList() << testFileName));
+    QVERIFY(createTestArchive(testZipName, QStringList() << testFileName));
+    QuaZipFile testFile(testZipName);
+    testFile.setFileName(testFileName.toUpper());
+#ifdef Q_WS_WIN
+    QVERIFY(testFile.open(QIODevice::ReadOnly));
+    testFile.close();
+#else
+    QVERIFY(!testFile.open(QIODevice::ReadOnly));
+#endif
+    testFile.setFileName(testFileName.toUpper(), QuaZip::csInsensitive);
+    QVERIFY(testFile.open(QIODevice::ReadOnly));
+    testFile.close();
+    testFile.setFileName(testFileName.toUpper(), QuaZip::csSensitive);
+    QVERIFY(!testFile.open(QIODevice::ReadOnly));
+    removeTestFiles(QStringList() << testFileName);
+    QDir curDir;
+    curDir.remove(testZipName);
 }
