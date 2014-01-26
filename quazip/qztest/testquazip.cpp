@@ -200,7 +200,7 @@ void TestQuaZip::setDataDescriptorWritingEnabled()
     QuaZipFile readZipFile(zipName, "vegetation_info.xml");
     QVERIFY(readZipFile.open(QIODevice::ReadOnly));
     // Test that file is not compressed.
-    QCOMPARE(readZipFile.csize(), contents.size());
+    QCOMPARE(readZipFile.csize(), static_cast<qint64>(contents.size()));
     readZipFile.close();
     QCOMPARE(QFileInfo(zipName).size(), static_cast<qint64>(171));
     QFile zipFile(zipName);
