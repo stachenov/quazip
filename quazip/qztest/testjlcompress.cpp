@@ -131,6 +131,9 @@ void TestJlCompress::extractFile_data()
             << "testdir2/subdir/test2sub.txt")
         << QString::fromUtf8("testdir2/тест2.txt")
         << QString::fromUtf8("тест2.txt") << QByteArray("IBM866");
+    QTest::newRow("extract dir") << "jlextdir.zip" << (
+            QStringList() << "testdir1/")
+        << "testdir1/" << "testdir1/" << QByteArray();
 }
 
 void TestJlCompress::extractFile()
@@ -147,6 +150,15 @@ void TestJlCompress::extractFile()
     if (!createTestFiles(fileNames)) {
         QFAIL("Couldn't create test files");
     }
+    QFile srcFile("tmp/" + fileToExtract);
+    QFile::Permissions srcPerm = srcFile.permissions();
+    // Invert the "write other" flag so permissions
+    // are NOT default any more. Otherwise it's impossible
+    // to figure out whether the permissions were set correctly
+    // or JlCompress failed to set them completely,
+    // thus leaving them at the default setting.
+    srcPerm ^= QFile::WriteOther;
+    QVERIFY(srcFile.setPermissions(srcPerm));
     if (!createTestArchive(zipName, fileNames,
                            QTextCodec::codecForName(encoding))) {
         QFAIL("Can't create test archive");
@@ -159,9 +171,16 @@ void TestJlCompress::extractFile()
     QCOMPARE(destInfo.size(), srcInfo.size());
     QCOMPARE(destInfo.permissions(), srcInfo.permissions());
     curDir.remove("jlext/jlfile/" + destName);
-    curDir.mkdir("jlext/jlfile/" + destName);
-    QVERIFY(JlCompress::extractFile(zipName, fileToExtract,
-                "jlext/jlfile/" + destName).isEmpty());
+    if (!fileToExtract.endsWith("/")) {
+        // If we aren't extracting a directory, we need to check
+        // that extractFile() fails if there is a directory
+        // with the same name as the file being extracted.
+        curDir.mkdir("jlext/jlfile/" + destName);
+        QVERIFY(JlCompress::extractFile(zipName, fileToExtract,
+                    "jlext/jlfile/" + destName).isEmpty());
+    }
+    // Here we either delete the target dir or the dir created in the
+    // test above.
     curDir.rmpath("jlext/jlfile/" + destName);
     removeTestFiles(fileNames);
     curDir.remove(zipName);
