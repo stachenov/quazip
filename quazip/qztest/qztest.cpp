@@ -31,6 +31,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "testquagzipfile.h"
 #include "testquaziodevice.h"
 #include "testquazipnewinfo.h"
+#include "testquazipfileinfo.h"
 
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
@@ -216,6 +217,10 @@ int main(int argc, char **argv)
     {
         TestQuaZipNewInfo testQuaZipNewInfo;
         err = qMax(err, QTest::qExec(&testQuaZipNewInfo, app.arguments()));
+    }
+    {
+        TestQuaZipFileInfo testQuaZipFileInfo;
+        err = qMax(err, QTest::qExec(&testQuaZipFileInfo, app.arguments()));
     }
     if (err == 0) {
         qDebug("All tests executed successfully");

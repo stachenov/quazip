@@ -20,7 +20,8 @@ testquaziodevice.h \
 testquazipdir.h \
 testquazipfile.h \
 testquazip.h \
-    testquazipnewinfo.h
+    testquazipnewinfo.h \
+    testquazipfileinfo.h
 
 SOURCES += qztest.cpp \
 testjlcompress.cpp \
@@ -30,7 +31,8 @@ testquaziodevice.cpp \
 testquazip.cpp \
 testquazipdir.cpp \
 testquazipfile.cpp \
-    testquazipnewinfo.cpp
+    testquazipnewinfo.cpp \
+    testquazipfileinfo.cpp
 
 OBJECTS_DIR = .obj
 MOC_DIR = .moc

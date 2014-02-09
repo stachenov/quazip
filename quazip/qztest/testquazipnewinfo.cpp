@@ -16,7 +16,7 @@ TestQuaZipNewInfo::TestQuaZipNewInfo(QObject *parent) :
 {
 }
 
-void TestQuaZipNewInfo::testSetNTFSTimes()
+void TestQuaZipNewInfo::setFileNTFSTimes()
 {
     QString zipName = "newtimes.zip";
     QStringList testFiles;
