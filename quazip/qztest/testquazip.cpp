@@ -30,6 +30,9 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QDir>
 #include <QFileInfo>
 #include <QHash>
+#ifdef QUAZIP_TEST_QSAVEFILE
+#include <QSaveFile>
+#endif
 #include <QTextCodec>
 
 #include <QtTest/QtTest>
@@ -321,12 +324,6 @@ void TestQuaZip::setIoDevice()
     QVERIFY(!file.isOpen());
     QVERIFY(file.exists());
     QDir().remove(file.fileName());
-    QSaveFile saveFile("testSaveFile.zip");
-    zip.setIoDevice(&saveFile);
-    QCOMPARE(zip.getIoDevice(), &saveFile);
-    zip.open(QuaZip::mdCreate);
-    zip.close();
-    QVERIFY(QFileInfo(saveFile.fileName()).exists());
 }
 
 void TestQuaZip::setCommentCodec()
@@ -371,3 +368,16 @@ void TestQuaZip::setAutoClose()
         QVERIFY(zip.open(QuaZip::mdCreate));
     }
 }
+
+#ifdef QUAZIP_TEST_QSAVEFILE
+void TestQuaZip::saveFileBug();
+{
+    QuaZip zip;
+    QSaveFile saveFile("testSaveFile.zip");
+    zip.setIoDevice(&saveFile);
+    QCOMPARE(zip.getIoDevice(), &saveFile);
+    zip.open(QuaZip::mdCreate);
+    zip.close();
+    QVERIFY(QFileInfo(saveFile.fileName()).exists());
+}
+#endif
