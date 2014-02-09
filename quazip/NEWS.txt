@@ -1,5 +1,15 @@
 QuaZIP changes
 
+* 2014-02-09 0.6.2
+        * QuaZipNewInfo / QuaZipFileInfo64 now provide API to access/set
+          NTFS time stamps - useful even on non-NTFS systems if you 
+          need more precise dates and times than default ones.
+        * QuaZipNewInfo may now be initialized from QuaZipFileInfo64.
+        * No more crashes when using QSaveFile as QIODevice for ZIP.
+        * The new QuaZip::setAutoClose() method allows to leave the
+          QIODevice open when you close the QuaZip instance.
+        * qztest now depends on quazip, no longer breaking the build.
+
 * 2014-01-26 0.6.1
         * Improved zip64 support.
         * A LOT more tests thanks to g++ --coverage / lcov.
