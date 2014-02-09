@@ -372,12 +372,20 @@ void TestQuaZip::setAutoClose()
 #ifdef QUAZIP_TEST_QSAVEFILE
 void TestQuaZip::saveFileBug()
 {
+    QDir curDir;
+    QString zipName = "testSaveFile.zip";
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName)) {
+            QFAIL("Can't remove testSaveFile.zip");
+        }
+    }
     QuaZip zip;
-    QSaveFile saveFile("testSaveFile.zip");
+    QSaveFile saveFile(zipName);
     zip.setIoDevice(&saveFile);
     QCOMPARE(zip.getIoDevice(), &saveFile);
     zip.open(QuaZip::mdCreate);
     zip.close();
     QVERIFY(QFileInfo(saveFile.fileName()).exists());
+    curDir.remove(saveFile.fileName());
 }
 #endif
