@@ -53,13 +53,37 @@ static void QuaZipNewInfo_setPermissions(QuaZipNewInfo *info,
     info->externalAttr = (info->externalAttr & ~0xFFFF0000u) | (uPerm << 16);
 }
 
+template<typename FileInfo>
+void QuaZipNewInfo_init(QuaZipNewInfo &self, const FileInfo &existing)
+{
+    self.name = existing.name;
+    self.dateTime = existing.dateTime;
+    self.internalAttr = existing.internalAttr;
+    self.externalAttr = existing.externalAttr;
+    self.comment = existing.comment;
+    self.extraLocal = existing.extra;
+    self.extraGlobal = existing.extra;
+    self.uncompressedSize = existing.uncompressedSize;
+}
+
+QuaZipNewInfo::QuaZipNewInfo(const QuaZipFileInfo &existing)
+{
+    QuaZipNewInfo_init(*this, existing);
+}
+
+QuaZipNewInfo::QuaZipNewInfo(const QuaZipFileInfo64 &existing)
+{
+    QuaZipNewInfo_init(*this, existing);
+}
+
 QuaZipNewInfo::QuaZipNewInfo(const QString& name):
-  name(name), dateTime(QDateTime::currentDateTime()), internalAttr(0), externalAttr(0)
+  name(name), dateTime(QDateTime::currentDateTime()), internalAttr(0), externalAttr(0),
+  uncompressedSize(0)
 {
 }
 
 QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
-  name(name), internalAttr(0), externalAttr(0)
+  name(name), internalAttr(0), externalAttr(0), uncompressedSize(0)
 {
   QFileInfo info(file);
   QDateTime lm = info.lastModified();

@@ -31,6 +31,8 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include "quazip_global.h"
 
+#include "quazipfileinfo.h"
+
 /// Information about a file to be created.
 /** This structure holds information about a file to be created inside
  * ZIP archive. At least name should be set to something correct before
@@ -96,6 +98,22 @@ struct QUAZIP_EXPORT QuaZipNewInfo {
    * \sa setFileDateTime()
    **/
   QuaZipNewInfo(const QString& name, const QString& file);
+  /// Initializes the new instance from existing file info.
+  /** Mainly used when copying files between archives.
+   *
+   * Both extra fields are initialized to existing.extra.
+   * @brief QuaZipNewInfo
+   * @param existing
+   */
+  QuaZipNewInfo(const QuaZipFileInfo &existing);
+  /// Initializes the new instance from existing file info.
+  /** Mainly used when copying files between archives.
+   *
+   * Both extra fields are initialized to existing.extra.
+   * @brief QuaZipNewInfo
+   * @param existing
+   */
+  QuaZipNewInfo(const QuaZipFileInfo64 &existing);
   /// Sets the file timestamp from the existing file.
   /** Use this function to set the file timestamp from the existing
    * file. Use it like this:
