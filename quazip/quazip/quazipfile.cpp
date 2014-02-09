@@ -306,7 +306,9 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
     info_z.dosDate = 0;
     info_z.internal_fa=(uLong)info.internalAttr;
     info_z.external_fa=(uLong)info.externalAttr;
-    if (!p->zip->isDataDescriptorWritingEnabled())
+    if (p->zip->isDataDescriptorWritingEnabled())
+        zipSetFlags(p->zip->getZipFile(), ZIP_WRITE_DATA_DESCRIPTOR);
+    else
         zipClearFlags(p->zip->getZipFile(), ZIP_WRITE_DATA_DESCRIPTOR);
     p->setZipError(zipOpenNewFileInZip3_64(p->zip->getZipFile(),
           p->zip->getFileNameCodec()->fromUnicode(info.name).constData(), &info_z,

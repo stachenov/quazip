@@ -316,9 +316,17 @@ void TestQuaZip::setIoDevice()
     zip.setIoDevice(&file);
     QCOMPARE(zip.getIoDevice(), &file);
     zip.open(QuaZip::mdCreate);
+    QVERIFY(file.isOpen());
     zip.close();
+    QVERIFY(!file.isOpen());
     QVERIFY(file.exists());
     QDir().remove(file.fileName());
+    QSaveFile saveFile("testSaveFile.zip");
+    zip.setIoDevice(&saveFile);
+    QCOMPARE(zip.getIoDevice(), &saveFile);
+    zip.open(QuaZip::mdCreate);
+    zip.close();
+    QVERIFY(QFileInfo(saveFile.fileName()).exists());
 }
 
 void TestQuaZip::setCommentCodec()
@@ -336,4 +344,30 @@ void TestQuaZip::setCommentCodec()
     QCOMPARE(zip.getComment(), QString::fromUtf8("бНОПНЯ"));
     zip.close();
     QDir().remove(zip.getZipName());
+}
+
+void TestQuaZip::setAutoClose()
+{
+    {
+        QBuffer buf;
+        QuaZip zip(&buf);
+        QVERIFY(zip.isAutoClose());
+        QVERIFY(zip.open(QuaZip::mdCreate));
+        QVERIFY(buf.isOpen());
+        zip.close();
+        QVERIFY(!buf.isOpen());
+        QVERIFY(zip.open(QuaZip::mdCreate));
+    }
+    {
+        QBuffer buf;
+        QuaZip zip(&buf);
+        QVERIFY(zip.isAutoClose());
+        zip.setAutoClose(false);
+        QVERIFY(!zip.isAutoClose());
+        QVERIFY(zip.open(QuaZip::mdCreate));
+        QVERIFY(buf.isOpen());
+        zip.close();
+        QVERIFY(buf.isOpen());
+        QVERIFY(zip.open(QuaZip::mdCreate));
+    }
 }

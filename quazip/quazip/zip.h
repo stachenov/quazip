@@ -83,6 +83,7 @@ typedef voidp zipFile;
 #define ZIP_INTERNALERROR               (-104)
 
 #define ZIP_WRITE_DATA_DESCRIPTOR 0x8u
+#define ZIP_AUTO_CLOSE 0x1u
 
 #ifndef DEF_MEM_LEVEL
 #  if MAX_MEM_LEVEL >= 8

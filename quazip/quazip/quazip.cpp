@@ -67,6 +67,8 @@ class QuaZipPrivate {
     bool dataDescriptorWritingEnabled;
     /// The zip64 mode.
     bool zip64;
+    /// The auto-close flag.
+    bool autoClose;
     inline QTextCodec *getDefaultFileNameCodec()
     {
         if (defaultFileNameCodec == NULL) {
@@ -85,7 +87,8 @@ class QuaZipPrivate {
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
       dataDescriptorWritingEnabled(true),
-      zip64(false)
+      zip64(false),
+      autoClose(true)
     {
         lastMappedDirectoryEntry.num_of_file = 0;
         lastMappedDirectoryEntry.pos_in_zip_directory = 0;
@@ -101,7 +104,8 @@ class QuaZipPrivate {
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
       dataDescriptorWritingEnabled(true),
-      zip64(false)
+      zip64(false),
+      autoClose(true)
     {
         lastMappedDirectoryEntry.num_of_file = 0;
         lastMappedDirectoryEntry.pos_in_zip_directory = 0;
@@ -116,7 +120,8 @@ class QuaZipPrivate {
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
       dataDescriptorWritingEnabled(true),
-      zip64(false)
+      zip64(false),
+      autoClose(true)
     {
         lastMappedDirectoryEntry.num_of_file = 0;
         lastMappedDirectoryEntry.pos_in_zip_directory = 0;
@@ -260,6 +265,11 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
               ioApi);
       }
       if(p->zipFile_f!=NULL) {
+        if (p->autoClose) {
+            zipSetFlags(p->zipFile_f, ZIP_AUTO_CLOSE);
+        } else {
+            zipClearFlags(p->zipFile_f, ZIP_AUTO_CLOSE);
+        }
         p->mode=mode;
         p->ioDevice = ioDevice;
         return true;
@@ -732,4 +742,14 @@ void QuaZip::setZip64Enabled(bool zip64)
 bool QuaZip::isZip64Enabled() const
 {
     return p->zip64;
+}
+
+bool QuaZip::isAutoClose() const
+{
+    return p->autoClose;
+}
+
+void QuaZip::setAutoClose(bool autoClose) const
+{
+    p->autoClose = autoClose;
 }

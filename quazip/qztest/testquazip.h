@@ -41,6 +41,7 @@ private slots:
     void setZipName();
     void setIoDevice();
     void setCommentCodec();
+    void setAutoClose();
 };
 
 #endif // QUAZIP_TEST_QUAZIP_H

@@ -801,7 +801,9 @@ int LoadCentralDirectoryRecord(zip64_internal* pziinit)
 
   if (err!=ZIP_OK)
   {
-    ZCLOSE64(pziinit->z_filefunc, pziinit->filestream);
+      if ((pziinit->flags & ZIP_AUTO_CLOSE) != 0) {
+        ZCLOSE64(pziinit->z_filefunc, pziinit->filestream);
+      }
     return ZIP_ERRNO;
   }
 
@@ -885,7 +887,7 @@ extern zipFile ZEXPORT zipOpen3 (voidpf file, int append, zipcharpc* globalcomme
     ziinit.ci.stream_initialised = 0;
     ziinit.number_entry = 0;
     ziinit.add_position_when_writting_offset = 0;
-    ziinit.flags = ZIP_WRITE_DATA_DESCRIPTOR;
+    ziinit.flags = ZIP_WRITE_DATA_DESCRIPTOR | ZIP_AUTO_CLOSE;
     init_linkedlist(&(ziinit.central_dir));
 
 
@@ -893,7 +895,9 @@ extern zipFile ZEXPORT zipOpen3 (voidpf file, int append, zipcharpc* globalcomme
     zi = (zip64_internal*)ALLOC(sizeof(zip64_internal));
     if (zi==NULL)
     {
-        ZCLOSE64(ziinit.z_filefunc,ziinit.filestream);
+        if ((ziinit.flags & ZIP_AUTO_CLOSE) != 0) {
+            ZCLOSE64(ziinit.z_filefunc,ziinit.filestream);
+        }
         return NULL;
     }
 
@@ -1983,9 +1987,11 @@ extern int ZEXPORT zipClose (zipFile file, const char* global_comment)
     if(err == ZIP_OK)
       err = Write_GlobalComment(zi, global_comment);
 
-    if (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0)
-        if (err == ZIP_OK)
-            err = ZIP_ERRNO;
+    if ((zi->flags & ZIP_AUTO_CLOSE) != 0) {
+        if (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0)
+            if (err == ZIP_OK)
+                err = ZIP_ERRNO;
+    }
 
 #ifndef NO_ADDFILEINEXISTINGZIP
     TRYFREE(zi->globalcomment);

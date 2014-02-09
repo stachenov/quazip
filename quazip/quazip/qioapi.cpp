@@ -16,7 +16,12 @@
 #include "ioapi.h"
 #include "quazip_global.h"
 #include <QIODevice>
-
+#if (QT_VERSION >= 0x050100)
+#define QUAZIP_QSAVEFILE_BUG_WORKAROUND
+#endif
+#ifdef QUAZIP_QSAVEFILE_BUG_WORKAROUND
+#include <QSaveFile>
+#endif
 
 /* I've found an old Unix (a SunOS 4.1.3_U1) without all SEEK_* defined.... */
 
@@ -76,15 +81,21 @@ voidpf ZCALLBACK qiodevice_open_file_func (
    int mode)
 {
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(file);
+    QIODevice::OpenMode desiredMode;
     if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER)==ZLIB_FILEFUNC_MODE_READ)
-        iodevice->open(QIODevice::ReadOnly);
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
-        iodevice->open(QIODevice::ReadWrite);
-    else
-    if (mode & ZLIB_FILEFUNC_MODE_CREATE)
-        iodevice->open(QIODevice::WriteOnly);
-
+        desiredMode = QIODevice::ReadOnly;
+    else if (mode & ZLIB_FILEFUNC_MODE_EXISTING)
+        desiredMode = QIODevice::ReadWrite;
+    else if (mode & ZLIB_FILEFUNC_MODE_CREATE)
+        desiredMode = QIODevice::WriteOnly;
+    if (iodevice->isOpen()) {
+        if ((iodevice->openMode() & desiredMode) == desiredMode) {
+            return iodevice;
+        } else {
+            return NULL;
+        }
+    }
+    iodevice->open(desiredMode);
     if (iodevice->isOpen()) {
         if (iodevice->isSequential()) {
             iodevice->close();
@@ -194,7 +205,17 @@ int ZCALLBACK qiodevice_close_file_func (
    voidpf /*opaque UNUSED*/,
    voidpf stream)
 {
-    ((QIODevice*)stream)->close();
+    QIODevice *device = reinterpret_cast<QIODevice*>(stream);
+#ifdef QUAZIP_QSAVEFILE_BUG_WORKAROUND
+    // QSaveFile terribly breaks the is-a idiom:
+    // it IS a QIODevice, but it is NOT compatible with it: close() is private
+    QSaveFile *file = qobject_cast<QSaveFile*>(device);
+    if (file != NULL) {
+        // We have to call the ugly commit() instead:
+        return file->commit() ? 0 : -1;
+    }
+#endif
+    device->close();
     return 0;
 }
 
