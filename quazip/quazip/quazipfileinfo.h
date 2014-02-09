@@ -86,6 +86,13 @@ struct QUAZIP_EXPORT QuaZipFileInfo64 {
   /// Compression method.
   quint16 method;
   /// Last modification date and time.
+  /**
+   * This is the time stored in the standard ZIP header. This format only allows
+   * to store time with 2-second precision, so the seconds will always be even
+   * and the milliseconds will always be zero. If you need more precise
+   * date and time, you can try to call the getNTFSmTime() function or
+   * its siblings, provided that the archive itself contains these NTFS times.
+   */
   QDateTime dateTime;
   /// CRC.
   quint32 crc;
@@ -121,6 +128,45 @@ struct QUAZIP_EXPORT QuaZipFileInfo64 {
     occured.
     */
   bool toQuaZipFileInfo(QuaZipFileInfo &info) const;
+  /// Returns the NTFS modification time
+  /**
+   * The getNTFS*Time() functions only work if there is an NTFS extra field
+   * present. Otherwise, they all return invalid null timestamps.
+   * @param fineTicks If not NULL, the fractional part of milliseconds returned
+   *                  there, measured in 100-nanosecond ticks. Will be set to
+   *                  zero if there is no NTFS extra field.
+   * @sa dateTime
+   * @sa getNTFSaTime()
+   * @sa getNTFScTime()
+   * @return The NTFS modification time, UTC
+   */
+  QDateTime getNTFSmTime(int *fineTicks = NULL) const;
+  /// Returns the NTFS access time
+  /**
+   * The getNTFS*Time() functions only work if there is an NTFS extra field
+   * present. Otherwise, they all return invalid null timestamps.
+   * @param fineTicks If not NULL, the fractional part of milliseconds returned
+   *                  there, measured in 100-nanosecond ticks. Will be set to
+   *                  zero if there is no NTFS extra field.
+   * @sa dateTime
+   * @sa getNTFSmTime()
+   * @sa getNTFScTime()
+   * @return The NTFS access time, UTC
+   */
+  QDateTime getNTFSaTime(int *fineTicks = NULL) const;
+  /// Returns the NTFS creation time
+  /**
+   * The getNTFS*Time() functions only work if there is an NTFS extra field
+   * present. Otherwise, they all return invalid null timestamps.
+   * @param fineTicks If not NULL, the fractional part of milliseconds returned
+   *                  there, measured in 100-nanosecond ticks. Will be set to
+   *                  zero if there is no NTFS extra field.
+   * @sa dateTime
+   * @sa getNTFSmTime()
+   * @sa getNTFSaTime()
+   * @return The NTFS creation time, UTC
+   */
+  QDateTime getNTFScTime(int *fineTicks = NULL) const;
 };
 
 #endif
