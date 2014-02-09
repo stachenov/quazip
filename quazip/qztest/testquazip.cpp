@@ -370,7 +370,7 @@ void TestQuaZip::setAutoClose()
 }
 
 #ifdef QUAZIP_TEST_QSAVEFILE
-void TestQuaZip::saveFileBug();
+void TestQuaZip::saveFileBug()
 {
     QuaZip zip;
     QSaveFile saveFile("testSaveFile.zip");

@@ -90,6 +90,14 @@ voidpf ZCALLBACK qiodevice_open_file_func (
         desiredMode = QIODevice::WriteOnly;
     if (iodevice->isOpen()) {
         if ((iodevice->openMode() & desiredMode) == desiredMode) {
+            if (iodevice->isSequential()) {
+                return NULL;
+            } else {
+                if ((desiredMode & QIODevice::WriteOnly) != 0) {
+                    // open for writing, need to seek existing device
+                    iodevice->seek(0);
+                }
+            }
             return iodevice;
         } else {
             return NULL;
