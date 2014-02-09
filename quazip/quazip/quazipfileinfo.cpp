@@ -24,9 +24,6 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include "quazipfileinfo.h"
 
-#define EXTRA_NTFS_MAGIC 0x000Au
-#define EXTRA_NTFS_TIME_MAGIC 0x0001u
-
 static QFile::Permissions permissionsFromExternalAttr(quint32 externalAttr) {
     quint32 uPerm = (externalAttr & 0xFFFF0000u) >> 16;
     QFile::Permissions perm = 0;
@@ -107,7 +104,7 @@ static QDateTime getNTFSTime(const QByteArray &extra, int position,
                 | (static_cast<unsigned>(static_cast<unsigned char>(
                                                   extra.at(i + 1))) << 8);
         i += 2;
-        if (type == EXTRA_NTFS_MAGIC && length >= 32) {
+        if (type == QUAZIP_EXTRA_NTFS_MAGIC && length >= 32) {
             i += 4; // reserved
             while (i <= extra.size() - 4) {
                 unsigned tag = static_cast<unsigned>(
@@ -122,7 +119,8 @@ static QDateTime getNTFSTime(const QByteArray &extra, int position,
                                static_cast<unsigned char>(extra.at(i + 1)))
                            << 8);
                 i += 2;
-                if (tag == EXTRA_NTFS_TIME_MAGIC && tagsize >= position + 8) {
+                if (tag == QUAZIP_EXTRA_NTFS_TIME_MAGIC
+                        && tagsize >= position + 8) {
                     i += position;
                     quint64 mtime = static_cast<quint64>(
                                 static_cast<unsigned char>(extra.at(i)))

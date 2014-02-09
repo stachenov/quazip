@@ -126,6 +126,64 @@ struct QUAZIP_EXPORT QuaZipNewInfo {
     otherwise.
     */
   void setPermissions(QFile::Permissions permissions);
+  /// Sets the NTFS times from an existing file.
+  /**
+   * If the file doesn't exist, a warning is printed to the stderr and nothing
+   * is done. Otherwise, all three times, as reported by
+   * QFileInfo::lastModified(), QFileInfo::lastRead() and QFileInfo::created(),
+   * are written to the NTFS extra field record.
+   *
+   * The NTFS record is written to
+   * both the local and the global extra fields, updating the existing record
+   * if there is one, or creating a new one and appending it to the end
+   * of each extra field.
+   *
+   * The microseconds will be zero, as they aren't reported by QFileInfo.
+   * @param fileName
+   */
+  void setFileNTFSTimes(const QString &fileName);
+  /// Sets the NTFS modification time.
+  /**
+   * The time is written into the NTFS record in
+   * both the local and the global extra fields, updating the existing record
+   * if there is one, or creating a new one and appending it to the end
+   * of each extra field. When updating an existing record, all other fields
+   * are left intact.
+   * @param mTime The new modification time.
+   * @param fineTicks The fractional part of milliseconds, in 100-nanosecond
+   *        ticks (i. e. 9999 ticks = 999.9 microsecond). Values greater than
+   *        9999 will add milliseconds or even seconds, but this can be
+   *        confusing and therefore is discouraged.
+   */
+  void setFileNTFSmTime(const QDateTime &mTime, int fineTicks = 0);
+  /// Sets the NTFS access time.
+  /**
+   * The time is written into the NTFS record in
+   * both the local and the global extra fields, updating the existing record
+   * if there is one, or creating a new one and appending it to the end
+   * of each extra field. When updating an existing record, all other fields
+   * are left intact.
+   * @param mTime The new modification time.
+   * @param fineTicks The fractional part of milliseconds, in 100-nanosecond
+   *        ticks (i. e. 9999 ticks = 999.9 microsecond). Values greater than
+   *        9999 will add milliseconds or even seconds, but this can be
+   *        confusing and therefore is discouraged.
+   */
+  void setFileNTFSaTime(const QDateTime &aTime, int fineTicks = 0);
+  /// Sets the NTFS creation time.
+  /**
+   * The time is written into the NTFS record in
+   * both the local and the global extra fields, updating the existing record
+   * if there is one, or creating a new one and appending it to the end
+   * of each extra field. When updating an existing record, all other fields
+   * are left intact.
+   * @param mTime The new modification time.
+   * @param fineTicks The fractional part of milliseconds, in 100-nanosecond
+   *        ticks (i. e. 9999 ticks = 999.9 microsecond). Values greater than
+   *        9999 will add milliseconds or even seconds, but this can be
+   *        confusing and therefore is discouraged.
+   */
+  void setFileNTFScTime(const QDateTime &cTime, int fineTicks = 0);
 };
 
 #endif
