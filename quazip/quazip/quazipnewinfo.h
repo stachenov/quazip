@@ -181,7 +181,7 @@ struct QUAZIP_EXPORT QuaZipNewInfo {
    * if there is one, or creating a new one and appending it to the end
    * of each extra field. When updating an existing record, all other fields
    * are left intact.
-   * @param mTime The new modification time.
+   * @param aTime The new access time.
    * @param fineTicks The fractional part of milliseconds, in 100-nanosecond
    *        ticks (i. e. 9999 ticks = 999.9 microsecond). Values greater than
    *        9999 will add milliseconds or even seconds, but this can be
@@ -195,7 +195,7 @@ struct QUAZIP_EXPORT QuaZipNewInfo {
    * if there is one, or creating a new one and appending it to the end
    * of each extra field. When updating an existing record, all other fields
    * are left intact.
-   * @param mTime The new modification time.
+   * @param cTime The new creation time.
    * @param fineTicks The fractional part of milliseconds, in 100-nanosecond
    *        ticks (i. e. 9999 ticks = 999.9 microsecond). Values greater than
    *        9999 will add milliseconds or even seconds, but this can be
