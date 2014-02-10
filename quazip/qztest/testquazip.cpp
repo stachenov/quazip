@@ -33,6 +33,8 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #ifdef QUAZIP_TEST_QSAVEFILE
 #include <QSaveFile>
 #endif
+#include <QTcpServer>
+#include <QTcpSocket>
 #include <QTextCodec>
 
 #include <QtTest/QtTest>
@@ -389,3 +391,51 @@ void TestQuaZip::saveFileBug()
     curDir.remove(saveFile.fileName());
 }
 #endif
+
+void TestQuaZip::testSequential()
+{
+    QTcpServer server;
+    QVERIFY(server.listen());
+    quint16 port = server.serverPort();
+    QTcpSocket socket;
+    socket.connectToHost(QHostAddress(QHostAddress::LocalHost), port);
+    QVERIFY(socket.waitForConnected());
+    QVERIFY(server.waitForNewConnection(30000));
+    QTcpSocket *client = server.nextPendingConnection();
+    QuaZip zip(&socket);
+    zip.setAutoClose(false);
+    QVERIFY(zip.open(QuaZip::mdCreate));
+    QVERIFY(socket.isOpen());
+    QuaZipFile zipFile(&zip);
+    QuaZipNewInfo info("test.txt");
+    QVERIFY(zipFile.open(QIODevice::WriteOnly, info, NULL, 0, 0));
+    QCOMPARE(zipFile.write("test"), static_cast<qint64>(4));
+    zipFile.close();
+    zip.close();
+    QVERIFY(socket.isOpen());
+    socket.disconnectFromHost();
+    QVERIFY(socket.waitForDisconnected());
+    QVERIFY(client->waitForReadyRead());
+    QByteArray received = client->readAll();
+//#ifdef QUAZIP_QZTEST_QUAZIP_DEBUG_SOCKET
+    QFile debug("testSequential.zip");
+    debug.open(QIODevice::WriteOnly);
+    debug.write(received);
+    debug.close();
+//#endif
+    client->close();
+    QBuffer buffer(&received);
+    QuaZip receivedZip(&buffer);
+    QVERIFY(receivedZip.open(QuaZip::mdUnzip));
+    QVERIFY(receivedZip.goToFirstFile());
+    QuaZipFileInfo64 receivedInfo;
+    QVERIFY(receivedZip.getCurrentFileInfo(&receivedInfo));
+    QCOMPARE(receivedInfo.name, QString::fromLatin1("test.txt"));
+    QCOMPARE(receivedInfo.uncompressedSize, static_cast<quint64>(4));
+    QuaZipFile receivedFile(&receivedZip);
+    QVERIFY(receivedFile.open(QIODevice::ReadOnly));
+    QByteArray receivedText = receivedFile.readAll();
+    QCOMPARE(receivedText, QByteArray("test"));
+    receivedFile.close();
+    receivedZip.close();
+}

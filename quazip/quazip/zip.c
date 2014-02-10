@@ -803,6 +803,8 @@ int LoadCentralDirectoryRecord(zip64_internal* pziinit)
   {
       if ((pziinit->flags & ZIP_AUTO_CLOSE) != 0) {
         ZCLOSE64(pziinit->z_filefunc, pziinit->filestream);
+      } else {
+        ZFAKECLOSE64(pziinit->z_filefunc, pziinit->filestream);
       }
     return ZIP_ERRNO;
   }
@@ -897,6 +899,8 @@ extern zipFile ZEXPORT zipOpen3 (voidpf file, int append, zipcharpc* globalcomme
     {
         if ((ziinit.flags & ZIP_AUTO_CLOSE) != 0) {
             ZCLOSE64(ziinit.z_filefunc,ziinit.filestream);
+        } else {
+            ZFAKECLOSE64(ziinit.z_filefunc,ziinit.filestream);
         }
         return NULL;
     }
@@ -1110,7 +1114,8 @@ extern int ZEXPORT zipOpenNewFileInZip4_64 (zipFile file, const char* filename, 
     }
 
     if (method == 0
-            && (level == 0 || (zi->flags & ZIP_WRITE_DATA_DESCRIPTOR) == 0))
+            && (level == 0 || (zi->flags & ZIP_WRITE_DATA_DESCRIPTOR) == 0)
+            && (zi->flags & ZIP_SEQUENTIAL) == 0)
     {
         version_to_extract = 10;
     }
@@ -1734,42 +1739,44 @@ extern int ZEXPORT zipCloseFileInZipRaw64 (zipFile file, ZPOS64_T uncompressed_s
 
     if (err==ZIP_OK)
     {
-        /* Update the LocalFileHeader with the new values. */
+        if ((zi->flags & ZIP_SEQUENTIAL) == 0) {
+            /* Update the LocalFileHeader with the new values. */
 
-        ZPOS64_T cur_pos_inzip = ZTELL64(zi->z_filefunc,zi->filestream);
+            ZPOS64_T cur_pos_inzip = ZTELL64(zi->z_filefunc,zi->filestream);
 
-        if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_local_header + 14,ZLIB_FILEFUNC_SEEK_SET)!=0)
-            err = ZIP_ERRNO;
+            if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_local_header + 14,ZLIB_FILEFUNC_SEEK_SET)!=0)
+                err = ZIP_ERRNO;
 
-        if (err==ZIP_OK)
-            err = zip64local_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
+            if (err==ZIP_OK)
+                err = zip64local_putValue(&zi->z_filefunc,zi->filestream,crc32,4); /* crc 32, unknown */
 
-        if(uncompressed_size >= 0xffffffff || compressed_size >= 0xffffffff)
-        {
-          if(zi->ci.pos_zip64extrainfo > 0)
-          {
-            /* Update the size in the ZIP64 extended field. */
-            if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_zip64extrainfo + 4,ZLIB_FILEFUNC_SEEK_SET)!=0)
-              err = ZIP_ERRNO;
+            if(uncompressed_size >= 0xffffffff || compressed_size >= 0xffffffff)
+            {
+                if(zi->ci.pos_zip64extrainfo > 0)
+                {
+                    /* Update the size in the ZIP64 extended field. */
+                    if (ZSEEK64(zi->z_filefunc,zi->filestream, zi->ci.pos_zip64extrainfo + 4,ZLIB_FILEFUNC_SEEK_SET)!=0)
+                        err = ZIP_ERRNO;
 
-            if (err==ZIP_OK) /* compressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc, zi->filestream, uncompressed_size, 8);
+                    if (err==ZIP_OK) /* compressed size, unknown */
+                        err = zip64local_putValue(&zi->z_filefunc, zi->filestream, uncompressed_size, 8);
 
-            if (err==ZIP_OK) /* uncompressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc, zi->filestream, compressed_size, 8);
-          }
+                    if (err==ZIP_OK) /* uncompressed size, unknown */
+                        err = zip64local_putValue(&zi->z_filefunc, zi->filestream, compressed_size, 8);
+                }
+            }
+            else
+            {
+                if (err==ZIP_OK) /* compressed size, unknown */
+                    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
+
+                if (err==ZIP_OK) /* uncompressed size, unknown */
+                    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
+            }
+
+            if (ZSEEK64(zi->z_filefunc,zi->filestream, cur_pos_inzip,ZLIB_FILEFUNC_SEEK_SET)!=0)
+                err = ZIP_ERRNO;
         }
-        else
-        {
-          if (err==ZIP_OK) /* compressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc,zi->filestream,compressed_size,4);
-
-          if (err==ZIP_OK) /* uncompressed size, unknown */
-              err = zip64local_putValue(&zi->z_filefunc,zi->filestream,uncompressed_size,4);
-        }
-
-        if (ZSEEK64(zi->z_filefunc,zi->filestream, cur_pos_inzip,ZLIB_FILEFUNC_SEEK_SET)!=0)
-            err = ZIP_ERRNO;
 
         if ((zi->ci.flag & 8) != 0) {
             /* Write local Descriptor after file data */
@@ -1988,9 +1995,15 @@ extern int ZEXPORT zipClose (zipFile file, const char* global_comment)
       err = Write_GlobalComment(zi, global_comment);
 
     if ((zi->flags & ZIP_AUTO_CLOSE) != 0) {
-        if (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0)
+        if (ZCLOSE64(zi->z_filefunc,zi->filestream) != 0) {
             if (err == ZIP_OK)
                 err = ZIP_ERRNO;
+        }
+    } else {
+        if (ZFAKECLOSE64(zi->z_filefunc,zi->filestream) != 0) {
+            if (err == ZIP_OK)
+                err = ZIP_ERRNO;
+        }
     }
 
 #ifndef NO_ADDFILEINEXISTINGZIP
@@ -2066,6 +2079,10 @@ int ZEXPORT zipSetFlags(zipFile file, unsigned flags)
         return ZIP_PARAMERROR;
     zi = (zip64_internal*)file;
     zi->flags |= flags;
+    // If the output is non-seekable, the data descriptor is needed.
+    if ((zi->flags & ZIP_SEQUENTIAL) != 0) {
+        zi->flags |= ZIP_WRITE_DATA_DESCRIPTOR;
+    }
     return ZIP_OK;
 }
 
@@ -2076,5 +2093,9 @@ int ZEXPORT zipClearFlags(zipFile file, unsigned flags)
         return ZIP_PARAMERROR;
     zi = (zip64_internal*)file;
     zi->flags &= ~flags;
+    // If the data descriptor is not written, we can't use a non-seekable output.
+    if ((zi->flags & ZIP_WRITE_DATA_DESCRIPTOR) == 0) {
+        zi->flags &= ~ZIP_SEQUENTIAL;
+    }
     return ZIP_OK;
 }

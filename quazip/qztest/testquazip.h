@@ -49,6 +49,7 @@ private slots:
 #ifdef QUAZIP_TEST_QSAVEFILE
     void saveFileBug();
 #endif
+    void testSequential();
 };
 
 #endif // QUAZIP_TEST_QUAZIP_H

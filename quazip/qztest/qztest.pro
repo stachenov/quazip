@@ -1,5 +1,6 @@
 TEMPLATE = app
 QT -= gui
+QT += network
 CONFIG += qtestlib
 CONFIG += console
 CONFIG -= app_bundle
