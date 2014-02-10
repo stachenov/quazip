@@ -220,7 +220,6 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
     return false;
   }
   QIODevice *ioDevice = p->ioDevice;
-  bool sequential = false;
   if (ioDevice == NULL) {
     if (p->zipName.isEmpty()) {
       qWarning("QuaZip::open(): set either ZIP file name or IO device first");
@@ -228,13 +227,6 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
     } else {
       ioDevice = new QFile(p->zipName);
     }
-  } else {
-      sequential = ioDevice->isSequential();
-      if (sequential && mode != mdCreate) {
-          qWarning("QuaZip::open(): "
-                   "only mdCreate can be used with sequential devices");
-          return false;
-      }
   }
   switch(mode) {
     case mdUnzip:
@@ -245,6 +237,13 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
           p->unzFile_f=unzOpen2(ioDevice, ioApi);
       }
       if(p->unzFile_f!=NULL) {
+        if (ioDevice->isSequential()) {
+            if (!p->zipName.isEmpty())
+                delete ioDevice;
+            qWarning("QuaZip::open(): "
+                     "only mdCreate can be used with sequential devices");
+            return false;
+        }
         p->mode=mode;
         p->ioDevice = ioDevice;
         return true;
@@ -278,7 +277,15 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
         } else {
             zipClearFlags(p->zipFile_f, ZIP_AUTO_CLOSE);
         }
-        if (sequential) {
+        if (ioDevice->isSequential()) {
+            if (mode != mdCreate) {
+                zipClose(p->zipFile_f, NULL);
+                qWarning("QuaZip::open(): "
+                        "only mdCreate can be used with sequential devices");
+                if (!p->zipName.isEmpty())
+                    delete ioDevice;
+                return false;
+            }
             zipSetFlags(p->zipFile_f, ZIP_SEQUENTIAL);
         }
         p->mode=mode;
@@ -345,12 +352,6 @@ void QuaZip::setIoDevice(QIODevice *ioDevice)
   if(isOpen()) {
     qWarning("QuaZip::setIoDevice(): ZIP is already open!");
     return;
-  }
-  if (!p->dataDescriptorWritingEnabled && ioDevice != NULL
-          && ioDevice->isSequential()) {
-      qWarning("QuaZip::setIoDevice(): data descriptor writing is disabled,"
-               " impossible to use a sequential device");
-      return;
   }
   p->ioDevice = ioDevice;
   p->zipName = QString();
@@ -632,11 +633,6 @@ zipFile QuaZip::getZipFile()
 
 void QuaZip::setDataDescriptorWritingEnabled(bool enabled)
 {
-    if (!enabled && p->ioDevice != NULL && p->ioDevice->isSequential()) {
-        qWarning("QuaZip::setDataDescriptorWritingEnabled(): data "
-                 "descriptor writing must be enabled for sequential devices");
-        return;
-    }
     p->dataDescriptorWritingEnabled = enabled;
 }
 

@@ -261,11 +261,6 @@ class QUAZIP_EXPORT QuaZip {
     /// Sets the device representing the ZIP file.
     /** Does nothing if the ZIP file is open.
      *
-     * If the device is sequential, as reported by QIODevice::isSequential(),
-     * and if the data descriptor was disabled using
-     *  QuaZip::setDataDescriptorWritingEnabled(false), then this call
-     * will fail and an error message will be printed to stderr.
-     *
      * Does not reset error code returned by getZipError().
      * \sa getIoDevice(), getZipName(), setZipName()
      **/
@@ -437,10 +432,8 @@ class QUAZIP_EXPORT QuaZip {
       The data descriptor writing mode is enabled by default.
 
       Note that if the ZIP archive is written into a QIODevice for which
-      QIODevice::isSequential() return \c true, then the data descriptor
-      is mandatory. An attempt to disable data descriptor after setting such
-      device using QuaZip::setIoDevice() or the appropriate construtor
-      will fail and an error message will be printed to stderr.
+      QIODevice::isSequential() returns \c true, then the data descriptor
+      is mandatory and will be written even if this flag is set to false.
 
       \param enabled If \c true, enable local descriptor writing,
       disable it otherwise.

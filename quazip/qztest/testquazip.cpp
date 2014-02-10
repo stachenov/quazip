@@ -417,12 +417,12 @@ void TestQuaZip::testSequential()
     QVERIFY(socket.waitForDisconnected());
     QVERIFY(client->waitForReadyRead());
     QByteArray received = client->readAll();
-//#ifdef QUAZIP_QZTEST_QUAZIP_DEBUG_SOCKET
+#ifdef QUAZIP_QZTEST_QUAZIP_DEBUG_SOCKET
     QFile debug("testSequential.zip");
     debug.open(QIODevice::WriteOnly);
     debug.write(received);
     debug.close();
-//#endif
+#endif
     client->close();
     QBuffer buffer(&received);
     QuaZip receivedZip(&buffer);
