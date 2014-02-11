@@ -187,6 +187,7 @@ typedef struct
     int encrypted;
 
     int isZip64;
+    unsigned flags;
 
 #    ifndef NOUNCRYPT
     unsigned long keys[3];     /* keys defining the pseudo-random sequence */
@@ -741,9 +742,14 @@ local unzFile unzOpenInternal (voidpf file,
         (err==UNZ_OK))
         err=UNZ_BADZIPFILE;
 
+    /* TODO: need to figure out a way to set these flags before unzOpen() */
+    us.flags = UNZ_AUTO_CLOSE;
     if (err!=UNZ_OK)
     {
-        ZCLOSE64(us.z_filefunc, us.filestream);
+        if ((us.flags & UNZ_AUTO_CLOSE) != 0)
+            ZCLOSE64(us.z_filefunc, us.filestream);
+        else
+            ZFAKECLOSE64(us.z_filefunc, us.filestream);
         return NULL;
     }
 
@@ -817,7 +823,10 @@ extern int ZEXPORT unzClose (unzFile file)
     if (s->pfile_in_zip_read!=NULL)
         unzCloseCurrentFile(file);
 
-    ZCLOSE64(s->z_filefunc, s->filestream);
+    if ((s->flags & UNZ_AUTO_CLOSE) != 0)
+        ZCLOSE64(s->z_filefunc, s->filestream);
+    else
+        ZFAKECLOSE64(s->z_filefunc, s->filestream);
     TRYFREE(s);
     return UNZ_OK;
 }
@@ -2122,4 +2131,26 @@ extern int ZEXPORT unzSetOffset64(unzFile file, ZPOS64_T pos)
 extern int ZEXPORT unzSetOffset (unzFile file, uLong pos)
 {
     return unzSetOffset64(file,pos);
+}
+
+
+int ZEXPORT unzSetFlags(unzFile file, unsigned flags)
+{
+    unz64_s* s;
+    if (file == NULL)
+        return UNZ_PARAMERROR;
+    s = (unz64_s*)file;
+    s->flags |= flags;
+    return UNZ_OK;
+}
+
+
+int ZEXPORT unzClearFlags(unzFile file, unsigned flags)
+{
+    unz64_s* s;
+    if (file == NULL)
+        return UNZ_PARAMERROR;
+    s = (unz64_s*)file;
+    s->flags &= ~flags;
+    return UNZ_OK;
 }

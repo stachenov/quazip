@@ -85,6 +85,8 @@ typedef voidp unzFile;
 #define UNZ_INTERNALERROR               (-104)
 #define UNZ_CRCERROR                    (-105)
 
+#define UNZ_AUTO_CLOSE 0x01u
+
 /* tm_unz contain date/time info */
 typedef struct tm_unz_s
 {
@@ -433,7 +435,8 @@ extern uLong ZEXPORT unzGetOffset (unzFile file);
 extern int ZEXPORT unzSetOffset64 (unzFile file, ZPOS64_T pos);
 extern int ZEXPORT unzSetOffset (unzFile file, uLong pos);
 
-
+extern int ZEXPORT unzSetFlags(unzFile file, unsigned flags);
+extern int ZEXPORT unzClearFlags(unzFile file, unsigned flags);
 
 #ifdef __cplusplus
 }

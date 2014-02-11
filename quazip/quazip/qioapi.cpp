@@ -210,6 +210,17 @@ int ZCALLBACK qiodevice_seek_file_func (
    uLong offset,
    int origin)
 {
+    QIODevice *iodevice = reinterpret_cast<QIODevice*>(stream);
+    if (iodevice->isSequential()) {
+        if (origin == ZLIB_FILEFUNC_SEEK_END
+                && offset == 0) {
+            // sequential devices are always at end (needed in mdAppend)
+            return 0;
+        } else {
+            qWarning("qiodevice_seek_file_func() called for sequential device");
+            return -1;
+        }
+    }
     uLong qiodevice_seek_result=0;
     int ret;
     switch (origin)
@@ -226,7 +237,7 @@ int ZCALLBACK qiodevice_seek_file_func (
     default:
         return -1;
     }
-    ret = !((QIODevice*)stream)->seek(qiodevice_seek_result);
+    ret = !iodevice->seek(qiodevice_seek_result);
     return ret;
 }
 
@@ -236,6 +247,17 @@ int ZCALLBACK qiodevice64_seek_file_func (
    ZPOS64_T offset,
    int origin)
 {
+    QIODevice *iodevice = reinterpret_cast<QIODevice*>(stream);
+    if (iodevice->isSequential()) {
+        if (origin == ZLIB_FILEFUNC_SEEK_END
+                && offset == 0) {
+            // sequential devices are always at end (needed in mdAppend)
+            return 0;
+        } else {
+            qWarning("qiodevice_seek_file_func() called for sequential device");
+            return -1;
+        }
+    }
     qint64 qiodevice_seek_result=0;
     int ret;
     switch (origin)
@@ -252,7 +274,7 @@ int ZCALLBACK qiodevice64_seek_file_func (
     default:
         return -1;
     }
-    ret = !((QIODevice*)stream)->seek(qiodevice_seek_result);
+    ret = !iodevice->seek(qiodevice_seek_result);
     return ret;
 }
 
