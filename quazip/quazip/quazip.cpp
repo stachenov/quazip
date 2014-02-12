@@ -252,7 +252,7 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
             if (!p->zipName.isEmpty())
                 delete ioDevice;
             qWarning("QuaZip::open(): "
-                     "only mdCreate or mdAppend can be used with "
+                     "only mdCreate can be used with "
                      "sequential devices");
             return false;
         }
@@ -292,10 +292,10 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
       }
       if(p->zipFile_f!=NULL) {
         if (ioDevice->isSequential()) {
-            if (mode != mdCreate && mode != mdAppend) {
+            if (mode != mdCreate) {
                 zipClose(p->zipFile_f, NULL);
                 qWarning("QuaZip::open(): "
-                        "only mdCreate or mdAppend can be used with "
+                        "only mdCreate can be used with "
                          "sequential devices");
                 if (!p->zipName.isEmpty())
                     delete ioDevice;
