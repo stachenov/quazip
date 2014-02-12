@@ -85,6 +85,7 @@ typedef voidp zipFile;
 #define ZIP_WRITE_DATA_DESCRIPTOR 0x8u
 #define ZIP_AUTO_CLOSE 0x1u
 #define ZIP_SEQUENTIAL 0x2u
+#define ZIP_DEFAULT_FLAGS (ZIP_AUTO_CLOSE | ZIP_WRITE_DATA_DESCRIPTOR)
 
 #ifndef DEF_MEM_LEVEL
 #  if MAX_MEM_LEVEL >= 8
@@ -153,6 +154,17 @@ extern zipFile ZEXPORT zipOpen2_64 OF((voidpf file,
                                    int append,
                                    zipcharpc* globalcomment,
                                    zlib_filefunc64_def* pzlib_filefunc_def));
+
+/*
+ * Exported by Sergey A. Tachenov to suit the needs of QuaZIP.
+ * Note that this function MAY change signature in order to
+ * provide new QuaZIP features. You have been warned!
+ * */
+extern zipFile ZEXPORT zipOpen3 (voidpf file,
+                                 int append,
+                                 zipcharpc* globalcomment,
+                                 zlib_filefunc64_32_def* pzlib_filefunc64_32_def,
+                                 unsigned flags);
 
 extern int ZEXPORT zipOpenNewFileInZip OF((zipFile file,
                        const char* filename,

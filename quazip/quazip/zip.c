@@ -859,12 +859,14 @@ int LoadCentralDirectoryRecord(zip64_internal* pziinit)
 
 
 /************************************************************/
-extern zipFile ZEXPORT zipOpen3 (voidpf file, int append, zipcharpc* globalcomment, zlib_filefunc64_32_def* pzlib_filefunc64_32_def)
+extern zipFile ZEXPORT zipOpen3 (voidpf file, int append, zipcharpc* globalcomment, zlib_filefunc64_32_def* pzlib_filefunc64_32_def,
+                                 unsigned flags)
 {
     zip64_internal ziinit;
     zip64_internal* zi;
     int err=ZIP_OK;
 
+    ziinit.flags = flags;
     ziinit.z_filefunc.zseek32_file = NULL;
     ziinit.z_filefunc.ztell32_file = NULL;
     if (pzlib_filefunc64_32_def==NULL)
@@ -889,7 +891,6 @@ extern zipFile ZEXPORT zipOpen3 (voidpf file, int append, zipcharpc* globalcomme
     ziinit.ci.stream_initialised = 0;
     ziinit.number_entry = 0;
     ziinit.add_position_when_writting_offset = 0;
-    ziinit.flags = ZIP_WRITE_DATA_DESCRIPTOR | ZIP_AUTO_CLOSE;
     init_linkedlist(&(ziinit.central_dir));
 
 
@@ -941,10 +942,10 @@ extern zipFile ZEXPORT zipOpen2 (voidpf file, int append, zipcharpc* globalcomme
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
-        return zipOpen3(file, append, globalcomment, &zlib_filefunc64_32_def_fill);
+        return zipOpen3(file, append, globalcomment, &zlib_filefunc64_32_def_fill, ZIP_DEFAULT_FLAGS);
     }
     else
-        return zipOpen3(file, append, globalcomment, NULL);
+        return zipOpen3(file, append, globalcomment, NULL, ZIP_DEFAULT_FLAGS);
 }
 
 extern zipFile ZEXPORT zipOpen2_64 (voidpf file, int append, zipcharpc* globalcomment, zlib_filefunc64_def* pzlib_filefunc_def)
@@ -955,22 +956,22 @@ extern zipFile ZEXPORT zipOpen2_64 (voidpf file, int append, zipcharpc* globalco
         zlib_filefunc64_32_def_fill.zfile_func64 = *pzlib_filefunc_def;
         zlib_filefunc64_32_def_fill.ztell32_file = NULL;
         zlib_filefunc64_32_def_fill.zseek32_file = NULL;
-        return zipOpen3(file, append, globalcomment, &zlib_filefunc64_32_def_fill);
+        return zipOpen3(file, append, globalcomment, &zlib_filefunc64_32_def_fill, ZIP_DEFAULT_FLAGS);
     }
     else
-        return zipOpen3(file, append, globalcomment, NULL);
+        return zipOpen3(file, append, globalcomment, NULL, ZIP_DEFAULT_FLAGS);
 }
 
 
 
 extern zipFile ZEXPORT zipOpen (voidpf file, int append)
 {
-    return zipOpen3(file,append,NULL,NULL);
+    return zipOpen3(file,append,NULL,NULL, ZIP_DEFAULT_FLAGS);
 }
 
 extern zipFile ZEXPORT zipOpen64 (voidpf file, int append)
 {
-    return zipOpen3(file,append,NULL,NULL);
+    return zipOpen3(file,append,NULL,NULL, ZIP_DEFAULT_FLAGS);
 }
 
 int Write_LocalFileHeader(zip64_internal* zi, const char* filename,

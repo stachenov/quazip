@@ -183,7 +183,9 @@ class QUAZIP_EXPORT QuaZip {
      *
      * \note If the \ref QuaZip::setAutoClose() "no-auto-close" feature is used,
      * then the \a ioApi argument \em should be NULL because the old API
-     * doesn't support the 'fake close' operation, causing slight memory leaks.
+     * doesn't support the 'fake close' operation, causing slight memory leaks
+     * and other possible troubles (like closing the output device in case
+     * when an error occurs during opening).
      *
      * In short: just forget about the \a ioApi argument and you'll be
      * fine.

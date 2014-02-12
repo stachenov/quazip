@@ -584,9 +584,9 @@ local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib
      Else, the return value is a unzFile Handle, usable with other function
        of this unzip package.
 */
-local unzFile unzOpenInternal (voidpf file,
+extern unzFile unzOpenInternal (voidpf file,
                                zlib_filefunc64_32_def* pzlib_filefunc64_32_def,
-                               int is64bitOpenFunction)
+                               int is64bitOpenFunction, unsigned flags)
 {
     unz64_s us;
     unz64_s *s;
@@ -606,6 +606,7 @@ local unzFile unzOpenInternal (voidpf file,
     if (unz_copyright[0]!=' ')
         return NULL;
 
+    us.flags = flags;
     us.z_filefunc.zseek32_file = NULL;
     us.z_filefunc.ztell32_file = NULL;
     if (pzlib_filefunc64_32_def==NULL)
@@ -742,8 +743,6 @@ local unzFile unzOpenInternal (voidpf file,
         (err==UNZ_OK))
         err=UNZ_BADZIPFILE;
 
-    /* TODO: need to figure out a way to set these flags before unzOpen() */
-    us.flags = UNZ_AUTO_CLOSE;
     if (err!=UNZ_OK)
     {
         if ((us.flags & UNZ_AUTO_CLOSE) != 0)
@@ -777,10 +776,10 @@ extern unzFile ZEXPORT unzOpen2 (voidpf file,
     {
         zlib_filefunc64_32_def zlib_filefunc64_32_def_fill;
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
-        return unzOpenInternal(file, &zlib_filefunc64_32_def_fill, 0);
+        return unzOpenInternal(file, &zlib_filefunc64_32_def_fill, 0, UNZ_DEFAULT_FLAGS);
     }
     else
-        return unzOpenInternal(file, NULL, 0);
+        return unzOpenInternal(file, NULL, 0, UNZ_DEFAULT_FLAGS);
 }
 
 extern unzFile ZEXPORT unzOpen2_64 (voidpf file,
@@ -792,20 +791,20 @@ extern unzFile ZEXPORT unzOpen2_64 (voidpf file,
         zlib_filefunc64_32_def_fill.zfile_func64 = *pzlib_filefunc_def;
         zlib_filefunc64_32_def_fill.ztell32_file = NULL;
         zlib_filefunc64_32_def_fill.zseek32_file = NULL;
-        return unzOpenInternal(file, &zlib_filefunc64_32_def_fill, 1);
+        return unzOpenInternal(file, &zlib_filefunc64_32_def_fill, 1, UNZ_DEFAULT_FLAGS);
     }
     else
-        return unzOpenInternal(file, NULL, 1);
+        return unzOpenInternal(file, NULL, 1, UNZ_DEFAULT_FLAGS);
 }
 
 extern unzFile ZEXPORT unzOpen (voidpf file)
 {
-    return unzOpenInternal(file, NULL, 0);
+    return unzOpenInternal(file, NULL, 0, UNZ_DEFAULT_FLAGS);
 }
 
 extern unzFile ZEXPORT unzOpen64 (voidpf file)
 {
-    return unzOpenInternal(file, NULL, 1);
+    return unzOpenInternal(file, NULL, 1, UNZ_DEFAULT_FLAGS);
 }
 
 /*
