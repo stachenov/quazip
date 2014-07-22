@@ -39,9 +39,21 @@ void TestQuaZipFileInfo::getNTFSTime()
         QuaZip zip(zipName);
         QVERIFY(zip.open(QuaZip::mdCreate));
         QuaZipFile zipFile(&zip);
-        mTicks = base.msecsTo(fileInfo.lastModified()) * 10000;
-        aTicks = base.msecsTo(fileInfo.lastRead()) * 10000;
-        cTicks = base.msecsTo(fileInfo.created()) * 10000;
+        QDateTime lm = fileInfo.lastModified().toUTC();
+        QDateTime lr = fileInfo.lastRead().toUTC();
+        QDateTime cr = fileInfo.created().toUTC();
+        mTicks = (static_cast<qint64>(base.date().daysTo(lm.date()))
+                * Q_UINT64_C(86400000)
+                + static_cast<qint64>(base.time().msecsTo(lm.time())))
+            * Q_UINT64_C(10000);
+        aTicks = (static_cast<qint64>(base.date().daysTo(lr.date()))
+                * Q_UINT64_C(86400000)
+                + static_cast<qint64>(base.time().msecsTo(lr.time())))
+            * Q_UINT64_C(10000);
+        cTicks = (static_cast<qint64>(base.date().daysTo(cr.date()))
+                * Q_UINT64_C(86400000)
+                + static_cast<qint64>(base.time().msecsTo(cr.time())))
+            * Q_UINT64_C(10000);
         QuaZipNewInfo newInfo("test.txt", "tmp/test.txt");
         QByteArray extra(36, 0);
         extra[0] = 0x0A; // magic

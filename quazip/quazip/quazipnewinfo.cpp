@@ -239,7 +239,15 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
         extra[timesPos + 3] = static_cast<char>(ntfsTimesLength >> 8);
     }
     QDateTime base(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
+#if (QT_VERSION >= 0x040700)
     quint64 ticks = base.msecsTo(time) * 10000 + fineTicks;
+#else
+    QDateTime utc = time.toUTC();
+    quint64 ticks = (static_cast<qint64>(base.date().daysTo(utc.date()))
+            * Q_INT64_C(86400000)
+            + static_cast<qint64>(base.time().msecsTo(utc.time())))
+        * Q_INT64_C(10000) + fineTicks;
+#endif
     extra[timesPos + 4 + position] = static_cast<char>(ticks);
     extra[timesPos + 5 + position] = static_cast<char>(ticks >> 8);
     extra[timesPos + 6 + position] = static_cast<char>(ticks >> 16);
