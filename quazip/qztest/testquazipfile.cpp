@@ -405,3 +405,108 @@ void TestQuaZipFile::setFileAttrs()
     removeTestFiles(fileNames);
     QDir().remove(testZip.getZipName());
 }
+
+void TestQuaZipFile::largeFile()
+{
+    QDir curDir;
+    QVERIFY(curDir.mkpath("tmp"));
+    QFile fakeLargeFile("tmp/large.zip");
+    QVERIFY(fakeLargeFile.open(QIODevice::WriteOnly));
+    QDataStream ds(&fakeLargeFile);
+    ds.setByteOrder(QDataStream::LittleEndian);
+    QList<qint64> localOffsets;
+    const int numFiles = 2; // name fixed to 5 bytes, so MAX 10 FILES!!!
+    for (int i = 0; i < numFiles; ++i) {
+        localOffsets.append(fakeLargeFile.pos());
+        QBuffer extra;
+        extra.open(QIODevice::WriteOnly);
+        QDataStream es(&extra);
+        es.setByteOrder(QDataStream::LittleEndian);
+        // prepare extra
+        es << static_cast<quint16>(0x0001u); // zip64
+        es << static_cast<quint16>(16); // extra data size
+        es << static_cast<quint64>(0); // uncompressed size
+        es << static_cast<quint64>(0); // compressed size
+        // now the local header
+        ds << static_cast<quint32>(0x04034b50u); // local magic
+        ds << static_cast<quint16>(45); // version needed
+        ds << static_cast<quint16>(0); // flags
+        ds << static_cast<quint16>(0); // method
+        ds << static_cast<quint16>(0); // time 00:00:00
+        ds << static_cast<quint16>(0x21); // date 1980-01-01
+        ds << static_cast<quint32>(0); // CRC-32
+        ds << static_cast<quint32>(0xFFFFFFFFu); // compressed size
+        ds << static_cast<quint32>(0xFFFFFFFFu); // uncompressed size
+        ds << static_cast<quint16>(5); // name length
+        ds << static_cast<quint16>(extra.size()); // extra length
+        ds.writeRawData("file", 4); // name
+        ds << static_cast<qint8>('0' + i); // name (contd.)
+        ds.writeRawData(extra.buffer(), extra.size());
+    }
+    // central dir:
+    qint64 centralStart = fakeLargeFile.pos();
+    for (int i = 0; i < numFiles; ++i) {
+        QBuffer extra;
+        extra.open(QIODevice::WriteOnly);
+        QDataStream es(&extra);
+        es.setByteOrder(QDataStream::LittleEndian);
+        // prepare extra
+        es << static_cast<quint16>(0x0001u); // zip64
+        es << static_cast<quint16>(24); // extra data size
+        es << static_cast<quint64>(0); // uncompressed size
+        es << static_cast<quint64>(0); // compressed size
+        es << static_cast<quint64>(localOffsets[i]);
+        // now the central dir header
+        ds << static_cast<quint32>(0x02014b50u); // central magic
+        ds << static_cast<quint16>(45); // version made by
+        ds << static_cast<quint16>(45); // version needed
+        ds << static_cast<quint16>(0); // flags
+        ds << static_cast<quint16>(0); // method
+        ds << static_cast<quint16>(0); // time 00:00:00
+        ds << static_cast<quint16>(0x21); // date 1980-01-01
+        ds << static_cast<quint32>(0); // CRC-32
+        ds << static_cast<quint32>(0xFFFFFFFFu); // compressed size
+        ds << static_cast<quint32>(0xFFFFFFFFu); // uncompressed size
+        ds << static_cast<quint16>(5); // name length
+        ds << static_cast<quint16>(extra.size()); // extra length
+        ds << static_cast<quint16>(0); // comment length
+        ds << static_cast<quint16>(0); // disk number
+        ds << static_cast<quint16>(0); // internal attrs
+        ds << static_cast<quint32>(0); // external attrs
+        ds << static_cast<quint32>(0xFFFFFFFFu); // local offset
+        ds.writeRawData("file", 4); // name
+        ds << static_cast<qint8>('0' + i); // name (contd.)
+        ds.writeRawData(extra.buffer(), extra.size());
+    }
+    qint64 centralEnd = fakeLargeFile.pos();
+    // zip64 end
+    ds << static_cast<quint32>(0x06064b50); // zip64 end magic
+    ds << static_cast<quint64>(44); // size of the zip64 end
+    ds << static_cast<quint16>(45); // version made by
+    ds << static_cast<quint16>(45); // version needed
+    ds << static_cast<quint32>(0); // disk number
+    ds << static_cast<quint32>(0); // central dir disk number
+    ds << static_cast<quint64>(2); // number of entries on disk
+    ds << static_cast<quint64>(2); // total number of entries
+    ds << static_cast<quint64>(centralEnd - centralStart); // size
+    ds << static_cast<quint64>(centralStart); // offset
+    // zip64 locator
+    ds << static_cast<quint32>(0x07064b50); // zip64 locator magic
+    ds << static_cast<quint32>(0); // disk number
+    ds << static_cast<quint64>(centralEnd); // offset
+    ds << static_cast<quint32>(1); // number of disks
+    // zip32 end
+    ds << static_cast<quint32>(0x06054b50); // end magic
+    ds << static_cast<quint16>(0); // disk number
+    ds << static_cast<quint16>(0); // central dir disk number
+    ds << static_cast<quint16>(2); // number of entries
+    ds << static_cast<quint32>(0xFFFFFFFFu); // central dir size
+    ds << static_cast<quint32>(0xFFFFFFFFu); // central dir offset
+    ds << static_cast<quint16>(0); // comment length
+    fakeLargeFile.close();
+    QuaZip fakeLargeZip("tmp/large.zip");
+    QVERIFY(fakeLargeZip.open(QuaZip::mdUnzip));
+    QCOMPARE(fakeLargeZip.getFileInfoList().size(), numFiles);
+    QCOMPARE(fakeLargeZip.getFileInfoList()[0].uncompressedSize,
+            static_cast<quint32>(0));
+}

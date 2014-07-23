@@ -45,6 +45,7 @@ private slots:
     void setFileName();
     void constructorDestructor();
     void setFileAttrs();
+    void largeFile();
 };
 
 #endif // QUAZIP_TEST_QUAZIPFILE_H
