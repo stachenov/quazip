@@ -1,5 +1,11 @@
 QuaZIP changes
 
+* 2014-07-24 0.7
+        * It is now possible to write ZIP files to sequential devices
+          like sockets (only in mdCreate mode, so no self-extract, sorry).
+        * A few zip64 fixes.
+        * Several bug fixes and portability improvements.
+
 * 2014-02-09 0.6.2
         * QuaZipNewInfo / QuaZipFileInfo64 now provide API to access/set
           NTFS time stamps - useful even on non-NTFS systems if you 
