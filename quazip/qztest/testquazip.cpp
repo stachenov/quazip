@@ -395,7 +395,7 @@ void TestQuaZip::saveFileBug()
 void TestQuaZip::testSequential()
 {
     QTcpServer server;
-    QVERIFY(server.listen());
+    QVERIFY(server.listen(QHostAddress(QHostAddress::LocalHost)));
     quint16 port = server.serverPort();
     QTcpSocket socket;
     socket.connectToHost(QHostAddress(QHostAddress::LocalHost), port);
