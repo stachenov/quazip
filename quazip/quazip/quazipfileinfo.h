@@ -32,7 +32,11 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "quazip_global.h"
 
 /// Information about a file inside archive.
-/** Call QuaZip::getCurrentFileInfo() or QuaZipFile::getFileInfo() to
+/**
+ * \deprecated Use QuaZipFileInfo64 instead. Not only it supports large files,
+ * but also more convenience methods as well.
+ *
+ * Call QuaZip::getCurrentFileInfo() or QuaZipFile::getFileInfo() to
  * fill this structure. */
 struct QUAZIP_EXPORT QuaZipFileInfo {
   /// File name.
@@ -167,6 +171,8 @@ struct QUAZIP_EXPORT QuaZipFileInfo64 {
    * @return The NTFS creation time, UTC
    */
   QDateTime getNTFScTime(int *fineTicks = NULL) const;
+  /// Checks whether the file is encrypted.
+  bool isEncrypted() const {return (flags & 1) != 0;}
 };
 
 #endif

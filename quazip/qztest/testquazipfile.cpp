@@ -121,7 +121,10 @@ void TestQuaZipFile::zipUnzip()
     QCOMPARE(testUnzip.getComment(), comment);
     QVERIFY(testUnzip.goToFirstFile());
     foreach (QString fileName, fileNames) {
-        QCOMPARE(testUnzip.getCurrentFileName(), fileName);
+        QuaZipFileInfo64 info;
+        QVERIFY(testUnzip.getCurrentFileInfo(&info));
+        QCOMPARE(info.name, fileName);
+        QCOMPARE(info.isEncrypted(), !password.isEmpty());
         QFile original("tmp/" + fileName);
         QVERIFY(original.open(QIODevice::ReadOnly));
         QuaZipFile archived(&testUnzip);
