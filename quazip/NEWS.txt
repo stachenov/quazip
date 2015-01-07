@@ -1,5 +1,8 @@
 QuaZIP changes
 
+* 2014-01-07 0.7.1
+        * Fixed licensing issues (bug #45).
+        * Added the convenience method QuaZipFileInfo::isEncrypted().
 * 2014-07-24 0.7
         * It is now possible to write ZIP files to sequential devices
           like sockets (only in mdCreate mode, so no self-extract, sorry).
