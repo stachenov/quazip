@@ -10,10 +10,11 @@ endif()
 
 if (Qt5Core_FOUND)
     set(QTCORE_LIBRARIES ${Qt5Core_LIBRARIES})
+    set(QUAZIP_LIB_VERSION_SUFFIX 5)
     # if there is no QT_ROOT, try to deduce it from Qt QtCore include
     if ("${QT_ROOT}" STREQUAL "")
         set(QT_ROOT ${QT_QTCORE_INCLUDE_DIR}/../..)
-    endif()    
+    endif()
     include_directories(${Qt5Core_INCLUDE_DIRS})
 
     macro(qt_wrap_cpp)
@@ -48,6 +49,8 @@ SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
 set(LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
+set(QUAZIP_LIB_TARGET_NAME quazip${QUAZIP_LIB_VERSION_SUFFIX} CACHE
+    INTERNAL "Target name of libquazip" FORCE)
 
 add_subdirectory(quazip)
 
