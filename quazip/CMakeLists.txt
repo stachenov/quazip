@@ -54,4 +54,4 @@ set(QUAZIP_LIB_TARGET_NAME quazip${QUAZIP_LIB_VERSION_SUFFIX} CACHE
 
 add_subdirectory(quazip)
 
-install(FILES FindQuaZip.cmake DESTINATION ${CMAKE_ROOT}/Modules)
+install(FILES FindQuaZip.cmake RENAME FindQuaZip${QUAZIP_LIB_VERSION_SUFFIX}.cmake DESTINATION ${CMAKE_ROOT}/Modules)

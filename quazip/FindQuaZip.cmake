@@ -33,7 +33,7 @@ ELSE (QUAZIP_INCLUDE_DIRS AND QUAZIP_LIBRARIES)
 		)
 		FIND_PATH(QUAZIP_INCLUDE_DIR quazip.h
 			HINTS /usr/include /usr/local/include
-			PATH_SUFFIXES quazip
+			PATH_SUFFIXES quazip${QUAZIP_LIB_VERSION_SUFFIX}
 		)
 		FIND_PATH(QUAZIP_ZLIB_INCLUDE_DIR zlib.h HINTS /usr/include /usr/local/include)
 	ENDIF (WIN32)
