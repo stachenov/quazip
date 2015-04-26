@@ -135,6 +135,18 @@ void TestQuaZipFile::zipUnzip()
         QCOMPARE(archivedData, originalData);
         testUnzip.goToNextFile();
     }
+    if (!password.isEmpty()) {
+        QVERIFY(testUnzip.goToFirstFile());
+        QuaZipFileInfo64 info;
+        QVERIFY(testUnzip.getCurrentFileInfo(&info));
+        QFile original("tmp/" + info.name);
+        QVERIFY(original.open(QIODevice::ReadOnly));
+        QuaZipFile archived(&testUnzip);
+        QVERIFY(archived.open(QIODevice::ReadOnly, "WrongPassword"));
+        QByteArray originalData = original.readAll();
+        QByteArray archivedData = archived.readAll();
+        QVERIFY(archivedData != originalData);
+    }
     testUnzip.close();
     QCOMPARE(testUnzip.getZipError(), UNZ_OK);
     // clean up
