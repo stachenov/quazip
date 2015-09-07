@@ -337,7 +337,7 @@ void TestQuaZipFile::setFileName()
     QVERIFY(createTestArchive(testZipName, QStringList() << testFileName));
     QuaZipFile testFile(testZipName);
     testFile.setFileName(testFileName.toUpper());
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
     QVERIFY(testFile.open(QIODevice::ReadOnly));
     testFile.close();
 #else
