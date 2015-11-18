@@ -59,7 +59,8 @@ private:
       files.
       \return true if success, false otherwise.
       */
-    static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive = true);
+    static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive,
+                               QDir::Filters filters);
     /// Extract a single file.
     /**
       \param zip The opened zip archive to extract from.
@@ -92,6 +93,8 @@ public:
     static bool compressFiles(QString fileCompressed, QStringList files);
     /// Compress a whole directory.
     /**
+      Does not compress hidden files. See compressDir(QString, QString, bool, QDir::Filters).
+
       \param fileCompressed The name of the archive.
       \param dir The directory to compress.
       \param recursive Whether to pack the subdirectories as well, or
@@ -99,6 +102,24 @@ public:
       \return true if success, false otherwise.
       */
     static bool compressDir(QString fileCompressed, QString dir = QString(), bool recursive = true);
+    /**
+     * @brief Compress a whole directory.
+     *
+     * Unless filters are specified explicitly, packs
+     * only regular non-hidden files (and subdirs, if @c recursive is true).
+     * If filters are specified, they are OR-combined with
+     * <tt>%QDir::AllDirs|%QDir::NoDotAndDotDot</tt> when searching for dirs
+     * and with <tt>QDir::Files</tt> when searching for files.
+     *
+     * @param fileCompressed path to the resulting archive
+     * @param dir path to the directory being compressed
+     * @param recursive if true, then the subdirectories are packed as well
+     * @param filters what to pack, filters are applied both when searching
+     * for subdirs (if packing recursively) and when looking for files to pack
+     * @return true on success, false otherwise
+     */
+    static bool compressDir(QString fileCompressed, QString dir,
+                            bool recursive, QDir::Filters filters);
 
 public:
     /// Extract a single file.
