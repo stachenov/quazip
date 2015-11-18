@@ -105,24 +105,20 @@ void TestJlCompress::compressDir_data()
 {
     QTest::addColumn<QString>("zipName");
     QTest::addColumn<QStringList>("fileNames");
-    QTest::addColumn<QList<int>>("attributes");
     QTest::addColumn<QStringList>("expected");
     QTest::newRow("simple") << "jldir.zip"
         << (QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
-        << QList<int>()
 		<< (QStringList() << "test0.txt"
 			<< "testdir1/" << "testdir1/test1.txt"
             << "testdir2/" << "testdir2/test2.txt"
 			<< "testdir2/subdir/" << "testdir2/subdir/test2sub.txt");
     QTest::newRow("empty dirs") << "jldir_empty.zip"
 		<< (QStringList() << "testdir1/" << "testdir2/testdir3/")
-        << QList<int>()
         << (QStringList() << "testdir1/" << "testdir2/"
             << "testdir2/testdir3/");
     QTest::newRow("hidden files") << "jldir_hidden.zip"
         << (QStringList() << ".test0.txt" << "test1.txt")
-        << (QList<int>() << QDir::Hidden << QDir::Files)
         << (QStringList() << ".test0.txt" << "test1.txt");
 }
 
@@ -130,7 +126,6 @@ void TestJlCompress::compressDir()
 {
     QFETCH(QString, zipName);
     QFETCH(QStringList, fileNames);
-    QFETCH(QList<int>, attributes);
     QFETCH(QStringList, expected);
     QDir curDir;
     if (curDir.exists(zipName)) {
@@ -141,8 +136,8 @@ void TestJlCompress::compressDir()
         QFAIL("Can't create test files");
     }
 #ifdef Q_OS_WIN
-    for (int i = 0; i < attributes.size(); ++i) {
-        if ((attributes.at(i) & QDir::Hidden) != 0) {
+    for (int i = 0; i < fileNames.size(); ++i) {
+        if (fileNames.at(i).startsWith(".")) {
             QString fn = "compressDir_tmp\\" + fileNames.at(i);
             SetFileAttributes(reinterpret_cast<LPCWSTR>(fn.utf16()),
                               FILE_ATTRIBUTE_HIDDEN);
