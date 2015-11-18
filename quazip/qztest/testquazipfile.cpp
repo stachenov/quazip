@@ -524,4 +524,6 @@ void TestQuaZipFile::largeFile()
     QCOMPARE(fakeLargeZip.getFileInfoList().size(), numFiles);
     QCOMPARE(fakeLargeZip.getFileInfoList()[0].uncompressedSize,
             static_cast<quint32>(0));
+    fakeLargeZip.close();
+    curDir.remove("tmp/large.zip");
 }
