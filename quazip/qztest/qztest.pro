@@ -12,6 +12,8 @@ win32 {
     DEFINES += NOMINMAX
 }
 
+CONFIG(staticlib): DEFINES += QUAZIP_STATIC
+
 # Input
 HEADERS += qztest.h \
 testjlcompress.h \
