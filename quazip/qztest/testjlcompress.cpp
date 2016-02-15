@@ -61,6 +61,13 @@ void TestJlCompress::compressFile()
     QStringList fileList = JlCompress::getFileList(zipName);
     QCOMPARE(fileList.count(), 1);
     QVERIFY(fileList[0] == fileName);
+    // now test the QIODevice* overload of getFileList()
+    QFile zipFile(zipName);
+    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    fileList = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList.count(), 1);
+    QVERIFY(fileList[0] == fileName);
+    zipFile.close();
     removeTestFiles(QStringList() << fileName);
     curDir.remove(zipName);
 }
@@ -211,6 +218,15 @@ void TestJlCompress::extractFile()
     QCOMPARE(destInfo.size(), srcInfo.size());
     QCOMPARE(destInfo.permissions(), srcInfo.permissions());
     curDir.remove("jlext/jlfile/" + destName);
+    // now test the QIODevice* overload
+    QFile zipFile(zipName);
+    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    QVERIFY(!JlCompress::extractFile(&zipFile, fileToExtract,
+                "jlext/jlfile/" + destName).isEmpty());
+    destInfo = QFileInfo("jlext/jlfile/" + destName);
+    QCOMPARE(destInfo.size(), srcInfo.size());
+    QCOMPARE(destInfo.permissions(), srcInfo.permissions());
+    curDir.remove("jlext/jlfile/" + destName);
     if (!fileToExtract.endsWith("/")) {
         // If we aren't extracting a directory, we need to check
         // that extractFile() fails if there is a directory
@@ -219,6 +235,7 @@ void TestJlCompress::extractFile()
         QVERIFY(JlCompress::extractFile(zipName, fileToExtract,
                     "jlext/jlfile/" + destName).isEmpty());
     }
+    zipFile.close();
     // Here we either delete the target dir or the dir created in the
     // test above.
     curDir.rmpath("jlext/jlfile/" + destName);
@@ -262,6 +279,20 @@ void TestJlCompress::extractFiles()
         curDir.remove("jlext/jlfiles/" + fileName);
         curDir.rmpath(fileInfo.dir().path());
     }
+    // now test the QIODevice* overload
+    QFile zipFile(zipName);
+    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    QVERIFY(!JlCompress::extractFiles(&zipFile, filesToExtract,
+                "jlext/jlfiles").isEmpty());
+    foreach (QString fileName, filesToExtract) {
+        QFileInfo fileInfo("jlext/jlfiles/" + fileName);
+        QFileInfo extInfo("tmp/" + fileName);
+        QCOMPARE(fileInfo.size(), extInfo.size());
+        QCOMPARE(fileInfo.permissions(), extInfo.permissions());
+        curDir.remove("jlext/jlfiles/" + fileName);
+        curDir.rmpath(fileInfo.dir().path());
+    }
+    zipFile.close();
     curDir.rmpath("jlext/jlfiles");
     removeTestFiles(fileNames);
     curDir.remove(zipName);
@@ -309,6 +340,26 @@ void TestJlCompress::extractDir()
 	    absolutePath += '/';
         QVERIFY(extracted.contains(absolutePath));
     }
+    // now test the QIODevice* overload
+    QFile zipFile(zipName);
+    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    QCOMPARE((extracted = JlCompress::extractDir(&zipFile, "jlext/jldir"))
+        .count(), fileNames.count());
+    foreach (QString fileName, fileNames) {
+        QString fullName = "jlext/jldir/" + fileName;
+        QFileInfo fileInfo(fullName);
+        QFileInfo extInfo("tmp/" + fileName);
+        if (!fileInfo.isDir())
+            QCOMPARE(fileInfo.size(), extInfo.size());
+        QCOMPARE(fileInfo.permissions(), extInfo.permissions());
+        curDir.remove(fullName);
+        curDir.rmpath(fileInfo.dir().path());
+        QString absolutePath = fileInfo.absoluteFilePath();
+        if (fileInfo.isDir() && !absolutePath.endsWith('/'))
+        absolutePath += '/';
+        QVERIFY(extracted.contains(absolutePath));
+    }
+    zipFile.close();
     curDir.rmpath("jlext/jldir");
     removeTestFiles(fileNames);
     curDir.remove(zipName);

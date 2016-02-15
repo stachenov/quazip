@@ -288,12 +288,17 @@ bool JlCompress::compressDir(QString fileCompressed, QString dir,
 QString JlCompress::extractFile(QString fileCompressed, QString fileName, QString fileDest) {
     // Apro lo zip
     QuaZip zip(fileCompressed);
+    return extractFile(zip, fileName, fileDest);
+}
+
+QString JlCompress::extractFile(QuaZip &zip, QString fileName, QString fileDest)
+{
     if(!zip.open(QuaZip::mdUnzip)) {
         return QString();
     }
 
     // Estraggo il file
-    if (fileDest.isEmpty()) 
+    if (fileDest.isEmpty())
         fileDest = fileName;
     if (!extractFile(&zip,fileName,fileDest)) {
         return QString();
@@ -311,6 +316,11 @@ QString JlCompress::extractFile(QString fileCompressed, QString fileName, QStrin
 QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, QString dir) {
     // Creo lo zip
     QuaZip zip(fileCompressed);
+    return extractFiles(zip, files, dir);
+}
+
+QStringList JlCompress::extractFiles(QuaZip &zip, const QStringList &files, const QString &dir)
+{
     if(!zip.open(QuaZip::mdUnzip)) {
         return QStringList();
     }
@@ -339,6 +349,11 @@ QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, 
 QStringList JlCompress::extractDir(QString fileCompressed, QString dir) {
     // Apro lo zip
     QuaZip zip(fileCompressed);
+    return extractDir(zip, dir);
+}
+
+QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
+{
     if(!zip.open(QuaZip::mdUnzip)) {
         return QStringList();
     }
@@ -371,6 +386,11 @@ QStringList JlCompress::extractDir(QString fileCompressed, QString dir) {
 QStringList JlCompress::getFileList(QString fileCompressed) {
     // Apro lo zip
     QuaZip* zip = new QuaZip(QFileInfo(fileCompressed).absoluteFilePath());
+    return getFileList(zip);
+}
+
+QStringList JlCompress::getFileList(QuaZip *zip)
+{
     if(!zip->open(QuaZip::mdUnzip)) {
         delete zip;
         return QStringList();
@@ -395,7 +415,29 @@ QStringList JlCompress::getFileList(QString fileCompressed) {
         return QStringList();
     }
     delete zip;
-
     return lst;
 }
 
+QStringList JlCompress::extractDir(QIODevice *ioDevice, QString dir)
+{
+    QuaZip zip(ioDevice);
+    return extractDir(zip, dir);
+}
+
+QStringList JlCompress::getFileList(QIODevice *ioDevice)
+{
+    QuaZip *zip = new QuaZip(ioDevice);
+    return getFileList(zip);
+}
+
+QString JlCompress::extractFile(QIODevice *ioDevice, QString fileName, QString fileDest)
+{
+    QuaZip zip(ioDevice);
+    return extractFile(zip, fileName, fileDest);
+}
+
+QStringList JlCompress::extractFiles(QIODevice *ioDevice, QStringList files, QString dir)
+{
+    QuaZip zip(ioDevice);
+    return extractFiles(zip, files, dir);
+} 
