@@ -74,6 +74,9 @@ void TestQuaZIODevice::readMany()
     QCOMPARE(testDevice.read(outBuf, 4), static_cast<qint64>(4));
     QVERIFY(!testDevice.atEnd());
     QVERIFY(testDevice.bytesAvailable() > 0);
+    QCOMPARE(testDevice.read(4).size(), 4);
+    QCOMPARE(testDevice.bytesAvailable(), static_cast<qint64>(0));
+    QVERIFY(testDevice.atEnd());
     testDevice.close();
     QVERIFY(!testDevice.isOpen());
 }

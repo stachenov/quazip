@@ -213,6 +213,7 @@ qint64 QuaZIODevice::readData(char *data, qint64 maxSize)
       case Z_STREAM_END:
         read = (char *) d->zins.next_out - data;
         d->inBufPos = (char *) d->zins.next_in - d->inBuf;
+        d->atEnd = true;
         return read;
       case Z_BUF_ERROR: // this should never happen, but just in case
         if (!d->zBufError) {
@@ -323,10 +324,16 @@ bool QuaZIODevice::isSequential() const
 
 bool QuaZIODevice::atEnd() const
 {
-    return (openMode() == NotOpen) || d->atEnd;
+    // Here we MUST check QIODevice::bytesAvailable() because WE
+    // might have reached the end, but QIODevice didn't--
+    // it could have simply pre-buffered all remaining data.
+    return (openMode() == NotOpen) || (QIODevice::bytesAvailable() == 0 && d->atEnd);
 }
 
 qint64 QuaZIODevice::bytesAvailable() const
 {
-    return (atEnd() ? 0 : 1) + QIODevice::bytesAvailable();
+    // If we haven't recevied Z_STREAM_END, it means that
+    // we have at least one more input byte available.
+    // Plus whatever QIODevice has buffered.
+    return (d->atEnd ? 0 : 1) + QIODevice::bytesAvailable();
 }
