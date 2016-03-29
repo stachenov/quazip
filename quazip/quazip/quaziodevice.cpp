@@ -42,6 +42,7 @@ class QuaZIODevicePrivate {
     int outBufPos;
     int outBufSize;
     bool zBufError;
+    bool atEnd;
     int doFlush(QString &error);
 };
 
@@ -53,7 +54,8 @@ QuaZIODevicePrivate::QuaZIODevicePrivate(QIODevice *io):
   outBuf(NULL),
   outBufPos(0),
   outBufSize(0),
-  zBufError(false)
+  zBufError(false),
+  atEnd(false)
 {
   zins.zalloc = (alloc_func) NULL;
   zins.zfree = (free_func) NULL;
@@ -316,5 +318,15 @@ bool QuaZIODevice::flush()
 
 bool QuaZIODevice::isSequential() const
 {
-  return true;
+    return true;
+}
+
+bool QuaZIODevice::atEnd() const
+{
+    return (openMode() == NotOpen) || d->atEnd;
+}
+
+qint64 QuaZIODevice::bytesAvailable() const
+{
+    return (atEnd() ? 0 : 1) + QIODevice::bytesAvailable();
 }
