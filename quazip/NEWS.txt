@@ -1,7 +1,9 @@
 QuaZIP changes
 
-* 2015-11-18 0.7.2
-        * A few minor fixes and improvements.
+* 2016-03-29 0.7.2
+        * New JlCompress methods (QIODevice*-based API by Lukasz Kwiecinski)
+        * Implemented QuaZioDevice::atEnd() and bytesAvailable()--these might
+          break ABI, but pretty unlikely.
 
 * 2015-01-07 0.7.1
         * Fixed licensing issues (bug #45).
