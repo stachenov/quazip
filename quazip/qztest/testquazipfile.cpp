@@ -43,20 +43,24 @@ void TestQuaZipFile::zipUnzip_data()
     QTest::addColumn<QByteArray>("fileNameCodec");
     QTest::addColumn<QByteArray>("password");
     QTest::addColumn<bool>("zip64");
+    QTest::addColumn<int>("size");
     QTest::newRow("simple") << "simple.zip" << (
             QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
-        << QByteArray() << QByteArray() << false;
+        << QByteArray() << QByteArray() << false << -1;
     QTest::newRow("Cyrillic") << "cyrillic.zip" << (
             QStringList()
             << QString::fromUtf8("русское имя файла с пробелами.txt"))
-        << QByteArray("IBM866") << QByteArray() << false;
+        << QByteArray("IBM866") << QByteArray() << false << -1;
     QTest::newRow("password") << "password.zip" << (
             QStringList() << "test.txt")
-        << QByteArray() << QByteArray("PassPass") << false;
+        << QByteArray() << QByteArray("PassPass") << false << -1;
     QTest::newRow("zip64") << "zip64.zip" << (
             QStringList() << "test64.txt")
-        << QByteArray() << QByteArray() << true;
+        << QByteArray() << QByteArray() << true << -1;
+    QTest::newRow("large enough to flush") << "flush.zip" << (
+            QStringList() << "flush.txt")
+        << QByteArray() << QByteArray() << true << 65536 * 2;
 }
 
 void TestQuaZipFile::zipUnzip()
@@ -66,13 +70,14 @@ void TestQuaZipFile::zipUnzip()
     QFETCH(QByteArray, fileNameCodec);
     QFETCH(QByteArray, password);
     QFETCH(bool, zip64);
+    QFETCH(int, size);
     QFile testFile(zipName);
     if (testFile.exists()) {
         if (!testFile.remove()) {
             QFAIL("Couldn't remove existing archive to create a new one");
         }
     }
-    if (!createTestFiles(fileNames)) {
+    if (!createTestFiles(fileNames, size)) {
         QFAIL("Couldn't create test files for zipping");
     }
     QuaZip testZip(&testFile);
@@ -158,17 +163,21 @@ void TestQuaZipFile::bytesAvailable_data()
 {
     QTest::addColumn<QString>("zipName");
     QTest::addColumn<QStringList>("fileNames");
+    QTest::addColumn<int>("size");
     QTest::newRow("simple") << "test.zip" << (
             QStringList() << "test0.txt" << "testdir1/test1.txt"
-            << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt");
+            << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt") << -1;
+    QTest::newRow("large enough to flush")
+            << "flush.zip" << (QStringList() << "test.txt") << 65536 * 4;
 }
 
 void TestQuaZipFile::bytesAvailable()
 {
     QFETCH(QString, zipName);
     QFETCH(QStringList, fileNames);
+    QFETCH(int, size);
     QDir curDir;
-    if (!createTestFiles(fileNames)) {
+    if (!createTestFiles(fileNames, size)) {
         QFAIL("Couldn't create test files");
     }
     if (!JlCompress::compressDir(zipName, "tmp")) {
@@ -202,8 +211,9 @@ void TestQuaZipFile::atEnd()
 {
     QFETCH(QString, zipName);
     QFETCH(QStringList, fileNames);
+    QFETCH(int, size);
     QDir curDir;
-    if (!createTestFiles(fileNames)) {
+    if (!createTestFiles(fileNames, size)) {
         QFAIL("Couldn't create test files");
     }
     if (!JlCompress::compressDir(zipName, "tmp")) {
@@ -228,17 +238,18 @@ void TestQuaZipFile::atEnd()
     curDir.remove(zipName);
 }
 
-void TestQuaZipFile::pos_data()
+void TestQuaZipFile::posRead_data()
 {
     bytesAvailable_data();
 }
 
-void TestQuaZipFile::pos()
+void TestQuaZipFile::posRead()
 {
     QFETCH(QString, zipName);
     QFETCH(QStringList, fileNames);
+    QFETCH(int, size);
     QDir curDir;
-    if (!createTestFiles(fileNames)) {
+    if (!createTestFiles(fileNames, size)) {
         QFAIL("Couldn't create test files");
     }
     if (!JlCompress::compressDir(zipName, "tmp")) {
@@ -259,6 +270,41 @@ void TestQuaZipFile::pos()
         QCOMPARE(zipFile.pos(), fileInfo.size());
     }
     removeTestFiles(fileNames);
+    testZip.close();
+    curDir.remove(zipName);
+}
+
+void TestQuaZipFile::posWrite_data()
+{
+    posRead_data();
+}
+
+void TestQuaZipFile::posWrite()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QStringList, fileNames);
+    QFETCH(int, size);
+    if (size == -1)
+        size = 20;
+    QDir curDir;
+    QuaZip testZip(zipName);
+    QVERIFY(testZip.open(QuaZip::mdCreate));
+    foreach (QString fileName, fileNames) {
+        QuaZipFile zipFile(&testZip);
+        QVERIFY(zipFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileName)));
+        QCOMPARE(zipFile.pos(), (qint64) 0);
+        zipFile.putChar('0');
+        QCOMPARE(zipFile.pos(), (qint64) 1);
+        QByteArray buffer(size / 2 - 1, '\0');
+        for (int i = 0; i < buffer.size(); ++i)
+            buffer[i] = static_cast<char>(qrand());
+        zipFile.write(buffer);
+        QCOMPARE(zipFile.pos(), size / 2);
+        for (int i = 0; i < size - size / 2; ++i) {
+            zipFile.putChar(static_cast<char>(qrand()));
+        }
+        QCOMPARE(zipFile.pos(), size);
+    }
     testZip.close();
     curDir.remove(zipName);
 }

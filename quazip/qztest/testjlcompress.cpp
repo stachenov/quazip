@@ -139,7 +139,7 @@ void TestJlCompress::compressDir()
         if (!curDir.remove(zipName))
             QFAIL("Can't remove zip file");
     }
-    if (!createTestFiles(fileNames, "compressDir_tmp")) {
+    if (!createTestFiles(fileNames, -1, "compressDir_tmp")) {
         QFAIL("Can't create test files");
     }
 #ifdef Q_OS_WIN
