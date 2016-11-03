@@ -146,7 +146,7 @@ void TestJlCompress::compressDir()
     for (int i = 0; i < fileNames.size(); ++i) {
         if (fileNames.at(i).startsWith(".")) {
             QString fn = "compressDir_tmp\\" + fileNames.at(i);
-            SetFileAttributes(reinterpret_cast<LPCWSTR>(fn.utf16()),
+            SetFileAttributesW(reinterpret_cast<LPCWSTR>(fn.utf16()),
                               FILE_ATTRIBUTE_HIDDEN);
         }
     }
