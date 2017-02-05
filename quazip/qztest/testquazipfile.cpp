@@ -299,11 +299,11 @@ void TestQuaZipFile::posWrite()
         for (int i = 0; i < buffer.size(); ++i)
             buffer[i] = static_cast<char>(qrand());
         zipFile.write(buffer);
-        QCOMPARE(zipFile.pos(), size / 2);
+        QCOMPARE(zipFile.pos(), qint64(size / 2));
         for (int i = 0; i < size - size / 2; ++i) {
             zipFile.putChar(static_cast<char>(qrand()));
         }
-        QCOMPARE(zipFile.pos(), size);
+        QCOMPARE(zipFile.pos(), qint64(size));
     }
     testZip.close();
     curDir.remove(zipName);
