@@ -42,7 +42,7 @@ MOC_DIR = .moc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../quazip/release/ -lquazip
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/debug/ -lquazipd
-else:mac:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/debug/ -lquazip_debug
+else:mac:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/ -lquazip_debug
 else:unix: LIBS += -L$$OUT_PWD/../quazip/ -lquazip
 
 INCLUDEPATH += $$PWD/..
