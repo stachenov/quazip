@@ -2,6 +2,13 @@ TEMPLATE = lib
 CONFIG += qt warn_on
 QT -= gui
 
+# Creating pkgconfig .pc file
+CONFIG += create_prl no_install_prl create_pc
+
+QMAKE_PKGCONFIG_PREFIX = $$PREFIX
+QMAKE_PKGCONFIG_INCDIR = $$headers.path
+QMAKE_PKGCONFIG_REQUIRES = Qt5Core
+
 # The ABI version.
 
 !win32:VERSION = 1.0.0
@@ -43,6 +50,7 @@ unix:!symbian {
     headers.path=$$PREFIX/include/quazip
     headers.files=$$HEADERS
     target.path=$$PREFIX/lib/$${LIB_ARCH}
+    QMAKE_PKGCONFIG_DESTDIR = pkgconfig
     INSTALLS += headers target
 
 	OBJECTS_DIR=.obj
@@ -53,8 +61,21 @@ unix:!symbian {
 win32 {
     headers.path=$$PREFIX/include/quazip
     headers.files=$$HEADERS
-    target.path=$$PREFIX/lib
     INSTALLS += headers target
+    CONFIG(staticlib){
+        target.path=$$PREFIX/lib
+        QMAKE_PKGCONFIG_LIBDIR = $$PREFIX/lib/
+    } else {
+        target.path=$$PREFIX/bin
+        QMAKE_PKGCONFIG_LIBDIR = $$PREFIX/bin/
+    }
+
+    ## odd, this path seems to be relative to the
+    ## target.path, so if we install the .dll into
+    ## the 'bin' dir, the .pc will go there as well,
+    ## unless have hack the needed path...
+    ## TODO any nicer solution?
+    QMAKE_PKGCONFIG_DESTDIR = ../lib/pkgconfig
     # workaround for qdatetime.h macro bug
     DEFINES += NOMINMAX
 }
