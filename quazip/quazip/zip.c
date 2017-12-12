@@ -12,6 +12,9 @@
          Modifications for QIODevice support and other QuaZIP fixes
          Copyright (C) 2005-2014 Sergey A. Tachenov
 
+         Fixing static code analysis issues
+         Copyright (C) 2016 Intel Deutschland GmbH
+
          Changes
    Oct-2009 - Mathias Svensson - Remove old C style function prototypes
    Oct-2009 - Mathias Svensson - Added Zip64 Support when creating new file archives
@@ -1171,6 +1174,9 @@ extern int ZEXPORT zipOpenNewFileInZip4_64 (zipFile file, const char* filename, 
     zi->ci.size_centralExtraFree = 32; /* Extra space we have reserved in case we need to add ZIP64 extra info data */
 
     zi->ci.central_header = (char*)ALLOC((uInt)zi->ci.size_centralheader + zi->ci.size_centralExtraFree);
+    if(!zi->ci.central_header) {
+      return (Z_MEM_ERROR);
+    }
 
     zi->ci.size_centralExtra = size_extrafield_global;
     zip64local_putValue_inmemory(zi->ci.central_header,(uLong)CENTRALHEADERMAGIC,4);
@@ -2025,6 +2031,9 @@ extern int ZEXPORT zipRemoveExtraInfoBlock (char* pData, int* dataLen, short sHe
     return ZIP_PARAMERROR;
 
   pNewHeader = (char*)ALLOC(*dataLen);
+  if(!pNewHeader) {
+    return Z_MEM_ERROR;
+  }
   pTmp = pNewHeader;
 
   while(p < (pData + *dataLen))
