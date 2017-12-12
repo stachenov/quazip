@@ -1,5 +1,10 @@
 QuaZIP changes
 
+* 2017-02-05 0.7.4
+        * Static analysis patch from Intel Deutschland GmbH
+        * Replaced UNUSED with QUAZIP_UNUSED to avoid name clashes
+        * Minor bug fixes
+
 * 2017-02-05 0.7.3
         * Symlink handling
         * Static linking exception for LGPL
