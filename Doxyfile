@@ -31,7 +31,7 @@ PROJECT_NAME           = QuaZIP
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
-PROJECT_NUMBER         = quazip-0-7-4
+PROJECT_NUMBER         = quazip-0-7-5
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer
@@ -1491,7 +1491,7 @@ SKIP_FUNCTION_MACROS   = YES
 # If a tag file is not located in the directory in which doxygen
 # is run, you must also specify the path to the tagfile here.
 
-TAGFILES               = qtcore.tags=http://doc.qt.io/qt-5/
+TAGFILES               = qtcore.tags=http://doc.qt.io/qt-5.9/
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create
 # a tag file that is based on the input files it reads.

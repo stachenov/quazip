@@ -1,15 +1,12 @@
 /**
  * \mainpage QuaZIP - Qt/C++ wrapper for ZIP/UNZIP package
  *
-\htmlonly
-<a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=142688&amp;type=7" style="width:210; height:62; border:none; float:right;" alt="Powered by SourceForge.net" /></a>
-\endhtmlonly
  * \section overview Overview
  * 
  * QuaZIP is a simple C++ wrapper over <a
  * href="http://www.winimage.com/zLibDll/minizip.html">Gilles Vollant's ZIP/UNZIP
  * package</a> that can be used to access ZIP archives. It uses <a
- * href="http://qt.digia.com/">the Qt toolkit</a>.
+ * href="http://qt.io/">the Qt toolkit</a>.
  *
  * If you do not know what Qt is, you have two options:
  * - Just forget about QuaZIP.
@@ -24,31 +21,27 @@
  * API, and - yes! - that means that you can also use QTextStream,
  * QDataStream or whatever you would like to use on your zipped files.
  *
- * QuaZIP provides complete abstraction of the ZIP/UNZIP API, for both
+ * QuaZIP provides a complete abstraction of the ZIP/UNZIP API, for both
  * reading from and writing to ZIP archives.
  *
  * \section download Download QuaZIP
  *
- * Downloads are available from <a
- * href="http://sourceforge.net/projects/quazip/">QuaZIP project's page
- * at SourceForge.net</a>.
+ * The latest downloads are available from the
+ * <a href="https://github.com/stachenov/quazip/releases">GitHub page</a>.
+ *
+ * Older downloads are available from
+ * <a href="http://sourceforge.net/projects/quazip/">QuaZIP project's page at SourceForge.net</a>.
  *
  * \section platforms Platforms supported
  *
- * QuaZIP has been currently tested on the following platforms:
- * - linux-g++ (Ubuntu 11.10, Qt 4.7.4)
- * - freebsd-g++ (Qt 4.0.0
- * - hpux-acc (HP-UX 11.11)
- * - hpux-g++ (HP-UX 11.11)
- * - win32-g++ (MinGW)
- * - win32-msvc2010 (MS VS 2010 Express, Qt 4.8.4)
- * - win32-msvc2010 (Qt Creator, Qt 5.0.1)
- * - win32-msvc2012 (Qt Creator, Qt 5.2.0)
- * - some Symbian version, reportedly
+ * QuaZIP is regularly tested on the following platforms:
+ * - linux-g++ (Ubuntu 16.04 LTS, Qt 5.5.1)
+ * - linux-g++ (CentOS 6.9, Qt 4.6.2)
+ * - win32-msvc (MS VS/VC 2013 64-bit, Qt 5.9.2)
  * 
- * No testing has been officially done on other systems. Of course, patches to
- * make it work on any platform that it currently does not work on are
- * always welcome!
+ * It should work fine on any platform supported by Qt 4.6.2 or later.
+ * In theory, older versions might work as well, but aren't guaranteed
+ * to.
  *
  * \section whats-new What is new in this version of QuaZIP?
  *
@@ -56,10 +49,9 @@
  *
  * \section Requirements
  *
- * Just <a href="http://www.zlib.org/">zlib</a> and Qt 4/5. Well, Qt 4
- * depends on zlib anyway, but you will need zlib headers to compile
- * QuaZIP. With Qt5 sometimes you need the zlib library as well (on
- * Windows, for example).
+ * Just <a href="http://www.zlib.org/">zlib</a> and Qt 4/5. Sometimes
+ * you can get away with using zlib library bundled into Qt, but
+ * usually you need at least its headers to compile your project.
  *
  * \section building Building, testing and installing
  *
@@ -72,21 +64,24 @@
  * To build the library, run:
 \verbatim
 $ cd /wherever/quazip/source/is/quazip-x.y.z/quazip
-$ qmake [PREFIX=where-to-install]
+$ qmake <qmake args> [PREFIX=where-to-install]
 $ make
 \endverbatim
  *
  * Make sure that you have Qt 4/5 installed with all required headers and
  * utilities (that is, including the 'dev' or 'devel' package on Linux)
- * and that you run qmake utility of the Qt 4, not some other version
+ * and that you run qmake utility of the Qt 4/5, not some other version
  * you may have already installed (you may need to type full path to
  * qmake like /usr/local/qt4/bin/qmake).
  *
- * To reconfigure (with another PREFIX, for example), just run qmake
- * with appropriate arguments again.
+ * To reconfigure (with another PREFIX, for example), just run
+\verbatim
+qmake distclean
+\endverbatim
+ * and then qmake with the appropriate arguments again.
  *
- * If you need to specify additional include path or libraries, use
- * qmake features (see qmake reference in the Qt documentation). For
+ * Usually, it is needed to specify additional include path or libraries
+ * in qmake args (see qmake reference in the Qt documentation). For
  * example:
  *
 \verbatim
@@ -116,7 +111,7 @@ $ make install
  *
  * Binary compatibility is guaranteed between minor releases starting
  * with version 0.5, thanks to the Pimpl idiom. That is, the next binary
- * incompatible version will be 1.x.
+ * incompatible version will be 1.x in the worst case.
  *
  * \section test Testing
  *
@@ -148,10 +143,9 @@ $ ./qztest
  * 
  * \section contacts Authors and contacts
  *
- * This wrapper has been written by Sergey A. Tachenov, AKA Alqualos.
- * This is my first open source project, so it may suck, but I did not
- * find anything like that, so I just had no other choice but to write
- * it.
+ * This wrapper has been written by Sergei Tachenov.
+ * This is my first open source project, and it's pretty old, but it
+ * works and many people are happily using it, including myself.
  *
  * If you have anything to say to me about QuaZIP library, feel free to
  * do so (read the \ref faq first, though). I can not promise,
@@ -161,17 +155,23 @@ $ ./qztest
  * dead already (you never know...).
  *
  * To report bugs or to post ideas about what should be done, use
- * SourceForge.net's <a
- * href="http://sourceforge.net/tracker/?group_id=142688">trackers</a>.
- * If you want to send me a private message, use my e-mail address
- * stachenov@gmail.com.
+ * <a href="https://github.com/stachenov/quazip">GitHub</a>. It's an
+ * awesome site, where you can report bugs or register yourself an
+ * account, fork QuaZIP (don't hesitate to do so), create a new branch,
+ * make some changes and issue a
+ * <a href="https://help.github.com/articles/about-pull-requests/">pull
+ * request</a>, which is GitHub's way of offering patches.
  *
  * Do not use e-mail to report bugs, please. Reporting bugs and problems
- * with the SourceForge.net's bug report system has that advantage that
+ * with GitHub has that advantage that
  * it is visible to public, and I can always search for open tickets
  * that were created long ago. It is highly unlikely that I will search
  * my mail for that kind of stuff, so if a bug reported by mail isn't
  * fixed immediately, it will likely be forgotten forever.
  *
- * Copyright (C) 2005-2014 Sergey A. Tachenov and contributors
+ * Old bugs may still be available at
+ * <a href="https://sourceforge.net/projects/quazip/">SourceForge</a>
+ * for reference.
+ *
+ * Copyright (C) 2005-2018 Sergei Tachenov and contributors
  **/

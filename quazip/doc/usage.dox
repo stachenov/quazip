@@ -15,7 +15,7 @@
  *
  * \section terminology Terminology
  *
- * "QuaZIP" means whole this library, while "QuaZip" (note the
+ * "QuaZIP" means the whole library, while "QuaZip" (note the
  * lower case) is just one class in it.
  *
  * "ZIP/UNZIP API" or "minizip" means the original API of the Gilles

@@ -1,5 +1,5 @@
 /**
- * \page faq QuaZip FAQ
+ * \page faq QuaZIP FAQ
  *
  * <!--
  *
@@ -34,12 +34,6 @@
  *
  * \anchor faq-seekable Q. Can QuaZIP write archives to a sequential QIODevice like QTcpSocket?
  *
- * A. Not yet. It is not supported by vanilla Minizip (the back-end
- * QuaZIP uses), although theoretically possible according to the ZIP
- * standard. It would require some Minizip modifications that would
- * allow it to detect non-seekable I/O and produce necessary output
- * structures. QuaZIP already writes data descriptor which is necessary
- * for non-seekable I/O. The only thing that is apparently left is to
- * make Minizip fill local headers with correct values and forget about
- * seeking after closing the file.
+ * A. Yes, it's possible since QuaZIP v0.7. It's only possible in
+ * mdCreate mode, no mdAppend support.
  **/
