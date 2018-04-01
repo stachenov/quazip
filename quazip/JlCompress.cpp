@@ -105,6 +105,10 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
         QFileInfoList files = directory.entryInfoList(QDir::AllDirs|QDir::NoDotAndDotDot|filters);
         for (int index = 0; index < files.size(); ++index ) {
             const QFileInfo & file( files.at( index ) );
+#if QT_VERSION < QT_VERSION_CHECK(4, 7, 4)
+            if (!file.isDir())
+                continue;
+#endif
             // Comprimo la sotto cartella
             if(!compressSubDir(zip,file.absoluteFilePath(),origDir,recursive,filters)) return false;
         }
