@@ -1,0 +1,7 @@
+<map id="G" name="G">
+<area shape="rect" id="node1" href="qtcore.tags$qobject.html" title="QObject" alt="" coords="6,56,77,83"/>
+<area shape="rect" id="node3" href="qtcore.tags$qiodevice.html" title="QIODevice" alt="" coords="125,56,208,83"/>
+<area shape="rect" id="node5" href="$classQuaGzipFile.html" title="GZIP file." alt="" coords="261,5,355,32"/>
+<area shape="rect" id="node7" href="$classQuaZIODevice.html" title="A class to compress/decompress QIODevice." alt="" coords="256,56,360,83"/>
+<area shape="rect" id="node9" href="$classQuaZipFile.html" title="A file inside ZIP archive." alt="" coords="266,107,350,133"/>
+</map>

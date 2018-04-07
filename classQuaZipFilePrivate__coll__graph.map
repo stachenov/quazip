@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node17" href="$classQuaZipFile.html" title="A file inside ZIP archive." alt="" coords="131,475,215,501"/>
+<area shape="rect" id="node2" href="$classQuaZip.html" title="ZIP archive." alt="" coords="181,293,243,320"/>
+<area shape="rect" id="node4" href="$classQuaZipPrivate.html" title="All the internal stuff for the QuaZip class." alt="" coords="181,203,283,229"/>
+<area shape="rect" id="node7" href="qtcore.tags$qhash.html" title="QHash\&lt; QString, unz64_file_pos \&gt;" alt="" coords="112,83,336,109"/>
+<area shape="rect" id="node9" href="qtcore.tags$qiodevice.html" title="QIODevice" alt="" coords="5,83,88,109"/>
+<area shape="rect" id="node11" href="qtcore.tags$qobject.html" title="QObject" alt="" coords="11,5,81,32"/>
+<area shape="rect" id="node13" href="qtcore.tags$qstring.html" title="QString" alt="" coords="561,83,628,109"/>
+<area shape="rect" id="node15" href="qtcore.tags$qtextcodec.html" title="QTextCodec" alt="" coords="361,83,455,109"/>
+</map>
