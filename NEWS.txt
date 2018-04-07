@@ -1,5 +1,10 @@
 QuaZIP changes
 
+* Current
+        * Worked around a Qt 4.6 bug (QTBUG-15421) screwing up hidden
+          files handling in JlCompress::compressDir()
+        * Removed Q_FOREACH uses to avoid conflicts (SF patch #32)
+
 * 2017-02-05 0.7.4
         * Static analysis patch from Intel Deutschland GmbH
         * Replaced UNUSED with QUAZIP_UNUSED to avoid name clashes
