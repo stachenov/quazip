@@ -537,10 +537,9 @@ local ZPOS64_T zip64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_f
         uPosFound = uReadPos+i;
         break;
       }
-
+    }
       if (uPosFound!=0)
         break;
-    }
   }
   TRYFREE(buf);
   return uPosFound;
