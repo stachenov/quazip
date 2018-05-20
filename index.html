@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>QuaZIP: QuaZIP - Qt/C++ wrapper for ZIP/UNZIP package</title>
+<title>QuaZIP: QuaZIP - Qt/C++ wrapper for Minizip</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
@@ -32,39 +32,38 @@
 </div>
 <div class="header">
   <div class="headertitle">
-<div class="title">QuaZIP - Qt/C++ wrapper for ZIP/UNZIP package </div>  </div>
+<div class="title">QuaZIP - Qt/C++ wrapper for Minizip </div>  </div>
 </div>
 <div class="contents">
 <div class="textblock"><h2><a class="anchor" id="overview"></a>
 Overview</h2>
-<p>QuaZIP is a simple C++ wrapper over <a href="http://www.winimage.com/zLibDll/minizip.html">Gilles Vollant's ZIP/UNZIP package</a> that can be used to access ZIP archives. It uses <a href="http://qt.io/">the Qt toolkit</a>.</p>
-<p>If you do not know what <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> is, you have two options:</p>
-<ul>
-<li>Just forget about QuaZIP.</li>
-<li>Learn more about <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> by downloading it and/or reading the excellent <a href="http://qt-project.org/doc/">official Qt documentation</a></li>
-</ul>
-<p>The choice is yours, but if you are really interested in cross-platform (Windows/Linux/BSD/UNIX/Mac/Others) software development, I would definitely recommend you the latter ^_^</p>
-<p>QuaZIP allows you to access files inside ZIP archives using <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> API, and - yes! - that means that you can also use <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextstream.html">QTextStream</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatastream.html">QDataStream</a> or whatever you would like to use on your zipped files.</p>
-<p>QuaZIP provides a complete abstraction of the ZIP/UNZIP API, for both reading from and writing to ZIP archives.</p>
+<p><a href="http://www.winimage.com/zLibDll/minizip.html">Minizip, or Gilles Vollant's ZIP/UNZIP package</a> is a simple C library for creating, appending and reading ZIP archives.</p>
+<p><a href="http://qt.io/">Qt</a> is a very powerful cross-platform C++ library with a lot of useful modules and classes. With Qt, you can create rich GUIs, perform networking activities, accessing databases and much much more. If Java is “write once, run everywhere”, Qt is “write once, compile everywhere” which is not that bad either.</p>
+<p>One thing Qt can't do out-of-the-box is write and read ZIP archives. Of course, you can do it with Minizip, but Minizip has its own interface which isn't exactly compatible with Qt. Namely, in Qt there is an abstract class called <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a>, which is Qt-speak for “input/output stream”. There are a lot of classes that accept <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> to write some useful things to it—you could serialize XML to a <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a>, for example. Therefore, wouldn't it be useful if you could open a <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> that would write directly to a file in a ZIP archive? Or read from one? That's exactly where QuaZIP comes into the picture.</p>
+<p>Technically speaking, QuaZIP is a simple C++ wrapper around Minizip. Or you could call it an implementation of the Adapter pattern. With QuaZIP, both ZIP files and files inside ZIP archives can be accessed with <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> API. You can even write ZIP files to a sequential devices like TCP sockets, although some limitations apply in this case.</p>
 <h2><a class="anchor" id="download"></a>
 Download QuaZIP</h2>
-<p>The latest downloads are available from the <a href="https://github.com/stachenov/quazip/releases">GitHub page</a>.</p>
+<p>The latest downloads are available from the <a href="https://github.com/stachenov/quazip/releases">GitHub page</a>. Downloads are in source format. The documentation you're reading right now can be build with the “doxygen” tool if you have one installed. Just run it from the project directory and it will create the “doc” directory for you. If you don't have Doxygen installed, you can still read offline docs in the “quazip/doc” subdir and in the header files. Don't confuse those dirs:</p>
+<ul>
+<li>“doc” in the project's root is where Doxygen <em>output</em> is.</li>
+<li>“quazip/doc” is where Doxygen <em>input</em> is, along with the header files.</li>
+</ul>
 <p>Older downloads are available from <a href="http://sourceforge.net/projects/quazip/">QuaZIP project's page at SourceForge.net</a>.</p>
 <h2><a class="anchor" id="platforms"></a>
 Platforms supported</h2>
 <p>QuaZIP is regularly tested on the following platforms:</p>
 <ul>
-<li>linux-g++ (Ubuntu 16.04 LTS, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> 5.5.1)</li>
-<li>linux-g++ (CentOS 6.9, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> 4.6.2)</li>
-<li>win32-msvc (MS VS/VC 2013 64-bit, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> 5.9.2)</li>
+<li>linux-g++ (Ubuntu 16.04 LTS, Qt 5.5.1)</li>
+<li>linux-g++ (CentOS 6.9, Qt 4.6.2)</li>
+<li>win32-msvc (MS VS/VC 2013 64-bit, Qt 5.9.2)</li>
 </ul>
-<p>It should work fine on any platform supported by <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> 4.6.2 or later. In theory, older versions might work as well, but aren't guaranteed to.</p>
+<p>It should work fine on any platform supported by Qt 4.6.2 or later. In theory, older versions might work as well, but aren't guaranteed to.</p>
 <h2><a class="anchor" id="whats-new"></a>
 What is new in this version of QuaZIP?</h2>
 <p>See the NEWS.txt file supplied with the distribution.</p>
-<h2><a class="anchor" id="Requirements"></a>
-Requirements</h2>
-<p>Just <a href="http://www.zlib.org/">zlib</a> and <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> 4/5. Sometimes you can get away with using zlib library bundled into <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a>, but usually you need at least its headers to compile your project.</p>
+<h2><a class="anchor" id="Dependencies"></a>
+Dependencies</h2>
+<p>Just <a href="http://www.zlib.org/">zlib</a> and Qt 4/5. Sometimes you can get away with using zlib library bundled into Qt, but usually you need at least its headers.</p>
 <h2><a class="anchor" id="building"></a>
 Building, testing and installing</h2>
 <dl class="note"><dt><b>Note:</b></dt><dd>Instructions given in this section assume that you are using some UNIX dialect, but the build process should be very similar on win32-g++ platform too. On other platforms it's essentially the same process, maybe with some qmake adjustments not specific to QuaZIP itself.</dd></dl>
@@ -73,15 +72,15 @@ Building, testing and installing</h2>
 $ cd /wherever/quazip/source/is/quazip-x.y.z/quazip
 $ qmake &lt;qmake args&gt; [PREFIX=where-to-install]
 $ make
-</pre></div><p>Make sure that you have <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> 4/5 installed with all required headers and utilities (that is, including the 'dev' or 'devel' package on Linux) and that you run qmake utility of the <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> 4/5, not some other version you may have already installed (you may need to type full path to qmake like /usr/local/qt4/bin/qmake).</p>
+</pre></div><p>Make sure that you have Qt 4/5 installed with all required headers and utilities (that is, including the 'dev' or 'devel' package on Linux) and that you run qmake utility of the Qt 4/5, not some other version you may have already installed (you may need to type full path to qmake like /usr/local/qt4/bin/qmake).</p>
 <p>To reconfigure (with another PREFIX, for example), just run </p>
 <div class="fragment"><pre class="fragment">
 qmake distclean
 </pre></div><p> and then qmake with the appropriate arguments again.</p>
-<p>Usually, it is needed to specify additional include path or libraries in qmake args (see qmake reference in the <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> documentation). For example:</p>
+<p>Usually, it is needed to specify additional include path or libraries in qmake args (see qmake reference in the Qt documentation). For example:</p>
 <div class="fragment"><pre class="fragment">
 $ qmake LIBS+=-L/usr/local/zlib/lib INCLUDEPATH+=/usr/local/zlib/include
-</pre></div><p> (note abscence of "-I" before the include path and the presence of "-L" before the lib path)</p>
+</pre></div><p> (note abscence of “-I” before the include path and the presence of “-L” before the lib path)</p>
 <p>Also note that you may or may not need to define ZLIB_WINAPI (qmake DEFINES+=ZLIB_WINAPI) when linking to zlib on Windows, depending on how zlib was built (generally, if using zlibwapi.dll, this define is needed).</p>
 <p>To install compiled library: </p>
 <div class="fragment"><pre class="fragment">
@@ -100,22 +99,22 @@ $ cd /wherever/quazip/source/is/quazip-x.y.z/qztest
 $ qmake
 $ make
 $ ./qztest
-</pre></div><p>Note that the test suite looks for the quazip library in the "quazip" folder of the project ("../quazip"), but you may wish to use LIBS for some systems (Windows often puts the library in the separate "debug" or "release" directory). If you wish to use the quazip version that's already installed, provide the appropriate path.</p>
-<p>On some systems you may need to set PATH, LD_LIBRARY_PATH or SHLIB_PATH to get "qztest" to actually run.</p>
+</pre></div><p>Note that the test suite looks for the quazip library in the “quazip” folder of the project (“../quazip”), but you may wish to use LIBS for some systems (Windows often puts the library in the separate “debug” or “release” directory). If you wish to use the quazip version that's already installed, provide the appropriate path.</p>
+<p>On some systems you may need to set PATH, LD_LIBRARY_PATH or SHLIB_PATH to get “qztest” to actually run and to use the right version.</p>
 <p>If everything went fine, the test suite should report a lot of PASS messages. If something goes wrong, it will provide details and a warning that some tests failed.</p>
 <h2><a class="anchor" id="using"></a>
 Using</h2>
-<p>See <a class="el" href="usage.html">usage page</a>.</p>
+<p>See <a class="el" href="usage.html">Usage</a> “usage page”.</p>
 <h2><a class="anchor" id="contacts"></a>
 Authors and contacts</h2>
 <p>This wrapper has been written by Sergei Tachenov. This is my first open source project, and it's pretty old, but it works and many people are happily using it, including myself.</p>
 <p>If you have anything to say to me about QuaZIP library, feel free to do so (read the <a class="el" href="faq.html">QuaZIP FAQ</a> first, though). I can not promise, though, that I fix all the bugs you report in, add any features you want, or respond to your critics, or respond to your feedback at all. I may be busy, I may be tired of working on QuaZIP, I may be even dead already (you never know...).</p>
-<p>To report bugs or to post ideas about what should be done, use <a href="https://github.com/stachenov/quazip">GitHub</a>. It's an awesome site, where you can report bugs or register yourself an account, fork QuaZIP (don't hesitate to do so), create a new branch, make some changes and issue a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>, which is GitHub's way of offering patches.</p>
+<p>To report bugs or to post ideas about what should be done, use <a href="https://github.com/stachenov/quazip">GitHub</a>. It's an awesome site, where you can report bugs or register yourself an account, fork QuaZIP (don't hesitate to do so), create a new branch, make some changes and issue a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>, which is GitHub's way of offering patches. See CONTRIBUTING.md file for details.</p>
 <p>Do not use e-mail to report bugs, please. Reporting bugs and problems with GitHub has that advantage that it is visible to public, and I can always search for open tickets that were created long ago. It is highly unlikely that I will search my mail for that kind of stuff, so if a bug reported by mail isn't fixed immediately, it will likely be forgotten forever.</p>
 <p>Old bugs may still be available at <a href="https://sourceforge.net/projects/quazip/">SourceForge</a> for reference.</p>
 <p>Copyright (C) 2005-2018 Sergei Tachenov and contributors </p>
 </div></div>
-<hr class="footer"/><address class="footer"><small>Generated on Sun Apr 1 2018 13:29:58 for QuaZIP by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Sun May 20 2018 10:27:51 for QuaZIP by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>
