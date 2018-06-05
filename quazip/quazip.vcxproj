@@ -142,7 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="crypt.h" />
+    <ClInclude Include="minizip_crypt.h" />
     <ClInclude Include="ioapi.h" />
     <ClInclude Include="JlCompress.h" />
     <ClInclude Include="quaadler32.h" />

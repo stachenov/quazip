@@ -30,7 +30,7 @@
   If, for some reason, all these files are missing, the Info-ZIP license
   also may be found at:  ftp://ftp.info-zip.org/pub/infozip/license.html
 
-        crypt.c (full version) by Info-ZIP.      Last revised:  [see crypt.h]
+        crypt.c (full version) by Info-ZIP.      Last revised:  [see minizip_crypt.h]
 
   The encryption/decryption parts of this source code (as opposed to the
   non-echoing password parts) were originally written in Europe.  The
@@ -199,7 +199,7 @@ typedef struct
 
 
 #ifndef NOUNCRYPT
-#include "crypt.h"
+#include "minizip_crypt.h"
 #endif
 
 /* ===========================================================================

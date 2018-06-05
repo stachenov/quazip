@@ -645,7 +645,7 @@ RECURSIVE              = YES
 EXCLUDE                = quazip/unzip.h \
                          quazip/zip.h \
                          quazip/ioapi.h \
-                         quazip/crypt.h \
+                         quazip/minizip_crypt.h \
                          qztest/
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
