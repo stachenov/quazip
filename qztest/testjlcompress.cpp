@@ -302,17 +302,25 @@ void TestJlCompress::extractDir_data()
 {
     QTest::addColumn<QString>("zipName");
     QTest::addColumn<QStringList>("fileNames");
-    QTest::newRow("simple") << "jlextdir.zip" << (
-            QStringList() << "test0.txt" << "testdir1/test1.txt"
+    QTest::addColumn<QStringList>("expectedExtracted");
+    QTest::newRow("simple") << "jlextdir.zip"
+        << (QStringList() << "test0.txt" << "testdir1/test1.txt"
+            << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+        << (QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt");
-    QTest::newRow("separate dir") << "sepdir.zip" << (
-            QStringList() << "laj/" << "laj/lajfile.txt");
+    QTest::newRow("separate dir") << "sepdir.zip"
+        << (QStringList() << "laj/" << "laj/lajfile.txt")
+        << (QStringList() << "laj/" << "laj/lajfile.txt");
+    QTest::newRow("Zip Slip") << "zipslip.zip"
+        << (QStringList() << "test0.txt" << "../zipslip.txt")
+        << (QStringList() << "test0.txt");
 }
 
 void TestJlCompress::extractDir()
 {
     QFETCH(QString, zipName);
     QFETCH(QStringList, fileNames);
+    QFETCH(QStringList, expectedExtracted);
     QDir curDir;
     if (!curDir.mkpath("jlext/jldir")) {
         QFAIL("Couldn't mkpath jlext/jldir");
@@ -325,9 +333,10 @@ void TestJlCompress::extractDir()
     }
     QStringList extracted;
     QCOMPARE((extracted = JlCompress::extractDir(zipName, "jlext/jldir"))
-        .count(), fileNames.count());
-    foreach (QString fileName, fileNames) {
-        QString fullName = "jlext/jldir/" + fileName;
+        .count(), expectedExtracted.count());
+    const QString dir = "jlext/jldir/";
+    foreach (QString fileName, expectedExtracted) {
+        QString fullName = dir + fileName;
         QFileInfo fileInfo(fullName);
         QFileInfo extInfo("tmp/" + fileName);
         if (!fileInfo.isDir())
@@ -335,7 +344,7 @@ void TestJlCompress::extractDir()
         QCOMPARE(fileInfo.permissions(), extInfo.permissions());
         curDir.remove(fullName);
         curDir.rmpath(fileInfo.dir().path());
-        QString absolutePath = fileInfo.absoluteFilePath();
+        QString absolutePath = QDir(dir).absoluteFilePath(fileName);
         if (fileInfo.isDir() && !absolutePath.endsWith('/'))
 	    absolutePath += '/';
         QVERIFY(extracted.contains(absolutePath));
@@ -344,9 +353,9 @@ void TestJlCompress::extractDir()
     QFile zipFile(zipName);
     QVERIFY(zipFile.open(QIODevice::ReadOnly));
     QCOMPARE((extracted = JlCompress::extractDir(&zipFile, "jlext/jldir"))
-        .count(), fileNames.count());
-    foreach (QString fileName, fileNames) {
-        QString fullName = "jlext/jldir/" + fileName;
+        .count(), expectedExtracted.count());
+    foreach (QString fileName, expectedExtracted) {
+        QString fullName = dir + fileName;
         QFileInfo fileInfo(fullName);
         QFileInfo extInfo("tmp/" + fileName);
         if (!fileInfo.isDir())
@@ -354,7 +363,7 @@ void TestJlCompress::extractDir()
         QCOMPARE(fileInfo.permissions(), extInfo.permissions());
         curDir.remove(fullName);
         curDir.rmpath(fileInfo.dir().path());
-        QString absolutePath = fileInfo.absoluteFilePath();
+        QString absolutePath = QDir(dir).absoluteFilePath(fileName);
         if (fileInfo.isDir() && !absolutePath.endsWith('/'))
         absolutePath += '/';
         QVERIFY(extracted.contains(absolutePath));

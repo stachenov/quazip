@@ -1,5 +1,8 @@
 QuaZIP changes
 
+* Current
+        * Fixed the Zip Slip vulnerability in JlCompress
+
 * 0.7.5
         * Fixed target_link_libraries call in CMakeLists
         * Worked around a Qt 4.6 bug (QTBUG-15421) screwing up hidden
