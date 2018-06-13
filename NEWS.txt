@@ -1,6 +1,6 @@
 QuaZIP changes
 
-* Current
+* 2018-06-13 0.7.6
         * Fixed the Zip Slip vulnerability in JlCompress
         * Renamed crypt.h to minizip_crypt.h to avoid conflicts
 
