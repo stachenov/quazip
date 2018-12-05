@@ -42,9 +42,9 @@ class QuaZipPrivate {
     Q_DISABLE_COPY(QuaZipPrivate)
     /// The pointer to the corresponding QuaZip instance.
     QuaZip *q;
-    /// The codec for file names.
+    /// The codec for file names (unzip only, zip always encodes in UTF-8).
     QTextCodec *fileNameCodec;
-    /// The codec for comments.
+    /// The codec for comments (unzip only, zip always encodes in UTF-8).
     QTextCodec *commentCodec;
     /// The archive file name.
     QString zipName;
@@ -117,7 +117,7 @@ class QuaZipPrivate {
     }
     /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q, QIODevice *ioDevice):
-        q(q),
+      q(q),
       fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QTextCodec::codecForLocale()),
       ioDevice(ioDevice),
@@ -342,8 +342,7 @@ void QuaZip::close()
     case mdAppend:
     case mdAdd:
       p->zipError=zipClose(p->zipFile_f, 
-          p->comment.isNull() ? NULL
-          : p->commentCodec->fromUnicode(p->comment).constData());
+          p->comment.isNull() ? NULL : qUtf8Printable(p->comment));
       break;
     default:
       qWarning("QuaZip::close(): unknown mode: %d", (int)p->mode);
@@ -409,7 +408,9 @@ QString QuaZip::getComment()const
   if((fakeThis->p->zipError=unzGetGlobalComment(p->unzFile_f, comment.data(), comment.size())) < 0)
     return QString();
   fakeThis->p->zipError = UNZ_OK;
-  return p->commentCodec->toUnicode(comment);
+  unsigned flags = 0;
+  return (unzGetFileFlags(p->unzFile_f, &flags) == UNZ_OK) && (flags & UNZ_ENCODING_UTF8)
+    ? QString::fromUtf8(comment) : p->commentCodec->toUnicode(comment);
 }
 
 bool QuaZip::setCurrentFile(const QString& fileName, CaseSensitivity cs)
@@ -544,8 +545,8 @@ bool QuaZip::getCurrentFileInfo(QuaZipFileInfo64 *info)const
   info->diskNumberStart=info_z.disk_num_start;
   info->internalAttr=info_z.internal_fa;
   info->externalAttr=info_z.external_fa;
-  info->name=p->fileNameCodec->toUnicode(fileName);
-  info->comment=p->commentCodec->toUnicode(comment);
+  info->name=(info->flags & ZIP_ENCODING_UTF8) ? QString::fromUtf8(fileName) : p->fileNameCodec->toUnicode(fileName);
+  info->comment=(info->flags & ZIP_ENCODING_UTF8) ? QString::fromUtf8(comment) : p->commentCodec->toUnicode(comment);
   info->extra=extra;
   info->dateTime=QDateTime(
       QDate(info_z.tmu_date.tm_year, info_z.tmu_date.tm_mon+1, info_z.tmu_date.tm_mday),
@@ -565,10 +566,11 @@ QString QuaZip::getCurrentFileName()const
   }
   if(!isOpen()||!hasCurrentFile()) return QString();
   QByteArray fileName(MAX_FILE_NAME_LENGTH, 0);
-  if((fakeThis->p->zipError=unzGetCurrentFileInfo64(p->unzFile_f, NULL, fileName.data(), fileName.size(),
+  unz_file_info64 file_info;
+  if((fakeThis->p->zipError=unzGetCurrentFileInfo64(p->unzFile_f, &file_info, fileName.data(), fileName.size(),
       NULL, 0, NULL, 0))!=UNZ_OK)
     return QString();
-  QString result = p->fileNameCodec->toUnicode(fileName.constData());
+  QString result = (file_info.flag & ZIP_ENCODING_UTF8) ? QString::fromUtf8(fileName) : p->fileNameCodec->toUnicode(fileName);
   if (result.isEmpty())
       return result;
   // Add to directory map

@@ -70,7 +70,7 @@ struct QUAZIP_EXPORT QuaZipNewInfo {
     */
   quint32 externalAttr;
   /// File comment.
-  /** Will be encoded using QuaZip::getCommentCodec().
+  /** Will be encoded in UTF-8 encoding.
    **/
   QString comment;
   /// File local extra field.
