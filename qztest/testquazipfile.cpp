@@ -43,24 +43,32 @@ void TestQuaZipFile::zipUnzip_data()
     QTest::addColumn<QByteArray>("fileNameCodec");
     QTest::addColumn<QByteArray>("password");
     QTest::addColumn<bool>("zip64");
+    QTest::addColumn<bool>("utf8");
     QTest::addColumn<int>("size");
     QTest::newRow("simple") << "simple.zip" << (
             QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
-        << QByteArray() << QByteArray() << false << -1;
+        << QByteArray() << QByteArray() << false << false << -1;
     QTest::newRow("Cyrillic") << "cyrillic.zip" << (
             QStringList()
             << QString::fromUtf8("русское имя файла с пробелами.txt"))
-        << QByteArray("IBM866") << QByteArray() << false << -1;
+        << QByteArray("IBM866") << QByteArray() << false << false << -1;
+    QTest::newRow("Unicode") << "unicode.zip" << (
+            QStringList()
+            << QString::fromUtf8("Українське сало.txt")
+            << QString::fromUtf8("Vin français.txt")
+            << QString::fromUtf8("日本の寿司.txt")
+            << QString::fromUtf8("ქართული ხაჭაპური.txt"))
+        << QByteArray("") << QByteArray() << false << true << -1;
     QTest::newRow("password") << "password.zip" << (
             QStringList() << "test.txt")
-        << QByteArray() << QByteArray("PassPass") << false << -1;
+        << QByteArray() << QByteArray("PassPass") << false << false << -1;
     QTest::newRow("zip64") << "zip64.zip" << (
             QStringList() << "test64.txt")
-        << QByteArray() << QByteArray() << true << -1;
+        << QByteArray() << QByteArray() << true << false << -1;
     QTest::newRow("large enough to flush") << "flush.zip" << (
             QStringList() << "flush.txt")
-        << QByteArray() << QByteArray() << true << 65536 * 2;
+        << QByteArray() << QByteArray() << true << false << 65536 * 2;
 }
 
 void TestQuaZipFile::zipUnzip()
@@ -70,6 +78,7 @@ void TestQuaZipFile::zipUnzip()
     QFETCH(QByteArray, fileNameCodec);
     QFETCH(QByteArray, password);
     QFETCH(bool, zip64);
+    QFETCH(bool, utf8);
     QFETCH(int, size);
     QFile testFile(zipName);
     if (testFile.exists()) {
@@ -82,10 +91,11 @@ void TestQuaZipFile::zipUnzip()
     }
     QuaZip testZip(&testFile);
     testZip.setZip64Enabled(zip64);
+    testZip.setUtf8Enabled(utf8);
     if (!fileNameCodec.isEmpty())
         testZip.setFileNameCodec(fileNameCodec);
     QVERIFY(testZip.open(QuaZip::mdCreate));
-    QString comment = "Test comment";
+    QString comment = utf8 ? "test テスト ჩეკი" : "Test comment";
     testZip.setComment(comment);
     foreach (QString fileName, fileNames) {
         QFile inFile("tmp/" + fileName);
