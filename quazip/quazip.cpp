@@ -342,7 +342,7 @@ void QuaZip::close()
     case mdAppend:
     case mdAdd:
       p->zipError=zipClose(p->zipFile_f, 
-          p->comment.isNull() ? NULL : qUtf8Printable(p->comment));
+          p->comment.isNull() ? NULL : p->comment.toUtf8().constData());
       break;
     default:
       qWarning("QuaZip::close(): unknown mode: %d", (int)p->mode);
