@@ -155,13 +155,13 @@ bool QuaZIODevice::open(QIODevice::OpenMode mode)
     }
     if ((mode & QIODevice::ReadOnly) != 0) {
         if (inflateInit(&d->zins) != Z_OK) {
-            setErrorString(d->zins.msg);
+            setErrorString(QString::fromStdString(d->zins.msg));
             return false;
         }
     }
     if ((mode & QIODevice::WriteOnly) != 0) {
         if (deflateInit(&d->zouts, Z_DEFAULT_COMPRESSION) != Z_OK) {
-            setErrorString(d->zouts.msg);
+            setErrorString(QString::fromStdString(d->zouts.msg));
             return false;
         }
     }
@@ -172,13 +172,13 @@ void QuaZIODevice::close()
 {
     if ((openMode() & QIODevice::ReadOnly) != 0) {
         if (inflateEnd(&d->zins) != Z_OK) {
-            setErrorString(d->zins.msg);
+            setErrorString(QString::fromStdString(d->zins.msg));
         }
     }
     if ((openMode() & QIODevice::WriteOnly) != 0) {
         flush();
         if (deflateEnd(&d->zouts) != Z_OK) {
-            setErrorString(d->zouts.msg);
+            setErrorString(QString::fromStdString(d->zouts.msg));
         }
     }
     QIODevice::close();

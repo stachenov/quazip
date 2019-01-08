@@ -121,7 +121,7 @@ void QuaZipNewInfo::setFilePermissions(const QString &file)
 
 void QuaZipNewInfo::setPermissions(QFile::Permissions permissions)
 {
-    QuaZipNewInfo_setPermissions(this, permissions, name.endsWith('/'));
+    QuaZipNewInfo_setPermissions(this, permissions, name.endsWith(QStringLiteral("/")));
 }
 
 void QuaZipNewInfo::setFileNTFSTimes(const QString &fileName)
