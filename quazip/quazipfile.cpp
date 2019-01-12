@@ -112,7 +112,7 @@ class QuaZipFilePrivate {
       {
         zip=new QuaZip(zipName);
         this->fileName=fileName;
-        if (this->fileName.startsWith(QStringLiteral("/")))
+        if (this->fileName.startsWith(QLatin1String("/")))
             this->fileName = this->fileName.mid(1);
         this->caseSensitivity=cs;
       }
@@ -232,7 +232,7 @@ void QuaZipFile::setFileName(const QString& fileName, QuaZip::CaseSensitivity cs
     return;
   }
   p->fileName=fileName;
-  if (p->fileName.startsWith(QStringLiteral("/")))
+  if (p->fileName.startsWith(QLatin1String("/")))
       p->fileName = p->fileName.mid(1);
   p->caseSensitivity=cs;
 }

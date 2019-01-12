@@ -92,7 +92,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
 	if (dir != origDir) {
 		QuaZipFile dirZipFile(zip);
 		if (!dirZipFile.open(QIODevice::WriteOnly,
-            QuaZipNewInfo(origDirectory.relativeFilePath(dir) + QStringLiteral("/"), dir), 0, 0, 0)) {
+            QuaZipNewInfo(origDirectory.relativeFilePath(dir) + QLatin1String("/"), dir), 0, 0, 0)) {
 				return false;
 		}
 		dirZipFile.close();
@@ -148,7 +148,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
 
     // Controllo esistenza cartella file risultato
     QDir curDir;
-    if (fileDest.endsWith(QStringLiteral("/"))) {
+    if (fileDest.endsWith(QLatin1String("/"))) {
         if (!curDir.mkpath(fileDest)) {
             return false;
         }
@@ -163,7 +163,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
         return false;
 
     QFile::Permissions srcPerm = info.getPermissions();
-    if (fileDest.endsWith(QStringLiteral("/")) && QFileInfo(fileDest).isDir()) {
+    if (fileDest.endsWith(QLatin1String("/")) && QFileInfo(fileDest).isDir()) {
         if (srcPerm != 0) {
             QFile(fileDest).setPermissions(srcPerm);
         }
@@ -375,9 +375,9 @@ QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
         QString name = zip.getCurrentFileName();
         QString absFilePath = directory.absoluteFilePath(name);
         QString absCleanPath = QDir::cleanPath(absFilePath);
-        if (!absCleanPath.startsWith(absCleanDir + QStringLiteral("/")))
+        if (!absCleanPath.startsWith(absCleanDir + QLatin1String("/")))
             continue;
-        if (!extractFile(&zip, QStringLiteral(""), absFilePath)) {
+        if (!extractFile(&zip, QLatin1String(""), absFilePath)) {
             removeFile(extracted);
             return QStringList();
         }
