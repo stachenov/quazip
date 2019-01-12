@@ -32,7 +32,8 @@ QMAKE_PKGCONFIG_REQUIRES = Qt5Core
 
 # This one handles dllimport/dllexport directives.
 DEFINES += QUAZIP_BUILD
-
+DEFINES+=QT_NO_CAST_FROM_ASCII
+DEFINES+=QT_NO_CAST_TO_ASCII
 # You'll need to define this one manually if using a build system other
 # than qmake or using QuaZIP sources directly in your project.
 CONFIG(staticlib): DEFINES += QUAZIP_STATIC
