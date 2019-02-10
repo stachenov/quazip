@@ -144,13 +144,23 @@ QIODevice *QuaZIODevice::getIoDevice() const
 bool QuaZIODevice::open(QIODevice::OpenMode mode)
 {
     if ((mode & QIODevice::Append) != 0) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         setErrorString(tr("QIODevice::Append is not supported for"
                     " QuaZIODevice"));
+#else
+        setErrorString(trUtf8("QIODevice::Append is not supported for"
+                    " QuaZIODevice"));
+#endif
         return false;
     }
     if ((mode & QIODevice::ReadWrite) == QIODevice::ReadWrite) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
         setErrorString(tr("QIODevice::ReadWrite is not supported for"
                     " QuaZIODevice"));
+#else
+        setErrorString(trUtf8("QIODevice::ReadWrite is not supported for"
+                    " QuaZIODevice"));
+#endif
         return false;
     }
     if ((mode & QIODevice::ReadOnly) != 0) {
