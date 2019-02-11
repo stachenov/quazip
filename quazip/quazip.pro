@@ -59,6 +59,10 @@ unix:!symbian {
 	
 }
 
+macx {
+    LIBS += -lz
+}
+
 win32 {
     headers.path=$$PREFIX/include/quazip
     headers.files=$$HEADERS
