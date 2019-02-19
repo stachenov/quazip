@@ -8,6 +8,9 @@ DEPENDPATH += .
 INCLUDEPATH += .
 !win32: LIBS += -lz
 win32 {
+    INCLUDEPATH += $$PWD\..\..\..\platforms\win\include
+    LIBS += -L$$PWD\..\..\..\platforms\win\lib32 -lzdll
+    
     # workaround for qdatetime.h macro bug
     DEFINES += NOMINMAX
 }
