@@ -48,6 +48,7 @@ CONFIG(debug, debug|release) {
 }
 
 unix:!symbian {
+    LIBS += -lz
     headers.path=$$PREFIX/include/quazip
     headers.files=$$HEADERS
     target.path=$$PREFIX/lib/$${LIB_ARCH}
@@ -60,6 +61,8 @@ unix:!symbian {
 }
 
 win32 {
+    INCLUDEPATH += $$PWD\..\..\..\platforms\win\include
+    LIBS += -L$$PWD\..\..\..\platforms\win\lib32 -lzdll
     headers.path=$$PREFIX/include/quazip
     headers.files=$$HEADERS
     INSTALLS += headers target
