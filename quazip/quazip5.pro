@@ -39,7 +39,7 @@ DEFINES+=QT_NO_CAST_TO_ASCII
 CONFIG(staticlib): DEFINES += QUAZIP_STATIC
 
 # Input
-include(quazip.pri)
+include(quazip5.pri)
 
 
 CONFIG(debug, debug|release) {

@@ -40,10 +40,10 @@ testquazipfile.cpp \
 OBJECTS_DIR = .obj
 MOC_DIR = .moc
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../quazip/release/ -lquazip
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/debug/ -lquazipd
-else:mac:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/ -lquazip_debug
-else:unix: LIBS += -L$$OUT_PWD/../quazip/ -lquazip
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../quazip/release/ -lquazip5
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/debug/ -lquazip5d
+else:mac:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/ -lquazip5_debug
+else:unix: LIBS += -L$$OUT_PWD/../quazip/ -lquazip5
 
 INCLUDEPATH += $$PWD/..
 DEPENDPATH += $$PWD/../quazip
