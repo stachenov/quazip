@@ -324,7 +324,7 @@ qint64 QuaZIODevice::writeData(const char *data, qint64 maxSize)
 
 bool QuaZIODevice::flush()
 {
-    d->flush(Z_SYNC_FLUSH);
+    return d->flush(Z_SYNC_FLUSH);
 }
 
 bool QuaZIODevice::isSequential() const
