@@ -28,6 +28,8 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include "quazip.h"
 
+#define QUAZIP_OS_UNIX 3u
+
 /// All the internal stuff for the QuaZip class.
 /**
   \internal
@@ -72,6 +74,8 @@ class QuaZipPrivate {
     bool autoClose;
     /// The UTF-8 flag.
     bool utf8;
+    /// The OS code.
+    uint osCode;
     inline QTextCodec *getDefaultFileNameCodec()
     {
         if (defaultFileNameCodec == NULL) {
@@ -92,7 +96,8 @@ class QuaZipPrivate {
       dataDescriptorWritingEnabled(true),
       zip64(false),
       autoClose(true),
-      utf8(false)
+      utf8(false),
+      osCode(defaultOsCode)
     {
         unzFile_f = NULL;
         zipFile_f = NULL;
@@ -112,7 +117,8 @@ class QuaZipPrivate {
       dataDescriptorWritingEnabled(true),
       zip64(false),
       autoClose(true),
-      utf8(false)
+      utf8(false),
+      osCode(defaultOsCode)
     {
         unzFile_f = NULL;
         zipFile_f = NULL;
@@ -131,7 +137,8 @@ class QuaZipPrivate {
       dataDescriptorWritingEnabled(true),
       zip64(false),
       autoClose(true),
-      utf8(false)
+      utf8(false),
+      osCode(defaultOsCode)
     {
         unzFile_f = NULL;
         zipFile_f = NULL;
@@ -150,9 +157,11 @@ class QuaZipPrivate {
       QHash<QString, unz64_file_pos> directoryCaseInsensitive;
       unz64_file_pos lastMappedDirectoryEntry;
       static QTextCodec *defaultFileNameCodec;
+      static uint defaultOsCode;
 };
 
 QTextCodec *QuaZipPrivate::defaultFileNameCodec = NULL;
+uint QuaZipPrivate::defaultOsCode = QUAZIP_OS_UNIX;
 
 void QuaZipPrivate::clearDirectoryMap()
 {
@@ -595,7 +604,17 @@ void QuaZip::setFileNameCodec(QTextCodec *fileNameCodec)
 
 void QuaZip::setFileNameCodec(const char *fileNameCodecName)
 {
-  p->fileNameCodec=QTextCodec::codecForName(fileNameCodecName);
+    p->fileNameCodec=QTextCodec::codecForName(fileNameCodecName);
+}
+
+void QuaZip::setOsCode(uint osCode)
+{
+    p->osCode = osCode;
+}
+
+uint QuaZip::getOsCode() const
+{
+    return p->osCode;
 }
 
 QTextCodec *QuaZip::getFileNameCodec()const
@@ -784,6 +803,16 @@ void QuaZip::setDefaultFileNameCodec(QTextCodec *codec)
 void QuaZip::setDefaultFileNameCodec(const char *codecName)
 {
     setDefaultFileNameCodec(QTextCodec::codecForName(codecName));
+}
+
+void QuaZip::setDefaultOsCode(uint osCode)
+{
+    QuaZipPrivate::defaultOsCode = osCode;
+}
+
+uint QuaZip::getDefaultOsCode()
+{
+    return QuaZipPrivate::defaultOsCode;
 }
 
 void QuaZip::setZip64Enabled(bool zip64)

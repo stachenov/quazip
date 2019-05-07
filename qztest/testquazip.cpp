@@ -208,6 +208,34 @@ void TestQuaZip::setFileNameCodec()
     curDir.remove(zipName);
 }
 
+void TestQuaZip::setOsCode_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<uint>("osCode");
+    QTest::newRow("unix") << "unix.zip" << 3u;
+    QTest::newRow("dos") << "dos.zip" << 0u;
+}
+
+void TestQuaZip::setOsCode()
+{
+    QFETCH(QString, zipName);
+    QFETCH(uint, osCode);
+    QuaZip testZip(zipName);
+    testZip.setOsCode(osCode);
+    testZip.open(QuaZip::mdCreate);
+    QCOMPARE(testZip.getOsCode(), osCode);
+    QuaZipFile testZipFile(&testZip);
+    testZipFile.open(QIODevice::WriteOnly, QuaZipNewInfo("test.txt"));
+    testZipFile.close();
+    testZip.close();
+    QuaZip checkZip(zipName);
+    checkZip.open(QuaZip::mdUnzip);
+    checkZip.goToFirstFile();
+    QuaZipFileInfo64 fi;
+    QVERIFY(checkZip.getCurrentFileInfo(&fi));
+    QCOMPARE(fi.versionCreated >> 8, static_cast<quint16>(osCode));
+}
+
 void TestQuaZip::setDataDescriptorWritingEnabled()
 {
     QString zipName = "zip10.zip";

@@ -26,6 +26,8 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 using namespace std;
 
+#define QUAZIP_VERSION_MADE_BY 0x1Eu
+
 /// The implementation class for QuaZip.
 /**
 \internal
@@ -339,7 +341,7 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
         zipSetFlags(p->zip->getZipFile(), ZIP_WRITE_DATA_DESCRIPTOR);
     else
         zipClearFlags(p->zip->getZipFile(), ZIP_WRITE_DATA_DESCRIPTOR);
-    p->setZipError(zipOpenNewFileInZip3_64(p->zip->getZipFile(),
+    p->setZipError(zipOpenNewFileInZip4_64(p->zip->getZipFile(),
           p->zip->isUtf8Enabled()
             ? info.name.toUtf8().constData()
             : p->zip->getFileNameCodec()->fromUnicode(info.name).constData(),
@@ -352,6 +354,8 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
           method, level, (int)raw,
           windowBits, memLevel, strategy,
           password, (uLong)crc,
+          (p->zip->getOsCode() << 8) | QUAZIP_VERSION_MADE_BY,
+          0,
           p->zip->isZip64Enabled()));
     if(p->zipError==UNZ_OK) {
       p->writePos=0;

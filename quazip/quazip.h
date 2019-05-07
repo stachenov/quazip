@@ -227,6 +227,14 @@ class QUAZIP_EXPORT QuaZip {
      * Equivalent to calling setFileNameCodec(QTextCodec::codecForName(codecName));
      **/
     void setFileNameCodec(const char *fileNameCodecName);
+    /// Sets the OS code (highest 8 bits of the “version made by” field) for new files.
+    /** There is currently no way to specify this for each file individually,
+        except by calling this function before opening each file. If this function is not called,
+        then the default OS code will be used. The default code is set by calling
+        setDefaultOsCode(). The default value at the moment of QuaZip creation will be used. */
+    void setOsCode(uint osCode);
+    /// Returns the OS code for new files.
+    uint getOsCode() const;
     /// Returns the codec used to encode/decode comments inside archive.
     QTextCodec* getFileNameCodec() const;
     /// Sets the codec used to encode/decode comments inside archive.
@@ -585,9 +593,19 @@ class QUAZIP_EXPORT QuaZip {
     /**
      * @overload
      * Equivalent to calling
-     * setDefltFileNameCodec(QTextCodec::codecForName(codecName)).
+     * setDefaultFileNameCodec(QTextCodec::codecForName(codecName)).
      */
     static void setDefaultFileNameCodec(const char *codecName);
+    /// Sets default OS code.
+    /**
+     * @sa setOsCode()
+     */
+    static void setDefaultOsCode(uint osCode);
+    /// Returns default OS code.
+    /**
+     * @sa getOsCode()
+     */
+    static uint getDefaultOsCode();
 };
 
 #endif
