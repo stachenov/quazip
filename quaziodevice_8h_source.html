@@ -14,7 +14,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-7-5</span></div>
+   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-8-1</span></div>
   </td>
  </tr>
  </tbody>
@@ -81,31 +81,32 @@
 <a name="l00034"></a>00034 
 <a name="l00036"></a>00036 
 <a name="l00041"></a><a class="code" href="classQuaZIODevice.html">00041</a> <span class="keyword">class </span>QUAZIP_EXPORT <a class="code" href="classQuaZIODevice.html" title="A class to compress/decompress QIODevice.">QuaZIODevice</a>: <span class="keyword">public</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> {
-<a name="l00042"></a>00042   Q_OBJECT
-<a name="l00043"></a>00043 <span class="keyword">public</span>:
-<a name="l00045"></a>00045 
-<a name="l00049"></a>00049   <a class="code" href="classQuaZIODevice.html" title="A class to compress/decompress QIODevice.">QuaZIODevice</a>(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> *io, <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qobject.html">QObject</a> *parent = NULL);
-<a name="l00051"></a>00051   ~<a class="code" href="classQuaZIODevice.html" title="A class to compress/decompress QIODevice.">QuaZIODevice</a>();
-<a name="l00053"></a>00053 
-<a name="l00073"></a>00073   <span class="keyword">virtual</span> <span class="keywordtype">bool</span> flush();
-<a name="l00075"></a>00075 
-<a name="l00079"></a>00079   <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#open">open</a>(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#OpenModeFlag-enum">QIODevice::OpenMode</a> mode);
-<a name="l00081"></a>00081 
-<a name="l00085"></a>00085   <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#close">close</a>();
-<a name="l00087"></a>00087   <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> *getIoDevice() <span class="keyword">const</span>;
-<a name="l00089"></a>00089   <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#isSequential">isSequential</a>() <span class="keyword">const</span>;
-<a name="l00091"></a>00091   <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#atEnd">atEnd</a>() <span class="keyword">const</span>;
-<a name="l00093"></a>00093   <span class="keyword">virtual</span> qint64 <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#bytesAvailable">bytesAvailable</a>() <span class="keyword">const</span>;
-<a name="l00094"></a>00094 <span class="keyword">protected</span>:
-<a name="l00096"></a>00096   <span class="keyword">virtual</span> qint64 <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#readData">readData</a>(<span class="keywordtype">char</span> *data, qint64 maxSize);
-<a name="l00098"></a>00098   <span class="keyword">virtual</span> qint64 <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#writeData">writeData</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *data, qint64 maxSize);
-<a name="l00099"></a>00099 <span class="keyword">private</span>:
-<a name="l00100"></a>00100   QuaZIODevicePrivate *d;
-<a name="l00101"></a>00101 };
-<a name="l00102"></a>00102 <span class="preprocessor">#endif // QUAZIP_QUAZIODEVICE_H</span>
+<a name="l00042"></a>00042   <span class="keyword">friend</span> <span class="keyword">class </span>QuaZIODevicePrivate;
+<a name="l00043"></a>00043   Q_OBJECT
+<a name="l00044"></a>00044 <span class="keyword">public</span>:
+<a name="l00046"></a>00046 
+<a name="l00050"></a>00050   <a class="code" href="classQuaZIODevice.html" title="A class to compress/decompress QIODevice.">QuaZIODevice</a>(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> *io, <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qobject.html">QObject</a> *parent = NULL);
+<a name="l00052"></a>00052   ~<a class="code" href="classQuaZIODevice.html" title="A class to compress/decompress QIODevice.">QuaZIODevice</a>();
+<a name="l00054"></a>00054 
+<a name="l00074"></a>00074   <span class="keyword">virtual</span> <span class="keywordtype">bool</span> flush();
+<a name="l00076"></a>00076 
+<a name="l00080"></a>00080   <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#open">open</a>(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#OpenModeFlag-enum">QIODevice::OpenMode</a> mode);
+<a name="l00082"></a>00082 
+<a name="l00086"></a>00086   <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#close">close</a>();
+<a name="l00088"></a>00088   <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> *getIoDevice() <span class="keyword">const</span>;
+<a name="l00090"></a>00090   <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#isSequential">isSequential</a>() <span class="keyword">const</span>;
+<a name="l00092"></a>00092   <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#atEnd">atEnd</a>() <span class="keyword">const</span>;
+<a name="l00094"></a>00094   <span class="keyword">virtual</span> qint64 <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#bytesAvailable">bytesAvailable</a>() <span class="keyword">const</span>;
+<a name="l00095"></a>00095 <span class="keyword">protected</span>:
+<a name="l00097"></a>00097   <span class="keyword">virtual</span> qint64 <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#readData">readData</a>(<span class="keywordtype">char</span> *data, qint64 maxSize);
+<a name="l00099"></a>00099   <span class="keyword">virtual</span> qint64 <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#writeData">writeData</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *data, qint64 maxSize);
+<a name="l00100"></a>00100 <span class="keyword">private</span>:
+<a name="l00101"></a>00101   QuaZIODevicePrivate *d;
+<a name="l00102"></a>00102 };
+<a name="l00103"></a>00103 <span class="preprocessor">#endif // QUAZIP_QUAZIODEVICE_H</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Sun May 20 2018 10:27:51 for QuaZIP by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed Jun 5 2019 07:27:00 for QuaZIP by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

@@ -14,7 +14,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-7-5</span></div>
+   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-8-1</span></div>
   </td>
  </tr>
  </tbody>
@@ -135,73 +135,84 @@
 <a name="l00224"></a>00224     <span class="keywordtype">void</span> setFileNameCodec(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a> *fileNameCodec);
 <a name="l00226"></a>00226 
 <a name="l00229"></a>00229     <span class="keywordtype">void</span> setFileNameCodec(<span class="keyword">const</span> <span class="keywordtype">char</span> *fileNameCodecName);
-<a name="l00231"></a>00231     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a>* getFileNameCodec() <span class="keyword">const</span>;
-<a name="l00233"></a>00233 
-<a name="l00235"></a>00235     <span class="keywordtype">void</span> setCommentCodec(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a> *commentCodec);
-<a name="l00237"></a>00237 
-<a name="l00240"></a>00240     <span class="keywordtype">void</span> setCommentCodec(<span class="keyword">const</span> <span class="keywordtype">char</span> *commentCodecName);
-<a name="l00242"></a>00242     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a>* getCommentCodec() <span class="keyword">const</span>;
-<a name="l00244"></a>00244 
-<a name="l00249"></a>00249     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a> getZipName() <span class="keyword">const</span>;
-<a name="l00251"></a>00251 
-<a name="l00256"></a>00256     <span class="keywordtype">void</span> setZipName(<span class="keyword">const</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a>&amp; zipName);
-<a name="l00258"></a>00258 
-<a name="l00262"></a>00262     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> *getIoDevice() <span class="keyword">const</span>;
-<a name="l00264"></a>00264 
-<a name="l00269"></a>00269     <span class="keywordtype">void</span> setIoDevice(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> *ioDevice);
-<a name="l00271"></a>00271     Mode getMode() <span class="keyword">const</span>;
-<a name="l00273"></a>00273     <span class="keywordtype">bool</span> isOpen() <span class="keyword">const</span>;
-<a name="l00275"></a>00275 
-<a name="l00283"></a>00283     <span class="keywordtype">int</span> getZipError() <span class="keyword">const</span>;
-<a name="l00285"></a>00285 
-<a name="l00288"></a>00288     <span class="keywordtype">int</span> getEntriesCount() <span class="keyword">const</span>;
-<a name="l00290"></a>00290     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a> getComment() <span class="keyword">const</span>;
-<a name="l00292"></a>00292 
-<a name="l00300"></a>00300     <span class="keywordtype">void</span> setComment(<span class="keyword">const</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a>&amp; comment);
-<a name="l00302"></a>00302 
-<a name="l00305"></a>00305     <span class="keywordtype">bool</span> goToFirstFile();
-<a name="l00307"></a>00307 
-<a name="l00324"></a>00324     <span class="keywordtype">bool</span> goToNextFile();
-<a name="l00326"></a>00326 
-<a name="l00350"></a>00350     <span class="keywordtype">bool</span> setCurrentFile(<span class="keyword">const</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a>&amp; fileName, CaseSensitivity cs =csDefault);
-<a name="l00352"></a>00352     <span class="keywordtype">bool</span> hasCurrentFile() <span class="keyword">const</span>;
-<a name="l00354"></a>00354 
-<a name="l00375"></a>00375     <span class="keywordtype">bool</span> getCurrentFileInfo(<a class="code" href="structQuaZipFileInfo.html" title="Information about a file inside archive.">QuaZipFileInfo</a>* info)<span class="keyword">const</span>;
-<a name="l00377"></a>00377 
-<a name="l00385"></a>00385     <span class="keywordtype">bool</span> getCurrentFileInfo(<a class="code" href="structQuaZipFileInfo64.html" title="Information about a file inside archive (with zip64 support).">QuaZipFileInfo64</a>* info)<span class="keyword">const</span>;
-<a name="l00387"></a>00387 
-<a name="l00393"></a>00393     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a> getCurrentFileName()<span class="keyword">const</span>;
+<a name="l00231"></a>00231 
+<a name="l00235"></a>00235     <span class="keywordtype">void</span> setOsCode(uint osCode);
+<a name="l00237"></a>00237     uint getOsCode() <span class="keyword">const</span>;
+<a name="l00239"></a>00239     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a>* getFileNameCodec() <span class="keyword">const</span>;
+<a name="l00241"></a>00241 
+<a name="l00243"></a>00243     <span class="keywordtype">void</span> setCommentCodec(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a> *commentCodec);
+<a name="l00245"></a>00245 
+<a name="l00248"></a>00248     <span class="keywordtype">void</span> setCommentCodec(<span class="keyword">const</span> <span class="keywordtype">char</span> *commentCodecName);
+<a name="l00250"></a>00250     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a>* getCommentCodec() <span class="keyword">const</span>;
+<a name="l00252"></a>00252 
+<a name="l00257"></a>00257     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a> getZipName() <span class="keyword">const</span>;
+<a name="l00259"></a>00259 
+<a name="l00264"></a>00264     <span class="keywordtype">void</span> setZipName(<span class="keyword">const</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a>&amp; zipName);
+<a name="l00266"></a>00266 
+<a name="l00270"></a>00270     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> *getIoDevice() <span class="keyword">const</span>;
+<a name="l00272"></a>00272 
+<a name="l00277"></a>00277     <span class="keywordtype">void</span> setIoDevice(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> *ioDevice);
+<a name="l00279"></a>00279     Mode getMode() <span class="keyword">const</span>;
+<a name="l00281"></a>00281     <span class="keywordtype">bool</span> isOpen() <span class="keyword">const</span>;
+<a name="l00283"></a>00283 
+<a name="l00291"></a>00291     <span class="keywordtype">int</span> getZipError() <span class="keyword">const</span>;
+<a name="l00293"></a>00293 
+<a name="l00296"></a>00296     <span class="keywordtype">int</span> getEntriesCount() <span class="keyword">const</span>;
+<a name="l00298"></a>00298     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a> getComment() <span class="keyword">const</span>;
+<a name="l00300"></a>00300 
+<a name="l00308"></a>00308     <span class="keywordtype">void</span> setComment(<span class="keyword">const</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a>&amp; comment);
+<a name="l00310"></a>00310 
+<a name="l00313"></a>00313     <span class="keywordtype">bool</span> goToFirstFile();
+<a name="l00315"></a>00315 
+<a name="l00332"></a>00332     <span class="keywordtype">bool</span> goToNextFile();
+<a name="l00334"></a>00334 
+<a name="l00358"></a>00358     <span class="keywordtype">bool</span> setCurrentFile(<span class="keyword">const</span> <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a>&amp; fileName, CaseSensitivity cs =csDefault);
+<a name="l00360"></a>00360     <span class="keywordtype">bool</span> hasCurrentFile() <span class="keyword">const</span>;
+<a name="l00362"></a>00362 
+<a name="l00383"></a>00383     <span class="keywordtype">bool</span> getCurrentFileInfo(<a class="code" href="structQuaZipFileInfo.html" title="Information about a file inside archive.">QuaZipFileInfo</a>* info)<span class="keyword">const</span>;
+<a name="l00385"></a>00385 
+<a name="l00393"></a>00393     <span class="keywordtype">bool</span> getCurrentFileInfo(<a class="code" href="structQuaZipFileInfo64.html" title="Information about a file inside archive (with zip64 support).">QuaZipFileInfo64</a>* info)<span class="keyword">const</span>;
 <a name="l00395"></a>00395 
-<a name="l00410"></a>00410     unzFile getUnzFile();
-<a name="l00412"></a>00412 
-<a name="l00416"></a>00416     zipFile getZipFile();
-<a name="l00418"></a>00418 
-<a name="l00445"></a>00445     <span class="keywordtype">void</span> setDataDescriptorWritingEnabled(<span class="keywordtype">bool</span> enabled);
-<a name="l00447"></a>00447 
-<a name="l00450"></a>00450     <span class="keywordtype">bool</span> isDataDescriptorWritingEnabled() <span class="keyword">const</span>;
-<a name="l00452"></a>00452 
-<a name="l00458"></a>00458     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstringlist.html">QStringList</a> getFileNameList() <span class="keyword">const</span>;
+<a name="l00401"></a>00401     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html">QString</a> getCurrentFileName()<span class="keyword">const</span>;
+<a name="l00403"></a>00403 
+<a name="l00418"></a>00418     unzFile getUnzFile();
+<a name="l00420"></a>00420 
+<a name="l00424"></a>00424     zipFile getZipFile();
+<a name="l00426"></a>00426 
+<a name="l00453"></a>00453     <span class="keywordtype">void</span> setDataDescriptorWritingEnabled(<span class="keywordtype">bool</span> enabled);
+<a name="l00455"></a>00455 
+<a name="l00458"></a>00458     <span class="keywordtype">bool</span> isDataDescriptorWritingEnabled() <span class="keyword">const</span>;
 <a name="l00460"></a>00460 
-<a name="l00472"></a>00472     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qlist.html">QList&lt;QuaZipFileInfo&gt;</a> getFileInfoList() <span class="keyword">const</span>;
-<a name="l00474"></a>00474 
-<a name="l00482"></a>00482     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qlist.html">QList&lt;QuaZipFileInfo64&gt;</a> getFileInfoList64() <span class="keyword">const</span>;
-<a name="l00484"></a>00484 
-<a name="l00497"></a>00497     <span class="keywordtype">void</span> setZip64Enabled(<span class="keywordtype">bool</span> zip64);
-<a name="l00499"></a>00499 
-<a name="l00504"></a>00504     <span class="keywordtype">bool</span> isZip64Enabled() <span class="keyword">const</span>;
-<a name="l00506"></a>00506 
-<a name="l00509"></a>00509     <span class="keywordtype">bool</span> isAutoClose() <span class="keyword">const</span>;
-<a name="l00511"></a>00511 
-<a name="l00531"></a>00531     <span class="keywordtype">void</span> setAutoClose(<span class="keywordtype">bool</span> autoClose) <span class="keyword">const</span>;
-<a name="l00533"></a>00533 
-<a name="l00562"></a>00562     <span class="keyword">static</span> <span class="keywordtype">void</span> setDefaultFileNameCodec(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a> *codec);
-<a name="l00568"></a>00568     <span class="keyword">static</span> <span class="keywordtype">void</span> setDefaultFileNameCodec(<span class="keyword">const</span> <span class="keywordtype">char</span> *codecName);
-<a name="l00569"></a>00569 };
-<a name="l00570"></a>00570 
-<a name="l00571"></a>00571 <span class="preprocessor">#endif</span>
+<a name="l00466"></a>00466     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstringlist.html">QStringList</a> getFileNameList() <span class="keyword">const</span>;
+<a name="l00468"></a>00468 
+<a name="l00480"></a>00480     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qlist.html">QList&lt;QuaZipFileInfo&gt;</a> getFileInfoList() <span class="keyword">const</span>;
+<a name="l00482"></a>00482 
+<a name="l00490"></a>00490     <a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qlist.html">QList&lt;QuaZipFileInfo64&gt;</a> getFileInfoList64() <span class="keyword">const</span>;
+<a name="l00492"></a>00492 
+<a name="l00505"></a>00505     <span class="keywordtype">void</span> setZip64Enabled(<span class="keywordtype">bool</span> zip64);
+<a name="l00507"></a>00507 
+<a name="l00512"></a>00512     <span class="keywordtype">bool</span> isZip64Enabled() <span class="keyword">const</span>;
+<a name="l00514"></a>00514 
+<a name="l00527"></a>00527     <span class="keywordtype">void</span> setUtf8Enabled(<span class="keywordtype">bool</span> utf8);
+<a name="l00529"></a>00529 
+<a name="l00534"></a>00534     <span class="keywordtype">bool</span> isUtf8Enabled() <span class="keyword">const</span>;
+<a name="l00536"></a>00536 
+<a name="l00539"></a>00539     <span class="keywordtype">bool</span> isAutoClose() <span class="keyword">const</span>;
+<a name="l00541"></a>00541 
+<a name="l00561"></a>00561     <span class="keywordtype">void</span> setAutoClose(<span class="keywordtype">bool</span> autoClose) <span class="keyword">const</span>;
+<a name="l00563"></a>00563 
+<a name="l00592"></a>00592     <span class="keyword">static</span> <span class="keywordtype">void</span> setDefaultFileNameCodec(<a class="codeRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a> *codec);
+<a name="l00598"></a>00598     <span class="keyword">static</span> <span class="keywordtype">void</span> setDefaultFileNameCodec(<span class="keyword">const</span> <span class="keywordtype">char</span> *codecName);
+<a name="l00600"></a>00600 
+<a name="l00603"></a>00603     <span class="keyword">static</span> <span class="keywordtype">void</span> setDefaultOsCode(uint osCode);
+<a name="l00605"></a>00605 
+<a name="l00608"></a>00608     <span class="keyword">static</span> uint getDefaultOsCode();
+<a name="l00609"></a>00609 };
+<a name="l00610"></a>00610 
+<a name="l00611"></a>00611 <span class="preprocessor">#endif</span>
 </pre></div></div>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Sun May 20 2018 10:27:51 for QuaZIP by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed Jun 5 2019 07:27:00 for QuaZIP by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

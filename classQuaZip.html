@@ -14,7 +14,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-7-5</span></div>
+   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-8-1</span></div>
   </td>
  </tr>
  </tbody>
@@ -101,6 +101,11 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the codec used to encode/decode file names inside archive.  <a href="#a339010b5566704ba3c9cafbfe848d8fb"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#a8f283519a195aa1d9076bbbb01ea0497">setFileNameCodec</a> (const char *fileNameCodecName)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the codec used to encode/decode file names inside archive.  <a href="#a8f283519a195aa1d9076bbbb01ea0497"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#abe3f1d87c362aae68e3a09d01a81acbb">setOsCode</a> (uint osCode)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the OS code (highest 8 bits of the “version made by” field) for new files.  <a href="#abe3f1d87c362aae68e3a09d01a81acbb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5750f5a716cdf72b63d159c73e640fe3"></a><!-- doxytag: member="QuaZip::getOsCode" ref="a5750f5a716cdf72b63d159c73e640fe3" args="() const " -->
+uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#a5750f5a716cdf72b63d159c73e640fe3">getOsCode</a> () const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the OS code for new files. <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a27b866aa2c75ea6f9c438cbb6e32b43c"></a><!-- doxytag: member="QuaZip::getFileNameCodec" ref="a27b866aa2c75ea6f9c438cbb6e32b43c" args="() const " -->
 <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#a27b866aa2c75ea6f9c438cbb6e32b43c">getFileNameCodec</a> () const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the codec used to encode/decode comments inside archive. <br/></td></tr>
@@ -167,6 +172,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables the zip64 mode.  <a href="#ab99a22efae02ebb4b5c9cd8eedc1c0b0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#a1b638566390d7599ba5982e844b151f4">isZip64Enabled</a> () const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the zip64 mode is enabled.  <a href="#a1b638566390d7599ba5982e844b151f4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#aae641d2f7810ec80bba8207d6a5e7518">setUtf8Enabled</a> (bool utf8)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables the use of UTF-8 encoding for file names and comments text.  <a href="#aae641d2f7810ec80bba8207d6a5e7518"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#a46a9e1602ef2cfa792e52817ba8d1ea9">isUtf8Enabled</a> () const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether the UTF-8 encoding mode is enabled.  <a href="#a46a9e1602ef2cfa792e52817ba8d1ea9"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#adc2cc762ab5744720ae4d33290b5f5bf">isAutoClose</a> () const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the auto-close flag.  <a href="#adc2cc762ab5744720ae4d33290b5f5bf"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#a54bfc924762774ccf9f99be075ba7b0e">setAutoClose</a> (bool autoClose) const </td></tr>
@@ -178,6 +187,10 @@ Static Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#a317f5db89d84a80417338a3ab89770da">setDefaultFileNameCodec</a> (<a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html">QTextCodec</a> *codec)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the default file name codec to use.  <a href="#a317f5db89d84a80417338a3ab89770da"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#a694af3c0ab076fab7bf619952f6fbfea">setDefaultFileNameCodec</a> (const char *codecName)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#aa913f4539ec45b392f3dc43e4919c9a1">setDefaultOsCode</a> (uint osCode)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets default OS code.  <a href="#aa913f4539ec45b392f3dc43e4919c9a1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZip.html#a3ca4a8f668bbcb5e89a7b0c36644d611">getDefaultOsCode</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns default OS code.  <a href="#a3ca4a8f668bbcb5e89a7b0c36644d611"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="friends"></a>
 Friends</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d400b33a69412e9d419a484aaf476cd"></a><!-- doxytag: member="QuaZip::QuaZipPrivate" ref="a5d400b33a69412e9d419a484aaf476cd" args="" -->
@@ -431,7 +444,7 @@ If the <a class="el" href="classQuaZip.html#a54bfc924762774ccf9f99be075ba7b0e">n
 <p>If the underlying <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> was set explicitly using <a class="el" href="classQuaZip.html#a64642948b6531ee54f5522f29e388cc6" title="Sets the device representing the ZIP file.">setIoDevice()</a> or the appropriate constructor, then it is closed if the auto-close flag is set (which it is by default). Call <a class="el" href="classQuaZip.html#a54bfc924762774ccf9f99be075ba7b0e" title="Sets or unsets the auto-close flag.">setAutoClose()</a> to clear the auto-close flag if this behavior is undesirable.</p>
 <p>Since <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qt.html">Qt</a> 5.1, the <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qsavefile.html">QSaveFile</a> was introduced. It breaks the <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> API by making <a class="el" href="classQuaZip.html#a7a4323b73e12f3b4470109f200728f9f" title="Closes ZIP file.">close()</a> private and crashing the application if it is called from the base class where it is public. It is an excellent example of poor design that illustrates why you should never ever break an is-a relationship between the base class and a subclass. QuaZIP works around this bug by checking if the <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> is an instance of <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qsavefile.html">QSaveFile</a>, using qobject_cast&lt;&gt;, and if it is, calls <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qsavefile.html#commit">QSaveFile::commit()</a> instead of <a class="el" href="classQuaZip.html#a7a4323b73e12f3b4470109f200728f9f" title="Closes ZIP file.">close()</a>. It is a really ugly hack, but at least it makes your programs work instead of crashing. Note that if the auto-close flag is cleared, then this is a non-issue, and commit() isn't called. </p>
 
-<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#constData">QByteArray::constData()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html#fromUnicode">QTextCodec::fromUnicode()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#isEmpty">QString::isEmpty()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#isNull">QString::isNull()</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a22c745f349f06add449af523254fdaec">mdAdd</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4ab807f0c65653a16d77b365801fd25582">mdAppend</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a25ae05b12590540af8c66ae8298b928e">mdCreate</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4ac87ddb1e901e1ec700c16ee0d4d398ce">mdNotOpen</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a803a371910c2dc830d111e9ce5b58897">mdUnzip</a>, <a class="el" href="classQuaZipPrivate.html#aeb1d2d3263929b17d6b0608e35af2a88">QuaZipPrivate::unzFile_f</a>, and <a class="el" href="classQuaZipPrivate.html#ab83497156892d07e6a1514cef149a1e2">QuaZipPrivate::zipFile_f</a>.</p>
+<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#constData">QByteArray::constData()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html#fromUnicode">QTextCodec::fromUnicode()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#isEmpty">QString::isEmpty()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#isNull">QString::isNull()</a>, <a class="el" href="classQuaZip.html#a46a9e1602ef2cfa792e52817ba8d1ea9">isUtf8Enabled()</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a22c745f349f06add449af523254fdaec">mdAdd</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4ab807f0c65653a16d77b365801fd25582">mdAppend</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a25ae05b12590540af8c66ae8298b928e">mdCreate</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4ac87ddb1e901e1ec700c16ee0d4d398ce">mdNotOpen</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a803a371910c2dc830d111e9ce5b58897">mdUnzip</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#toUtf8">QString::toUtf8()</a>, <a class="el" href="classQuaZipPrivate.html#aeb1d2d3263929b17d6b0608e35af2a88">QuaZipPrivate::unzFile_f</a>, and <a class="el" href="classQuaZipPrivate.html#ab83497156892d07e6a1514cef149a1e2">QuaZipPrivate::zipFile_f</a>.</p>
 
 <p>Referenced by <a class="el" href="classQuaZipFile.html#a42a39b12619bccd3d419ee60bbb3fcf6">QuaZipFile::close()</a>, <a class="el" href="classJlCompress.html#ada7511686a24c014e9db25735be148a7">JlCompress::compressDir()</a>, <a class="el" href="classJlCompress.html#a4a4de9c62ecf161bb658d4d80495ea97">JlCompress::compressFile()</a>, <a class="el" href="classJlCompress.html#a9cdb92d29a94c6b13a718a3249685846">JlCompress::compressFiles()</a>, <a class="el" href="classQuaZipFile.html#aed75bace51f2bb4c3e4f656ab4493aac">QuaZipFile::open()</a>, and <a class="el" href="classQuaZip.html#af60a2d3930b90f3b25a3148baecad81e">~QuaZip()</a>.</p>
 
@@ -476,6 +489,26 @@ If the <a class="el" href="classQuaZip.html#a54bfc924762774ccf9f99be075ba7b0e">n
 <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. Equivalent to calling setFileNameCodec(QTextCodec::codecForName(codecName)); </p>
 
 <p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html#codecForName">QTextCodec::codecForName()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abe3f1d87c362aae68e3a09d01a81acbb"></a><!-- doxytag: member="QuaZip::setOsCode" ref="abe3f1d87c362aae68e3a09d01a81acbb" args="(uint osCode)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QuaZip::setOsCode </td>
+          <td>(</td>
+          <td class="paramtype">uint&#160;</td>
+          <td class="paramname"><em>osCode</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Sets the OS code (highest 8 bits of the “version made by” field) for new files. </p>
+<p>There is currently no way to specify this for each file individually, except by calling this function before opening each file. If this function is not called, then the default OS code will be used. The default code is set by calling <a class="el" href="classQuaZip.html#aa913f4539ec45b392f3dc43e4919c9a1" title="Sets default OS code.">setDefaultOsCode()</a>. The default value at the moment of <a class="el" href="classQuaZip.html" title="ZIP archive.">QuaZip</a> creation will be used. </p>
 
 </div>
 </div>
@@ -826,7 +859,7 @@ If the <a class="el" href="classQuaZip.html#a54bfc924762774ccf9f99be075ba7b0e">n
 <p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. This function supports zip64. If the archive doesn't use zip64, it is completely equivalent to getCurrentFileInfo(QuaZipFileInfo* info) except for the argument type.</p>
 <dl class="see"><dt><b>See also:</b></dt><dd></dd></dl>
 
-<p>References <a class="el" href="structQuaZipFileInfo64.html#aba3f5b982087c3e0343bb61e8814c7d1">QuaZipFileInfo64::comment</a>, <a class="el" href="structQuaZipFileInfo64.html#add8733946ea4af23aa32d85f10955b0f">QuaZipFileInfo64::compressedSize</a>, <a class="el" href="structQuaZipFileInfo64.html#aeb7b2757a0efa814b196b5280d000a14">QuaZipFileInfo64::crc</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#data">QByteArray::data()</a>, <a class="el" href="structQuaZipFileInfo64.html#a4d77c6aa6076703e858c938efeb551e4">QuaZipFileInfo64::dateTime</a>, <a class="el" href="structQuaZipFileInfo64.html#ac8945cf1ff54d39d28e755685b91e941">QuaZipFileInfo64::diskNumberStart</a>, <a class="el" href="structQuaZipFileInfo64.html#a3a8bc40f1aa0cb0985c4e2f8a9678430">QuaZipFileInfo64::externalAttr</a>, <a class="el" href="structQuaZipFileInfo64.html#acf0b1b97f377208847c6912cd1bf1332">QuaZipFileInfo64::extra</a>, <a class="el" href="structQuaZipFileInfo64.html#a6aa533dd4e02f52459e1e1a0df31e992">QuaZipFileInfo64::flags</a>, <a class="el" href="classQuaZip.html#a00b237d926648f45da86db25e7cfb697">hasCurrentFile()</a>, <a class="el" href="structQuaZipFileInfo64.html#aeb895613e76a4cc63f861b010c9e92c0">QuaZipFileInfo64::internalAttr</a>, <a class="el" href="classQuaZip.html#a5b869a9c0d4f49955b759592fec08888">isOpen()</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a803a371910c2dc830d111e9ce5b58897">mdUnzip</a>, <a class="el" href="structQuaZipFileInfo64.html#a445967ecbb5a3dd2a9d516db3e14a34a">QuaZipFileInfo64::method</a>, <a class="el" href="structQuaZipFileInfo64.html#a2cadad4cb9a765e90b5422dae2388762">QuaZipFileInfo64::name</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#resize">QByteArray::resize()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#size">QByteArray::size()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html#toUnicode">QTextCodec::toUnicode()</a>, <a class="el" href="structQuaZipFileInfo64.html#a571ca077fe282c908e57b0bc82528d49">QuaZipFileInfo64::uncompressedSize</a>, <a class="el" href="classQuaZipPrivate.html#aeb1d2d3263929b17d6b0608e35af2a88">QuaZipPrivate::unzFile_f</a>, <a class="el" href="structQuaZipFileInfo64.html#a95aeb06b080e483fde874ba2d06f203c">QuaZipFileInfo64::versionCreated</a>, and <a class="el" href="structQuaZipFileInfo64.html#a27654f5ce3a75331e9c9a7900b407169">QuaZipFileInfo64::versionNeeded</a>.</p>
+<p>References <a class="el" href="structQuaZipFileInfo64.html#aba3f5b982087c3e0343bb61e8814c7d1">QuaZipFileInfo64::comment</a>, <a class="el" href="structQuaZipFileInfo64.html#add8733946ea4af23aa32d85f10955b0f">QuaZipFileInfo64::compressedSize</a>, <a class="el" href="structQuaZipFileInfo64.html#aeb7b2757a0efa814b196b5280d000a14">QuaZipFileInfo64::crc</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#data">QByteArray::data()</a>, <a class="el" href="structQuaZipFileInfo64.html#a4d77c6aa6076703e858c938efeb551e4">QuaZipFileInfo64::dateTime</a>, <a class="el" href="structQuaZipFileInfo64.html#ac8945cf1ff54d39d28e755685b91e941">QuaZipFileInfo64::diskNumberStart</a>, <a class="el" href="structQuaZipFileInfo64.html#a3a8bc40f1aa0cb0985c4e2f8a9678430">QuaZipFileInfo64::externalAttr</a>, <a class="el" href="structQuaZipFileInfo64.html#acf0b1b97f377208847c6912cd1bf1332">QuaZipFileInfo64::extra</a>, <a class="el" href="structQuaZipFileInfo64.html#a6aa533dd4e02f52459e1e1a0df31e992">QuaZipFileInfo64::flags</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#fromUtf8">QString::fromUtf8()</a>, <a class="el" href="classQuaZip.html#a00b237d926648f45da86db25e7cfb697">hasCurrentFile()</a>, <a class="el" href="structQuaZipFileInfo64.html#aeb895613e76a4cc63f861b010c9e92c0">QuaZipFileInfo64::internalAttr</a>, <a class="el" href="classQuaZip.html#a5b869a9c0d4f49955b759592fec08888">isOpen()</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a803a371910c2dc830d111e9ce5b58897">mdUnzip</a>, <a class="el" href="structQuaZipFileInfo64.html#a445967ecbb5a3dd2a9d516db3e14a34a">QuaZipFileInfo64::method</a>, <a class="el" href="structQuaZipFileInfo64.html#a2cadad4cb9a765e90b5422dae2388762">QuaZipFileInfo64::name</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#resize">QByteArray::resize()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#size">QByteArray::size()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html#toUnicode">QTextCodec::toUnicode()</a>, <a class="el" href="structQuaZipFileInfo64.html#a571ca077fe282c908e57b0bc82528d49">QuaZipFileInfo64::uncompressedSize</a>, <a class="el" href="classQuaZipPrivate.html#aeb1d2d3263929b17d6b0608e35af2a88">QuaZipPrivate::unzFile_f</a>, <a class="el" href="structQuaZipFileInfo64.html#a95aeb06b080e483fde874ba2d06f203c">QuaZipFileInfo64::versionCreated</a>, and <a class="el" href="structQuaZipFileInfo64.html#a27654f5ce3a75331e9c9a7900b407169">QuaZipFileInfo64::versionNeeded</a>.</p>
 
 </div>
 </div>
@@ -848,7 +881,7 @@ If the <a class="el" href="classQuaZip.html#a54bfc924762774ccf9f99be075ba7b0e">n
 <p>Equivalent to calling <a class="el" href="classQuaZip.html#a9c91a53ed4c2038e153c64bdc097ebe8" title="Retrieves information about the current file.">getCurrentFileInfo()</a> and then getting <code>name</code> field of the <a class="el" href="structQuaZipFileInfo.html" title="Information about a file inside archive.">QuaZipFileInfo</a> structure, but faster and more convenient.</p>
 <p>Should be used only in <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a803a371910c2dc830d111e9ce5b58897" title="ZIP file is open for reading files inside it.">QuaZip::mdUnzip</a> mode. </p>
 
-<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#constData">QByteArray::constData()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#data">QByteArray::data()</a>, <a class="el" href="classQuaZip.html#a00b237d926648f45da86db25e7cfb697">hasCurrentFile()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#isEmpty">QString::isEmpty()</a>, <a class="el" href="classQuaZip.html#a5b869a9c0d4f49955b759592fec08888">isOpen()</a>, <a class="el" href="classQuaZip.html#adce46b942c341dbb5c851eadead65459ab26ce1a9c9e94f901dc2cf90fa5baa4b">MAX_FILE_NAME_LENGTH</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a803a371910c2dc830d111e9ce5b58897">mdUnzip</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#size">QByteArray::size()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html#toUnicode">QTextCodec::toUnicode()</a>, and <a class="el" href="classQuaZipPrivate.html#aeb1d2d3263929b17d6b0608e35af2a88">QuaZipPrivate::unzFile_f</a>.</p>
+<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#data">QByteArray::data()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#fromUtf8">QString::fromUtf8()</a>, <a class="el" href="classQuaZip.html#a00b237d926648f45da86db25e7cfb697">hasCurrentFile()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#isEmpty">QString::isEmpty()</a>, <a class="el" href="classQuaZip.html#a5b869a9c0d4f49955b759592fec08888">isOpen()</a>, <a class="el" href="classQuaZip.html#adce46b942c341dbb5c851eadead65459ab26ce1a9c9e94f901dc2cf90fa5baa4b">MAX_FILE_NAME_LENGTH</a>, <a class="el" href="classQuaZip.html#a47e28d4116ee716fdd6b431b821d0be4a803a371910c2dc830d111e9ce5b58897">mdUnzip</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#resize">QByteArray::resize()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#size">QByteArray::size()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html#toUnicode">QTextCodec::toUnicode()</a>, and <a class="el" href="classQuaZipPrivate.html#aeb1d2d3263929b17d6b0608e35af2a88">QuaZipPrivate::unzFile_f</a>.</p>
 
 <p>Referenced by <a class="el" href="classQuaZipFile.html#a7b8e3c39026855cd98661a1b2815c220">QuaZipFile::getActualFileName()</a>, and <a class="el" href="classQuaZip.html#a6c657bfcfccb59d728e0da24c677d899">setCurrentFile()</a>.</p>
 
@@ -1068,6 +1101,56 @@ If the <a class="el" href="classQuaZip.html#a54bfc924762774ccf9f99be075ba7b0e">n
 
 </div>
 </div>
+<a class="anchor" id="aae641d2f7810ec80bba8207d6a5e7518"></a><!-- doxytag: member="QuaZip::setUtf8Enabled" ref="aae641d2f7810ec80bba8207d6a5e7518" args="(bool utf8)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QuaZip::setUtf8Enabled </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>utf8</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Enables the use of UTF-8 encoding for file names and comments text. </p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">utf8</td><td>If <code>true</code>, the UTF-8 mode is enabled, disabled otherwise.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Once this is enabled, the names of all new files and comments text (until the mode is disabled again) will be encoded in UTF-8 encoding, and the version to extract will be set to 6.3 (63) in ZIP header. By default, the UTF-8 mode is off due to compatibility reasons.</p>
+<p>Note that when extracting ZIP archives, the UTF-8 mode is determined from ZIP file header, not from this flag.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQuaZip.html#a46a9e1602ef2cfa792e52817ba8d1ea9" title="Returns whether the UTF-8 encoding mode is enabled.">isUtf8Enabled()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a46a9e1602ef2cfa792e52817ba8d1ea9"></a><!-- doxytag: member="QuaZip::isUtf8Enabled" ref="a46a9e1602ef2cfa792e52817ba8d1ea9" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool QuaZip::isUtf8Enabled </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns whether the UTF-8 encoding mode is enabled. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd><code>true</code> if and only if the UTF-8 mode is enabled.</dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQuaZip.html#aae641d2f7810ec80bba8207d6a5e7518" title="Enables the use of UTF-8 encoding for file names and comments text.">setUtf8Enabled()</a> </dd></dl>
+
+<p>Referenced by <a class="el" href="classQuaZip.html#a7a4323b73e12f3b4470109f200728f9f">close()</a>, and <a class="el" href="classQuaZipFile.html#a2429ea59c77371d7af56d739db130b18">QuaZipFile::open()</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="adc2cc762ab5744720ae4d33290b5f5bf"></a><!-- doxytag: member="QuaZip::isAutoClose" ref="adc2cc762ab5744720ae4d33290b5f5bf" args="() const " -->
 <div class="memitem">
 <div class="memproto">
@@ -1157,9 +1240,48 @@ If the <a class="el" href="classQuaZip.html#a54bfc924762774ccf9f99be075ba7b0e">n
       </table>
 </div>
 <div class="memdoc">
-<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. Equivalent to calling setDefltFileNameCodec(QTextCodec::codecForName(codecName)). </p>
+<p>This is an overloaded member function, provided for convenience. It differs from the above function only in what argument(s) it accepts. Equivalent to calling setDefaultFileNameCodec(QTextCodec::codecForName(codecName)). </p>
 
 <p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qtextcodec.html#codecForName">QTextCodec::codecForName()</a>, and <a class="el" href="classQuaZip.html#a317f5db89d84a80417338a3ab89770da">setDefaultFileNameCodec()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa913f4539ec45b392f3dc43e4919c9a1"></a><!-- doxytag: member="QuaZip::setDefaultOsCode" ref="aa913f4539ec45b392f3dc43e4919c9a1" args="(uint osCode)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void QuaZip::setDefaultOsCode </td>
+          <td>(</td>
+          <td class="paramtype">uint&#160;</td>
+          <td class="paramname"><em>osCode</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Sets default OS code. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQuaZip.html#abe3f1d87c362aae68e3a09d01a81acbb" title="Sets the OS code (highest 8 bits of the “version made by” field) for new files.">setOsCode()</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3ca4a8f668bbcb5e89a7b0c36644d611"></a><!-- doxytag: member="QuaZip::getDefaultOsCode" ref="a3ca4a8f668bbcb5e89a7b0c36644d611" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint QuaZip::getDefaultOsCode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns default OS code. </p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classQuaZip.html#a5750f5a716cdf72b63d159c73e640fe3" title="Returns the OS code for new files.">getOsCode()</a> </dd></dl>
 
 </div>
 </div>
@@ -1168,7 +1290,7 @@ If the <a class="el" href="classQuaZip.html#a54bfc924762774ccf9f99be075ba7b0e">n
 <li>quazip/quazip.cpp</li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Sun May 20 2018 10:27:51 for QuaZIP by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed Jun 5 2019 07:27:00 for QuaZIP by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

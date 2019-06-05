@@ -14,7 +14,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-7-5</span></div>
+   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-8-1</span></div>
   </td>
  </tr>
  </tbody>
@@ -40,7 +40,8 @@
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a>  </div>
+<a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#friends">Friends</a>  </div>
   <div class="headertitle">
 <div class="title">QuaZIODevice Class Reference</div>  </div>
 </div>
@@ -100,6 +101,10 @@ virtual qint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aab23b6badbc3548eb71ca86bf6211902"></a><!-- doxytag: member="QuaZIODevice::writeData" ref="aab23b6badbc3548eb71ca86bf6211902" args="(const char *data, qint64 maxSize)" -->
 virtual qint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classQuaZIODevice.html#aab23b6badbc3548eb71ca86bf6211902">writeData</a> (const char *data, qint64 maxSize)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Implementation of <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#writeData">QIODevice::writeData()</a>. <br/></td></tr>
+<tr><td colspan="2"><h2><a name="friends"></a>
+Friends</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5944d0379df941c5e44895c58406c14"></a><!-- doxytag: member="QuaZIODevice::QuaZIODevicePrivate" ref="ac5944d0379df941c5e44895c58406c14" args="" -->
+class&#160;</td><td class="memItemRight" valign="bottom"><b>QuaZIODevicePrivate</b></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>A class to compress/decompress <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a>. </p>
@@ -167,10 +172,6 @@ virtual qint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
     sock-&gt;flush(); <span class="comment">// this actually sends data to network</span>
 </pre></div><p>This may change in the future versions of QuaZIP by implementing an ugly hack: trying to cast the <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html">QIODevice</a> using qobject_cast to known <a class="el" href="classQuaZIODevice.html#a25f586eb564841b51c395fd17f1cc080" title="Flushes data waiting to be written.">flush()</a>-supporting subclasses, and calling flush if the resulting pointer is not zero. </p>
 
-<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#fromLocal8Bit">QString::fromLocal8Bit()</a>, and <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#setErrorString">QIODevice::setErrorString()</a>.</p>
-
-<p>Referenced by <a class="el" href="classQuaZIODevice.html#ad27e447544d57f897316ee6f44535895">close()</a>.</p>
-
 </div>
 </div>
 <a class="anchor" id="a175446c18eb20c9aff6faf23f09cc67a"></a><!-- doxytag: member="QuaZIODevice::open" ref="a175446c18eb20c9aff6faf23f09cc67a" args="(QIODevice::OpenMode mode)" -->
@@ -196,7 +197,7 @@ virtual qint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
   </dd>
 </dl>
 
-<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#setErrorString">QIODevice::setErrorString()</a>, and <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qobject-obsolete.html#trUtf8">QObject::trUtf8()</a>.</p>
+<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#fromLocal8Bit">QString::fromLocal8Bit()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#setErrorString">QIODevice::setErrorString()</a>, and <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qobject-obsolete.html#trUtf8">QObject::trUtf8()</a>.</p>
 
 </div>
 </div>
@@ -219,7 +220,7 @@ virtual qint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 
 <p>Reimplemented from <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#close">QIODevice</a>.</p>
 
-<p>References <a class="el" href="classQuaZIODevice.html#a25f586eb564841b51c395fd17f1cc080">flush()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#openMode">QIODevice::openMode()</a>, and <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#setErrorString">QIODevice::setErrorString()</a>.</p>
+<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qstring.html#fromLocal8Bit">QString::fromLocal8Bit()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#openMode">QIODevice::openMode()</a>, and <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qiodevice.html#setErrorString">QIODevice::setErrorString()</a>.</p>
 
 <p>Referenced by <a class="el" href="classQuaZIODevice.html#ab3524cef44c240c21e6b7680ee5f42de">~QuaZIODevice()</a>.</p>
 
@@ -230,7 +231,7 @@ virtual qint64&#160;</td><td class="memItemRight" valign="bottom"><a class="el" 
 <li>quazip/quaziodevice.cpp</li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Sun May 20 2018 10:27:51 for QuaZIP by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Wed Jun 5 2019 07:27:00 for QuaZIP by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>
