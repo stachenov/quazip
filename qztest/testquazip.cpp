@@ -233,7 +233,7 @@ void TestQuaZip::setOsCode()
     checkZip.goToFirstFile();
     QuaZipFileInfo64 fi;
     QVERIFY(checkZip.getCurrentFileInfo(&fi));
-    QCOMPARE(fi.versionCreated >> 8, static_cast<quint16>(osCode));
+    QCOMPARE(static_cast<uint>(fi.versionCreated) >> 8, osCode);
 }
 
 void TestQuaZip::setDataDescriptorWritingEnabled()
