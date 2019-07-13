@@ -8,7 +8,7 @@ cmake_policy(SET CMP0042 NEW)
 
 option(BUILD_WITH_QT4 "Build QuaZip with Qt4 no matter if Qt5 was found" OFF)
 
-if( NOT BUILD_WITH_QT4 )
+if(NOT BUILD_WITH_QT4)
     # try Qt5 first, and prefer that if found
     find_package(Qt5Core QUIET)
 endif()
@@ -42,13 +42,13 @@ endif()
 # Use system zlib on unix and Qt ZLIB on Windows
 if(UNIX OR MINGW)
     find_package(ZLIB REQUIRED)
-else(UNIX OR MINGW)
+else()
     set(ZLIB_INCLUDE_DIRS "${QT_ROOT}/src/3rdparty/zlib" CACHE STRING "Path to ZLIB headers of Qt")
     set(ZLIB_LIBRARIES "")
     if(NOT EXISTS "${ZLIB_INCLUDE_DIRS}/zlib.h")
         message("Please specify a valid zlib include dir")
-    endif(NOT EXISTS "${ZLIB_INCLUDE_DIRS}/zlib.h")
-endif(UNIX OR MINGW)
+    endif()
+endif()
 
 # All build libraries are moved to this directory
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
@@ -61,4 +61,4 @@ set(QUAZIP_LIB_TARGET_NAME quazip${QUAZIP_LIB_VERSION_SUFFIX} CACHE
 
 add_subdirectory(quazip)
 
-install(FILES FindQuaZip.cmake RENAME FindQuaZip${QUAZIP_LIB_VERSION_SUFFIX}.cmake DESTINATION share/cmake/Modules)
+install(FILES QuaZipConfig.cmake DESTINATION ${LIB_DESTINATION}/cmake/QuaZip${QUAZIP_LIB_VERSION_SUFFIX} RENAME QuaZip${QUAZIP_LIB_VERSION_SUFFIX}Config.cmake)
