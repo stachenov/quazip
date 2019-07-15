@@ -41,7 +41,11 @@ void TestQuaZipFileInfo::getNTFSTime()
         QuaZipFile zipFile(&zip);
         QDateTime lm = fileInfo.lastModified().toUTC();
         QDateTime lr = fileInfo.lastRead().toUTC();
-        QDateTime cr = fileInfo.created().toUTC();
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+        QDateTime cr = fileInfo.birthTime();
+#else
+        QDateTime cr = fileInfo.created();
+#endif
         mTicks = (static_cast<qint64>(base.date().daysTo(lm.date()))
                 * Q_UINT64_C(86400000)
                 + static_cast<qint64>(base.time().msecsTo(lm.time())))
@@ -101,7 +105,11 @@ void TestQuaZipFileInfo::getNTFSTime()
         zip.close();
         QCOMPARE(zipFileInfo.getNTFSmTime(), fileInfo.lastModified());
         QCOMPARE(zipFileInfo.getNTFSaTime(), fileInfo.lastRead());
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+        QCOMPARE(zipFileInfo.getNTFScTime(), fileInfo.birthTime());
+#else
         QCOMPARE(zipFileInfo.getNTFScTime(), fileInfo.created());
+#endif
     }
     removeTestFiles(testFiles);
     curDir.remove(zipName);

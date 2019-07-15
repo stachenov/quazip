@@ -62,7 +62,7 @@ void TestQuaZip::getFileList()
 {
     QFETCH(QString, zipName);
     QFETCH(QStringList, fileNames);
-    qSort(fileNames);
+    fileNames.sort();
     QDir curDir;
     if (curDir.exists(zipName)) {
         if (!curDir.remove(zipName))
@@ -79,7 +79,7 @@ void TestQuaZip::getFileList()
     QVERIFY(testZip.goToFirstFile());
     QString firstFile = testZip.getCurrentFileName();
     QStringList fileList = testZip.getFileNameList();
-    qSort(fileList);
+    fileList.sort();
     QCOMPARE(fileList, fileNames);
     QHash<QString, QFileInfo> srcInfo;
     foreach (QString fileName, fileNames) {
@@ -178,7 +178,7 @@ void TestQuaZip::setFileNameCodec()
     QFETCH(QString, zipName);
     QFETCH(QStringList, fileNames);
     QFETCH(QByteArray, encoding);
-    qSort(fileNames);
+    fileNames.sort();
     QDir curDir;
     if (curDir.exists(zipName)) {
         if (!curDir.remove(zipName))
@@ -194,13 +194,13 @@ void TestQuaZip::setFileNameCodec()
     QuaZip testZip(zipName);
     QVERIFY(testZip.open(QuaZip::mdUnzip));
     QStringList fileList = testZip.getFileNameList();
-    qSort(fileList);
+    fileList.sort();
     QVERIFY(fileList[0] != fileNames[0]);
     testZip.close();
     testZip.setFileNameCodec(encoding);
     QVERIFY(testZip.open(QuaZip::mdUnzip));
     fileList = testZip.getFileNameList();
-    qSort(fileList);
+    fileList.sort();
     QCOMPARE(fileList, fileNames);
     testZip.close();
     // clean up

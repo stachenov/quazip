@@ -148,8 +148,9 @@ struct QUAZIP_EXPORT QuaZipNewInfo {
   /**
    * If the file doesn't exist, a warning is printed to the stderr and nothing
    * is done. Otherwise, all three times, as reported by
-   * QFileInfo::lastModified(), QFileInfo::lastRead() and QFileInfo::created(),
-   * are written to the NTFS extra field record.
+   * QFileInfo::lastModified(), QFileInfo::lastRead() and
+   * QFileInfo::birthTime() (>=Qt5.10) or QFileInfo::created(), are written to
+   * the NTFS extra field record.
    *
    * The NTFS record is written to
    * both the local and the global extra fields, updating the existing record
