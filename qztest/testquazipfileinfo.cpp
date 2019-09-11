@@ -114,3 +114,49 @@ void TestQuaZipFileInfo::getNTFSTime()
     removeTestFiles(testFiles);
     curDir.remove(zipName);
 }
+
+void TestQuaZipFileInfo::getExtTime_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<quint16>("sizeLocal");
+    QTest::addColumn<quint8>("flags");
+    QTest::addColumn< QList<qint32> >("timesLocal");
+    QTest::addColumn<quint16>("sizeGlobal");
+    QTest::addColumn< QList<qint32> >("timesGlobal");
+    QTest::newRow("no times") << QString::fromUtf8("noTimes")
+                              << quint16(1)
+                              << quint8(0)
+                              << QList<qint32>()
+                              << quint16(1)
+                              << QList<qint32>();
+}
+
+void TestQuaZipFileInfo::getExtTime()
+{
+    QFETCH(QString, zipName);
+    QFETCH(quint16, sizeLocal);
+    QFETCH(quint8, flags);
+    QFETCH(QList<qint32>, timesLocal);
+    QFETCH(quint16, sizeGlobal);
+    QFETCH(QList<qint32>, timesGlobal);
+}
+
+void TestQuaZipFileInfo::getExtTime_issue43()
+{
+    // Test original GitHub issue, just in case.
+    // (The test above relies on manual ZIP generation, which isn't perfect.)
+    QuaZip zip(":/test_files/issue43_cant_get_dates.zip");
+    QVERIFY(zip.open(QuaZip::mdUnzip));
+    zip.goToFirstFile();
+    QuaZipFileInfo64 zipFileInfo;
+    QVERIFY(zip.getCurrentFileInfo(&zipFileInfo));
+    zip.close();
+    QDateTime extModTime(QDate(2019, 7, 2), QTime(15, 43, 47), Qt::UTC);
+    QDateTime extAcTime = extModTime;
+    QDateTime extCrTime = extModTime;
+    QCOMPARE(zipFileInfo.getExtModTime(), extModTime);
+#if 0 // don't work due to a minizip limitation
+    QCOMPARE(zipFileInfo.getExtAcTime(), extAcTime);
+    QCOMPARE(zipFileInfo.getExtCrTime(), extCrTime);
+#endif
+}

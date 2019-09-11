@@ -171,6 +171,39 @@ struct QUAZIP_EXPORT QuaZipFileInfo64 {
    * @return The NTFS creation time, UTC
    */
   QDateTime getNTFScTime(int *fineTicks = NULL) const;
+  /// Returns the extended modification timestamp
+  /**
+   * The getExt*Time() functions only work if there is an extended timestamp
+   * extra field (ID 0x5455) present. Otherwise, they all return invalid null
+   * timestamps.
+   * @sa dateTime
+   * @sa getExtAcTime()
+   * @sa getExtCrTime()
+   * @return The extended modification time, UTC
+   */
+  QDateTime getExtModTime() const;
+  /// Doesn't work due to a minizip limitation
+  /**
+   * The getExt*Time() functions only work if there is an extended timestamp
+   * extra field (ID 0x5455) present. Otherwise, they all return invalid null
+   * timestamps.
+   * @sa dateTime
+   * @sa getExtModTime()
+   * @sa getExtCrTime()
+   * @return The extended access time, UTC
+   */
+  QDateTime getExtAcTime() const;
+  /// Doesn't work due to a minizip limitation
+  /**
+   * The getExt*Time() functions only work if there is an extended timestamp
+   * extra field (ID 0x5455) present. Otherwise, they all return invalid null
+   * timestamps.
+   * @sa dateTime
+   * @sa getExtModTime()
+   * @sa getExtAcTime()
+   * @return The extended creation time, UTC
+   */
+  QDateTime getExtCrTime() const;
   /// Checks whether the file is encrypted.
   bool isEncrypted() const {return (flags & 1) != 0;}
 };

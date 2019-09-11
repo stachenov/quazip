@@ -52,3 +52,6 @@ else:unix: LIBS += -L$$OUT_PWD/../quazip/ -lquazip
 
 INCLUDEPATH += $$PWD/..
 DEPENDPATH += $$PWD/../quazip
+
+RESOURCES += \
+    qztest.qrc

@@ -174,3 +174,68 @@ QDateTime QuaZipFileInfo64::getNTFScTime(int *fineTicks) const
 {
     return getNTFSTime(extra, 16, fineTicks);
 }
+
+static QDateTime getExtTime(const QByteArray &extra, int flag)
+{
+    QDateTime dateTime;
+    const int mTimeFlag = 1;
+    const int aTimeFlag = 2;
+    const int cTimeFlag = 4;
+    for (int i = 0; i <= extra.size() - 4; ) {
+        unsigned type = static_cast<unsigned>(static_cast<unsigned char>(
+                                                  extra.at(i)))
+                | (static_cast<unsigned>(static_cast<unsigned char>(
+                                                  extra.at(i + 1))) << 8);
+        i += 2;
+        unsigned length = static_cast<unsigned>(static_cast<unsigned char>(
+                                                  extra.at(i)))
+                | (static_cast<unsigned>(static_cast<unsigned char>(
+                                                  extra.at(i + 1))) << 8);
+        i += 2;
+        if (type == QUAZIP_EXTRA_EXT_TIME_MAGIC && length >= 1) {
+            int flags = static_cast<int>(
+                        static_cast<unsigned char>(extra.at(i)));
+            if ((flags & flag) == 0)
+                return dateTime;
+            ++i;
+            int flagsRemaining = flags;
+            while (i <= extra.length() - 4 && flagsRemaining != 0) {
+                int nextFlag = flagsRemaining & -flagsRemaining;
+                if (nextFlag == flag) {
+                    qint64 time = static_cast<qint32>(
+                                static_cast<unsigned char>(extra.at(i)))
+                            | (static_cast<qint32>(static_cast<unsigned char>(
+                                                        extra.at(i + 1))) << 8)
+                            | (static_cast<qint32>(static_cast<unsigned char>(
+                                                        extra.at(i + 2))) << 16)
+                            | (static_cast<qint32>(static_cast<unsigned char>(
+                                                        extra.at(i + 3))) << 24);
+                    QDateTime base(QDate(1970, 1, 1), QTime(0, 0), Qt::UTC);
+                    dateTime = base.addSecs(time);
+                    return dateTime;
+                } else {
+                    flagsRemaining &= flagsRemaining - 1;
+                    i += 4;
+                }
+            }
+        } else {
+            i += length;
+        }
+    }
+    return dateTime;
+}
+
+QDateTime QuaZipFileInfo64::getExtModTime() const
+{
+    return getExtTime(extra, 1);
+}
+
+QDateTime QuaZipFileInfo64::getExtAcTime() const
+{
+    return getExtTime(extra, 2);
+}
+
+QDateTime QuaZipFileInfo64::getExtCrTime() const
+{
+    return getExtTime(extra, 4);
+}
