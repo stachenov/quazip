@@ -466,9 +466,13 @@ void TestQuaZipFile::setFileAttrs()
                 QFile::WriteOther | QFile::ReadOther | QFile::ExeOther;
         QCOMPARE(info.getPermissions() & usedPermissions,
                  srcInfo.permissions() & usedPermissions);
-        // I really hope Qt 6 will use quint64 for time_t!
+#if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0) // Yay! Finally a way to get time as qint64!
+        qint64 newTime = info.dateTime.toSecsSinceEpoch();
+        qint64 oldTime = srcInfo.lastModified().toSecsSinceEpoch();
+#else
         quint64 newTime = info.dateTime.toTime_t();
         quint64 oldTime = srcInfo.lastModified().toTime_t();
+#endif
         // ZIP uses weird format with 2 second precision
         QCOMPARE(newTime / 2, oldTime / 2);
         readFileAttrs.close();
