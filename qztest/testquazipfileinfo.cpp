@@ -5,6 +5,7 @@
 #include <QByteArray>
 #include <QDir>
 #include <QFileInfo>
+#include <QPair>
 
 #include <QtTest/QtTest>
 
@@ -159,4 +160,75 @@ void TestQuaZipFileInfo::getExtTime_issue43()
     QCOMPARE(zipFileInfo.getExtAcTime(), extAcTime);
     QCOMPARE(zipFileInfo.getExtCrTime(), extCrTime);
 #endif
+}
+
+void TestQuaZipFileInfo::parseExtraField_data()
+{
+    QTest::addColumn<QByteArray>("extraField");
+    QTest::addColumn<QuaExtraFieldHash>("expected");
+    QTest::newRow("empty")
+            << QByteArray()
+            << QuaExtraFieldHash();
+    {
+    QuaExtraFieldHash oneZeroIdWithNoData;
+    oneZeroIdWithNoData[0] = QList<QByteArray>() << QByteArray();
+    QTest::newRow("one zero ID with no data")
+            << QByteArray("\x00\x00\x00\x00", 4)
+            << oneZeroIdWithNoData;
+    }
+    {
+    QuaExtraFieldHash oneZeroIdWithData;
+    oneZeroIdWithData[0] = QList<QByteArray>() << QByteArray("DATA", 4);
+    QTest::newRow("one zero ID with data")
+            << QByteArray("\x00\x00\x04\x00" "DATA", 8)
+            << oneZeroIdWithData;
+    }
+    {
+    QuaExtraFieldHash oneNonZeroIdWithData;
+    oneNonZeroIdWithData[1] = QList<QByteArray>() << QByteArray("DATA", 4);
+    QTest::newRow("one non zero ID with data")
+            << QByteArray("\x01\x00\x04\x00" "DATA", 8)
+            << oneNonZeroIdWithData;
+    }
+    {
+    QuaExtraFieldHash severalDifferentIDs;
+    severalDifferentIDs[0] = QList<QByteArray>() << QByteArray("DATA0", 5);
+    severalDifferentIDs[1] = QList<QByteArray>() << QByteArray("DATA1", 5);
+    QTest::newRow("two IDs")
+            << QByteArray("\x00\x00\x05\x00" "DATA0" "\x01\x00\x05\x00" "DATA1", 18)
+            << severalDifferentIDs;
+    }
+    {
+    QuaExtraFieldHash repeatedID;
+    repeatedID[0] = QList<QByteArray>() << QByteArray("DATA0", 5) << QByteArray("DATA1", 5);
+    QTest::newRow("repeated ID")
+            << QByteArray("\x00\x00\x05\x00" "DATA0" "\x00\x00\x05\x00" "DATA1", 18)
+            << repeatedID;
+    }
+    {
+    QuaExtraFieldHash largeID;
+    largeID[0x0102] = QList<QByteArray>() << QByteArray("DATA", 4);
+    QTest::newRow("large ID")
+            << QByteArray("\x02\x01\x04\x00" "DATA", 8)
+            << largeID;
+    }
+    {
+    QuaExtraFieldHash largeData;
+    largeData[0] = QList<QByteArray>() << QByteArray(65535, 'x');
+    QTest::newRow("large ID")
+            << (QByteArray("\x00\x00\xff\xff", 4) + QByteArray(65535, 'x'))
+            << largeData;
+    }
+    QTest::newRow("only 1 byte") << QByteArray("\x00", 1) << QuaExtraFieldHash();
+    QTest::newRow("only 2 bytes") << QByteArray("\x00\x00", 2) << QuaExtraFieldHash();
+    QTest::newRow("only 3 bytes") << QByteArray("\x00\x00\x00", 3) << QuaExtraFieldHash();
+    QTest::newRow("truncated data") << QByteArray("\x00\x00\x02\x00\x00", 5) << QuaExtraFieldHash();
+}
+
+void TestQuaZipFileInfo::parseExtraField()
+{
+    QFETCH(QByteArray, extraField);
+    QFETCH(QuaExtraFieldHash, expected);
+    QuaExtraFieldHash actual = QuaZipFileInfo64::parseExtraField(extraField);
+    QCOMPARE(actual, expected);
 }

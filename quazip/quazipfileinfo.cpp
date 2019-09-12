@@ -24,6 +24,8 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include "quazipfileinfo.h"
 
+#include <QDataStream>>
+
 static QFile::Permissions permissionsFromExternalAttr(quint32 externalAttr) {
     quint32 uPerm = (externalAttr & 0xFFFF0000u) >> 16;
     QFile::Permissions perm = 0;
@@ -238,4 +240,27 @@ QDateTime QuaZipFileInfo64::getExtAcTime() const
 QDateTime QuaZipFileInfo64::getExtCrTime() const
 {
     return getExtTime(extra, 4);
+}
+
+QuaExtraFieldHash QuaZipFileInfo64::parseExtraField(const QByteArray &extraField)
+{
+    QDataStream input(extraField);
+    input.setByteOrder(QDataStream::LittleEndian);
+    QHash<quint16, QList<QByteArray> > result;
+    while (!input.atEnd()) {
+        quint16 id, size;
+        input >> id;
+        if (input.status() == QDataStream::ReadPastEnd)
+            return result;
+        input >> size;
+        if (input.status() == QDataStream::ReadPastEnd)
+            return result;
+        QByteArray data;
+        data.resize(size);
+        int read = input.readRawData(data.data(), data.size());
+        if (read < data.size())
+            return result;
+        result[id] << data;
+    }
+    return result;
 }

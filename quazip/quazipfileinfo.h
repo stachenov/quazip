@@ -28,8 +28,12 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QByteArray>
 #include <QDateTime>
 #include <QFile>
+#include <QHash>
 
 #include "quazip_global.h"
+
+/// The typedef to store extra field parse results
+typedef QHash<quint16, QList<QByteArray> > QuaExtraFieldHash;
 
 /// Information about a file inside archive.
 /**
@@ -206,6 +210,18 @@ struct QUAZIP_EXPORT QuaZipFileInfo64 {
   QDateTime getExtCrTime() const;
   /// Checks whether the file is encrypted.
   bool isEncrypted() const {return (flags & 1) != 0;}
+  /// Parses extra field
+  /**
+   * The returned hash table contains a list of data blocks for every header ID
+   * in the provided extra field. The number of data blocks in a hash table value
+   * equals to the number of occurrences of the appropriate header id. In most cases,
+   * a block with a specific header ID only occurs once, and therefore the returned
+   * hash table will contain a list consisting of a single element for that header ID.
+   *
+   * @param extraField extra field to parse
+   * @return header id to list of data block hash
+   */
+  static QuaExtraFieldHash parseExtraField(const QByteArray &extraField);
 };
 
 #endif
