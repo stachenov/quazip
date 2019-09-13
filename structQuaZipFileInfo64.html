@@ -14,7 +14,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-8-1</span></div>
+   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-9-SNAPSHOT</span></div>
   </td>
  </tr>
  </tbody>
@@ -40,6 +40,7 @@
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a>  </div>
   <div class="headertitle">
 <div class="title">QuaZipFileInfo64 Struct Reference</div>  </div>
@@ -72,9 +73,17 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the NTFS access time.  <a href="#afe4c454de7d067a0095da0223f0cbec2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatetime.html">QDateTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQuaZipFileInfo64.html#a409dcbbe1ecd88dadb51be1aec48819d">getNTFScTime</a> (int *fineTicks=NULL) const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the NTFS creation time.  <a href="#a409dcbbe1ecd88dadb51be1aec48819d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatetime.html">QDateTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQuaZipFileInfo64.html#a2bcdbc5280144a9110084cac4132bf1f">getExtModTime</a> () const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the extended modification timestamp.  <a href="#a2bcdbc5280144a9110084cac4132bf1f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c93235e4a13ee5461023a5f3fe03e26"></a><!-- doxytag: member="QuaZipFileInfo64::isEncrypted" ref="a8c93235e4a13ee5461023a5f3fe03e26" args="() const " -->
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQuaZipFileInfo64.html#a8c93235e4a13ee5461023a5f3fe03e26">isEncrypted</a> () const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether the file is encrypted. <br/></td></tr>
+<tr><td colspan="2"><h2><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qhash.html">QuaExtraFieldHash</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQuaZipFileInfo64.html#a96635e5b45a5028741bd212c4c108daa">parseExtraField</a> (const <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html">QByteArray</a> &amp;extraField)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses extra field.  <a href="#a96635e5b45a5028741bd212c4c108daa"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatetime.html">QDateTime</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQuaZipFileInfo64.html#aceaaf9988613886d1e3076dc36c2d5f0">getExtTime</a> (const <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html">QByteArray</a> &amp;<a class="el" href="structQuaZipFileInfo64.html#acf0b1b97f377208847c6912cd1bf1332">extra</a>, int flag)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Extracts extended time from the extra field.  <a href="#aceaaf9988613886d1e3076dc36c2d5f0"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2cadad4cb9a765e90b5422dae2388762"></a><!-- doxytag: member="QuaZipFileInfo64::name" ref="a2cadad4cb9a765e90b5422dae2388762" args="" -->
@@ -263,6 +272,116 @@ quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 
 </div>
 </div>
+<a class="anchor" id="a2bcdbc5280144a9110084cac4132bf1f"></a><!-- doxytag: member="QuaZipFileInfo64::getExtModTime" ref="a2bcdbc5280144a9110084cac4132bf1f" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatetime.html">QDateTime</a> QuaZipFileInfo64::getExtModTime </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Returns the extended modification timestamp. </p>
+<p>The getExt*Time() functions only work if there is an extended timestamp extra field (ID 0x5455) present. Otherwise, they all return invalid null timestamps.</p>
+<p><a class="el" href="structQuaZipFileInfo64.html" title="Information about a file inside archive (with zip64 support).">QuaZipFileInfo64</a> only contains the modification time because it's extracted from <a class="el" href="structQuaZipFileInfo64.html#acf0b1b97f377208847c6912cd1bf1332">extra</a>, which contains the global extra field, and access and creation time are in the local header which can be accessed through <a class="el" href="classQuaZipFile.html">QuaZipFile</a>.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="structQuaZipFileInfo64.html#a4d77c6aa6076703e858c938efeb551e4" title="Last modification date and time.">dateTime</a> </dd>
+<dd>
+<a class="el" href="classQuaZipFile.html#acbdb9dd15f27aa6e19f2c4b1515667d9" title="Returns the extended modification timestamp.">QuaZipFile::getExtModTime()</a> </dd>
+<dd>
+<a class="el" href="classQuaZipFile.html#a32a3761f3d0d17c6b7382579a29f27b1" title="Returns the extended access timestamp.">QuaZipFile::getExtAcTime()</a> </dd>
+<dd>
+<a class="el" href="classQuaZipFile.html#a5c62a614a0eb4871e7e38892a5cf7fe1" title="Returns the extended creation timestamp.">QuaZipFile::getExtCrTime()</a> </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The extended modification time, UTC </dd></dl>
+
+<p>References <a class="el" href="structQuaZipFileInfo64.html#aceaaf9988613886d1e3076dc36c2d5f0">getExtTime()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a96635e5b45a5028741bd212c4c108daa"></a><!-- doxytag: member="QuaZipFileInfo64::parseExtraField" ref="a96635e5b45a5028741bd212c4c108daa" args="(const QByteArray &amp;extraField)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qhash.html">QuaExtraFieldHash</a> QuaZipFileInfo64::parseExtraField </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html">QByteArray</a> &amp;&#160;</td>
+          <td class="paramname"><em>extraField</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Parses extra field. </p>
+<p>The returned hash table contains a list of data blocks for every header ID in the provided extra field. The number of data blocks in a hash table value equals to the number of occurrences of the appropriate header id. In most cases, a block with a specific header ID only occurs once, and therefore the returned hash table will contain a list consisting of a single element for that header ID.</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">extraField</td><td>extra field to parse </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>header id to list of data block hash </dd></dl>
+
+<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatastream.html#atEnd">QDataStream::atEnd()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#data">QByteArray::data()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatastream.html#readRawData">QDataStream::readRawData()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#resize">QByteArray::resize()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatastream.html#setByteOrder">QDataStream::setByteOrder()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#size">QByteArray::size()</a>, and <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatastream.html#status">QDataStream::status()</a>.</p>
+
+<p>Referenced by <a class="el" href="structQuaZipFileInfo64.html#aceaaf9988613886d1e3076dc36c2d5f0">getExtTime()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aceaaf9988613886d1e3076dc36c2d5f0"></a><!-- doxytag: member="QuaZipFileInfo64::getExtTime" ref="aceaaf9988613886d1e3076dc36c2d5f0" args="(const QByteArray &amp;extra, int flag)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatetime.html">QDateTime</a> QuaZipFileInfo64::getExtTime </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html">QByteArray</a> &amp;&#160;</td>
+          <td class="paramname"><em>extra</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flag</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Extracts extended time from the extra field. </p>
+<p>Utility function used by various getExt*Time() functions, but can be used directly if the extra field is obtained elsewhere (from a third party library, for example).</p>
+<dl><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">extra</td><td>the extra field for a file </td></tr>
+    <tr><td class="paramname">flag</td><td>1 - modification time, 2 - access time, 4 - creation time </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>the extracted time or null <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatetime.html">QDateTime</a> if not present </dd></dl>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="structQuaZipFileInfo64.html#a2bcdbc5280144a9110084cac4132bf1f" title="Returns the extended modification timestamp.">getExtModTime()</a> </dd>
+<dd>
+<a class="el" href="classQuaZipFile.html#acbdb9dd15f27aa6e19f2c4b1515667d9" title="Returns the extended modification timestamp.">QuaZipFile::getExtModTime()</a> </dd>
+<dd>
+<a class="el" href="classQuaZipFile.html#a32a3761f3d0d17c6b7382579a29f27b1" title="Returns the extended access timestamp.">QuaZipFile::getExtAcTime()</a> </dd>
+<dd>
+<a class="el" href="classQuaZipFile.html#a5c62a614a0eb4871e7e38892a5cf7fe1" title="Returns the extended creation timestamp.">QuaZipFile::getExtCrTime()</a> </dd></dl>
+
+<p>References <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatetime.html#addSecs">QDateTime::addSecs()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qlist.html#at">QList::at()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatastream.html#atEnd">QDataStream::atEnd()</a>, <a class="el" href="structQuaZipFileInfo64.html#a4d77c6aa6076703e858c938efeb551e4">dateTime</a>, <a class="el" href="structQuaZipFileInfo64.html#a6aa533dd4e02f52459e1e1a0df31e992">flags</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qlist.html#isEmpty">QList::isEmpty()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qbytearray.html#length">QByteArray::length()</a>, <a class="el" href="structQuaZipFileInfo64.html#a96635e5b45a5028741bd212c4c108daa">parseExtraField()</a>, and <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qdatastream.html#setByteOrder">QDataStream::setByteOrder()</a>.</p>
+
+<p>Referenced by <a class="el" href="classQuaZipFile.html#a32a3761f3d0d17c6b7382579a29f27b1">QuaZipFile::getExtAcTime()</a>, <a class="el" href="classQuaZipFile.html#a5c62a614a0eb4871e7e38892a5cf7fe1">QuaZipFile::getExtCrTime()</a>, <a class="el" href="structQuaZipFileInfo64.html#a2bcdbc5280144a9110084cac4132bf1f">getExtModTime()</a>, and <a class="el" href="classQuaZipFile.html#acbdb9dd15f27aa6e19f2c4b1515667d9">QuaZipFile::getExtModTime()</a>.</p>
+
+</div>
+</div>
 <hr/><h2>Member Data Documentation</h2>
 <a class="anchor" id="a4d77c6aa6076703e858c938efeb551e4"></a><!-- doxytag: member="QuaZipFileInfo64::dateTime" ref="a4d77c6aa6076703e858c938efeb551e4" args="" -->
 <div class="memitem">
@@ -278,7 +397,7 @@ quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 <p>Last modification date and time. </p>
 <p>This is the time stored in the standard ZIP header. This format only allows to store time with 2-second precision, so the seconds will always be even and the milliseconds will always be zero. If you need more precise date and time, you can try to call the <a class="el" href="structQuaZipFileInfo64.html#af4b19399367cf5bf24026344e0631ccb" title="Returns the NTFS modification time.">getNTFSmTime()</a> function or its siblings, provided that the archive itself contains these NTFS times. </p>
 
-<p>Referenced by <a class="el" href="classQuaZip.html#a7ba6daf39263c308c683e7f72f74e0ae">QuaZip::getCurrentFileInfo()</a>, and <a class="el" href="structQuaZipFileInfo64.html#ada29945c7ee4c9df6fbe95864793aade">toQuaZipFileInfo()</a>.</p>
+<p>Referenced by <a class="el" href="classQuaZip.html#a7ba6daf39263c308c683e7f72f74e0ae">QuaZip::getCurrentFileInfo()</a>, <a class="el" href="structQuaZipFileInfo64.html#aceaaf9988613886d1e3076dc36c2d5f0">getExtTime()</a>, and <a class="el" href="structQuaZipFileInfo64.html#ada29945c7ee4c9df6fbe95864793aade">toQuaZipFileInfo()</a>.</p>
 
 </div>
 </div>
@@ -287,7 +406,7 @@ quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 <li>quazip/quazipfileinfo.cpp</li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Wed Jun 5 2019 07:27:00 for QuaZIP by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Fri Sep 13 2019 22:19:30 for QuaZIP by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>

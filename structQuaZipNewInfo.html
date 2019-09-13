@@ -14,7 +14,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
-   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-8-1</span></div>
+   <div id="projectname">QuaZIP&#160;<span id="projectnumber">quazip-0-9-SNAPSHOT</span></div>
   </td>
  </tr>
  </tbody>
@@ -308,7 +308,7 @@ quint16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 <div class="memdoc">
 
 <p>Sets the NTFS times from an existing file. </p>
-<p>If the file doesn't exist, a warning is printed to the stderr and nothing is done. Otherwise, all three times, as reported by <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qfileinfo.html#lastModified">QFileInfo::lastModified()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qfileinfo.html#lastRead">QFileInfo::lastRead()</a> and <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qfileinfo.html#created">QFileInfo::created()</a>, are written to the NTFS extra field record.</p>
+<p>If the file doesn't exist, a warning is printed to the stderr and nothing is done. Otherwise, all three times, as reported by <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qfileinfo.html#lastModified">QFileInfo::lastModified()</a>, <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qfileinfo.html#lastRead">QFileInfo::lastRead()</a> and QFileInfo::birthTime() (&gt;=Qt5.10) or <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qfileinfo.html#created">QFileInfo::created()</a>, are written to the NTFS extra field record.</p>
 <p>The NTFS record is written to both the local and the global extra fields, updating the existing record if there is one, or creating a new one and appending it to the end of each extra field.</p>
 <p>The microseconds will be zero, as they aren't reported by <a class="elRef" doxygen="qtcore.tags:http://doc.qt.io/qt-5.9//" href="http://doc.qt.io/qt-5.9/qfileinfo.html">QFileInfo</a>. </p>
 <dl><dt><b>Parameters:</b></dt><dd>
@@ -541,7 +541,7 @@ quint16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 <li>quazip/quazipnewinfo.cpp</li>
 </ul>
 </div>
-<hr class="footer"/><address class="footer"><small>Generated on Wed Jun 5 2019 07:27:00 for QuaZIP by&#160;
+<hr class="footer"/><address class="footer"><small>Generated on Fri Sep 13 2019 22:19:30 for QuaZIP by&#160;
 <a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.4 </small></address>
 </body>
