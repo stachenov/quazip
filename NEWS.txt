@@ -1,5 +1,9 @@
 QuaZIP changes
 
+Current
+        * Support for extended timestamps
+        * Various contributed CMake fixes
+
 * 2019-05-27 0.8.1
         * CMake regression fix
 

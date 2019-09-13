@@ -138,7 +138,7 @@ QDateTime QuaZipFileInfo64::getNTFScTime(int *fineTicks) const
     return getNTFSTime(extra, 16, fineTicks);
 }
 
-static QDateTime getExtTime(const QByteArray &extra, int flag)
+QDateTime QuaZipFileInfo64::getExtTime(const QByteArray &extra, int flag)
 {
     QDateTime dateTime;
     QuaExtraFieldHash extraHash = QuaZipFileInfo64::parseExtraField(extra);
@@ -155,6 +155,7 @@ static QDateTime getExtTime(const QByteArray &extra, int flag)
     int flagsRemaining = flags;
     while (!input.atEnd()) {
         int nextFlag = flagsRemaining & -flagsRemaining;
+        flagsRemaining &= flagsRemaining - 1;
         qint32 time;
         input >> time;
         if (nextFlag == flag) {
@@ -169,16 +170,6 @@ static QDateTime getExtTime(const QByteArray &extra, int flag)
 QDateTime QuaZipFileInfo64::getExtModTime() const
 {
     return getExtTime(extra, 1);
-}
-
-QDateTime QuaZipFileInfo64::getExtAcTime() const
-{
-    return getExtTime(extra, 2);
-}
-
-QDateTime QuaZipFileInfo64::getExtCrTime() const
-{
-    return getExtTime(extra, 4);
 }
 
 QuaExtraFieldHash QuaZipFileInfo64::parseExtraField(const QByteArray &extraField)

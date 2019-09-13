@@ -24,6 +24,8 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include "quazipfile.h"
 
+#include "quazipfileinfo.h"
+
 using namespace std;
 
 #define QUAZIP_VERSION_MADE_BY 0x1Eu
@@ -538,4 +540,31 @@ int QuaZipFile::getZipError() const
 qint64 QuaZipFile::bytesAvailable() const
 {
     return size() - pos();
+}
+
+QByteArray QuaZipFile::getLocalExtraField()
+{
+    int size = unzGetLocalExtrafield(p->zip->getUnzFile(), NULL, 0);
+    QByteArray extra(size, '\0');
+    int err = unzGetLocalExtrafield(p->zip->getUnzFile(), extra.data(), static_cast<uint>(extra.size()));
+    if (err < 0) {
+        p->setZipError(err);
+        return QByteArray();
+    }
+    return extra;
+}
+
+QDateTime QuaZipFile::getExtModTime()
+{
+    return QuaZipFileInfo64::getExtTime(getLocalExtraField(), QUAZIP_EXTRA_EXT_MOD_TIME_FLAG);
+}
+
+QDateTime QuaZipFile::getExtAcTime()
+{
+    return QuaZipFileInfo64::getExtTime(getLocalExtraField(), QUAZIP_EXTRA_EXT_AC_TIME_FLAG);
+}
+
+QDateTime QuaZipFile::getExtCrTime()
+{
+    return QuaZipFileInfo64::getExtTime(getLocalExtraField(), QUAZIP_EXTRA_EXT_CR_TIME_FLAG);
 }

@@ -180,34 +180,19 @@ struct QUAZIP_EXPORT QuaZipFileInfo64 {
    * The getExt*Time() functions only work if there is an extended timestamp
    * extra field (ID 0x5455) present. Otherwise, they all return invalid null
    * timestamps.
+   *
+   * QuaZipFileInfo64 only contains the modification time because it's extracted
+   * from @ref extra, which contains the global extra field, and access and
+   * creation time are in the local header which can be accessed through
+   * @ref QuaZipFile.
+   *
    * @sa dateTime
-   * @sa getExtAcTime()
-   * @sa getExtCrTime()
+   * @sa QuaZipFile::getExtModTime()
+   * @sa QuaZipFile::getExtAcTime()
+   * @sa QuaZipFile::getExtCrTime()
    * @return The extended modification time, UTC
    */
   QDateTime getExtModTime() const;
-  /// Doesn't work due to a minizip limitation
-  /**
-   * The getExt*Time() functions only work if there is an extended timestamp
-   * extra field (ID 0x5455) present. Otherwise, they all return invalid null
-   * timestamps.
-   * @sa dateTime
-   * @sa getExtModTime()
-   * @sa getExtCrTime()
-   * @return The extended access time, UTC
-   */
-  QDateTime getExtAcTime() const;
-  /// Doesn't work due to a minizip limitation
-  /**
-   * The getExt*Time() functions only work if there is an extended timestamp
-   * extra field (ID 0x5455) present. Otherwise, they all return invalid null
-   * timestamps.
-   * @sa dateTime
-   * @sa getExtModTime()
-   * @sa getExtAcTime()
-   * @return The extended creation time, UTC
-   */
-  QDateTime getExtCrTime() const;
   /// Checks whether the file is encrypted.
   bool isEncrypted() const {return (flags & 1) != 0;}
   /// Parses extra field
@@ -222,6 +207,20 @@ struct QUAZIP_EXPORT QuaZipFileInfo64 {
    * @return header id to list of data block hash
    */
   static QuaExtraFieldHash parseExtraField(const QByteArray &extraField);
+  /// Extracts extended time from the extra field
+  /**
+   * Utility function used by various getExt*Time() functions, but can be used directly
+   * if the extra field is obtained elsewhere (from a third party library, for example).
+   *
+   * @param extra the extra field for a file
+   * @param flag 1 - modification time, 2 - access time, 4 - creation time
+   * @return the extracted time or null QDateTime if not present
+   * @sa getExtModTime()
+   * @sa QuaZipFile::getExtModTime()
+   * @sa QuaZipFile::getExtAcTime()
+   * @sa QuaZipFile::getExtCrTime()
+   */
+  static QDateTime getExtTime(const QByteArray &extra, int flag);
 };
 
 #endif
