@@ -22,7 +22,7 @@ Original ZIP package is copyrighted by Gilles Vollant and contributors,
 see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
-#include <QFileInfo>
+#include <QtCore/QFileInfo>
 
 #include "quazipnewinfo.h"
 

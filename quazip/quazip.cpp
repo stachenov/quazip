@@ -22,9 +22,9 @@ Original ZIP package is copyrighted by Gilles Vollant, see
 quazip/(un)zip.h files for details, basically it's zlib license.
  **/
 
-#include <QFile>
-#include <QFlags>
-#include <QHash>
+#include <QtCore/QFile>
+#include <QtCore/QFlags>
+#include <QtCore/QHash>
 
 #include "quazip.h"
 
