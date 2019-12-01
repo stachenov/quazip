@@ -105,7 +105,7 @@ bool QuaZipDir::cd(const QString &directoryName)
         }
         QStringList path = dirName.split(QLatin1String("/"), QString::SkipEmptyParts);
         for (QStringList::const_iterator i = path.constBegin();
-                i != path.end();
+                i != path.constEnd();
                 ++i) {
             const QString &step = *i;
 #ifdef QUAZIP_QUAZIPDIR_DEBUG
