@@ -24,7 +24,6 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
 #include "JlCompress.h"
-#include <QDebug>
 
 static bool copyData(QIODevice &inFile, QIODevice &outFile)
 {

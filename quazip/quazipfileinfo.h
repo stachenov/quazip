@@ -25,10 +25,10 @@ Original ZIP package is copyrighted by Gilles Vollant and contributors,
 see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
-#include <QByteArray>
-#include <QDateTime>
-#include <QFile>
-#include <QHash>
+#include <QtCore/QByteArray>
+#include <QtCore/QDateTime>
+#include <QtCore/QFile>
+#include <QtCore/QHash>
 
 #include "quazip_global.h"
 

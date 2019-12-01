@@ -25,9 +25,9 @@ Original ZIP package is copyrighted by Gilles Vollant, see
 quazip/(un)zip.h files for details, basically it's zlib license.
  **/
 
-#include <QDateTime>
-#include <QFile>
-#include <QString>
+#include <QtCore/QDateTime>
+#include <QtCore/QFile>
+#include <QtCore/QString>
 
 #include "quazip_global.h"
 
