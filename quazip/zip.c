@@ -32,7 +32,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "zlib.h"
+
+#include <zlib.h>
 #if (ZLIB_VERNUM < 0x1270)
 typedef uLongf z_crc_t;
 #endif
@@ -992,7 +993,9 @@ int Write_LocalFileHeader(zip64_internal* zi, const char* filename,
 
   if (err==ZIP_OK)
   {
-    if(zi->ci.zip64)
+    if(zi->ci.flag & ZIP_ENCODING_UTF8)
+      err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)63,2);/* Version 6.3 is required for Unicode support */
+    else if(zi->ci.zip64)
       err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);/* version needed to extract */
     else
       err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)version_to_extract,2);
@@ -1150,6 +1153,8 @@ extern int ZEXPORT zipOpenNewFileInZip4_64 (zipFile file, const char* filename, 
     }
 
     zi->ci.flag = flagBase;
+    if (zi->flags & ZIP_ENCODING_UTF8)
+        zi->ci.flag |= ZIP_ENCODING_UTF8;
     if ((level==8) || (level==9))
       zi->ci.flag |= 2;
     if (level==2)
@@ -1655,8 +1660,7 @@ extern int ZEXPORT zipCloseFileInZipRaw64 (zipFile file, ZPOS64_T uncompressed_s
       /*version Made by*/
       zip64local_putValue_inmemory(zi->ci.central_header+4,(uLong)45,2);
       /*version needed*/
-      zip64local_putValue_inmemory(zi->ci.central_header+6,(uLong)45,2);
-
+      zip64local_putValue_inmemory(zi->ci.central_header+6,(uLong)((zi->ci.flag & ZIP_ENCODING_UTF8) ? 63 : 45),2);
     }
 
     zip64local_putValue_inmemory(zi->ci.central_header+16,crc32,4); /*crc*/
@@ -1850,7 +1854,7 @@ int Write_Zip64EndOfCentralDirectoryRecord(zip64_internal* zi, uLong size_centra
     err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);
 
   if (err==ZIP_OK) /* version needed */
-    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)45,2);
+    err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)((zi->ci.flag & ZIP_ENCODING_UTF8) ? 63 : 45),2);
 
   if (err==ZIP_OK) /* number of this disk */
     err = zip64local_putValue(&zi->z_filefunc,zi->filestream,(uLong)0,4);

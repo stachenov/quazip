@@ -73,7 +73,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "zlib.h"
+#include <zlib.h>
 #if (ZLIB_VERNUM < 0x1270)
 typedef uLongf z_crc_t;
 #endif
@@ -858,6 +858,17 @@ extern int ZEXPORT unzGetGlobalInfo (unzFile file, unz_global_info* pglobal_info
     pglobal_info32->size_comment = s->gi.size_comment;
     return UNZ_OK;
 }
+
+extern int ZEXPORT unzGetFileFlags (unzFile file, unsigned* pflags)
+{
+    unz64_s* s;
+    if (file==NULL)
+        return UNZ_PARAMERROR;
+    s=(unz64_s*)file;
+    *pflags = s->flags;
+    return UNZ_OK;
+}
+
 /*
    Translate date/time from Dos format to tm_unz (readable more easilty)
 */
@@ -1200,6 +1211,8 @@ extern int ZEXPORT unzGoToFirstFile (unzFile file)
                                              &s->cur_file_info_internal,
                                              NULL,0,NULL,0,NULL,0);
     s->current_file_ok = (err == UNZ_OK);
+    if (s->cur_file_info.flag & UNZ_ENCODING_UTF8)
+        unzSetFlags(file, UNZ_ENCODING_UTF8);
     return err;
 }
 

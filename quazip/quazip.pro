@@ -29,10 +29,15 @@ QMAKE_PKGCONFIG_REQUIRES = Qt5Core
 # 2.0, VERSION to 2.0.0.
 # And so on.
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    # disable all the Qt APIs deprecated before Qt 6.0.0
+    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+}
 
 # This one handles dllimport/dllexport directives.
 DEFINES += QUAZIP_BUILD
-
+DEFINES += QT_NO_CAST_FROM_ASCII
+DEFINES += QT_NO_CAST_TO_ASCII
 # You'll need to define this one manually if using a build system other
 # than qmake or using QuaZIP sources directly in your project.
 CONFIG(staticlib): DEFINES += QUAZIP_STATIC

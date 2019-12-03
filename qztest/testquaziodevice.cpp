@@ -102,7 +102,8 @@ void TestQuaZIODevice::write()
     char outBuf[5];
     zins.next_out = reinterpret_cast<Bytef*>(outBuf);
     zins.avail_out = 5;
-    inflate(&zins, Z_FINISH);
+    int result = inflate(&zins, Z_FINISH);
+    QCOMPARE(result, Z_STREAM_END);
     inflateEnd(&zins);
     int size = 5 - zins.avail_out;
     QCOMPARE(size, 4);

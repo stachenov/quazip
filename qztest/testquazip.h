@@ -40,6 +40,8 @@ private slots:
     void add();
     void setFileNameCodec_data();
     void setFileNameCodec();
+    void setOsCode_data();
+    void setOsCode();
     void setDataDescriptorWritingEnabled();
     void testQIODeviceAPI();
     void setZipName();

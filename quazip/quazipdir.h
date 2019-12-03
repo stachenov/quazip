@@ -29,9 +29,9 @@ class QuaZipDirPrivate;
 
 #include "quazip.h"
 #include "quazipfileinfo.h"
-#include <QDir>
-#include <QList>
-#include <QSharedDataPointer>
+#include <QtCore/QDir>
+#include <QtCore/QList>
+#include <QtCore/QSharedDataPointer>
 
 /// Provides ZIP archive navigation.
 /**

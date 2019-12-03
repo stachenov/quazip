@@ -154,8 +154,8 @@ void TestJlCompress::compressDir()
     QVERIFY(JlCompress::compressDir(zipName, "compressDir_tmp", true, QDir::Hidden));
     // get the file list and check it
     QStringList fileList = JlCompress::getFileList(zipName);
-    qSort(fileList);
-    qSort(expected);
+    fileList.sort();
+    expected.sort();
     QCOMPARE(fileList, expected);
     removeTestFiles(fileNames, "compressDir_tmp");
     curDir.remove(zipName);

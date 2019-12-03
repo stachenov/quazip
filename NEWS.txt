@@ -1,5 +1,17 @@
 QuaZIP changes
 
+Current
+        * Support for extended timestamps
+        * Various contributed CMake fixes
+
+* 2019-05-27 0.8.1
+        * CMake regression fix
+
+* 2019-05-23 0.8
+        * Support for UTF-8 in file names and comments (Denis Zavorotnyy)
+        * get/setOsCode(), get/setDefaultOsCode()
+        * Fixed Z_STREAM_END handling in QuaZioDevice
+
 * 2018-06-13 0.7.6
         * Fixed the Zip Slip vulnerability in JlCompress
         * Renamed crypt.h to minizip_crypt.h to avoid conflicts

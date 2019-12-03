@@ -24,7 +24,6 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
 #include "JlCompress.h"
-#include <QDebug>
 
 static bool copyData(QIODevice &inFile, QIODevice &outFile)
 {
@@ -92,7 +91,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
 	if (dir != origDir) {
 		QuaZipFile dirZipFile(zip);
 		if (!dirZipFile.open(QIODevice::WriteOnly,
-			QuaZipNewInfo(origDirectory.relativeFilePath(dir) + "/", dir), 0, 0, 0)) {
+            QuaZipNewInfo(origDirectory.relativeFilePath(dir) + QLatin1String("/"), dir), 0, 0, 0)) {
 				return false;
 		}
 		dirZipFile.close();
@@ -148,7 +147,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
 
     // Controllo esistenza cartella file risultato
     QDir curDir;
-    if (fileDest.endsWith('/')) {
+    if (fileDest.endsWith(QLatin1String("/"))) {
         if (!curDir.mkpath(fileDest)) {
             return false;
         }
@@ -163,7 +162,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
         return false;
 
     QFile::Permissions srcPerm = info.getPermissions();
-    if (fileDest.endsWith('/') && QFileInfo(fileDest).isDir()) {
+    if (fileDest.endsWith(QLatin1String("/")) && QFileInfo(fileDest).isDir()) {
         if (srcPerm != 0) {
             QFile(fileDest).setPermissions(srcPerm);
         }
@@ -380,9 +379,9 @@ QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
         QString name = zip.getCurrentFileName();
         QString absFilePath = directory.absoluteFilePath(name);
         QString absCleanPath = QDir::cleanPath(absFilePath);
-        if (!absCleanPath.startsWith(absCleanDir + "/"))
+        if (!absCleanPath.startsWith(absCleanDir + QLatin1String("/")))
             continue;
-        if (!extractFile(&zip, "", absFilePath)) {
+        if (!extractFile(&zip, QLatin1String(""), absFilePath)) {
             removeFile(extracted);
             return QStringList();
         }

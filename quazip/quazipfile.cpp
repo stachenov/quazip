@@ -24,7 +24,11 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include "quazipfile.h"
 
+#include "quazipfileinfo.h"
+
 using namespace std;
+
+#define QUAZIP_VERSION_MADE_BY 0x1Eu
 
 /// The implementation class for QuaZip.
 /**
@@ -112,7 +116,7 @@ class QuaZipFilePrivate {
       {
         zip=new QuaZip(zipName);
         this->fileName=fileName;
-        if (this->fileName.startsWith('/'))
+        if (this->fileName.startsWith(QLatin1String("/")))
             this->fileName = this->fileName.mid(1);
         this->caseSensitivity=cs;
       }
@@ -232,7 +236,7 @@ void QuaZipFile::setFileName(const QString& fileName, QuaZip::CaseSensitivity cs
     return;
   }
   p->fileName=fileName;
-  if (p->fileName.startsWith('/'))
+  if (p->fileName.startsWith(QLatin1String("/")))
       p->fileName = p->fileName.mid(1);
   p->caseSensitivity=cs;
 }
@@ -339,14 +343,22 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
         zipSetFlags(p->zip->getZipFile(), ZIP_WRITE_DATA_DESCRIPTOR);
     else
         zipClearFlags(p->zip->getZipFile(), ZIP_WRITE_DATA_DESCRIPTOR);
-    p->setZipError(zipOpenNewFileInZip3_64(p->zip->getZipFile(),
-          p->zip->getFileNameCodec()->fromUnicode(info.name).constData(), &info_z,
+    p->setZipError(zipOpenNewFileInZip4_64(p->zip->getZipFile(),
+          p->zip->isUtf8Enabled()
+            ? info.name.toUtf8().constData()
+            : p->zip->getFileNameCodec()->fromUnicode(info.name).constData(),
+          &info_z,
           info.extraLocal.constData(), info.extraLocal.length(),
           info.extraGlobal.constData(), info.extraGlobal.length(),
-          p->zip->getCommentCodec()->fromUnicode(info.comment).constData(),
+          p->zip->isUtf8Enabled()
+            ? info.comment.toUtf8().constData()
+            : p->zip->getCommentCodec()->fromUnicode(info.comment).constData(),
           method, level, (int)raw,
           windowBits, memLevel, strategy,
-          password, (uLong)crc, p->zip->isZip64Enabled()));
+          password, (uLong)crc,
+          (p->zip->getOsCode() << 8) | QUAZIP_VERSION_MADE_BY,
+          0,
+          p->zip->isZip64Enabled()));
     if(p->zipError==UNZ_OK) {
       p->writePos=0;
       setOpenMode(mode);
@@ -528,4 +540,31 @@ int QuaZipFile::getZipError() const
 qint64 QuaZipFile::bytesAvailable() const
 {
     return size() - pos();
+}
+
+QByteArray QuaZipFile::getLocalExtraField()
+{
+    int size = unzGetLocalExtrafield(p->zip->getUnzFile(), NULL, 0);
+    QByteArray extra(size, '\0');
+    int err = unzGetLocalExtrafield(p->zip->getUnzFile(), extra.data(), static_cast<uint>(extra.size()));
+    if (err < 0) {
+        p->setZipError(err);
+        return QByteArray();
+    }
+    return extra;
+}
+
+QDateTime QuaZipFile::getExtModTime()
+{
+    return QuaZipFileInfo64::getExtTime(getLocalExtraField(), QUAZIP_EXTRA_EXT_MOD_TIME_FLAG);
+}
+
+QDateTime QuaZipFile::getExtAcTime()
+{
+    return QuaZipFileInfo64::getExtTime(getLocalExtraField(), QUAZIP_EXTRA_EXT_AC_TIME_FLAG);
+}
+
+QDateTime QuaZipFile::getExtCrTime()
+{
+    return QuaZipFileInfo64::getExtTime(getLocalExtraField(), QUAZIP_EXTRA_EXT_CR_TIME_FLAG);
 }

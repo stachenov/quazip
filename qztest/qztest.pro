@@ -12,6 +12,11 @@ win32 {
     DEFINES += NOMINMAX
 }
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+    # disable all the Qt APIs deprecated before Qt 6.0.0
+    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+}
+
 CONFIG(staticlib): DEFINES += QUAZIP_STATIC
 
 # Input
@@ -47,3 +52,6 @@ else:unix: LIBS += -L$$OUT_PWD/../quazip/ -lquazip
 
 INCLUDEPATH += $$PWD/..
 DEPENDPATH += $$PWD/../quazip
+
+RESOURCES += \
+    qztest.qrc
