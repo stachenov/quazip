@@ -28,6 +28,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include <QDir>
 #include <QFileInfo>
+#include <QTextCodec>
 
 #include <QtTest/QtTest>
 
@@ -303,17 +304,29 @@ void TestJlCompress::extractDir_data()
     QTest::addColumn<QString>("zipName");
     QTest::addColumn<QStringList>("fileNames");
     QTest::addColumn<QStringList>("expectedExtracted");
+    QTest::addColumn<QByteArray>("fileNameCodecName");
     QTest::newRow("simple") << "jlextdir.zip"
         << (QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
         << (QStringList() << "test0.txt" << "testdir1/test1.txt"
-            << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt");
+            << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+        << QByteArray();
     QTest::newRow("separate dir") << "sepdir.zip"
         << (QStringList() << "laj/" << "laj/lajfile.txt")
-        << (QStringList() << "laj/" << "laj/lajfile.txt");
+        << (QStringList() << "laj/" << "laj/lajfile.txt")
+        << QByteArray();
     QTest::newRow("Zip Slip") << "zipslip.zip"
         << (QStringList() << "test0.txt" << "../zipslip.txt")
-        << (QStringList() << "test0.txt");
+        << (QStringList() << "test0.txt")
+        << QByteArray();
+    QTest::newRow("Cyrillic") << "cyrillic.zip"
+        << (QStringList() << QString::fromUtf8("Ще не вмерла Україна"))
+        << (QStringList() << QString::fromUtf8("Ще не вмерла Україна"))
+        << QByteArray("KOI8-U");
+    QTest::newRow("Japaneses") << "japanese.zip"
+        << (QStringList() << QString::fromUtf8("日本"))
+        << (QStringList() << QString::fromUtf8("日本"))
+        << QByteArray("UTF-8");
 }
 
 void TestJlCompress::extractDir()
@@ -321,6 +334,10 @@ void TestJlCompress::extractDir()
     QFETCH(QString, zipName);
     QFETCH(QStringList, fileNames);
     QFETCH(QStringList, expectedExtracted);
+    QFETCH(QByteArray, fileNameCodecName);
+    QTextCodec *fileNameCodec = nullptr;
+    if (!fileNameCodecName.isEmpty())
+        fileNameCodec = QTextCodec::codecForName(fileNameCodecName);
     QDir curDir;
     if (!curDir.mkpath("jlext/jldir")) {
         QFAIL("Couldn't mkpath jlext/jldir");
@@ -328,12 +345,15 @@ void TestJlCompress::extractDir()
     if (!createTestFiles(fileNames)) {
         QFAIL("Couldn't create test files");
     }
-    if (!createTestArchive(zipName, fileNames)) {
+    if (!createTestArchive(zipName, fileNames, fileNameCodec)) {
         QFAIL("Couldn't create test archive");
     }
     QStringList extracted;
-    QCOMPARE((extracted = JlCompress::extractDir(zipName, "jlext/jldir"))
-        .count(), expectedExtracted.count());
+    if (fileNameCodec == nullptr)
+        extracted = JlCompress::extractDir(zipName, "jlext/jldir");
+    else // test both overloads here
+        extracted = JlCompress::extractDir(zipName, fileNameCodec, "jlext/jldir");
+    QCOMPARE(extracted.count(), expectedExtracted.count());
     const QString dir = "jlext/jldir/";
     foreach (QString fileName, expectedExtracted) {
         QString fullName = dir + fileName;
@@ -352,8 +372,11 @@ void TestJlCompress::extractDir()
     // now test the QIODevice* overload
     QFile zipFile(zipName);
     QVERIFY(zipFile.open(QIODevice::ReadOnly));
-    QCOMPARE((extracted = JlCompress::extractDir(&zipFile, "jlext/jldir"))
-        .count(), expectedExtracted.count());
+    if (fileNameCodec == nullptr)
+        extracted = JlCompress::extractDir(&zipFile, "jlext/jldir");
+    else // test both overloads here
+        extracted = JlCompress::extractDir(&zipFile, fileNameCodec, "jlext/jldir");
+    QCOMPARE(extracted.count(), expectedExtracted.count());
     foreach (QString fileName, expectedExtracted) {
         QString fullName = dir + fileName;
         QFileInfo fileInfo(fullName);
