@@ -62,7 +62,15 @@ unix:!symbian {
 
 win32 {
     INCLUDEPATH += $$PWD\..\..\..\platforms\win\include
-    LIBS += -L$$PWD\..\..\..\platforms\win\lib32 -lzdll
+
+    !contains(QMAKE_TARGET.arch, x86_64) {
+        message("Setting Quazip for x86 build")
+        LIBS += -L$$PWD\..\..\..\platforms\win\lib32 -lzdll
+    } else {
+        message("Setting Quazip for x86 build")
+        LIBS += -L$$PWD\..\..\..\platforms\win\lib64 -lzlib
+    }
+
     headers.path=$$PREFIX/include/quazip
     headers.files=$$HEADERS
     INSTALLS += headers target

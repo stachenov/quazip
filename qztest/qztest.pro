@@ -9,8 +9,15 @@ INCLUDEPATH += .
 !win32: LIBS += -lz
 win32 {
     INCLUDEPATH += $$PWD\..\..\..\platforms\win\include
-    LIBS += -L$$PWD\..\..\..\platforms\win\lib32 -lzdll
-    
+
+    !contains(QMAKE_TARGET.arch, x86_64) {
+        message("Setting Quazip for x86 build")
+        LIBS += -L$$PWD\..\..\..\platforms\win\lib32 -lzdll
+    } else {
+        message("Setting Quazip for x86 build")
+        LIBS += -L$$PWD\..\..\..\platforms\win\lib64 -lzlib
+    }
+
     # workaround for qdatetime.h macro bug
     DEFINES += NOMINMAX
 }
