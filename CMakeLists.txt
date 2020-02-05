@@ -40,15 +40,7 @@ else()
 endif()
 
 # Use system zlib on unix and Qt ZLIB on Windows
-if(UNIX OR MINGW)
-    find_package(ZLIB REQUIRED)
-else()
-    set(ZLIB_INCLUDE_DIRS "${QT_ROOT}/src/3rdparty/zlib" CACHE STRING "Path to ZLIB headers of Qt")
-    set(ZLIB_LIBRARIES "" CACHE STRING "Path to ZLIB libraries")
-    if(NOT EXISTS "${ZLIB_INCLUDE_DIRS}/zlib.h")
-        message("Please specify a valid zlib include dir")
-    endif()
-endif()
+find_package(ZLIB REQUIRED)
 
 # All build libraries are moved to this directory
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
@@ -60,5 +52,11 @@ set(QUAZIP_LIB_TARGET_NAME quazip${QUAZIP_LIB_VERSION_SUFFIX} CACHE
     INTERNAL "Target name of libquazip" FORCE)
 
 add_subdirectory(quazip)
+
+if(UNIX AND NOT APPLE)
+	configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/quazip.pc.cmakein
+			${CMAKE_CURRENT_BINARY_DIR}/quazip.pc @ONLY)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/quazip.pc DESTINATION "${INSTALL_PKGCONFIG_DIR}")
+endif()
 
 install(FILES QuaZipConfig.cmake DESTINATION ${LIB_DESTINATION}/cmake/QuaZip${QUAZIP_LIB_VERSION_SUFFIX} RENAME QuaZip${QUAZIP_LIB_VERSION_SUFFIX}Config.cmake)
