@@ -32,6 +32,9 @@ QMAKE_PKGCONFIG_REQUIRES = Qt5Core
 greaterThan(QT_MAJOR_VERSION, 4) {
     # disable all the Qt APIs deprecated before Qt 6.0.0
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    TARGET = Qt5Quazip
+} else {
+    TARGET = QtQuazip
 }
 
 # This one handles dllimport/dllexport directives.
