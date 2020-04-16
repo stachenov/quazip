@@ -14,6 +14,11 @@
 #include "quazip/quazipfileinfo.h"
 #include "quazip/quazipnewinfo.h"
 
+#if QT_VERSION < 0x050000
+Q_DECLARE_METATYPE(QList<qint32>);
+Q_DECLARE_METATYPE(QuaExtraFieldHash);
+#endif
+
 TestQuaZipFileInfo::TestQuaZipFileInfo(QObject *parent) :
     QObject(parent)
 {
