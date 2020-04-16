@@ -111,10 +111,14 @@ void TestQuaZipFileInfo::getNTFSTime()
         zip.close();
         QCOMPARE(zipFileInfo.getNTFSmTime(), fileInfo.lastModified());
         QCOMPARE(zipFileInfo.getNTFSaTime(), fileInfo.lastRead());
+#ifndef Q_OS_LINUX
+// There is some controversy about birthtime on various Linux version, and this test likely to fail.
+// Disabling for now
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
         QCOMPARE(zipFileInfo.getNTFScTime(), fileInfo.birthTime());
 #else
         QCOMPARE(zipFileInfo.getNTFScTime(), fileInfo.created());
+#endif
 #endif
     }
     removeTestFiles(testFiles);
