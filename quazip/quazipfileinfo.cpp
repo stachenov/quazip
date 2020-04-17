@@ -115,6 +115,8 @@ static QDateTime getNTFSTime(const QByteArray &extra, int position,
     timeReader.device()->seek(position);
     quint64 time;
     timeReader >> time;
+    if (time == 0)
+        return dateTime;
     QDateTime base(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
     dateTime = base.addMSecs(time / 10000);
     if (fineTicks != NULL) {
