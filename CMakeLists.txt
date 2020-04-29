@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.5)
 project(QuaZip)
 
 # CMP0042: Explicitly acknowledge MACOSX_RPATH
@@ -10,6 +10,8 @@ set(QUAZIP_LIB_VERSION 1.0.0)
 set(QUAZIP_LIB_SOVERSION 1)
 
 option(BUILD_WITH_QT4 "Build QuaZip with Qt4 no matter if Qt5 was found" OFF)
+
+include(GNUInstallDirs)
 
 if(NOT BUILD_WITH_QT4)
     # try Qt5 first, and prefer that if found
@@ -43,24 +45,18 @@ else()
     endmacro()
 endif()
 
-# Use system zlib on unix and Qt ZLIB on Windows
 find_package(ZLIB REQUIRED)
 
-# All build libraries are moved to this directory
-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-
-set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
-set(LIB_DESTINATION "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}" CACHE STRING "Library directory name" FORCE)
-set(INSTALL_PKGCONFIG_DIR "${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/pkgconfig" CACHE STRING "Installation directory for pkgconfig (.pc) files" FORCE)
-set(QUAZIP_LIB_TARGET_NAME ${QUAZIP_LIB_VERSION_PREFIX}Quazip CACHE
+set(QUAZIP_LIB_TARGET_NAME quazip${QUAZIP_LIB_VERSION_SUFFIX} CACHE
     INTERNAL "Target name of libquazip" FORCE)
 
 add_subdirectory(quazip)
 
 if(UNIX AND NOT APPLE)
-	configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/quazip.pc.cmakein
-        ${CMAKE_CURRENT_BINARY_DIR}/${QUAZIP_LIB_VERSION_PREFIX}Quazip.pc @ONLY)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${QUAZIP_LIB_VERSION_PREFIX}Quazip.pc DESTINATION "${INSTALL_PKGCONFIG_DIR}")
+    configure_file(quazip.pc.cmakein quazip.pc @ONLY)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/quazip.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
-install(FILES QuaZipConfig.cmake DESTINATION ${LIB_DESTINATION}/cmake/${QUAZIP_LIB_VERSION_PREFIX}QuaZip RENAME ${QUAZIP_LIB_VERSION_PREFIX}QuaZipConfig.cmake)
+install(FILES QuaZipConfig.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/QuaZip${QUAZIP_LIB_VERSION_SUFFIX}
+        RENAME QuaZip${QUAZIP_LIB_VERSION_SUFFIX}Config.cmake)
