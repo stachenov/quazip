@@ -47,7 +47,7 @@ endif()
 
 find_package(ZLIB REQUIRED)
 
-set(QUAZIP_LIB_TARGET_NAME quazip${QUAZIP_LIB_VERSION_SUFFIX} CACHE
+set(QUAZIP_LIB_TARGET_NAME ${QUAZIP_LIB_VERSION_PREFIX}Quazip CACHE
     INTERNAL "Target name of libquazip" FORCE)
 
 add_subdirectory(quazip)
