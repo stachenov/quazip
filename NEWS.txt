@@ -1,6 +1,6 @@
 QuaZIP changes
 
-Current
+* 2020-04-29 0.9
         * Support for extended timestamps
         * Various contributed CMake fixes
 
