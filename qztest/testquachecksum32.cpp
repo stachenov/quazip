@@ -24,10 +24,10 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include "testquachecksum32.h"
 
-#include <quazip/quaadler32.h>
-#include <quazip/quacrc32.h>
+#include <quaadler32.h>
+#include <quacrc32.h>
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 void TestQuaChecksum32::calculate()
 {

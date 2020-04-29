@@ -33,15 +33,15 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "testquazipnewinfo.h"
 #include "testquazipfileinfo.h"
 
-#include <quazip/quazip.h>
-#include <quazip/quazipfile.h>
+#include <quazip.h>
+#include <quazipfile.h>
 
 #include <QCoreApplication>
 #include <QDir>
 #include <QFileInfo>
 #include <QTextStream>
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
 {

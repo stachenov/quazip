@@ -26,15 +26,15 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include "qztest.h"
 
-#include <quazip/JlCompress.h>
-#include <quazip/quazipfile.h>
-#include <quazip/quazip.h>
+#include <JlCompress.h>
+#include <quazipfile.h>
+#include <quazip.h>
 
 #include <QFile>
 #include <QString>
 #include <QStringList>
 
-#include <QtTest/QtTest>
+#include <QtTest>
 
 void TestQuaZipFile::zipUnzip_data()
 {
