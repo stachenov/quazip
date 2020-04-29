@@ -15,6 +15,9 @@ win32 {
 greaterThan(QT_MAJOR_VERSION, 4) {
     # disable all the Qt APIs deprecated before Qt 6.0.0
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    LIBQUAZIP_VERSION_PREFIX = Qt5
+} else {
+    LIBQUAZIP_VERSION_PREFIX = Qt
 }
 
 CONFIG(staticlib): DEFINES += QUAZIP_STATIC
@@ -45,10 +48,10 @@ testquazipfile.cpp \
 OBJECTS_DIR = .obj
 MOC_DIR = .moc
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../quazip/release/ -lquazip
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/debug/ -lquazipd
-else:mac:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/ -lquazip_debug
-else:unix: LIBS += -L$$OUT_PWD/../quazip/ -lquazip
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../quazip/release/ -l$${LIBQUAZIP_VERSION_PREFIX}Quazip1
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/debug/ -l$${LIBQUAZIP_VERSION_PREFIX}Quazipd1
+else:mac:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../quazip/ -l$${LIBQUAZIP_VERSION_PREFIX}Quazip_debug
+else:unix: LIBS += -L$$OUT_PWD/../quazip/ -l$${LIBQUAZIP_VERSION_PREFIX}Quazip
 
 INCLUDEPATH += $$PWD/..
 DEPENDPATH += $$PWD/../quazip

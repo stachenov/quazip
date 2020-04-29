@@ -21,6 +21,7 @@ HEADERS += \
 SOURCES += $$PWD/qioapi.cpp \
            $$PWD/JlCompress.cpp \
            $$PWD/quaadler32.cpp \
+           $$PWD/quachecksum32.cpp \
            $$PWD/quacrc32.cpp \
            $$PWD/quagzipfile.cpp \
            $$PWD/quaziodevice.cpp \

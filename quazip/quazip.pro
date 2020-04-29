@@ -11,7 +11,7 @@ QMAKE_PKGCONFIG_REQUIRES = Qt5Core
 
 # The ABI version.
 
-!win32:VERSION = 1.0.0
+VERSION = 1.0.0
 
 # 1.0.0 is the first stable ABI.
 # The next binary incompatible change will be 2.0.0 and so on.
@@ -32,6 +32,9 @@ QMAKE_PKGCONFIG_REQUIRES = Qt5Core
 greaterThan(QT_MAJOR_VERSION, 4) {
     # disable all the Qt APIs deprecated before Qt 6.0.0
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
+    TARGET = Qt5Quazip
+} else {
+    TARGET = QtQuazip
 }
 
 # This one handles dllimport/dllexport directives.
