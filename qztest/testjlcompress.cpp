@@ -335,7 +335,7 @@ void TestJlCompress::extractDir()
     QFETCH(QStringList, fileNames);
     QFETCH(QStringList, expectedExtracted);
     QFETCH(QByteArray, fileNameCodecName);
-    QTextCodec *fileNameCodec = nullptr;
+    QTextCodec *fileNameCodec = NULL;
     if (!fileNameCodecName.isEmpty())
         fileNameCodec = QTextCodec::codecForName(fileNameCodecName);
     QDir curDir;
@@ -349,7 +349,7 @@ void TestJlCompress::extractDir()
         QFAIL("Couldn't create test archive");
     }
     QStringList extracted;
-    if (fileNameCodec == nullptr)
+    if (fileNameCodec == NULL)
         extracted = JlCompress::extractDir(zipName, "jlext/jldir");
     else // test both overloads here
         extracted = JlCompress::extractDir(zipName, fileNameCodec, "jlext/jldir");
@@ -372,7 +372,7 @@ void TestJlCompress::extractDir()
     // now test the QIODevice* overload
     QFile zipFile(zipName);
     QVERIFY(zipFile.open(QIODevice::ReadOnly));
-    if (fileNameCodec == nullptr)
+    if (fileNameCodec == NULL)
         extracted = JlCompress::extractDir(&zipFile, "jlext/jldir");
     else // test both overloads here
         extracted = JlCompress::extractDir(&zipFile, fileNameCodec, "jlext/jldir");
