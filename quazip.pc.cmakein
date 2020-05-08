@@ -9,4 +9,4 @@ Description: Quazip Library
 Version: @QUAZIP_LIB_VERSION@
 Libs: -l@QUAZIP_LIB_VERSION_PREFIX@Quazip
 Cflags: -I${includedir}/@QUAZIP_LIB_VERSION_PREFIX@Quazip
-Requires: Qt5Core
+Requires: Qt5Core zlib
