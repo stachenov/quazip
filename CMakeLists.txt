@@ -6,6 +6,9 @@ project(QuaZip)
 # and producing a warning when unset since 3.7.1)
 cmake_policy(SET CMP0042 NEW)
 
+set(QUAZIP_LIB_VERSION 0.9.1)
+set(QUAZIP_LIB_SOVERSION 1)
+
 option(BUILD_WITH_QT4 "Build QuaZip with Qt4 no matter if Qt5 was found" OFF)
 
 if(NOT BUILD_WITH_QT4)
