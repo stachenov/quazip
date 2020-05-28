@@ -103,7 +103,12 @@ bool QuaZipDir::cd(const QString &directoryName)
             if (!dir.cd(QLatin1String("/")))
                 return false;
         }
-        QStringList path = dirName.split(QLatin1String("/"), QString::SkipEmptyParts);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+        using Qt::SkipEmptyParts;
+#else
+        const auto SkipEmptyParts = QString::SplitBehavior::SkipEmptyParts;
+#endif
+        QStringList path = dirName.split(QLatin1String("/"), SkipEmptyParts);
         for (QStringList::const_iterator i = path.constBegin();
                 i != path.constEnd();
                 ++i) {
