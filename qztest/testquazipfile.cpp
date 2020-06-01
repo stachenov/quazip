@@ -307,11 +307,11 @@ void TestQuaZipFile::posWrite()
         QCOMPARE(zipFile.pos(), (qint64) 1);
         QByteArray buffer(size / 2 - 1, '\0');
         for (int i = 0; i < buffer.size(); ++i)
-            buffer[i] = static_cast<char>(qrand());
+            buffer[i] = static_cast<char>(QRandomGenerator::global()->generate());
         zipFile.write(buffer);
         QCOMPARE(zipFile.pos(), qint64(size / 2));
         for (int i = 0; i < size - size / 2; ++i) {
-            zipFile.putChar(static_cast<char>(qrand()));
+            zipFile.putChar(static_cast<char>(QRandomGenerator::global()->generate()));
         }
         QCOMPARE(zipFile.pos(), qint64(size));
     }

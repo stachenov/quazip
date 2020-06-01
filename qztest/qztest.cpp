@@ -71,7 +71,7 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
             }
             if (size == -1) {
                 QTextStream testStream(&testFile);
-                testStream << "This is a test file named " << fileName << endl;
+                testStream << "This is a test file named " << fileName << Qt::endl;
             } else {
                 for (int i = 0; i < size; ++i) {
                     testFile.putChar(static_cast<char>('0' + i % 10));
