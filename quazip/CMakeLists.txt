@@ -4,7 +4,7 @@ include(GNUInstallDirs) # configurable CMAKE_INSTALL_*DIR
 
 aux_source_directory(. SRCS)
 file(GLOB PUBLIC_HEADERS "*.h")
-set(QUAZIP_INCLUDE_PATH quazip)
+set(QUAZIP_INCLUDE_PATH ${QUAZIP_LIB_FILE_NAME}/quazip)
 
 foreach(_lib ${_libs})
 	add_library(${_lib} ${SRCS})
@@ -15,6 +15,7 @@ foreach(_lib ${_libs})
 	target_include_directories(${_lib} PUBLIC 
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
 		$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_INCLUDE_PATH}>
+		$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_LIB_FILE_NAME}>
 	)
 	target_link_libraries(${_lib} ${QUAZIP_QTCORE_LIBRARIES} ZLIB::ZLIB)
 
