@@ -57,6 +57,7 @@ if(UNIX AND NOT APPLE)
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/quazip.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
-install(FILES QuaZipConfig.cmake
+configure_file(QuaZipConfig.cmake.in QuaZipConfig.cmake @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/QuaZipConfig.cmake
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/QuaZip${QUAZIP_LIB_VERSION_SUFFIX}
         RENAME QuaZip${QUAZIP_LIB_VERSION_SUFFIX}Config.cmake)
