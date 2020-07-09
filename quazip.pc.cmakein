@@ -1,12 +1,12 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
-libdir=${prefix}/lib@LIB_SUFFIX@
-includedir=${prefix}/include
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@/@QUAZIP_LIB_VERSION_PREFIX@Quazip
 
 
 Name: Quazip
 Description: Quazip Library
 Version: @QUAZIP_LIB_VERSION@
 Libs: -l@QUAZIP_LIB_VERSION_PREFIX@Quazip
-Cflags:
+Cflags: -I${includedir}
 Requires: Qt5Core
