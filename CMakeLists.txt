@@ -22,10 +22,6 @@ if(Qt5Core_FOUND)
     set(CMAKE_CXX_STANDARD 11)
     set(QTCORE_LIBRARIES Qt5::Core)
     set(QUAZIP_LIB_VERSION_PREFIX Qt5)
-    # if there is no QT_ROOT, try to deduce it from Qt QtCore include
-    if("${QT_ROOT}" STREQUAL "")
-        set(QT_ROOT ${QT_QTCORE_INCLUDE_DIR}/../..)
-    endif()
     include_directories(${Qt5Core_INCLUDE_DIRS})
 
     macro(qt_wrap_cpp)
