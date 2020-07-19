@@ -48,10 +48,10 @@ set(QUAZIP_LIB_TARGET_NAME ${QUAZIP_LIB_VERSION_PREFIX}Quazip CACHE
 add_subdirectory(quazip)
 
 if(UNIX AND NOT APPLE)
-    configure_file(quazip.pc.cmakein quazip.pc @ONLY)
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/quazip.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+    configure_file(quazip.pc.cmakein ${CMAKE_CURRENT_BINARY_DIR}/${QUAZIP_LIB_VERSION_PREFIX}Quazip.pc @ONLY)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${QUAZIP_LIB_VERSION_PREFIX}Quazip.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 endif()
 
 install(FILES QuaZipConfig.cmake
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/QuaZip${QUAZIP_LIB_VERSION_SUFFIX}
-        RENAME QuaZip${QUAZIP_LIB_VERSION_SUFFIX}Config.cmake)
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${QUAZIP_LIB_VERSION_PREFIX}QuaZip
+        RENAME ${QUAZIP_LIB_VERSION_PREFIX}QuaZipConfig.cmake)
