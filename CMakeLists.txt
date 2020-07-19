@@ -22,7 +22,6 @@ if(Qt5Core_FOUND)
     set(CMAKE_CXX_STANDARD 11)
     set(QTCORE_LIBRARIES Qt5::Core)
     set(QUAZIP_LIB_VERSION_PREFIX Qt5)
-    include_directories(${Qt5Core_INCLUDE_DIRS})
 
     macro(qt_wrap_cpp)
         qt5_wrap_cpp(${ARGN})
