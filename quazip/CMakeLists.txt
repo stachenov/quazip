@@ -32,7 +32,7 @@ set_target_properties(${QUAZIP_LIB_TARGET_NAME} PROPERTIES
 function(create_cmake_config _prefix _target _name _config_in)
 	include(CMakePackageConfigHelpers)
 	write_basic_package_version_file(${PROJECT_BINARY_DIR}/${_name}ConfigVersion.cmake
-		COMPATIBILITY AnyNewerVersion
+		COMPATIBILITY SameMajorVersion
 	)
 	configure_package_config_file(${_config_in} ${_name}Config.cmake
 		INSTALL_DESTINATION lib/cmake/${_name}
