@@ -6,25 +6,23 @@ aux_source_directory(. SRCS)
 file(GLOB PUBLIC_HEADERS "*.h")
 set(QUAZIP_INCLUDE_PATH ${QUAZIP_LIB_FILE_NAME}/quazip)
 
-foreach(_lib ${_libs})
-	add_library(${_lib} ${SRCS})
-	set_target_properties(${_lib} PROPERTIES
-		VERSION ${QUAZIP_LIB_VERSION}
-		SOVERSION ${QUAZIP_LIB_SOVERSION}
-	)
-	target_include_directories(${_lib} PUBLIC 
-		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-		$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_INCLUDE_PATH}>
-		$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_LIB_FILE_NAME}>
-	)
-	target_link_libraries(${_lib} ${QUAZIP_QTCORE_LIBRARIES} ZLIB::ZLIB)
+add_library(${QUAZIP_LIB_TARGET_NAME} ${SRCS})
+set_target_properties(${QUAZIP_LIB_TARGET_NAME} PROPERTIES
+	VERSION ${QUAZIP_LIB_VERSION}
+	SOVERSION ${QUAZIP_LIB_SOVERSION}
+)
+target_include_directories(${QUAZIP_LIB_TARGET_NAME} PUBLIC 
+	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_INCLUDE_PATH}>
+	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_LIB_FILE_NAME}>
+)
+target_link_libraries(${QUAZIP_LIB_TARGET_NAME} ${QUAZIP_QTCORE_LIBRARIES} ZLIB::ZLIB)
 
-	if(BUILD_SHARED_LIBS)
-		target_compile_definitions(${_lib} PRIVATE QUAZIP_BUILD) # dllexport
-	else()
-		target_compile_definitions(${_lib} PUBLIC QUAZIP_STATIC) # suppress dllimport
-	endif()
-endforeach()
+if(BUILD_SHARED_LIBS)
+	target_compile_definitions(${QUAZIP_LIB_TARGET_NAME} PRIVATE QUAZIP_BUILD) # dllexport
+else()
+	target_compile_definitions(${QUAZIP_LIB_TARGET_NAME} PUBLIC QUAZIP_STATIC) # suppress dllimport
+endif()
 
 set_target_properties(${QUAZIP_LIB_TARGET_NAME} PROPERTIES
 	OUTPUT_NAME ${QUAZIP_LIB_FILE_NAME}
@@ -61,5 +59,3 @@ function(create_cmake_config _prefix _target _name _config_in)
 endfunction()
 
 create_cmake_config(QuaZip ${QUAZIP_LIB_TARGET_NAME} QuaZip QuaZipConfig.cmake.in)
-
-install(TARGETS quazip)
