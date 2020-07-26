@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15) # default install paths
-project(QuaZip)
+project(QuaZip VERSION 1.0)
 
 # CMP0042: Explicitly acknowledge MACOSX_RPATH
 # (introduced in CMake 2.8.12, enabled by default in CMake 3.0,
@@ -8,8 +8,8 @@ cmake_policy(SET CMP0042 NEW)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(QUAZIP_LIB_VERSION 1.0.0)
-set(QUAZIP_LIB_SOVERSION 1)
+set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
+set(QUAZIP_LIB_SOVERSION 1.0.0)
 
 option(BUILD_SHARED_LIBS "" ON)
 set(QUAZIP_QT_MAJOR_VERSION 5 CACHE STRING "Qt version to use (4 or 5), defaults to 5")
@@ -23,29 +23,26 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_DEBUG_POSTFIX d)
 
-set(QUAZIP_LIB_FILE_NAME quazip)
-if(WIN32)
-	set(QUAZIP_LIB_FILE_NAME ${QUAZIP_LIB_FILE_NAME}${QUAZIP_LIB_SOVERSION})
-endif()
+set(QUAZIP_LIB_FILE_NAME quazip${QuaZip_VERSION_MAJOR}-qt${QUAZIP_QT_MAJOR_VERSION})
+set(QUAZIP_LIB_TARGET_NAME QuaZip)
+set(QUAZIP_DIR_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION}-${QUAZIP_LIB_VERSION})
+set(QUAZIP_PACKAGE_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION})
+set(QUAZIP_PKGCONFIG_NAME quazip${QuaZip_VERSION_MAJOR}-qt${QUAZIP_QT_MAJOR_VERSION})
 if(QUAZIP_QT_MAJOR_VERSION EQUAL 5)
 	find_package(Qt5 REQUIRED COMPONENTS Core)
 	set(QUAZIP_LIB_QT_LIBRARIES Qt5::Core)
 	set(QUAZIP_TEST_QT_LIBRARIES Qt5::Core Qt5::Network Qt5::Test)
-	set(QUAZIP_LIB_FILE_NAME ${QUAZIP_LIB_FILE_NAME}-qt5)
-	set(QUAZIP_LIB_TARGET_NAME Qt5)
+	set(QUAZIP_PKGCONFIG_REQUIRES Qt5Core)
 elseif(QUAZIP_QT_MAJOR_VERSION EQUAL 4)
 	find_package(Qt4 4.5.0 REQUIRED COMPONENTS QtCore)
 	set(QUAZIP_LIB_QT_LIBRARIES Qt4::QtCore)
 	set(QUAZIP_TEST_QT_LIBRARIES Qt4::QtCore Qt4::QtNetwork Qt4::QtTest)
-	set(QUAZIP_LIB_FILE_NAME ${QUAZIP_LIB_FILE_NAME}-qt4)
-	set(QUAZIP_LIB_TARGET_NAME Qt4)
+	set(QUAZIP_PKGCONFIG_REQUIRES QtCore)
 else()
-        message(FATAL_ERROR "Qt version ${QUAZIP_QT_MAJOR_VERSION} is not supported")
+	message(FATAL_ERROR "Qt version ${QUAZIP_QT_MAJOR_VERSION} is not supported")
 endif()
 
 find_package(ZLIB REQUIRED)
-
-set(QUAZIP_LIB_NAME ${QUAZIP_LIB_FILE_NAME} CACHE INTERNAL "Target name of libquazip" FORCE)
 
 add_subdirectory(quazip)
 
@@ -57,6 +54,6 @@ add_test(NAME qztest_test
 )
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose DEPENDS qztest)
 
-configure_file(quazip.pc.cmakein quazip.pc @ONLY)
+configure_file(quazip.pc.cmakein ${QUAZIP_PKGCONFIG_NAME}.pc @ONLY)
 include(GNUInstallDirs) # configurable CMAKE_INSTALL_*DIR
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/quazip.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${QUAZIP_PKGCONFIG_NAME}.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)

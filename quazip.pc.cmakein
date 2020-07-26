@@ -3,10 +3,9 @@ exec_prefix=${prefix}
 libdir=${prefix}/lib@LIB_SUFFIX@
 includedir=${prefix}/include
 
-
-Name: Quazip
-Description: Quazip Library
+Name: QuaZip-Qt@QUAZIP_QT_MAJOR_VERSION@
+Description: Minizip wrapper library for Qt @QUAZIP_QT_MAJOR_VERSION@.x
 Version: @QUAZIP_LIB_VERSION@
 Libs: -l@QUAZIP_LIB_FILE_NAME@
 Cflags:
-Requires: Qt5Core
+Requires: @QUAZIP_PKGCONFIG_REQUIRES@
