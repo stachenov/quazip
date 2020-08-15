@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.15...3.18)
 
 project(QuaZip VERSION 1.0)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
 set(QUAZIP_LIB_SOVERSION 1.0.0)
