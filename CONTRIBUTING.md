@@ -1,4 +1,4 @@
-Fixed a bug? Implemented a new feature? Want to have it included in QuaZIP?
+Fixed a bug? Implemented a new feature? Want to have it included in QuaZip?
 Here's what you need to do.
 
 0. If you don't have a GitHub account, create one. It's ridiculously easy.
@@ -32,10 +32,10 @@ bug stays fixed and the feature keeps working.
 4. It would be nice if you also update NEWS.txt with whatever changes
 you propose. Just add another line on top.
 
-5. QuaZIP policies on PR commits are these. Don't squash your commits until
+5. QuaZip policies on PR commits are these. Don't squash your commits until
 the discussion on the PR is over and it's approved. *Do* squash them,
 however, once it's approved, unless asked otherwise. And finally: rebase,
-don't merge. QuaZIP keeps mostly linear history. If you have no idea what
+don't merge. QuaZip keeps mostly linear history. If you have no idea what
 it's all about, read on.
 
 **How to submit a pull request**
@@ -63,23 +63,23 @@ with all your changes combined.
 
 **Setting up for a PR submission**
 
-Here are the steps you need to follow if you're sending your *first* PR to QuaZIP.
+Here are the steps you need to follow if you're sending your *first* PR to QuaZip.
 You don't need to repeat these each time.
 
 0. If you haven't installed Git yet, do so. In Windows, choose the recommended
 setting for line endings.
 1. Go to https://github.com/stachenov/quazip.
 2. Click “Fork” in the top-right corner and wait until forking is complete.
-3. You should now have a full copy of QuaZIP in your own GitHub account.
+3. You should now have a full copy of QuaZip in your own GitHub account.
 This may sound like a huge overkill to just send a small patch, but it's
 actually very convenient once you get used to it.
-4. Clone QuaZIP to your computer. Use your own account's repo URL as a source,
+4. Clone QuaZip to your computer. Use your own account's repo URL as a source,
 NOT https://github.com/stachenov/quazip! To do it, run
 ```
 git clone https://github.com/your-user-name-goes-here/quazip
 ```
 This command will create a new `quazip` directory and clone into it.
-Now you have two QuaZIP repos. One in your GitHub account, accessible to
+Now you have two QuaZip repos. One in your GitHub account, accessible to
 you only via GitHub itself, and another one in the directory that has
 just been created. Let's call the repo on your PC the local repo.
 It is rooted at the directory that was created by Git when you
@@ -113,7 +113,7 @@ you have no write permissions for it, but Git doesn't know about it, so
 it added both lines for the upstream. Just ignore the push one.
 
 Now your local repo knows how to exchange commits with your GitHub
-account and with the main QuaZIP repo.
+account and with the main QuaZip repo.
 You're all set for submitting your first PR.
 
 If you ever wish to submit another PR, no need to do all this again.
@@ -128,7 +128,7 @@ Submitting a PR is easy, but can be confusing first time if you're
 not familiar with Git.
 
 1. Create a new branch in your local repo. This is very important!
-Most Git repos, including QuaZIP, have the main branch called “master”.
+Most Git repos, including QuaZip, have the main branch called “master”.
 By creating a new branch you tell Git where your changes begin and end.
 This way GitHub can automatically create a patch containing only your
 changes. To create a branch, run from your local repo:
@@ -243,7 +243,7 @@ the latest commit on your feature branch.
 A PR is sort of a patch attached to a specialized forum topic.
 It can be discussed, various pieces of code can be reviewed,
 and it ends either by merging the PR, including your changes
-in the QuaZIP repo, or closing it without merging if your
+in the QuaZip repo, or closing it without merging if your
 changes are rejected for whatever reason.
 
 If the PR is successfully merged, you can safely delete your
@@ -321,7 +321,7 @@ from rather than remembering which one of the remotes it's associated with.
 However, if you were already working on a branch that split off from
 the master before this update, now you need to somehow merge your changes
 into the new upstream version. There are two ways to do it: merge and rebase.
-The QuaZIP way is rebase, so rebase you should do. But first, switch to your branch:
+The QuaZip way is rebase, so rebase you should do. But first, switch to your branch:
 ```
 git checkout your-feature-branch
 ```

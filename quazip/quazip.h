@@ -4,20 +4,20 @@
 /*
 Copyright (C) 2005-2014 Sergey A. Tachenov
 
-This file is part of QuaZIP.
+This file is part of QuaZip.
 
-QuaZIP is free software: you can redistribute it and/or modify
+QuaZip is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 2.1 of the License, or
 (at your option) any later version.
 
-QuaZIP is distributed in the hope that it will be useful,
+QuaZip is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with QuaZIP.  If not, see <http://www.gnu.org/licenses/>.
+along with QuaZip.  If not, see <http://www.gnu.org/licenses/>.
 
 See COPYING file for the full LGPL text.
 
@@ -120,7 +120,7 @@ class QUAZIP_EXPORT QuaZip {
       csSensitive=1, ///< Case sensitive.
       csInsensitive=2 ///< Case insensitive.
     };
-    /// Returns the actual case sensitivity for the specified QuaZIP one.
+    /// Returns the actual case sensitivity for the specified QuaZip one.
     /**
       \param cs The value to convert.
       \returns If CaseSensitivity::csDefault, then returns the default
@@ -157,7 +157,7 @@ class QUAZIP_EXPORT QuaZip {
      *
      * If the ZIP file is accessed via explicitly set QIODevice, then
      * this device is opened in the necessary mode. If the device was
-     * already opened by some other means, then QuaZIP checks if the
+     * already opened by some other means, then QuaZip checks if the
      * open mode is compatible to the mode needed for the requested operation.
      * If necessary, seeking is performed to position the device properly.
      *
@@ -210,7 +210,7 @@ class QUAZIP_EXPORT QuaZip {
      * by making close() private and crashing the application if it is called
      * from the base class where it is public. It is an excellent example
      * of poor design that illustrates why you should never ever break
-     * an is-a relationship between the base class and a subclass. QuaZIP
+     * an is-a relationship between the base class and a subclass. QuaZip
      * works around this bug by checking if the QIODevice is an instance
      * of QSaveFile, using qobject_cast<>, and if it is, calls
      * QSaveFile::commit() instead of close(). It is a really ugly hack,
@@ -431,7 +431,7 @@ class QUAZIP_EXPORT QuaZip {
       According to the ZIP format specification, a file inside archive
       may have a data descriptor immediately following the file
       data. This is reflected by a special flag in the local file header
-      and in the central directory. By default, QuaZIP sets this flag
+      and in the central directory. By default, QuaZip sets this flag
       and writes the data descriptor unless both method and level were
       set to 0, in which case it operates in 1.0-compatible mode and
       never writes data descriptors.
@@ -543,14 +543,14 @@ class QUAZIP_EXPORT QuaZip {
     bool isAutoClose() const;
     /// Sets or unsets the auto-close flag.
     /**
-      By default, QuaZIP opens the underlying QIODevice when open() is called,
+      By default, QuaZip opens the underlying QIODevice when open() is called,
       and closes it when close() is called. In some cases, when the device
       is set explicitly using setIoDevice(), it may be desirable to
       leave the device open. If the auto-close flag is unset using this method,
       then the device isn't closed automatically if it was set explicitly.
 
       If it is needed to clear this flag, it is recommended to do so before
-      opening the archive because otherwise QuaZIP may close the device
+      opening the archive because otherwise QuaZip may close the device
       during the open() call if an error is encountered after the device
       is opened.
 
@@ -571,7 +571,7 @@ class QUAZIP_EXPORT QuaZip {
      * The codec specified here can be overriden by calling setFileNameCodec().
      * If neither function is called, QTextCodec::codecForLocale() will be used
      * to decode or encode file names. Use this function with caution if
-     * the application uses other libraries that depend on QuaZIP. Those
+     * the application uses other libraries that depend on QuaZip. Those
      * libraries can either call this function by themselves, thus overriding
      * your setting or can rely on the default encoding, thus failing
      * mysteriously if you change it. For these reasons, it isn't recommended
@@ -580,7 +580,7 @@ class QUAZIP_EXPORT QuaZip {
      * encoding.
      *
      * In most cases, using setFileNameCodec() instead is the right choice.
-     * However, if you depend on third-party code that uses QuaZIP, then the
+     * However, if you depend on third-party code that uses QuaZip, then the
      * reasons stated above can actually become a reason to use this function
      * in case the third-party code in question fails because it doesn't
      * understand the encoding you need and doesn't provide a way to specify it.

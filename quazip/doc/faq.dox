@@ -1,15 +1,33 @@
 /**
-\page faq QuaZIP FAQ
+\page faq %QuaZip FAQ
 
 <!--
 
+\ref faq-QuaZip-name "Q. QuaZIP, %QuaZip, Quazip, quazip... what's with these names?"
+
 \ref faq-non-QIODevice "Q. Is there any way to use QuaZipFile in Qt where you are supposed to use normal (non-zipped) file, but not through QIODevice API?"
 
-\ref faq-zip64 "Q. Can QuaZIP handle files larger than 4GB? What about zip64 standard?"
+\ref faq-zip64 "Q. Can %QuaZip handle files larger than 4GB? What about zip64 standard?"
 
-\ref faq-seekable "Q. Can QuaZIP write archives to a sequential QIODevice like QTcpSocket?"
+\ref faq-seekable "Q. Can %QuaZip write archives to (or read from) a sequential QIODevice like QTcpSocket?"
 
 -->
+
+\anchor faq-QuaZip-name Q. QuaZIP, %QuaZip, Quazip, quazip... what's with these names?
+
+In QuaZIP 0.x, there was this rule that QuaZIP is the library name, while %QuaZip is
+a class in this library. Since %QuaZip 1.0, it's now obsolete, and both are %QuaZip
+now to avoid confusion. The lowercase version is used in places where lowercase
+is the convention, such as some file names. Quazip is not used anywhere except maybe
+by mistake.
+
+One reason using QuaZIP actually made some sense is that Doxygen (used to generate
+this documentation) is very insistent on linking every mention of a class name
+to its documentation, meaning every %QuaZip became QuaZip (linked to the QuaZip class docs).
+This can be avoided by proper escaping, but it's pretty annoying to do it every time.
+Too bad I realized it \em after I'd renamed QuaZIP to %QuaZip, so if you see
+too many links to the QuaZip class in places where they don't belong, well... you now
+know the reason.
 
 \anchor faq-non-QIODevice Q. Is there any way to use QuaZipFile in Qt
 where you are supposed to use normal (non-zipped) file, but not
@@ -26,25 +44,25 @@ pointer. Then you would be able to pass QuaZipFile as well as many
 other nice things such as QBuffer or QProcess. Of course, that's only
 possible if you have control over the sources of the particular class.
 
-\anchor faq-zip64 Q. Can QuaZIP handle files larger than 4GB? What
+\anchor faq-zip64 Q. Can %QuaZip handle files larger than 4GB? What
 about zip64 standard?
 
-A. Starting with version 0.6, QuaZIP uses Minizip 1.1 with zip64
+A. Starting with version 0.6, %QuaZip uses Minizip 1.1 with zip64
 support which should handle large files perfectly. The zip64 support
 in Minizip looks like it's not 100% conforming to the standard, but
 3rd party tools seem to have no problem with the resulting archives.
 
-\anchor faq-seekable Q. Can QuaZIP write archives to a sequential QIODevice like QTcpSocket?
+\anchor faq-seekable Q. Can %QuaZip write archives to a sequential QIODevice like QTcpSocket?
 
-A. Yes, it's possible since QuaZIP v0.7. It's only possible in
-mdCreate mode, no mdAppend support.
+A. Writing is possible since %QuaZip v0.7. It's only possible in
+mdCreate mode, no mdAppend support. Reading is not supported either.
 
-\anchor faq-Minizip-update Q. Can I use another version of Minizip in QuaZIP, not the bundled one?
+\anchor faq-Minizip-update Q. Can I use another version of Minizip in %QuaZip, not the bundled one?
 
 A. No, unfortunately not. To support reading/writing ZIP archives from/to QIODevice objects,
 some modifications were needed to Minizip. Now that there is a Minizip fork on GitHub, it is
 theoretically possible to backport these modifications into Minizip in a backward-compatible
-manner to ensure seamless integration with QuaZIP, but it hasn't been done yet, and there
+manner to ensure seamless integration with %QuaZip, but it hasn't been done yet, and there
 are no short-term plans, only a long-term goal.
 
 */

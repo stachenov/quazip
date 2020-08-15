@@ -1,8 +1,8 @@
-QuaZIP is the C++ wrapper for Gilles Vollant's ZIP/UNZIP package
+QuaZip is the C++ wrapper for Gilles Vollant's ZIP/UNZIP package
 (AKA Minizip) using Trolltech's Qt library.
 
 If you need to write files to a ZIP archive or read files from one
-using QIODevice API, QuaZIP is exactly the kind of tool you need.
+using QIODevice API, QuaZip is exactly the kind of tool you need.
 
 See [the documentation](https://stachenov.github.io/quazip/) for details.
 
