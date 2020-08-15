@@ -50,7 +50,6 @@ find_package(ZLIB REQUIRED)
 
 add_subdirectory(quazip)
 
-add_library(QuaZip::QuaZip ALIAS ${QUAZIP_LIB_TARGET_NAME})
 add_subdirectory(qztest EXCLUDE_FROM_ALL)
 
 configure_file(quazip.pc.cmakein ${QUAZIP_PKGCONFIG_NAME}.pc @ONLY)
