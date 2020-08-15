@@ -2,12 +2,47 @@ project(QuaZip_Library VERSION ${QUAZIP_LIB_VERSION})
 
 include(GNUInstallDirs) # configurable CMAKE_INSTALL_*DIR
 
-aux_source_directory(. SRCS)
-file(GLOB PUBLIC_HEADERS "*.h")
+set(QUAZIP_HEADERS
+        JlCompress.h
+        ioapi.h
+        minizip_crypt.h
+        quaadler32.h
+        quachecksum32.h
+        quacrc32.h
+        quagzipfile.h
+        quaziodevice.h
+        quazip.h
+        quazip_global.h
+        quazipdir.h
+        quazipfile.h
+        quazipfileinfo.h
+        quazipnewinfo.h
+        unzip.h
+        zip.h
+   )
+
+set(QUAZIP_SOURCES
+        ${QUAZIP_HEADERS}
+        unzip.c
+        zip.c
+        JlCompress.cpp
+        qioapi.cpp
+        quaadler32.cpp
+        quachecksum32.cpp
+        quacrc32.cpp
+        quagzipfile.cpp
+        quaziodevice.cpp
+        quazip.cpp
+        quazipdir.cpp
+        quazipfile.cpp
+        quazipfileinfo.cpp
+        quazipnewinfo.cpp
+   )
+
 set(QUAZIP_INCLUDE_PATH ${QUAZIP_DIR_NAME}/quazip)
 set(QUAZIP_INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake)
 
-add_library(${QUAZIP_LIB_TARGET_NAME} ${SRCS})
+add_library(${QUAZIP_LIB_TARGET_NAME} ${QUAZIP_SOURCES})
 set_target_properties(${QUAZIP_LIB_TARGET_NAME} PROPERTIES
 	VERSION ${QUAZIP_LIB_VERSION}
 	SOVERSION ${QUAZIP_LIB_SOVERSION}
@@ -27,7 +62,7 @@ endif()
 
 set_target_properties(${QUAZIP_LIB_TARGET_NAME} PROPERTIES
 	OUTPUT_NAME ${QUAZIP_LIB_FILE_NAME}
-	PUBLIC_HEADER "${PUBLIC_HEADERS}"
+	PUBLIC_HEADER "${QUAZIP_HEADERS}"
 )
 
 if(BUILD_SHARED_LIBS)
