@@ -34,3 +34,9 @@ target_link_libraries(${PROJECT_NAME}
     ${QUAZIP_TEST_QT_LIBRARIES}
     QuaZip::QuaZip
 )
+
+add_test(NAME qztest_test
+	COMMAND qztest
+	WORKING_DIRECTORY ${QUAZIP_BINARY_DIR}/quazip # preliminary hack to find the dll on windows
+)
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose DEPENDS qztest)

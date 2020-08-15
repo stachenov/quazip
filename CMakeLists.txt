@@ -21,6 +21,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_DEBUG_POSTFIX d)
 
 set(QUAZIP_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(QUAZIP_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(QUAZIP_LIB_FILE_NAME quazip${QuaZip_VERSION_MAJOR}-qt${QUAZIP_QT_MAJOR_VERSION})
 set(QUAZIP_LIB_TARGET_NAME QuaZip)
 set(QUAZIP_DIR_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION}-${QUAZIP_LIB_VERSION})
@@ -51,11 +52,6 @@ add_subdirectory(quazip)
 
 add_library(QuaZip::QuaZip ALIAS ${QUAZIP_LIB_TARGET_NAME})
 add_subdirectory(qztest EXCLUDE_FROM_ALL)
-add_test(NAME qztest_test
-	COMMAND qztest
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/quazip # preliminary hack to find the dll on windows
-)
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose DEPENDS qztest)
 
 configure_file(quazip.pc.cmakein ${QUAZIP_PKGCONFIG_NAME}.pc @ONLY)
 include(GNUInstallDirs) # configurable CMAKE_INSTALL_*DIR
