@@ -17,7 +17,4 @@ else()
 endif()
 set_target_properties(QuaZip::QuaZip PROPERTIES IMPORTED_GLOBAL TRUE)
 
-# legacy
-set(QUAZIP_LIBRARIES QuaZip::QuaZip @QUAZIP_QTCORE_LIBRARIES@ ZLIB::ZLIB)
-include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(@QUAZIP_PACKAGE_NAME@ DEFAULT_MSG QUAZIP_LIBRARIES)
+check_required_components(@QUAZIP_PACKAGE_NAME@)
