@@ -1,6 +1,5 @@
 project(qztest)
 
-find_package(Qt5 REQUIRED COMPONENTS Network Test)
 if(NOT TARGET QuaZip::QuaZip)
     find_package(QuaZip REQUIRED)
 endif()
