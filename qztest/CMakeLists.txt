@@ -1,9 +1,5 @@
 project(qztest)
 
-if(NOT TARGET QuaZip::QuaZip)
-    find_package(QuaZip REQUIRED)
-endif()
-
 set(QZTEST_SOURCES
         qztest.h
         testjlcompress.h
