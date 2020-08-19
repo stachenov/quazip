@@ -118,21 +118,20 @@ To install, run
 $ cmake --build wherever/you/want/your/build/to/be --target install -D CMAKE_INSTALL_PREFIX=/wherever/you/want/to/install
 \endverbatim
 
+%QuaZip installs as CMake package QuaZip-QtX, where X is the major
+version of %Qt. For example, QuaZip-Qt5. Different major versions of
+%QuaZip have different binary names (libquazip1-qt5, for example),
+which allows to install them in parallel.
+
 To reconfigure (for another %Qt version or release/debug, or anything else), just nuke the whole build directory
 and repeat everything.
 
-By default, %QuaZip compiles as a DLL/SO, but you have other
-options:
-- Just copy appropriate source files to your project and use them,
-but you need to define QUAZIP_STATIC before including any %QuaZip
-headers (best done as a compiler option). This will save you from
-possible side effects of importing/exporting %QuaZip symbols.
-- Compile it as a static library using CONFIG += staticlib qmake
-option. QUAZIP_STATIC is defined automatically by qmake in this case.
+By default, %QuaZip compiles as a DLL/SO, but respects the standard BUILD_SHARED_LIBS CMake option, adjusting
+its imports/exports accordingly.
 
 Binary compatibility is guaranteed between minor releases starting
-with version 0.5, thanks to the Pimpl idiom. That is, the next binary
-incompatible version will be 1.x in the worst case.
+with version 1.0, thanks to the Pimpl idiom. That is, the next binary
+incompatible version will be 2.x in the worst case.
 
 \section test Testing
 

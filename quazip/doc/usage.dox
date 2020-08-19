@@ -27,6 +27,16 @@ target_link_libraries(whatever-your-target-is QuaZip::QuaZip)
 In the latter case, you may want to set BUILD_SHARED_LIBS to NO
 to link statically.
 
+In all cases, if %QuaZip is linked statically, it automatically
+defines QUAZIP_STATIC whenever your link to it, which disables
+dllimports that would lead to confusing errors (at least on Windows)
+otherwise.
+
+If, for some weird reason, you decide to add %QuaZip sources to your
+project directly (skipping CMake), or link it statically and then
+link it to your project without CMake, you may need to define
+QUAZIP_STATIC manually to avoid problems with dllimports.
+
 %QuaZip uses SameMajorVersion compatibility mode, so you can have,
 say, %QuaZip 1.x and %QuaZip 2.x (in some future, when there is such a thing)
 installed in parallel, and then pass the required version to
