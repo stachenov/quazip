@@ -47,7 +47,7 @@ public:
     \param io The QIODevice to read/write.
     \param parent The parent object, as per QObject logic.
     */
-  QuaZIODevice(QIODevice *io, QObject *parent = NULL);
+  QuaZIODevice(QIODevice *io, QObject *parent = nullptr);
   /// Destructor.
   ~QuaZIODevice();
   /// Flushes data waiting to be written.

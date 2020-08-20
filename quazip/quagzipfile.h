@@ -55,7 +55,7 @@ public:
     \param fileName The name of the GZIP file.
     \param parent The parent object, as per QObject logic.
     */
-  QuaGzipFile(const QString &fileName, QObject *parent = NULL);
+  QuaGzipFile(const QString &fileName, QObject *parent = nullptr);
   /// Destructor.
   virtual ~QuaGzipFile();
   /// Sets the name of the GZIP file to be opened.

@@ -119,7 +119,7 @@ static QDateTime getNTFSTime(const QByteArray &extra, int position,
         return dateTime;
     QDateTime base(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
     dateTime = base.addMSecs(time / 10000);
-    if (fineTicks != NULL) {
+    if (fineTicks != nullptr) {
         *fineTicks = static_cast<int>(time % 10000);
     }
     return dateTime;

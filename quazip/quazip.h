@@ -164,10 +164,10 @@ class QUAZIP_EXPORT QuaZip {
      * \return \c true if successful, \c false otherwise.
      *
      * \note ZIP/UNZIP API open calls do not return error code - they
-     * just return \c NULL indicating an error. But to make things
+     * just return \c null indicating an error. But to make things
      * easier, quazip.h header defines additional error code \c
      * UNZ_ERROROPEN and getZipError() will return it if the open call
-     * of the ZIP/UNZIP API returns \c NULL.
+     * of the ZIP/UNZIP API returns \c null.
      *
      * Argument \a ioApi specifies IO function set for ZIP/UNZIP
      * package to use. See unzip.h, zip.h and ioapi.h for details. Note
@@ -181,12 +181,12 @@ class QUAZIP_EXPORT QuaZip {
      * QIODevice instead of file name, but also has a nice side effect
      * of raising the file size limit from 2G to 4G (in non-zip64 archives).
      *
-     * \note If the zip64 support is needed, the ioApi argument \em must be NULL
+     * \note If the zip64 support is needed, the ioApi argument \em must be null
      * because due to the backwards compatibility issues it can be used to
      * provide a 32-bit API only.
      *
      * \note If the \ref QuaZip::setAutoClose() "no-auto-close" feature is used,
-     * then the \a ioApi argument \em should be NULL because the old API
+     * then the \a ioApi argument \em should be null because the old API
      * doesn't support the 'fake close' operation, causing slight memory leaks
      * and other possible troubles (like closing the output device in case
      * when an error occurs during opening).
@@ -194,7 +194,7 @@ class QUAZIP_EXPORT QuaZip {
      * In short: just forget about the \a ioApi argument and you'll be
      * fine.
      **/
-    bool open(Mode mode, zlib_filefunc_def *ioApi =NULL);
+    bool open(Mode mode, zlib_filefunc_def *ioApi =nullptr);
     /// Closes ZIP file.
     /** Call getZipError() to determine if the close was successful.
      *
@@ -591,7 +591,7 @@ class QUAZIP_EXPORT QuaZip {
      * setDefaultFileNameCodec() when you don't have access to the QuaZip
      * instance.
      *
-     * @param codec The codec to use by default. If NULL, resets to default.
+     * @param codec The codec to use by default. If null, resets to default.
      */
     static void setDefaultFileNameCodec(QTextCodec *codec);
     /**
