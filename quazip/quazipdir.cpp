@@ -23,6 +23,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
 #include "quazipdir.h"
+#include "quazip_qt_compat.h"
 
 #include <QtCore/QSet>
 #include <QtCore/QSharedData>
@@ -103,11 +104,6 @@ bool QuaZipDir::cd(const QString &directoryName)
             if (!dir.cd(QLatin1String("/")))
                 return false;
         }
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-        using Qt::SkipEmptyParts;
-#else
-        const auto SkipEmptyParts = QString::SplitBehavior::SkipEmptyParts;
-#endif
         QStringList path = dirName.split(QLatin1String("/"), SkipEmptyParts);
         for (QStringList::const_iterator i = path.constBegin();
                 i != path.constEnd();
@@ -395,11 +391,7 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
                 == Qt::CaseInsensitive)
             srt |= QDir::IgnoreCase;
         QuaZipDirComparator lessThan(srt);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-        std::sort(list.begin(), list.end(), lessThan);
-#else
-        qSort(list.begin(), list.end(), lessThan);
-#endif
+        quazip_sort(list.begin(), list.end(), lessThan);
     }
     QuaZipDir_convertInfoList(list, result);
     return true;

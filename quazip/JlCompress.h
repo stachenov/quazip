@@ -29,15 +29,11 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "quazip.h"
 #include "quazipfile.h"
 #include "quazipfileinfo.h"
+#include "quazip_qt_compat.h"
 #include <QtCore/QString>
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#  include <QtCore5Compat/QTextCodec>
-#else
-#  include <QtCore/QTextCodec>
-#endif
 
 /// Utility class for typical operations.
 /**

@@ -13,6 +13,7 @@
 #include <quazipfile.h>
 #include <quazipfileinfo.h>
 #include <quazipnewinfo.h>
+#include <quazip_qt_compat.h>
 
 #if QT_VERSION < 0x050000
 Q_DECLARE_METATYPE(QList<qint32>);
@@ -50,11 +51,7 @@ void TestQuaZipFileInfo::getNTFSTime()
         QuaZipFile zipFile(&zip);
         QDateTime lm = fileInfo.lastModified().toUTC();
         QDateTime lr = fileInfo.lastRead().toUTC();
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
-        QDateTime cr = fileInfo.birthTime().toUTC();
-#else
-        QDateTime cr = fileInfo.created().toUTC();
-#endif
+        QDateTime cr = quazip_ctime(fileInfo).toUTC();
         mTicks = (static_cast<qint64>(base.date().daysTo(lm.date()))
                 * Q_UINT64_C(86400000)
                 + static_cast<qint64>(base.time().msecsTo(lm.time())))
@@ -114,11 +111,7 @@ void TestQuaZipFileInfo::getNTFSTime()
         zip.close();
         QCOMPARE(zipFileInfo.getNTFSmTime(), useMTime ? fileInfo.lastModified() : QDateTime());
         QCOMPARE(zipFileInfo.getNTFSaTime(), useATime ? fileInfo.lastRead() : QDateTime());
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
-        QCOMPARE(zipFileInfo.getNTFScTime(), useCTime ? fileInfo.birthTime() : QDateTime());
-#else
-        QCOMPARE(zipFileInfo.getNTFScTime(), useCTime ? fileInfo.created() : QDateTime());
-#endif
+        QCOMPARE(zipFileInfo.getNTFScTime(), useCTime ? quazip_ctime(fileInfo) : QDateTime());
     }
     removeTestFiles(testFiles);
     curDir.remove(zipName);

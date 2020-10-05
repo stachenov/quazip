@@ -13,6 +13,7 @@ set(QUAZIP_HEADERS
         quaziodevice.h
         quazip.h
         quazip_global.h
+        quazip_qt_compat.h
         quazipdir.h
         quazipfile.h
         quazipfileinfo.h

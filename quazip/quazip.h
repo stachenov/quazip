@@ -27,11 +27,7 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#  include <QtCore5Compat/QTextCodec>
-#else
-#  include <QtCore/QTextCodec>
-#endif
+#include "quazip_qt_compat.h"
 
 #include "zip.h"
 #include "unzip.h"

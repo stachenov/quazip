@@ -16,12 +16,7 @@
 #include "ioapi.h"
 #include "quazip_global.h"
 #include <QtCore/QIODevice>
-#if (QT_VERSION >= 0x050100)
-#define QUAZIP_QSAVEFILE_BUG_WORKAROUND
-#endif
-#ifdef QUAZIP_QSAVEFILE_BUG_WORKAROUND
-#include <QtCore/QSaveFile>
-#endif
+#include "quazip_qt_compat.h"
 
 /* I've found an old Unix (a SunOS 4.1.3_U1) without all SEEK_* defined.... */
 
@@ -287,17 +282,7 @@ int ZCALLBACK qiodevice_close_file_func (
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     delete d;
     QIODevice *device = reinterpret_cast<QIODevice*>(stream);
-#ifdef QUAZIP_QSAVEFILE_BUG_WORKAROUND
-    // QSaveFile terribly breaks the is-a idiom:
-    // it IS a QIODevice, but it is NOT compatible with it: close() is private
-    QSaveFile *file = qobject_cast<QSaveFile*>(device);
-    if (file != nullptr) {
-        // We have to call the ugly commit() instead:
-        return file->commit() ? 0 : -1;
-    }
-#endif
-    device->close();
-    return 0;
+    return quazip_close(device) ? 0 : -1;
 }
 
 int ZCALLBACK qiodevice_fakeclose_file_func (

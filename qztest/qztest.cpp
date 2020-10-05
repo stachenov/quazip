@@ -35,6 +35,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include <quazip.h>
 #include <quazipfile.h>
+#include <quazip_qt_compat.h>
 
 #include <QCoreApplication>
 #include <QDir>
@@ -71,7 +72,7 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
             }
             if (size == -1) {
                 QTextStream testStream(&testFile);
-                testStream << "This is a test file named " << fileName << endl;
+                testStream << "This is a test file named " << fileName << quazip_endl;
             } else {
                 for (int i = 0; i < size; ++i) {
                     testFile.putChar(static_cast<char>('0' + i % 10));

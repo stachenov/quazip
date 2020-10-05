@@ -29,6 +29,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <JlCompress.h>
 #include <quazipfile.h>
 #include <quazip.h>
+#include <quazip_qt_compat.h>
 
 #include <QFile>
 #include <QString>
@@ -466,13 +467,8 @@ void TestQuaZipFile::setFileAttrs()
                 QFile::WriteOther | QFile::ReadOther | QFile::ExeOther;
         QCOMPARE(info.getPermissions() & usedPermissions,
                  srcInfo.permissions() & usedPermissions);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0) // Yay! Finally a way to get time as qint64!
-        qint64 newTime = info.dateTime.toSecsSinceEpoch();
-        qint64 oldTime = srcInfo.lastModified().toSecsSinceEpoch();
-#else
-        quint64 newTime = info.dateTime.toTime_t();
-        quint64 oldTime = srcInfo.lastModified().toTime_t();
-#endif
+        qint64 newTime = quazip_to_time64_t(info.dateTime);
+        qint64 oldTime = quazip_to_time64_t(srcInfo.lastModified());
         // ZIP uses weird format with 2 second precision
         QCOMPARE(newTime / 2, oldTime / 2);
         readFileAttrs.close();
