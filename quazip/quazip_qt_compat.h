@@ -61,7 +61,7 @@ inline void quazip_sort(T begin, T end, C comparator) {
 #else
 #include <QtAlgorithms>
 template<typename T, typename C>
-inline void quazip_sort(QList<T>::iterator begin, QList<T>::iterator end, C comparator) {
+inline void quazip_sort(T begin, T end, C comparator) {
     qSort(begin, end, comparator);
 }
 #endif
@@ -105,7 +105,7 @@ inline qint64 quazip_to_time64_t(const QDateTime &time) {
 }
 #else
 inline qint64 quazip_to_time64_t(const QDateTime &time) {
-    return quazip_cast<qint64>(time.toTime_t()); // 32 bits only, but better than nothing
+    return static_cast<qint64>(time.toTime_t()); // 32 bits only, but better than nothing
 }
 #endif
 
