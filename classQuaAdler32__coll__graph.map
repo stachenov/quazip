@@ -1,3 +1,4 @@
-<map id="G" name="G">
+<map id="QuaAdler32" name="QuaAdler32">
+<area shape="rect" id="node1" title="Adler32 checksum." alt="" coords="21,80,112,107"/>
 <area shape="rect" id="node2" href="$classQuaChecksum32.html" title="Checksum interface." alt="" coords="5,5,128,32"/>
 </map>

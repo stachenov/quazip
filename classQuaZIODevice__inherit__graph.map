@@ -1,4 +1,5 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="qtcore.tags$qiodevice.html" title="QIODevice" alt="" coords="16,80,99,107"/>
-<area shape="rect" id="node4" href="qtcore.tags$qobject.html" title="QObject" alt="" coords="22,5,92,32"/>
+<map id="QuaZIODevice" name="QuaZIODevice">
+<area shape="rect" id="node1" title="A class to compress/decompress QIODevice." alt="" coords="5,155,109,181"/>
+<area shape="rect" id="node2" href="C:/alqualos/pr/quazip/qtcore.tags$qiodevice.html" title=" " alt="" coords="16,80,99,107"/>
+<area shape="rect" id="node4" href="C:/alqualos/pr/quazip/qtcore.tags$qobject.html" title=" " alt="" coords="22,5,92,32"/>
 </map>

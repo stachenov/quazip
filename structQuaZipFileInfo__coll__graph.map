@@ -1,5 +1,6 @@
-<map id="G" name="G">
-<area shape="rect" id="node2" href="qtcore.tags$qdatetime.html" title="QDateTime" alt="" coords="5,5,91,32"/>
-<area shape="rect" id="node4" href="qtcore.tags$qstring.html" title="QString" alt="" coords="116,5,183,32"/>
-<area shape="rect" id="node6" href="qtcore.tags$qbytearray.html" title="QByteArray" alt="" coords="207,5,297,32"/>
+<map id="QuaZipFileInfo" name="QuaZipFileInfo">
+<area shape="rect" id="node1" title="Information about a file inside archive." alt="" coords="97,109,201,136"/>
+<area shape="rect" id="node2" href="C:/alqualos/pr/quazip/qtcore.tags$qdatetime.html" title=" " alt="" coords="5,5,91,32"/>
+<area shape="rect" id="node4" href="C:/alqualos/pr/quazip/qtcore.tags$qstring.html" title=" " alt="" coords="116,5,183,32"/>
+<area shape="rect" id="node6" href="C:/alqualos/pr/quazip/qtcore.tags$qbytearray.html" title=" " alt="" coords="207,5,297,32"/>
 </map>

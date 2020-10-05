@@ -1,3 +1,4 @@
-<map id="G" name="G">
+<map id="QuaCrc32" name="QuaCrc32">
+<area shape="rect" id="node1" title="CRC32 checksum." alt="" coords="27,80,107,107"/>
 <area shape="rect" id="node2" href="$classQuaChecksum32.html" title="Checksum interface." alt="" coords="5,5,128,32"/>
 </map>
