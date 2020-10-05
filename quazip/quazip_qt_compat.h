@@ -79,6 +79,31 @@ inline QDateTime quazip_ctime(const QFileInfo &fi) {
 }
 #endif
 
+// this is just a slightly better alternative
+#include <QFileInfo>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+inline bool quazip_is_symlink(const QFileInfo &fi) {
+    return fi.isSymbolicLink();
+}
+#else
+inline bool quazip_is_symlink(const QFileInfo &fi) {
+    // also detects *.lnk on Windows, but better than nothing
+    return fi.isSymLink();
+}
+#endif
+
+// I'm not even sure what this one is, but nevertheless
+#include <QFileInfo>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+inline QString quazip_symlink_target(const QFileInfo &fi) {
+    return fi.symLinkTarget();
+}
+#else
+inline QString quazip_symlink_target(const QFileInfo &fi) {
+    return fi.readLink(); // What's the difference? I've no idea.
+}
+#endif
+
 // this is not a deprecation but an improvement, for a change
 #include <QDateTime>
 #if (QT_VERSION >= 0x040700)

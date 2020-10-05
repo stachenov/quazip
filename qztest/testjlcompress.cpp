@@ -27,6 +27,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "qztest.h"
 
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QTextCodec>
 
@@ -413,3 +414,26 @@ void TestJlCompress::zeroPermissions()
     curDir.remove("zero.zip");
     curDir.remove("zero.txt");
 }
+
+#ifdef QUAZIP_SYMLINK_TEST
+
+void TestJlCompress::symlinkHandling()
+{
+    QStringList fileNames { "file.txt" };
+    if (!createTestFiles(fileNames)) {
+        QFAIL("Couldn't create test files");
+    }
+    QVERIFY(QFile::link("file.txt", "tmp/link.txt"));
+    fileNames << "link.txt";
+    QVERIFY(JlCompress::compressDir("symlink.zip", "tmp"));
+    QDir curDir;
+    QVERIFY(curDir.mkpath("extsymlink"));
+    QVERIFY(!JlCompress::extractDir("symlink.zip", "extsymlink").isEmpty());
+    QFileInfo linkInfo("extsymlink/link.txt");
+    QVERIFY(quazip_is_symlink(linkInfo));
+    removeTestFiles(fileNames, "extsymlink");
+    removeTestFiles(fileNames, "tmp");
+    curDir.remove("symlink.zip");
+}
+
+#endif

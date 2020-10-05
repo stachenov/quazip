@@ -61,6 +61,12 @@ QFile::Permissions QuaZipFileInfo64::getPermissions() const
     return permissionsFromExternalAttr(externalAttr);
 }
 
+bool QuaZipFileInfo64::isSymbolicLink() const
+{
+    quint32 uPerm = (externalAttr & 0xFFFF0000u) >> 16;
+    return (uPerm & 0170000) == 0120000;
+}
+
 bool QuaZipFileInfo64::toQuaZipFileInfo(QuaZipFileInfo &info) const
 {
     bool noOverflow = true;

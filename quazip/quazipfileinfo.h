@@ -124,6 +124,12 @@ struct QUAZIP_EXPORT QuaZipFileInfo64 {
     QFile::Permissions.
     */
   QFile::Permissions getPermissions() const;
+  /// Checks whether the file is a symbolic link.
+  /**
+    Returns true iff the highest 16 bits of the external attributes
+    indicate that the file is a symbolic link according to Unix file mode.
+   */
+  bool isSymbolicLink() const;
   /// Converts to QuaZipFileInfo
   /**
     If any of the fields are greater than 0xFFFFFFFFu, they are set to

@@ -27,6 +27,10 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include <QObject>
 
+#ifdef Q_OS_UNIX
+#define QUAZIP_SYMLINK_TEST
+#endif
+
 class TestJlCompress: public QObject {
     Q_OBJECT
 private slots:
@@ -43,6 +47,9 @@ private slots:
     void extractDir_data();
     void extractDir();
     void zeroPermissions();
+#ifdef QUAZIP_SYMLINK_TEST
+    void symlinkHandling();
+#endif
 };
 
 #endif // QUAZIP_TEST_JLCOMPRESS_H

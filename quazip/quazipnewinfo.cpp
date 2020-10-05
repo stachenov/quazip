@@ -101,7 +101,7 @@ QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
     dateTime = QDateTime::currentDateTime();
   } else {
     dateTime = lm;
-    QuaZipNewInfo_setPermissions(this, info.permissions(), info.isDir(), info.isSymLink());
+    QuaZipNewInfo_setPermissions(this, info.permissions(), info.isDir(), quazip_is_symlink(info));
   }
 }
 
@@ -117,7 +117,7 @@ void QuaZipNewInfo::setFilePermissions(const QString &file)
 {
     QFileInfo info = QFileInfo(file);
     QFile::Permissions perm = info.permissions();
-    QuaZipNewInfo_setPermissions(this, perm, info.isDir(), info.isSymLink());
+    QuaZipNewInfo_setPermissions(this, perm, info.isDir(), quazip_is_symlink(info));
 }
 
 void QuaZipNewInfo::setPermissions(QFile::Permissions permissions)
