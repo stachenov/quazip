@@ -234,6 +234,8 @@ void TestQuaZip::setOsCode()
     QuaZipFileInfo64 fi;
     QVERIFY(checkZip.getCurrentFileInfo(&fi));
     QCOMPARE(static_cast<uint>(fi.versionCreated) >> 8, osCode);
+    checkZip.close();
+    QDir().remove(zipName);
 }
 
 void TestQuaZip::setDataDescriptorWritingEnabled()
