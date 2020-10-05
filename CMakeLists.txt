@@ -6,7 +6,7 @@ project(QuaZip VERSION 1.0)
 set(CMAKE_CXX_STANDARD 14)
 
 set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
-set(QUAZIP_LIB_SOVERSION 1.0.0)
+set(QUAZIP_LIB_SOVERSION 1.1)
 
 option(BUILD_SHARED_LIBS "" ON)
 set(QUAZIP_QT_MAJOR_VERSION 5 CACHE STRING "Qt version to use (4 or 5), defaults to 5")
