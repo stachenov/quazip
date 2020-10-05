@@ -1,6 +1,6 @@
 QuaZip changes
 
-* Current
+* 2020-10-05 1.0
         * Preliminary Qt 6 support
         * Consistent naming of binaries (libquazip1-qt5 style)
         * Modern CMake support
