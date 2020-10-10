@@ -10,9 +10,11 @@ Want to report a bug or ask for a feature? Open an [issue](https://github.com/st
 
 Want to fix a bug or implement a new feature? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
+You're a package maintainer and want to update to QuaZip 1.0? Read [the migration guide](https://github.com/stachenov/quazip/blob/master/QuaZip-1.x-migration.md).
+
 Copyright notice:
 
-Copyright (C) 2005-2018 Sergey A. Tachenov
+Copyright (C) 2005-2020 Sergey A. Tachenov and contributors
 
 Distributed under LGPL, full details in the COPYING file.
 

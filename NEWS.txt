@@ -3,6 +3,7 @@ QuaZip changes
 * Current
         * Fixed symlink handling in JlCompress compression
         * Implemented symlink handling in JlCompress extraction
+        * Added 1.x migration guide
 
 * 2020-10-05 1.0
         * Preliminary Qt 6 support

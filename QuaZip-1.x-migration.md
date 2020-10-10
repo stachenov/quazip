@@ -1,7 +1,7 @@
 **QuaZip 0.x -> 1.x migration guide**
 
 This guide contains important information mostly for package
-maintainers, although it can also be useful for the developers
+maintainers, although it can also be useful for developers
 as well.
 
 **TL;DR**
@@ -11,7 +11,7 @@ QuaZip 1.0 is supposed to be installed in parallel with 0.x,
 The developers should switch to 1.0 in their new releases if
 they use CMake and/or want new features (although there are only few).
 
-**What happened with 1.0**
+**What happened in 1.0**
 
 QuaZip 1.0 introduced some important changes:
 
@@ -24,7 +24,7 @@ The reasons for this change were:
 
 - CMake support was a mess because at that time I didn't understand
 it at all, and was just blindly accepted all CMake-related PRs and
-patches, which lead to numerous inconsitencies between qmake and CMake
+patches, which lead to numerous inconsistencies between qmake and CMake
 builds;
 - maintaining both qmake and CMake support in a consistent manner
 would be next to impossible, as CMake installs some metadata
@@ -48,9 +48,20 @@ for qmake and CMake, and made no sense at all.
 
 **The differences**
 
-QuaZip 1.x use this scheme:
+QuaZip 0.x uses this “scheme”:
 
-- the include paths is `include/QuaZip-QtX-Y/quazip`, where `include` is
+- the includes went either to `include/quazip` or `include/quazip5`
+depending both on qmake/CMake and Qt4/Qt5 usage (only the CMake+Qt5
+combination would yield `quazip5`);
+- the binary base name was either `quazip` or `quazip5`, again,
+depending on qmake/CMake *and* Qt4/Qt5 choice;
+- the CMake config files were installed only when building with CMake;
+- the CMake package name was `QuaZip` (for Qt4) or `QuaZip5` (for Qt5);
+- the CMake target name was the same as the binary name.
+
+QuaZip 1.x uses this scheme:
+
+- the includes go to `include/QuaZip-QtX-Y/quazip`, where `include` is
 the installation prefix include path (`/usr/include` or something),
 `X` is the major version of Qt, and `Y` is the full version of QuaZip,
 e. g. `include/QuaZip-Qt5-1.0/quazip`;
@@ -63,8 +74,10 @@ This can't possibly conflict with any crazy 0.x setup, no matter
 qmake or CMake. CMake users get the easy modern CMake way
 (`find_package(QuaZip-Qt5)`, `target_link_libraries(... QuaZip::QuaZip)`)
 of using QuaZip, and includes can be either in the `#include <quazipfile.h>`
-or in the `#include <quazip/quazipfile.h>` style, as both include paths
-are added by default.
+or in the `#include <quazip/quazipfile.h>` style (which some qmake users
+used), as both `include/QuaZip-QtX-Y` and `include/QuaZip-QtX-Y/quazip`
+include paths are added by default. This ensures source
+compatibility between 0.x and 1.x without any annoying search-and-replace.
 
 **The intended use**
 
@@ -74,6 +87,7 @@ developers decide so, they should switch to QuaZip 1.0 in their new
 releases (and preferably switch to CMake as well).
 
 Package maintainers should *not* consider 1.0 an upgrade from 0.x,
-but rather an independent package. The same goes for future major
+but rather an independent package, pretty much the same way as Qt4 and Qt5
+are separate packages. The same goes for future major
 versions such as 2.0, whenever they are released. Or at least that's
 the current plan.
