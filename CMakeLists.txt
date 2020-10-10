@@ -1,12 +1,12 @@
 # require 3.15 for GNUInstallDirs
 cmake_minimum_required(VERSION 3.15...3.18)
 
-project(QuaZip VERSION 1.0)
+project(QuaZip VERSION 1.1)
 
 set(CMAKE_CXX_STANDARD 14)
 
 set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
-set(QUAZIP_LIB_SOVERSION 1.1)
+set(QUAZIP_LIB_SOVERSION 1.0.0)
 
 option(BUILD_SHARED_LIBS "" ON)
 set(QUAZIP_QT_MAJOR_VERSION 5 CACHE STRING "Qt version to use (4 or 5), defaults to 5")
