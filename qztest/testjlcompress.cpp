@@ -437,3 +437,32 @@ void TestJlCompress::symlinkHandling()
 }
 
 #endif
+
+#ifdef QUAZIP_SYMLINK_EXTRACTION_ON_WINDOWS_TEST
+
+void TestJlCompress::symlinkExtractionOnWindows()
+{
+    QuaZip zipWithSymlinks("withSymlinks.zip");
+    QVERIFY(zipWithSymlinks.open(QuaZip::mdCreate));
+    QuaZipFile file(&zipWithSymlinks);
+    QVERIFY(file.open(QIODevice::WriteOnly, QuaZipNewInfo("file.txt")));
+    file.write("contents");
+    file.close();
+    QuaZipNewInfo symlinkInfo("symlink.txt");
+    symlinkInfo.externalAttr |= 0120000 << 16; // symlink attr
+    QuaZipFile symlink(&zipWithSymlinks);
+    QVERIFY(symlink.open(QIODevice::WriteOnly, symlinkInfo));
+    symlink.write("file.txt"); // link target goes into contents
+    symlink.close();
+    zipWithSymlinks.close();
+    QCOMPARE(zipWithSymlinks.getZipError(), ZIP_OK);
+    // The best we can do here is to test that extraction works at all,
+    // because it's hard to say what should be the “correct” result when
+    // trying to extract symbolic links on Windows.
+    QVERIFY(!JlCompress::extractDir("withSymlinks.zip", "symlinksOnWindows").isEmpty());
+    QDir curDir;
+    curDir.remove("withSymlinks.zip");
+    removeTestFiles(QStringList() << "file.txt" << "symlink.txt", "symlinksOnWindows");
+}
+
+#endif
