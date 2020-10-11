@@ -57,7 +57,7 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
     if (quazip_is_symlink(input)) {
         // Not sure if we should use any specialized codecs here.
         // After all, a symlink IS just a byte array. And
-        // this is mostly for Link, where UTF-8 is ubiquitous these days.
+        // this is mostly for Linux, where UTF-8 is ubiquitous these days.
         QString path = quazip_symlink_target(input);
         QString relativePath = input.dir().relativeFilePath(path);
         outFile.write(QFile::encodeName(relativePath));
