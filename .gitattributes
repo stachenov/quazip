@@ -8,6 +8,7 @@ CMakeLists.txt -crlf
 *.in -crlf
 *.cmakein -crlf
 *.symbols -crlf
+.editorconfig -crlf
 
 # new Git versions
 *.h text eol=lf
@@ -19,3 +20,4 @@ CMakeLists.txt text eol=lf
 *.in text eol=lf
 *.cmakein text eol=lf
 *.symbols text eol=lf
+.editorconfig eol=lf
