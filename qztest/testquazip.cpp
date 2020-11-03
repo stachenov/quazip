@@ -26,18 +26,18 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include "qztest.h"
 
-#include <QDataStream>
-#include <QDir>
-#include <QFileInfo>
-#include <QHash>
+#include <QtCore/QDataStream>
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
+#include <QtCore/QHash>
 #ifdef QUAZIP_TEST_QSAVEFILE
-#include <QSaveFile>
+#include <QtCore/QSaveFile>
 #endif
-#include <QTcpServer>
-#include <QTcpSocket>
-#include <QTextCodec>
+#include <QtNetwork/QTcpServer>
+#include <QtNetwork/QTcpSocket>
+#include <quazip_qt_compat.h>
 
-#include <QtTest>
+#include <QtTest/QtTest>
 
 #include <quazip.h>
 #include <JlCompress.h>

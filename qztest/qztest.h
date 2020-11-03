@@ -25,10 +25,9 @@ Original ZIP package is copyrighted by Gilles Vollant and contributors,
 see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
-#include <QIODevice>
-#include <QString>
-#include <QStringList>
-#include <QTextCodec>
+#include <QtCore/QIODevice>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
 
 #include <quazip_qt_compat.h>
 

@@ -2,12 +2,12 @@
 
 #include "qztest.h"
 
-#include <QByteArray>
-#include <QDir>
-#include <QFileInfo>
-#include <QPair>
+#include <QtCore/QByteArray>
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
+#include <QtCore/QPair>
 
-#include <QtTest>
+#include <QtTest/QtTest>
 
 #include <quazip.h>
 #include <quazipfile.h>

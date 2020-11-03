@@ -24,9 +24,9 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include "testquagzipfile.h"
 #include <zlib.h>
-#include <QDir>
+#include <QtCore/QDir>
 #include <quagzipfile.h>
-#include <QtTest>
+#include <QtTest/QtTest>
 
 void TestQuaGzipFile::read()
 {

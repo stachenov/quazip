@@ -27,7 +27,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <quaadler32.h>
 #include <quacrc32.h>
 
-#include <QtTest>
+#include <QtTest/QtTest>
 
 void TestQuaChecksum32::calculate()
 {

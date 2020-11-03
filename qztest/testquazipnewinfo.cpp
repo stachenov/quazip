@@ -2,9 +2,9 @@
 
 #include "qztest.h"
 
-#include <QDir>
-#include <QFileInfo>
-#include <QtTest>
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
+#include <QtTest/QtTest>
 
 #include <quazip.h>
 #include <quazipfile.h>

@@ -31,11 +31,11 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <quazip.h>
 #include <quazip_qt_compat.h>
 
-#include <QFile>
-#include <QString>
-#include <QStringList>
+#include <QtCore/QFile>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
 
-#include <QtTest>
+#include <QtTest/QtTest>
 
 void TestQuaZipFile::zipUnzip_data()
 {
