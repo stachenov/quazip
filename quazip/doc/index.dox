@@ -50,11 +50,12 @@ Older downloads are available from
 
 \section platforms Platforms supported
 
-%QuaZip 1.0 was tested on:
+%QuaZip 1.1 was tested on:
 - %Qt 5.15.0 MinGW 8.1 x32
 - %Qt 5.12.9 MinGW 7.3 x32
 - %Qt 5.9.7 CentOS 7 x64
 - %Qt 4.8.7 CentOS 7 x64
+- %Qt 5.11.0 Astra Linux CE 1.6 x64
 
 It should work fine on any platform supported by %Qt 4.8.7 or later.
 In theory, even versions as old as %Qt 4.6.2 might work as well, but
