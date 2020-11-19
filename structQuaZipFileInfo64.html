@@ -19,7 +19,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QuaZip
-   &#160;<span id="projectnumber">quazip-1-0</span>
+   &#160;<span id="projectnumber">quazip-1-1-x</span>
    </div>
   </td>
  </tr>
@@ -70,6 +70,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aefeb71900e4f394e4996d3bf42c4435c"><td class="memItemLeft" align="right" valign="top"><a class="elRef" href="http://doc.qt.io/qt-5.12/qfiledevice.html#Permission-enum">QFile::Permissions</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQuaZipFileInfo64.html#aefeb71900e4f394e4996d3bf42c4435c">getPermissions</a> () const</td></tr>
 <tr class="memdesc:aefeb71900e4f394e4996d3bf42c4435c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the file permissions.  <a href="structQuaZipFileInfo64.html#aefeb71900e4f394e4996d3bf42c4435c">More...</a><br /></td></tr>
 <tr class="separator:aefeb71900e4f394e4996d3bf42c4435c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cce00670b7366da4997b0e48e253b87"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQuaZipFileInfo64.html#a8cce00670b7366da4997b0e48e253b87">isSymbolicLink</a> () const</td></tr>
+<tr class="memdesc:a8cce00670b7366da4997b0e48e253b87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks whether the file is a symbolic link.  <a href="structQuaZipFileInfo64.html#a8cce00670b7366da4997b0e48e253b87">More...</a><br /></td></tr>
+<tr class="separator:a8cce00670b7366da4997b0e48e253b87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a974707cbac74cf30ce57891be710589a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structQuaZipFileInfo64.html#a974707cbac74cf30ce57891be710589a">toQuaZipFileInfo</a> (<a class="el" href="structQuaZipFileInfo.html">QuaZipFileInfo</a> &amp;info) const</td></tr>
 <tr class="memdesc:a974707cbac74cf30ce57891be710589a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts to <a class="el" href="structQuaZipFileInfo.html" title="Information about a file inside archive.">QuaZipFileInfo</a>.  <a href="structQuaZipFileInfo64.html#a974707cbac74cf30ce57891be710589a">More...</a><br /></td></tr>
 <tr class="separator:a974707cbac74cf30ce57891be710589a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -178,6 +181,28 @@ quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 
 <p>Get the file permissions. </p>
 <p>Returns the high 16 bits of external attributes converted to <a class="elRef" href="http://doc.qt.io/qt-5.12/qfiledevice.html#Permission-enum">QFile::Permissions</a>. </p>
+
+<p class="reference">References <a class="el" href="structQuaZipFileInfo64.html#a3a8bc40f1aa0cb0985c4e2f8a9678430">externalAttr</a>.</p>
+
+</div>
+</div>
+<a id="a8cce00670b7366da4997b0e48e253b87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cce00670b7366da4997b0e48e253b87">&#9670;&nbsp;</a></span>isSymbolicLink()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool QuaZipFileInfo64::isSymbolicLink </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks whether the file is a symbolic link. </p>
+<p>Returns true iff the highest 16 bits of the external attributes indicate that the file is a symbolic link according to Unix file mode. </p>
 
 <p class="reference">References <a class="el" href="structQuaZipFileInfo64.html#a3a8bc40f1aa0cb0985c4e2f8a9678430">externalAttr</a>.</p>
 
@@ -467,7 +492,7 @@ quint32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="s
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Oct 5 2020 12:14:34 for QuaZip by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19
+Generated on Thu Nov 19 2020 17:09:40 for QuaZip by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19
 </small></address>
 </body>
 </html>

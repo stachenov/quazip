@@ -19,7 +19,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QuaZip
-   &#160;<span id="projectnumber">quazip-1-0</span>
+   &#160;<span id="projectnumber">quazip-1-1-x</span>
    </div>
   </td>
  </tr>
@@ -55,7 +55,46 @@ target_link_libraries(whatever-your-target-is QuaZip::QuaZip)
 <p>In all cases, if QuaZip is linked statically, it automatically defines QUAZIP_STATIC whenever your link to it, which disables dllimports that would lead to confusing errors (at least on Windows) otherwise.</p>
 <p>If, for some weird reason, you decide to add QuaZip sources to your project directly (skipping CMake), or link it statically and then link it to your project without CMake, you may need to define QUAZIP_STATIC manually to avoid problems with dllimports.</p>
 <p>QuaZip uses SameMajorVersion compatibility mode, so you can have, say, QuaZip 1.x and QuaZip 2.x (in some future, when there is such a thing) installed in parallel, and then pass the required version to <code>find_package</code>. As long as the major version matches, it will be found.</p>
-<h1><a class="anchor" id="terminology"></a>
+<h1><a class="anchor" id="Flatpak"></a>
+Flatpak</h1>
+<p>Quazip can be used in Flatpak YAML manifests as such:</p>
+<pre class="fragment">modules:
+  - name: quazip
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=MinSizeRel
+    sources:
+      - type: archive
+        url: https://github.com/stachenov/quazip/archive/v1.1.tar.gz
+        sha256: 54edce9c11371762bd4f0003c2937b5d8806a2752dd9c0fd9085e90792612ad0
+      - type: shell
+        commands:
+          - sed -i 's|${CMAKE_ROOT}/Modules|share/cmake|' CMakeLists.txt
+</pre><p>or on older JSON manifests: </p><pre class="fragment">"modules": [
+             {
+              "name": "quazip",
+              "buildsystem": "cmake-ninja",
+              "builddir": true,
+              "config-opts": [
+                "-DCMAKE_BUILD_TYPE=MinSizeRel"
+              ],
+              "sources": [
+                {
+                  "type": "archive",
+                  "url": "https://github.com/stachenov/quazip/archive/v1.1.tar.gz",
+                  "sha256": "54edce9c11371762bd4f0003c2937b5d8806a2752dd9c0fd9085e90792612ad0"
+                },
+                {
+                  "type": "shell",
+                  "commands": [
+                    "sed -i 's|${CMAKE_ROOT}/Modules|share/cmake|' CMakeLists.txt"
+                  ]
+                }
+              ]
+            }
+          ]
+</pre><h1><a class="anchor" id="terminology"></a>
 Terminology</h1>
 <p>“QuaZip” means the whole library or the <code><a class="el" href="classQuaZip.html" title="ZIP archive.">QuaZip</a></code> class, depending on the context.</p>
 <p>“ZIP/UNZIP API” or “Minizip” means the original API of the Gilles Vollant's ZIP/UNZIP package. It was slightly modified to better integrate with <a class="elRef" href="http://doc.qt.io/qt-5.12/qt.html">Qt</a>. These modifications are not source or binary compatible with the official Minizip release, which means you can't just drop the newer Minizip version into QuaZip sources and make it work.</p>
@@ -91,7 +130,7 @@ Error handling</h1>
 </div><!-- PageDoc -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Oct 5 2020 12:14:34 for QuaZip by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19
+Generated on Thu Nov 19 2020 17:09:40 for QuaZip by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19
 </small></address>
 </body>
 </html>
