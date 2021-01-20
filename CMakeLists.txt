@@ -9,6 +9,7 @@ set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
 set(QUAZIP_LIB_SOVERSION 1.0.0)
 
 option(BUILD_SHARED_LIBS "" ON)
+option(QUAZIP_INSTALL "" ON)
 set(QUAZIP_QT_MAJOR_VERSION 5 CACHE STRING "Qt version to use (4 or 5), defaults to 5")
 
 if(NOT CMAKE_BUILD_TYPE)
