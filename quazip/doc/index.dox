@@ -70,8 +70,7 @@ See the NEWS.txt file supplied with the distribution.
 \section Dependencies
 
 Just <a href="http://www.zlib.org/">zlib</a> and %Qt 4/5/6. Sometimes
-you can get away with using zlib library bundled into %Qt, but
-usually you need at least its headers.
+you can get away with using zlib library bundled into %Qt (see below).
 
 CMake-wise, you need \c ZLIB::ZLIB and one of the following:
 \li \c Qt5::Core
@@ -113,6 +112,14 @@ $ cmake --build wherever/you/want/your/build/to/be
 
 On Windows, it may be required to use <tt>-G "MinGW Makefiles"</tt> or something like that to convince
 CMake that you really want to use, say, MinGW and not Visual Studio, for example.
+
+It can be a pain to install zlib on Windows, so there's a possible workaround using zlib bundled into Qt itself.
+Note that this zlib is Qt's internal implementation detail, so it's more like a dirty hack, but it can be convenient.
+To enable this feature, configure %QuaZip with
+\verbatim
+-D QUAZIP_USE_QT_ZLIB=ON
+\endverbatim
+This option defaults to OFF, and even when enabled, if it fails to find zlib that comes with Qt, it will fall back to looking for a stand-alone zlib.
 
 To install, run
 \verbatim
