@@ -383,7 +383,6 @@ QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
     }
     QString cleanDir = QDir::cleanPath(dir);
     QDir directory(cleanDir);
-    QString absCleanDir = directory.absolutePath();
     QStringList extracted;
     if (!zip.goToFirstFile()) {
         return QStringList();
@@ -391,13 +390,12 @@ QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
     do {
         QString name = zip.getCurrentFileName();
         QString absFilePath = directory.absoluteFilePath(name);
-        QString absCleanPath = QDir::cleanPath(absFilePath);
-        if (!absCleanPath.startsWith(absCleanDir + QLatin1String("/")))
-            continue;
         if (!extractFile(&zip, QLatin1String(""), absFilePath)) {
             removeFile(extracted);
             return QStringList();
         }
+        if (!QFile::exists(absFilePath))
+            continue;
         extracted.append(absFilePath);
     } while (zip.goToNextFile());
 
