@@ -29,6 +29,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #ifdef Q_OS_UNIX
 #define QUAZIP_SYMLINK_TEST
+#define QUAZIP_EXTRACT_TO_ROOT_TEST
 #endif
 
 #ifdef Q_OS_WIN

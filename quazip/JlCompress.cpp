@@ -384,6 +384,8 @@ QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
     QString cleanDir = QDir::cleanPath(dir);
     QDir directory(cleanDir);
     QString absCleanDir = directory.absolutePath();
+    if (!absCleanDir.endsWith('/')) // It only ends with / if it's the FS root.
+        absCleanDir += '/';
     QStringList extracted;
     if (!zip.goToFirstFile()) {
         return QStringList();
@@ -392,7 +394,7 @@ QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
         QString name = zip.getCurrentFileName();
         QString absFilePath = directory.absoluteFilePath(name);
         QString absCleanPath = QDir::cleanPath(absFilePath);
-        if (!absCleanPath.startsWith(QDir::cleanPath(absCleanDir + QLatin1String("/"))))
+        if (!absCleanPath.startsWith(absCleanDir))
             continue;
         if (!extractFile(&zip, QLatin1String(""), absFilePath)) {
             removeFile(extracted);
