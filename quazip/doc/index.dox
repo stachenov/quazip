@@ -143,7 +143,10 @@ incompatible version will be 2.x in the worst case.
 
 \section test Testing
 
-To test, run:
+The tests are not built by default. Set the QUAZIP_ENABLE_TESTS option
+to build them.
+
+To run the tests, execute:
 \verbatim
 $ cmake --build wherever/you/want/your/build/to/be --target check
 \endverbatim

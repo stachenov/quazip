@@ -2,7 +2,12 @@ QuaZip changes
 
 * Current
         * Add CMake option to disable installation (Sebastian Rettenberger)
-        * Use Qt's internal zlib instead of an external one if available
+        * Qt's internal zlib can be used now (QUAZIP_USE_QT_ZLIB, OFF by
+          default)
+        * Make tests optional (QUAZIP_ENABLE_TESTS, OFF by default)
+          (Gleb Ignatev)
+        * Fix: QuaZip::close() can be safely called multiple times now
+        * Fix: -lz added to pkgconfig
 
 * 2020-10-11 1.1
         * Fixed Unix symlink handling in JlCompress compression
