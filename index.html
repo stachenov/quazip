@@ -73,7 +73,7 @@ What is new in this version of QuaZip?</h1>
 <p>See the NEWS.txt file supplied with the distribution.</p>
 <h1><a class="anchor" id="Dependencies"></a>
 Dependencies</h1>
-<p>Just <a href="http://www.zlib.org/">zlib</a> and Qt 4/5/6. Sometimes you can get away with using zlib library bundled into Qt, but usually you need at least its headers.</p>
+<p>Just <a href="http://www.zlib.org/">zlib</a> and Qt 4/5/6. Sometimes you can get away with using zlib library bundled into Qt (see below).</p>
 <p>CMake-wise, you need <code>ZLIB::ZLIB</code> and one of the following: </p><ul>
 <li><code>Qt5::Core</code> </li>
 <li><code>Qt6::Core</code> and <code>Qt6::Core5Compat</code> </li>
@@ -90,6 +90,8 @@ $ cmake -S . -B wherever/you/want/your/build/to/be -D QUAZIP_QT_MAJOR_VERSION=4,
 $ cmake --build wherever/you/want/your/build/to/be
 </pre><p><code>QUAZIP_QT_MAJOR_VERSION</code> is just one number, and it defaults to 5, so if building with Qt 5, it is optional.</p>
 <p>On Windows, it may be required to use <code>-G "MinGW Makefiles"</code> or something like that to convince CMake that you really want to use, say, MinGW and not Visual Studio, for example.</p>
+<p>It can be a pain to install zlib on Windows, so there's a possible workaround using zlib bundled into <a class="elRef" href="http://doc.qt.io/qt-5.12/qt.html">Qt</a> itself. Note that this zlib is <a class="elRef" href="http://doc.qt.io/qt-5.12/qt.html">Qt</a>'s internal implementation detail, so it's more like a dirty hack, but it can be convenient. To enable this feature, configure QuaZip with </p><pre class="fragment">-D QUAZIP_USE_QT_ZLIB=ON
+</pre><p> This option defaults to OFF, and even when enabled, if it fails to find zlib that comes with <a class="elRef" href="http://doc.qt.io/qt-5.12/qt.html">Qt</a>, it will fall back to looking for a stand-alone zlib.</p>
 <p>To install, run </p><pre class="fragment">$ cmake --build wherever/you/want/your/build/to/be --target install -D CMAKE_INSTALL_PREFIX=/wherever/you/want/to/install
 </pre><p>QuaZip installs as CMake package QuaZip-QtX, where X is the major version of Qt. For example, QuaZip-Qt5. Different major versions of QuaZip have different binary names (libquazip1-qt5, for example), which allows to install them in parallel.</p>
 <p>To reconfigure (for another Qt version or release/debug, or anything else), just nuke the whole build directory and repeat everything.</p>
@@ -97,7 +99,8 @@ $ cmake --build wherever/you/want/your/build/to/be
 <p>Binary compatibility is guaranteed between minor releases starting with version 1.0, thanks to the Pimpl idiom. That is, the next binary incompatible version will be 2.x in the worst case.</p>
 <h1><a class="anchor" id="test"></a>
 Testing</h1>
-<p>To test, run: </p><pre class="fragment">$ cmake --build wherever/you/want/your/build/to/be --target check
+<p>The tests are not built by default. Set the QUAZIP_ENABLE_TESTS option to build them.</p>
+<p>To run the tests, execute: </p><pre class="fragment">$ cmake --build wherever/you/want/your/build/to/be --target check
 </pre><p>Note that tests are not included in the <code>all</code> target, so if you want to build and test with Qt Creator, add another build step and select the <code>qztest</code> target. Then set up run configuration to launch the qztest binary.</p>
 <p>On Windows, you need to set its working directory to the <code>quazip</code> subdirectory of the build tree. The default is the <code>qztest</code> directory, which lead to mysterious crashes because qztest can't find the QuaZip DLL there.</p>
 <p>On some systems you may need to set PATH, LD_LIBRARY_PATH or SHLIB_PATH to get “qztest” to actually run and to use the version of QuaZip you've just built, especially if you already have some version of QuaZip installed somewhere.</p>
@@ -117,7 +120,7 @@ Authors and contacts</h1>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 19 2020 23:29:06 for QuaZip by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19
+Generated on Wed Oct 13 2021 19:10:02 for QuaZip by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19
 </small></address>
 </body>
 </html>
