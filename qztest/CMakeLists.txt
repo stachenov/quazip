@@ -1,5 +1,3 @@
-project(qztest)
-
 set(QZTEST_SOURCES
         qztest.h
         testjlcompress.h
@@ -23,9 +21,9 @@ set(QZTEST_SOURCES
         testquazipnewinfo.cpp
 )
 
-add_executable(${PROJECT_NAME} ${QZTEST_SOURCES} qztest.qrc)
-set_target_properties(${PROJECT_NAME} PROPERTIES AUTORCC ON)
-target_link_libraries(${PROJECT_NAME}
+add_executable(qztest ${QZTEST_SOURCES} qztest.qrc)
+set_target_properties(qztest PROPERTIES AUTORCC ON)
+target_link_libraries(qztest
     ${QUAZIP_TEST_QT_LIBRARIES}
     QuaZip::QuaZip
 )
