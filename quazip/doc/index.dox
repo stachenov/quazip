@@ -151,16 +151,6 @@ To run the tests, execute:
 $ cmake --build wherever/you/want/your/build/to/be --target check
 \endverbatim
 
-Note that tests are not included in the \c all target, so if you want
-to build and test with %Qt Creator, add another build step and select
-the \c qztest target. Then set up run configuration to launch
-the qztest binary.
-
-On Windows, you need to set its working directory
-to the \c quazip subdirectory of the build tree. The default
-is the \c qztest directory, which lead to mysterious crashes
-because qztest can't find the %QuaZip DLL there.
-
 On some systems you may need to set PATH, LD_LIBRARY_PATH or
 SHLIB_PATH to get “qztest” to actually run and to use the version of %QuaZip you've just built,
 especially if you already have some version of %QuaZip installed somewhere.
@@ -207,5 +197,5 @@ Old bugs may still be available at
 <a href="https://sourceforge.net/projects/quazip/">SourceForge</a>
 for reference.
 
-Copyright (C) 2005-2020 Sergei Tachenov and contributors
+Copyright (C) 2005-2021 Sergei Tachenov and contributors
 */

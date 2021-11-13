@@ -1,6 +1,6 @@
 QuaZip changes
 
-* Current
+* 2021-11-13 1.2
         * Add CMake option to disable installation (Sebastian Rettenberger)
         * Qt's internal zlib can be used now (QUAZIP_USE_QT_ZLIB, OFF by
           default)
