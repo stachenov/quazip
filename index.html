@@ -19,7 +19,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">QuaZip
-   &#160;<span id="projectnumber">quazip-1-1-x</span>
+   &#160;<span id="projectnumber">quazip-1-2</span>
    </div>
   </td>
  </tr>
@@ -101,9 +101,7 @@ $ cmake --build wherever/you/want/your/build/to/be
 Testing</h1>
 <p>The tests are not built by default. Set the QUAZIP_ENABLE_TESTS option to build them.</p>
 <p>To run the tests, execute: </p><pre class="fragment">$ cmake --build wherever/you/want/your/build/to/be --target check
-</pre><p>Note that tests are not included in the <code>all</code> target, so if you want to build and test with Qt Creator, add another build step and select the <code>qztest</code> target. Then set up run configuration to launch the qztest binary.</p>
-<p>On Windows, you need to set its working directory to the <code>quazip</code> subdirectory of the build tree. The default is the <code>qztest</code> directory, which lead to mysterious crashes because qztest can't find the QuaZip DLL there.</p>
-<p>On some systems you may need to set PATH, LD_LIBRARY_PATH or SHLIB_PATH to get “qztest” to actually run and to use the version of QuaZip you've just built, especially if you already have some version of QuaZip installed somewhere.</p>
+</pre><p>On some systems you may need to set PATH, LD_LIBRARY_PATH or SHLIB_PATH to get “qztest” to actually run and to use the version of QuaZip you've just built, especially if you already have some version of QuaZip installed somewhere.</p>
 <p>If everything went fine, the test suite should report a lot of PASS messages and the “All tests executed successfully” message. If something goes wrong, it will provide details and a warning that some tests failed.</p>
 <h1><a class="anchor" id="using"></a>
 Using</h1>
@@ -115,12 +113,12 @@ Authors and contacts</h1>
 <p>To report bugs or to post ideas about what should be done, use <a href="https://github.com/stachenov/quazip">GitHub</a>. It's an awesome site, where you can report bugs or register yourself an account, fork QuaZip (don't hesitate to do so), create a new branch, make some changes and issue a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>, which is GitHub's way of offering patches. See CONTRIBUTING.md file for details.</p>
 <p>Do not use e-mail to report bugs, please. Reporting bugs and problems with GitHub has that advantage that it is visible to public, and I can always search for open tickets that were created long ago. It is highly unlikely that I will search my mail for that kind of stuff, so if a bug reported by mail isn't fixed immediately, it will likely be forgotten forever.</p>
 <p>Old bugs may still be available at <a href="https://sourceforge.net/projects/quazip/">SourceForge</a> for reference.</p>
-<p>Copyright (C) 2005-2020 Sergei Tachenov and contributors </p>
+<p>Copyright (C) 2005-2021 Sergei Tachenov and contributors </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Oct 13 2021 19:10:02 for QuaZip by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19
+Generated on Sat Nov 13 2021 15:53:03 for QuaZip by&#160;<a href="http://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.8.19
 </small></address>
 </body>
 </html>
