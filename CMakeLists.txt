@@ -12,7 +12,7 @@ option(BUILD_SHARED_LIBS "" ON)
 option(QUAZIP_INSTALL "" ON)
 option(QUAZIP_USE_QT_ZLIB "" OFF)
 option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
-set(QUAZIP_QT_MAJOR_VERSION 5 CACHE STRING "Qt version to use (4 or 5), defaults to 5")
+set(QUAZIP_QT_MAJOR_VERSION 5 CACHE STRING "Qt version to use (4, 5 or 6), defaults to 5")
 
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE RELEASE)
