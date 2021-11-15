@@ -12,7 +12,14 @@ option(BUILD_SHARED_LIBS "" ON)
 option(QUAZIP_INSTALL "" ON)
 option(QUAZIP_USE_QT_ZLIB "" OFF)
 option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
-set(QUAZIP_QT_MAJOR_VERSION 5 CACHE STRING "Qt version to use (4, 5 or 6), defaults to 5")
+
+find_package(
+  QT NAMES Qt6 Qt5 Qt4
+  COMPONENTS Core
+  REQUIRED
+)
+
+set(QUAZIP_QT_MAJOR_VERSION ${QT_VERSION_MAJOR} CACHE STRING "Qt version to use (4, 5 or 6), defaults to ${QT_VERSION_MAJOR}")
 
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE RELEASE)
@@ -51,6 +58,7 @@ else()
 	message(FATAL_ERROR "Qt version ${QUAZIP_QT_MAJOR_VERSION} is not supported")
 endif()
 
+message(STATUS "Using Qt version ${QUAZIP_QT_MAJOR_VERSION}")
 
 set(QUAZIP_QT_ZLIB_USED OFF)
 if(QUAZIP_USE_QT_ZLIB)
