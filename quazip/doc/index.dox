@@ -104,11 +104,11 @@ same process, maybe with some CMake adjustments not specific to
 To build the library, run:
 \verbatim
 $ cd /wherever/quazip/source/is/quazip-x.y.z
-$ cmake -S . -B wherever/you/want/your/build/to/be -D QUAZIP_QT_MAJOR_VERSION=4, 5 or 6
+$ cmake -S . -B wherever/you/want/your/build/to/be -D QUAZIP_QT_MAJOR_VERSION=6, 5 or 4
 $ cmake --build wherever/you/want/your/build/to/be
 \endverbatim
 
-\c QUAZIP_QT_MAJOR_VERSION is just one number, and it defaults to 5, so if building with %Qt 5, it is optional.
+\c QUAZIP_QT_MAJOR_VERSION is just one number, and it defaults to the first Qt major version that can be found by CMake.
 
 On Windows, it may be required to use <tt>-G "MinGW Makefiles"</tt> or something like that to convince
 CMake that you really want to use, say, MinGW and not Visual Studio, for example.
