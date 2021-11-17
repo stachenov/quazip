@@ -13,11 +13,24 @@ option(QUAZIP_INSTALL "" ON)
 option(QUAZIP_USE_QT_ZLIB "" OFF)
 option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
 
+# Set the default value of `${QUAZIP_QT_MAJOR_VERSION}`.
+# We search quietly for Qt6, Qt5 and Qt4 in that order.
+# Qt6 and Qt5 provide config files for CMake.
+# Qt4 relies on `FindQt4.cmake`.
 find_package(
-  QT NAMES Qt6 Qt5 Qt4
-  COMPONENTS Core
-  REQUIRED
+  QT NAMES Qt6 Qt5
+  QUIET COMPONENTS Core
 )
+if (NOT QT_FOUND)
+  find_package(Qt4 QUIET COMPONENTS QtCore)
+  if (Qt4_FOUND)
+    set(QT_VERSION_MAJOR 4)
+  else()
+    # If neither 6, 5 nor 4 are found, we default to 5.
+    # The setup will fail further down.
+    set(QT_VERSION_MAJOR 5)
+  endif()
+endif()
 
 set(QUAZIP_QT_MAJOR_VERSION ${QT_VERSION_MAJOR} CACHE STRING "Qt version to use (4, 5 or 6), defaults to ${QT_VERSION_MAJOR}")
 
