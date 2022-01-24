@@ -41,7 +41,8 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
   simple operations, such as mass ZIP packing or extraction.
   */
 class QUAZIP_EXPORT JlCompress {
-private:
+public:
+    static bool copyData(QIODevice &inFile, QIODevice &outFile);
     static QStringList extractDir(QuaZip &zip, const QString &dir);
     static QStringList getFileList(QuaZip *zip);
     static QString extractFile(QuaZip &zip, QString fileName, QString fileDest);
@@ -81,7 +82,6 @@ private:
       */
     static bool removeFile(QStringList listFile);
 
-public:
     /// Compress a single file.
     /**
       \param fileCompressed The name of the archive.
@@ -126,7 +126,6 @@ public:
     static bool compressDir(QString fileCompressed, QString dir,
                             bool recursive, QDir::Filters filters);
 
-public:
     /// Extract a single file.
     /**
       \param fileCompressed The name of the archive.
