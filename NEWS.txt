@@ -1,4 +1,7 @@
-QuaZip changes
+* 2022-04-16 1.3
+        * All JlCompress methods are now public
+        * Default Qt major version is now detected automatically
+        * Minor CMake and pkg-config fixes and improvements
 
 * 2021-11-13 1.2
         * Add CMake option to disable installation (Sebastian Rettenberger)
