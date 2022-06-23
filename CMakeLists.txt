@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.15...3.18)
 
 project(QuaZip VERSION 1.3)
 
-set(CMAKE_CXX_STANDARD 14)
-
 set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
 set(QUAZIP_LIB_SOVERSION 1.3.0)
 
@@ -33,6 +31,12 @@ if (NOT QT_FOUND)
 endif()
 
 set(QUAZIP_QT_MAJOR_VERSION ${QT_VERSION_MAJOR} CACHE STRING "Qt version to use (4, 5 or 6), defaults to ${QT_VERSION_MAJOR}")
+
+if (QUAZIP_QT_MAJOR_VERSION EQUAL 6)
+    set(CMAKE_CXX_STANDARD 17)
+else()
+    set(CMAKE_CXX_STANDARD 14)
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE RELEASE)
