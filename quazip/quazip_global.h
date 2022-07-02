@@ -27,6 +27,8 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include <QtCore/QtGlobal>
 
+#define QUAZIP_VERSION ((QUAZIP_VERSION_MAJOR << 24) | (QUAZIP_VERSION_MINOR << 16) | (QUAZIP_VERSION_PATCH << 8) | QUAZIP_VERSION_TWEAK)
+
 /**
   This is automatically defined when building a static library, but when
   including QuaZip sources directly into a project, QUAZIP_STATIC should

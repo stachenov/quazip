@@ -42,6 +42,16 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <quazip.h>
 #include <JlCompress.h>
 
+void TestQuaZip::version()
+{
+    QCOMPARE(QString::fromLatin1(QUAZIP_VERSION_STRING), QString::fromLatin1("1.3"));
+    QCOMPARE(QUAZIP_VERSION, 0x01030000);
+    QCOMPARE(QUAZIP_VERSION_MAJOR, 1);
+    QCOMPARE(QUAZIP_VERSION_MINOR, 3);
+    QCOMPARE(QUAZIP_VERSION_PATCH, 0);
+    QCOMPARE(QUAZIP_VERSION_TWEAK, 0);
+}
+
 void TestQuaZip::getFileList_data()
 {
     QTest::addColumn<QString>("zipName");
