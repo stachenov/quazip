@@ -11,6 +11,12 @@ option(QUAZIP_INSTALL "" ON)
 option(QUAZIP_USE_QT_ZLIB "" OFF)
 option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
 
+# Make BZIP2 optional
+option(QUAZIP_BZIP2 "Enables BZIP2 compression" ON)
+
+option(QUAZIP_FETCH_LIBS "Enables fetching third-party libraries if not found" ${WIN32})
+option(QUAZIP_FORCE_FETCH_LIBS "Enables fetching third-party libraries always" OFF)
+
 # Set the default value of `${QUAZIP_QT_MAJOR_VERSION}`.
 # We search quietly for Qt6, Qt5 and Qt4 in that order.
 # Qt6 and Qt5 provide config files for CMake.

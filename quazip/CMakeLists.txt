@@ -2,6 +2,13 @@ project(QuaZip_Library VERSION ${QUAZIP_LIB_VERSION})
 
 include(GNUInstallDirs) # configurable CMAKE_INSTALL_*DIR
 
+
+
+set(QUAZIP_INC)
+set(QUAZIP_LIB)
+set(QUAZIP_LBD)
+
+
 set(QUAZIP_HEADERS
         JlCompress.h
         ioapi.h
@@ -47,24 +54,82 @@ set(QUAZIP_PKGCONFIG_NAME quazip${QuaZip_VERSION_MAJOR}-qt${QUAZIP_QT_MAJOR_VERS
 add_library(${QUAZIP_LIB_TARGET_NAME} ${QUAZIP_SOURCES})
 add_library(QuaZip::QuaZip ALIAS ${QUAZIP_LIB_TARGET_NAME})
 
+
+if(QUAZIP_BZIP2)
+    # Check if bzip2 is present
+    if(NOT QUAZIP_FORCE_FETCH_LIBS)
+        find_package(BZip2 QUIET)
+    endif()
+
+    if(BZIP2_FOUND AND NOT QUAZIP_FORCE_FETCH_LIBS)
+        message(STATUS "Using BZIP2 ${BZIP2_VERSION_STRING}")
+
+        list(APPEND QUAZIP_INC ${BZIP2_INCLUDE_DIRS})
+        list(APPEND QUAZIP_LIB ${BZIP2_LIBRARIES})
+        list(APPEND QUAZIP_LBD ${BZIP2_LIBRARY_DIRS})
+
+        set(PC_PRIVATE_LIBS "${PC_PRIVATE_LIBS} -lbzip2")
+    elseif(QUAZIP_FETCH_LIBS)
+        clone_repo(bzip2 https://sourceware.org/git/bzip2.git)
+
+        # BZip2 repository does not support cmake so we have to create
+        # the bzip2 library ourselves
+        set(BZIP2_SRC
+            ${BZIP2_SOURCE_DIR}/blocksort.c
+            ${BZIP2_SOURCE_DIR}/bzlib.c
+            ${BZIP2_SOURCE_DIR}/compress.c
+            ${BZIP2_SOURCE_DIR}/crctable.c
+            ${BZIP2_SOURCE_DIR}/decompress.c
+            ${BZIP2_SOURCE_DIR}/huffman.c
+            ${BZIP2_SOURCE_DIR}/randtable.c)
+
+        set(BZIP2_HDR
+            ${BZIP2_SOURCE_DIR}/bzlib.h
+            ${BZIP2_SOURCE_DIR}/bzlib_private.h)
+
+        add_library(bzip2 STATIC ${BZIP2_SRC} ${BZIP2_HDR})
+
+        target_compile_definitions(bzip2 PRIVATE -DBZ_NO_STDIO)
+
+        # list(APPEND MINIZIP_DEP bzip2)
+        list(APPEND QUAZIP_INC ${BZIP2_SOURCE_DIR})
+    else()
+        message(STATUS "BZip2 library not found")
+
+        set(QUAZIP_BZIP2 OFF)
+    endif()
+
+    if(QUAZIP_BZIP2)
+        list(APPEND MINIZIP_DEP_PKG BZip2)
+        list(APPEND MINIZIP_DEF -DHAVE_BZIP2)
+        list(APPEND MINIZIP_SRC mz_strm_bzip.c)
+        list(APPEND MINIZIP_HDR mz_strm_bzip.h)
+        add_compile_definitions(HAVE_BZIP2=1)
+    endif()
+endif()
+
+
 set_target_properties(${QUAZIP_LIB_TARGET_NAME} PROPERTIES
 	VERSION ${QUAZIP_LIB_VERSION}
 	SOVERSION ${QUAZIP_LIB_SOVERSION}
 	OUTPUT_NAME ${QUAZIP_LIB_FILE_NAME}
 	PUBLIC_HEADER "${QUAZIP_HEADERS}"
 )
-target_include_directories(${QUAZIP_LIB_TARGET_NAME} PUBLIC 
+target_include_directories(${QUAZIP_LIB_TARGET_NAME} PRIVATE ${QUAZIP_INC})
+target_include_directories(${QUAZIP_LIB_TARGET_NAME} PUBLIC
 	$<BUILD_INTERFACE:${QUAZIP_SOURCE_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_DIR_NAME}>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_INCLUDE_PATH}>
+    ${QUAZIP_INC}
 )
-target_link_libraries(${QUAZIP_LIB_TARGET_NAME} ${QUAZIP_LIB_LIBRARIES})
+target_link_libraries(${QUAZIP_LIB_TARGET_NAME} ${QUAZIP_LIB_LIBRARIES} ${QUAZIP_LIB})
 if(BUILD_SHARED_LIBS)
 	target_compile_definitions(${QUAZIP_LIB_TARGET_NAME} PRIVATE QUAZIP_BUILD) # dllexport
 else()
 	target_compile_definitions(${QUAZIP_LIB_TARGET_NAME} PUBLIC QUAZIP_STATIC) # suppress dllimport
 endif()
+target_link_directories(${QUAZIP_LIB_TARGET_NAME} PUBLIC ${QUAZIP_LBD})
 
 include(CMakePackageConfigHelpers)
 
