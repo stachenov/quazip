@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - master
+      - 147/AddBzipSupport
   pull_request:
 
 name: CI
