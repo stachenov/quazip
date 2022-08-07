@@ -2,8 +2,10 @@ project(QuaZip_Library VERSION ${QUAZIP_LIB_VERSION})
 
 include(GNUInstallDirs) # configurable CMAKE_INSTALL_*DIR
 
+cmake_minimum_required(VERSION 3.13)
 
 
+set(QUAZIP_DEP)
 set(QUAZIP_INC)
 set(QUAZIP_LIB)
 set(QUAZIP_LBD)
@@ -57,6 +59,8 @@ add_library(QuaZip::QuaZip ALIAS ${QUAZIP_LIB_TARGET_NAME})
 
 if(QUAZIP_BZIP2)
     # Check if bzip2 is present
+    set(QUAZIP_BZIP2 ON)
+
     if(NOT QUAZIP_FORCE_FETCH_LIBS)
         find_package(BZip2 QUIET)
     endif()
@@ -91,7 +95,8 @@ if(QUAZIP_BZIP2)
 
         target_compile_definitions(bzip2 PRIVATE -DBZ_NO_STDIO)
 
-        # list(APPEND MINIZIP_DEP bzip2)
+        list(APPEND QUAZIP_DEP bzip2)
+        list(APPEND QUAZIP_LIB bzip2)
         list(APPEND QUAZIP_INC ${BZIP2_SOURCE_DIR})
     else()
         message(STATUS "BZip2 library not found")
@@ -100,10 +105,7 @@ if(QUAZIP_BZIP2)
     endif()
 
     if(QUAZIP_BZIP2)
-        list(APPEND MINIZIP_DEP_PKG BZip2)
-        list(APPEND MINIZIP_DEF -DHAVE_BZIP2)
-        list(APPEND MINIZIP_SRC mz_strm_bzip.c)
-        list(APPEND MINIZIP_HDR mz_strm_bzip.h)
+        find_package(BZip2)
         add_compile_definitions(HAVE_BZIP2=1)
     endif()
 endif()
@@ -121,7 +123,6 @@ target_include_directories(${QUAZIP_LIB_TARGET_NAME} PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_DIR_NAME}>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_INCLUDE_PATH}>
-    ${QUAZIP_INC}
 )
 target_link_libraries(${QUAZIP_LIB_TARGET_NAME} ${QUAZIP_LIB_LIBRARIES} ${QUAZIP_LIB})
 if(BUILD_SHARED_LIBS)
@@ -146,7 +147,7 @@ if(QUAZIP_INSTALL)
     configure_package_config_file(QuaZipConfig.cmake.in ${QUAZIP_PACKAGE_NAME}Config.cmake
         INSTALL_DESTINATION ${QUAZIP_INSTALL_CONFIGDIR}/${QUAZIP_DIR_NAME}
     )
-    install(TARGETS ${QUAZIP_LIB_TARGET_NAME}
+    install(TARGETS ${QUAZIP_LIB_TARGET_NAME} ${QUAZIP_DEP}
         EXPORT ${QUAZIP_EXPORT_SET}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_INCLUDE_PATH}
     )

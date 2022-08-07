@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.15...3.18)
 
 project(QuaZip VERSION 1.3)
 
+include(cmake/clone-repo.cmake)
+
 set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
 set(QUAZIP_LIB_SOVERSION 1.3.0)
 
