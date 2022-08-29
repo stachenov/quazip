@@ -2,8 +2,6 @@
 
 include(CMakeFindDependencyMacro)
 
-find_dependency(ZLIB REQUIRED)
-
 include("${CMAKE_CURRENT_LIST_DIR}/@QUAZIP_EXPORT_SET@.cmake")
 
 if(@QUAZIP_QT_MAJOR_VERSION@ EQUAL 6)
@@ -15,6 +13,13 @@ elseif(@QUAZIP_QT_MAJOR_VERSION@ EQUAL 4)
 else()
     message(FATAL_ERROR "Qt version QUAZIP_QT_MAJOR_VERSION=@QUAZIP_QT_MAJOR_VERSION@ is unsupported")
 endif()
+
+if(@QUAZIP_USE_QT_ZLIB@)
+    find_dependency(Qt@QUAZIP_QT_MAJOR_VERSION@ REQUIRED COMPONENTS Zlib)
+else()
+    find_dependency(ZLIB REQUIRED)
+endif()
+
 set_target_properties(QuaZip::QuaZip PROPERTIES IMPORTED_GLOBAL TRUE)
 
 check_required_components(@QUAZIP_PACKAGE_NAME@)
