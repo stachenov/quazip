@@ -17,7 +17,7 @@ jobs:
       matrix:
         runner:
           - "ubuntu:20.04"  # cmake 3.16, qt 5.12
-          - "ubuntu:20.10"  # cmake 3.16, qt 5.14
+          - "ubuntu:22.04"  # cmake 3.22, qt 5.15
     env:
       DEBIAN_FRONTEND: noninteractive
     steps:
