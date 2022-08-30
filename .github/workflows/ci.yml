@@ -28,7 +28,7 @@ jobs:
         run: |
           apt-get update &&
           apt-get install -y --no-install-recommends \
-            g++ make cmake zlib1g-dev qt5-default qttools5-dev-tools
+            g++ make cmake zlib1g-dev qtbase5-dev qttools5-dev-tools
       - name: Show cmake version
         run: cmake --version
       - name: Run cmake
