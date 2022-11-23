@@ -90,10 +90,7 @@ bool QuaZipDir::cd(const QString &directoryName)
                 return false;
         }
         QStringList path = dirName.split(QLatin1String("/"), SkipEmptyParts);
-        for (QStringList::const_iterator i = path.constBegin();
-                i != path.constEnd();
-                ++i) {
-            const QString &step = *i;
+        for (const auto& step : path) {
 #ifdef QUAZIP_QUAZIPDIR_DEBUG
             qDebug("QuaZipDir::cd(%s): going to %s",
                     dirName.toUtf8().constData(),
@@ -181,10 +178,8 @@ static void QuaZipDir_convertInfoList(const QList<QuaZipFileInfo64> &from,
                                       QStringList &to)
 {
     to.clear();
-    for (QList<QuaZipFileInfo64>::const_iterator i = from.constBegin();
-            i != from.constEnd();
-            ++i) {
-        to.append(i->name);
+    for (const auto& file : from) {
+        to.append(file.name);
     }
 }
 
@@ -192,11 +187,9 @@ static void QuaZipDir_convertInfoList(const QList<QuaZipFileInfo64> &from,
                                       QList<QuaZipFileInfo> &to)
 {
     to.clear();
-    for (QList<QuaZipFileInfo64>::const_iterator i = from.constBegin();
-            i != from.constEnd();
-            ++i) {
+    for (const auto& file : from) {
         QuaZipFileInfo info32;
-        i->toQuaZipFileInfo(info32);
+        file.toQuaZipFileInfo(info32);
         to.append(info32);
     }
 }
@@ -459,11 +452,9 @@ bool QuaZipDir::exists(const QString &filePath) const
 #ifdef QUAZIP_QUAZIPDIR_DEBUG
             qDebug("QuaZipDir::exists(): looking for %s",
                     fileName.toUtf8().constData());
-            for (QStringList::const_iterator i = entries.constBegin();
-                    i != entries.constEnd();
-                    ++i) {
+            for (const auto& entry : entries) {
                 qDebug("QuaZipDir::exists(): entry: %s",
-                        i->toUtf8().constData());
+                        entry.toUtf8().constData());
             }
 #endif
             Qt::CaseSensitivity cs = QuaZip::convertCaseSensitivity(
