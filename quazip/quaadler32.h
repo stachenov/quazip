@@ -41,11 +41,11 @@ class QUAZIP_EXPORT QuaAdler32 : public QuaChecksum32
 public:
 	QuaAdler32();
 
-	quint32 calculate(const QByteArray &data);
+	quint32 calculate(const QByteArray &data) override;
 
-	void reset();
-	void update(const QByteArray &buf);
-	quint32 value();
+	void reset() override;
+	void update(const QByteArray &buf) override;
+	quint32 value() override;
 
 private:
 	quint32 checksum;
