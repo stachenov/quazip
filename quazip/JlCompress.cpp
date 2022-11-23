@@ -73,9 +73,7 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
 
     // Chiudo i file
     outFile.close();
-    if (outFile.getZipError()!=UNZ_OK) return false;
-
-    return true;
+    return outFile.getZipError() == UNZ_OK;
 }
 
 bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool recursive, QDir::Filters filters) {
@@ -174,9 +172,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
 
     if (info.isSymbolicLink()) {
         QString target = QFile::decodeName(inFile.readAll());
-        if (!QFile::link(target, fileDest))
-            return false;
-        return true;
+        return QFile::link(target, fileDest);
     }
 
     // Apro il file risultato
