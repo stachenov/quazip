@@ -48,11 +48,6 @@ private:
 };
 /// \endcond
 
-QuaZipDir::QuaZipDir(const QuaZipDir &that):
-    d(that.d)
-{
-}
-
 QuaZipDir::QuaZipDir(QuaZip *zip, const QString &dir):
     d(new QuaZipDirPrivate(zip, dir))
 {
@@ -60,20 +55,10 @@ QuaZipDir::QuaZipDir(QuaZip *zip, const QString &dir):
         d->dir = d->dir.mid(1);
 }
 
-QuaZipDir::~QuaZipDir()
-{
-}
-
-bool QuaZipDir::operator==(const QuaZipDir &that)
-{
-    return d->zip == that.d->zip && d->dir == that.d->dir;
-}
-
-QuaZipDir& QuaZipDir::operator=(const QuaZipDir &that)
-{
-    this->d = that.d;
-    return *this;
-}
+QuaZipDir::QuaZipDir(const QuaZipDir &that) = default;
+QuaZipDir::~QuaZipDir() = default;
+QuaZipDir::operator==(const QuaZipDir &that) = default;
+QuaZipDir& QuaZipDir::operator=(const QuaZipDir &that) = default;
 
 QString QuaZipDir::operator[](int pos) const
 {
