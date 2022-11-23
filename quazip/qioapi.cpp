@@ -73,10 +73,7 @@ ZPOS64_T call_ztell64 (const zlib_filefunc64_32_def* pfilefunc,voidpf filestream
 /// @cond internal
 struct QIODevice_descriptor {
     // Position only used for writing to sequential devices.
-    qint64 pos;
-    inline QIODevice_descriptor():
-        pos(0)
-    {}
+    qint64 pos{0};
 };
 /// @endcond
 

@@ -33,11 +33,11 @@ class QuaZipDirPrivate: public QSharedData {
     friend class QuaZipDir;
 private:
     QuaZipDirPrivate(QuaZip *zip, const QString &dir = QString()):
-        zip(zip), dir(dir), caseSensitivity(QuaZip::csDefault),
+        zip(zip), dir(dir),
         filter(QDir::NoFilter), sorting(QDir::NoSort) {}
     QuaZip *zip;
     QString dir;
-    QuaZip::CaseSensitivity caseSensitivity;
+    QuaZip::CaseSensitivity caseSensitivity{QuaZip::csDefault};
     QDir::Filters filter;
     QStringList nameFilters;
     QDir::SortFlags sorting;
@@ -321,7 +321,7 @@ bool QuaZipDirComparator::operator()(const QuaZipFileInfo64 &info1,
 }
 
 template<typename TFileInfoList>
-bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters, 
+bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
     QDir::Filters filter, QDir::SortFlags sort, TFileInfoList &result) const
 {
     QString basePath = simplePath();

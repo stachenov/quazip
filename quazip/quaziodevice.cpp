@@ -36,29 +36,21 @@ class QuaZIODevicePrivate {
     QuaZIODevice *q;
     z_stream zins;
     z_stream zouts;
-    char *inBuf;
-    int inBufPos;
-    int inBufSize;
-    char *outBuf;
-    int outBufPos;
-    int outBufSize;
-    bool zBufError;
-    bool atEnd;
+    char *inBuf{nullptr};
+    int inBufPos{0};
+    int inBufSize{0};
+    char *outBuf{nullptr};
+    int outBufPos{0};
+    int outBufSize{0};
+    bool zBufError{false};
+    bool atEnd{false};
     bool flush(int sync);
     int doFlush(QString &error);
 };
 
 QuaZIODevicePrivate::QuaZIODevicePrivate(QIODevice *io, QuaZIODevice *q):
   io(io),
-  q(q),
-  inBuf(nullptr),
-  inBufPos(0),
-  inBufSize(0),
-  outBuf(nullptr),
-  outBufPos(0),
-  outBufSize(0),
-  zBufError(false),
-  atEnd(false)
+  q(q)
 {
   zins.zalloc = (alloc_func) nullptr;
   zins.zfree = (free_func) nullptr;
