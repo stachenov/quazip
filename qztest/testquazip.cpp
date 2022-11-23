@@ -87,16 +87,16 @@ void TestQuaZip::getFileList()
     }
     QList<QuaZipFileInfo> destList = testZip.getFileInfoList();
     QCOMPARE(destList.size(), srcInfo.size());
-    for (int i = 0; i < destList.size(); i++) {
-        QCOMPARE(static_cast<qint64>(destList[i].uncompressedSize),
-                srcInfo[destList[i].name].size());
+    for (const auto& dest : destList) {
+        QCOMPARE(static_cast<qint64>(dest.uncompressedSize),
+                srcInfo[dest.name].size());
     }
     // Now test zip64
     QList<QuaZipFileInfo64> destList64 = testZip.getFileInfoList64();
     QCOMPARE(destList64.size(), srcInfo.size());
-    for (int i = 0; i < destList64.size(); i++) {
-        QCOMPARE(static_cast<qint64>(destList64[i].uncompressedSize),
-                srcInfo[destList64[i].name].size());
+    for (const auto& dest : destList64) {
+        QCOMPARE(static_cast<qint64>(dest.uncompressedSize),
+                srcInfo[dest.name].size());
     }
     // test that we didn't mess up the current file
     QCOMPARE(testZip.getCurrentFileName(), firstFile);
@@ -144,7 +144,7 @@ void TestQuaZip::add()
     QVERIFY(testZip.open(QuaZip::mdAdd));
     foreach (QString fileName, fileNamesToAdd) {
         QuaZipFile testFile(&testZip);
-        QVERIFY(testFile.open(QIODevice::WriteOnly, 
+        QVERIFY(testFile.open(QIODevice::WriteOnly,
             QuaZipNewInfo(fileName, "tmp/" + fileName)));
         QFile inFile("tmp/" + fileName);
         QVERIFY(inFile.open(QIODevice::ReadOnly));
