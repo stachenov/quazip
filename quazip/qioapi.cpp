@@ -48,7 +48,7 @@ int call_zseek64 (const zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPO
         return (*(pfilefunc->zfile_func64.zseek64_file)) (pfilefunc->zfile_func64.opaque,filestream,offset,origin);
     else
     {
-        uLong offsetTruncated = (uLong)offset;
+        uLong offsetTruncated = static_cast<uLong>(offset);
         if (offsetTruncated != offset)
             return -1;
         else
@@ -63,8 +63,8 @@ ZPOS64_T call_ztell64 (const zlib_filefunc64_32_def* pfilefunc,voidpf filestream
     else
     {
         uLong tell_uLong = (*(pfilefunc->ztell32_file))(pfilefunc->zfile_func64.opaque,filestream);
-        if ((tell_uLong) == ((uLong)-1))
-            return (ZPOS64_T)-1;
+        if ((tell_uLong) == (static_cast<uLong>(-1)))
+            return static_cast<ZPOS64_T>(-1);
         else
             return tell_uLong;
     }
@@ -139,9 +139,9 @@ uLong ZCALLBACK qiodevice_read_file_func (
 {
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(stream);
-    qint64 ret64 = iodevice->read((char*)buf,size);
+    qint64 ret64 = iodevice->read(static_cast<char*>(buf),size);
     uLong ret;
-    ret = (uLong) ret64;
+    ret = static_cast<uLong>(ret64);
     if (ret64 != -1) {
         d->pos += ret64;
     }
@@ -162,7 +162,7 @@ uLong ZCALLBACK qiodevice_write_file_func (
     if (ret64 != -1) {
         d->pos += ret64;
     }
-    ret = (uLong) ret64;
+    ret = static_cast<uLong>(ret64);
     return ret;
 }
 
@@ -220,10 +220,10 @@ int ZCALLBACK qiodevice_seek_file_func (
     switch (origin)
     {
     case ZLIB_FILEFUNC_SEEK_CUR :
-        qiodevice_seek_result = ((QIODevice*)stream)->pos() + offset;
+        qiodevice_seek_result = (static_cast<QIODevice*>(stream))->pos() + offset;
         break;
     case ZLIB_FILEFUNC_SEEK_END :
-        qiodevice_seek_result = ((QIODevice*)stream)->size() - offset;
+        qiodevice_seek_result = (static_cast<QIODevice*>(stream))->size() - offset;
         break;
     case ZLIB_FILEFUNC_SEEK_SET :
         qiodevice_seek_result = offset;
@@ -257,10 +257,10 @@ int ZCALLBACK qiodevice64_seek_file_func (
     switch (origin)
     {
     case ZLIB_FILEFUNC_SEEK_CUR :
-        qiodevice_seek_result = ((QIODevice*)stream)->pos() + offset;
+        qiodevice_seek_result = (static_cast<QIODevice*>(stream))->pos() + offset;
         break;
     case ZLIB_FILEFUNC_SEEK_END :
-        qiodevice_seek_result = ((QIODevice*)stream)->size() - offset;
+        qiodevice_seek_result = (static_cast<QIODevice*>(stream))->size() - offset;
         break;
     case ZLIB_FILEFUNC_SEEK_SET :
         qiodevice_seek_result = offset;

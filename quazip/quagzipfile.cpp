@@ -157,14 +157,14 @@ void QuaGzipFile::close()
 
 qint64 QuaGzipFile::readData(char *data, qint64 maxSize)
 {
-    return gzread(d->gzd, (voidp)data, (unsigned)maxSize);
+    return gzread(d->gzd, (voidp)data, static_cast<unsigned>(maxSize));
 }
 
 qint64 QuaGzipFile::writeData(const char *data, qint64 maxSize)
 {
     if (maxSize == 0)
         return 0;
-    int written = gzwrite(d->gzd, (voidp)data, (unsigned)maxSize);
+    int written = gzwrite(d->gzd, (voidp)data, static_cast<unsigned>(maxSize));
     if (written == 0)
         return -1;
     else

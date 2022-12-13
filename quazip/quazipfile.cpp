@@ -285,7 +285,7 @@ bool QuaZipFile::open(OpenMode mode, int *method, int *level, bool raw, const ch
       }
       if(p->zip->getMode()!=QuaZip::mdUnzip) {
         qWarning("QuaZipFile::open(): file open mode %d incompatible with ZIP open mode %d",
-            (int)mode, (int)p->zip->getMode());
+            (int)mode, static_cast<int>(p->zip->getMode()));
         return false;
       }
       if(!p->zip->hasCurrentFile()) {
@@ -293,7 +293,7 @@ bool QuaZipFile::open(OpenMode mode, int *method, int *level, bool raw, const ch
         return false;
       }
     }
-    p->setZipError(unzOpenCurrentFile3(p->zip->getUnzFile(), method, level, (int)raw, password));
+    p->setZipError(unzOpenCurrentFile3(p->zip->getUnzFile(), method, level, static_cast<int>(raw), password));
     if(p->zipError==UNZ_OK) {
       setOpenMode(mode);
       p->raw=raw;
@@ -327,7 +327,7 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
     }
     if(p->zip->getMode()!=QuaZip::mdCreate&&p->zip->getMode()!=QuaZip::mdAppend&&p->zip->getMode()!=QuaZip::mdAdd) {
       qWarning("QuaZipFile::open(): file open mode %d incompatible with ZIP open mode %d",
-          (int)mode, (int)p->zip->getMode());
+          (int)mode, static_cast<int>(p->zip->getMode()));
       return false;
     }
     info_z.tmz_date.tm_year=info.dateTime.date().year();
@@ -337,8 +337,8 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
     info_z.tmz_date.tm_min=info.dateTime.time().minute();
     info_z.tmz_date.tm_sec=info.dateTime.time().second();
     info_z.dosDate = 0;
-    info_z.internal_fa=(uLong)info.internalAttr;
-    info_z.external_fa=(uLong)info.externalAttr;
+    info_z.internal_fa=static_cast<uLong>(info.internalAttr);
+    info_z.external_fa=static_cast<uLong>(info.externalAttr);
     if (p->zip->isDataDescriptorWritingEnabled())
         zipSetFlags(p->zip->getZipFile(), ZIP_WRITE_DATA_DESCRIPTOR);
     else
@@ -353,9 +353,9 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
           p->zip->isUtf8Enabled()
             ? info.comment.toUtf8().constData()
             : p->zip->getCommentCodec()->fromUnicode(info.comment).constData(),
-          method, level, (int)raw,
+          method, level, static_cast<int>(raw),
           windowBits, memLevel, strategy,
-          password, (uLong)crc,
+          password, static_cast<uLong>(crc),
           (p->zip->getOsCode() << 8) | QUAZIP_VERSION_MADE_BY,
           0,
           p->zip->isZip64Enabled()));
@@ -498,9 +498,9 @@ void QuaZipFile::close()
 qint64 QuaZipFile::readData(char *data, qint64 maxSize)
 {
   p->setZipError(UNZ_OK);
-  qint64 bytesRead=unzReadCurrentFile(p->zip->getUnzFile(), data, (unsigned)maxSize);
+  qint64 bytesRead=unzReadCurrentFile(p->zip->getUnzFile(), data, static_cast<unsigned>(maxSize));
   if (bytesRead < 0) {
-    p->setZipError((int) bytesRead);
+    p->setZipError(static_cast<int>(bytesRead));
     return -1;
   }
   return bytesRead;
@@ -509,7 +509,7 @@ qint64 QuaZipFile::readData(char *data, qint64 maxSize)
 qint64 QuaZipFile::writeData(const char* data, qint64 maxSize)
 {
   p->setZipError(ZIP_OK);
-  p->setZipError(zipWriteInFileInZip(p->zip->getZipFile(), data, (uint)maxSize));
+  p->setZipError(zipWriteInFileInZip(p->zip->getZipFile(), data, static_cast<uint>(maxSize)));
   if(p->zipError!=ZIP_OK) return -1;
   else {
     p->writePos+=maxSize;
