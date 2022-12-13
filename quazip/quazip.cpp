@@ -79,10 +79,9 @@ class QuaZipPrivate {
     inline QTextCodec *getDefaultFileNameCodec()
     {
         if (defaultFileNameCodec == nullptr) {
-            return QTextCodec::codecForLocale();
-        } else {
-            return defaultFileNameCodec;
+          return QTextCodec::codecForLocale();
         }
+        return defaultFileNameCodec;
     }
     /// The constructor for the corresponding QuaZip constructor.
     inline QuaZipPrivate(QuaZip *q):
@@ -245,9 +244,8 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
     if (p->zipName.isEmpty()) {
       qWarning("QuaZip::open(): set either ZIP file name or IO device first");
       return false;
-    } else {
-      ioDevice = new QFile(p->zipName);
     }
+    ioDevice = new QFile(p->zipName);
   }
   unsigned flags = 0;
   switch(mode) {
@@ -280,12 +278,12 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
         p->mode=mode;
         p->ioDevice = ioDevice;
         return true;
-      } else {
-        p->zipError=UNZ_OPENERROR;
-        if (!p->zipName.isEmpty())
-          delete ioDevice;
-        return false;
       }
+      p->zipError = UNZ_OPENERROR;
+      if (!p->zipName.isEmpty())
+        delete ioDevice;
+      return false;
+
     case mdCreate:
     case mdAppend:
     case mdAdd:
@@ -329,12 +327,12 @@ bool QuaZip::open(Mode mode, zlib_filefunc_def* ioApi)
         p->mode=mode;
         p->ioDevice = ioDevice;
         return true;
-      } else {
-        p->zipError=UNZ_OPENERROR;
-        if (!p->zipName.isEmpty())
-          delete ioDevice;
-        return false;
       }
+      p->zipError = UNZ_OPENERROR;
+      if (!p->zipName.isEmpty())
+        delete ioDevice;
+      return false;
+
     default:
       qWarning("QuaZip::open(): unknown mode: %d", static_cast<int>(mode));
       if (!p->zipName.isEmpty())
@@ -521,9 +519,8 @@ bool QuaZip::getCurrentFileInfo(QuaZipFileInfo *info)const
     if (getCurrentFileInfo(&info64)) {
         info64.toQuaZipFileInfo(*info);
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 bool QuaZip::getCurrentFileInfo(QuaZipFileInfo64 *info)const
@@ -758,8 +755,7 @@ QStringList QuaZip::getFileNameList() const
     QStringList list;
     if (p->getFileInfoList(&list))
         return list;
-    else
-        return QStringList();
+    return QStringList();
 }
 
 QList<QuaZipFileInfo> QuaZip::getFileInfoList() const
@@ -767,8 +763,7 @@ QList<QuaZipFileInfo> QuaZip::getFileInfoList() const
     QList<QuaZipFileInfo> list;
     if (p->getFileInfoList(&list))
         return list;
-    else
-        return QList<QuaZipFileInfo>();
+    return QList<QuaZipFileInfo>();
 }
 
 QList<QuaZipFileInfo64> QuaZip::getFileInfoList64() const
@@ -776,8 +771,7 @@ QList<QuaZipFileInfo64> QuaZip::getFileInfoList64() const
     QList<QuaZipFileInfo64> list;
     if (p->getFileInfoList(&list))
         return list;
-    else
-        return QList<QuaZipFileInfo64>();
+    return QList<QuaZipFileInfo64>();
 }
 
 Qt::CaseSensitivity QuaZip::convertCaseSensitivity(QuaZip::CaseSensitivity cs)

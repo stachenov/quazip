@@ -146,9 +146,8 @@ bool createTestArchive(QuaZip &zip, const QString &zipName,
     zip.close();
     if (zipName.startsWith("<")) { // something like "<QIODevice pointer>"
         return true;
-    } else {
-        return QFileInfo(zipName).exists();
     }
+    return QFileInfo(zipName).exists();
 }
 
 bool createTestArchive(const QString &zipName,

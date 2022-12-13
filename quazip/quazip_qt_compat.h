@@ -30,10 +30,9 @@ inline bool quazip_close(QIODevice *device) {
     if (file != nullptr) {
         // We have to call the ugly commit() instead:
         return file->commit();
-    } else {
-        device->close();
-        return true;
     }
+    device->close();
+    return true;
 }
 #else
 inline bool quazip_close(QIODevice *device) {

@@ -316,8 +316,7 @@ local int zip64local_putValue (const zlib_filefunc64_32_def* pzlib_filefunc_def,
 
     if (ZWRITE64(*pzlib_filefunc_def,filestream,buf,nbByte)!=(uLong)nbByte)
         return ZIP_ERRNO;
-    else
-        return ZIP_OK;
+    return ZIP_OK;
 }
 
 local void zip64local_putValue_inmemory OF((void* dest, ZPOS64_T x, int nbByte));
@@ -368,13 +367,10 @@ local int zip64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def,vo
         *pi = (int)c;
         return ZIP_OK;
     }
-    else
-    {
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return ZIP_ERRNO;
-        else
-            return ZIP_EOF;
-    }
+
+    if (ZERROR64(*pzlib_filefunc_def, filestream))
+        return ZIP_ERRNO;
+    return ZIP_EOF;
 }
 
 
@@ -934,11 +930,9 @@ extern zipFile ZEXPORT zipOpen3 (voidpf file, int append, zipcharpc* globalcomme
         TRYFREE(zi);
         return NULL;
     }
-    else
-    {
-        *zi = ziinit;
-        return (zipFile)zi;
-    }
+
+    *zi = ziinit;
+    return (zipFile)zi;
 }
 
 extern zipFile ZEXPORT zipOpen2 (voidpf file, int append, zipcharpc* globalcomment, zlib_filefunc_def* pzlib_filefunc32_def)
@@ -949,8 +943,7 @@ extern zipFile ZEXPORT zipOpen2 (voidpf file, int append, zipcharpc* globalcomme
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
         return zipOpen3(file, append, globalcomment, &zlib_filefunc64_32_def_fill, ZIP_DEFAULT_FLAGS);
     }
-    else
-        return zipOpen3(file, append, globalcomment, NULL, ZIP_DEFAULT_FLAGS);
+    return zipOpen3(file, append, globalcomment, NULL, ZIP_DEFAULT_FLAGS);
 }
 
 extern zipFile ZEXPORT zipOpen2_64 (voidpf file, int append, zipcharpc* globalcomment, zlib_filefunc64_def* pzlib_filefunc_def)
@@ -963,8 +956,7 @@ extern zipFile ZEXPORT zipOpen2_64 (voidpf file, int append, zipcharpc* globalco
         zlib_filefunc64_32_def_fill.zseek32_file = NULL;
         return zipOpen3(file, append, globalcomment, &zlib_filefunc64_32_def_fill, ZIP_DEFAULT_FLAGS);
     }
-    else
-        return zipOpen3(file, append, globalcomment, NULL, ZIP_DEFAULT_FLAGS);
+    return zipOpen3(file, append, globalcomment, NULL, ZIP_DEFAULT_FLAGS);
 }
 
 

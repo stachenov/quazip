@@ -223,13 +223,10 @@ local int unz64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, v
         *pi = (int)c;
         return UNZ_OK;
     }
-    else
-    {
-        if (ZERROR64(*pzlib_filefunc_def,filestream))
-            return UNZ_ERRNO;
-        else
-            return UNZ_EOF;
-    }
+
+    if (ZERROR64(*pzlib_filefunc_def, filestream))
+        return UNZ_ERRNO;
+    return UNZ_EOF;
 }
 
 
@@ -780,8 +777,7 @@ extern unzFile ZEXPORT unzOpen2 (voidpf file,
         fill_zlib_filefunc64_32_def_from_filefunc32(&zlib_filefunc64_32_def_fill,pzlib_filefunc32_def);
         return unzOpenInternal(file, &zlib_filefunc64_32_def_fill, 0, UNZ_DEFAULT_FLAGS);
     }
-    else
-        return unzOpenInternal(file, NULL, 0, UNZ_DEFAULT_FLAGS);
+    return unzOpenInternal(file, NULL, 0, UNZ_DEFAULT_FLAGS);
 }
 
 extern unzFile ZEXPORT unzOpen2_64 (voidpf file,
@@ -795,8 +791,7 @@ extern unzFile ZEXPORT unzOpen2_64 (voidpf file,
         zlib_filefunc64_32_def_fill.zseek32_file = NULL;
         return unzOpenInternal(file, &zlib_filefunc64_32_def_fill, 1, UNZ_DEFAULT_FLAGS);
     }
-    else
-        return unzOpenInternal(file, NULL, 1, UNZ_DEFAULT_FLAGS);
+    return unzOpenInternal(file, NULL, 1, UNZ_DEFAULT_FLAGS);
 }
 
 extern unzFile ZEXPORT unzOpen (voidpf file)
@@ -1951,8 +1946,7 @@ extern int ZEXPORT unzeof (unzFile file)
 
     if (pfile_in_zip_read_info->rest_read_uncompressed == 0)
         return 1;
-    else
-        return 0;
+    return 0;
 }
 
 

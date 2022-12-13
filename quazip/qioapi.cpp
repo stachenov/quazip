@@ -36,38 +36,32 @@ voidpf call_zopen64 (const zlib_filefunc64_32_def* pfilefunc,voidpf file,int mod
 {
     if (pfilefunc->zfile_func64.zopen64_file != nullptr)
         return (*(pfilefunc->zfile_func64.zopen64_file)) (pfilefunc->zfile_func64.opaque,file,mode);
-    else
-    {
-        return (*(pfilefunc->zopen32_file))(pfilefunc->zfile_func64.opaque,file,mode);
-    }
+    return (*(pfilefunc->zopen32_file))(pfilefunc->zfile_func64.opaque, file,
+                                        mode);
 }
 
 int call_zseek64 (const zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, int origin)
 {
     if (pfilefunc->zfile_func64.zseek64_file != nullptr)
         return (*(pfilefunc->zfile_func64.zseek64_file)) (pfilefunc->zfile_func64.opaque,filestream,offset,origin);
-    else
-    {
-        uLong offsetTruncated = static_cast<uLong>(offset);
-        if (offsetTruncated != offset)
-            return -1;
-        else
-            return (*(pfilefunc->zseek32_file))(pfilefunc->zfile_func64.opaque,filestream,offsetTruncated,origin);
-    }
+
+    uLong offsetTruncated = static_cast<uLong>(offset);
+    if (offsetTruncated != offset)
+        return -1;
+    return (*(pfilefunc->zseek32_file))(pfilefunc->zfile_func64.opaque,
+                                        filestream, offsetTruncated, origin);
 }
 
 ZPOS64_T call_ztell64 (const zlib_filefunc64_32_def* pfilefunc,voidpf filestream)
 {
     if (pfilefunc->zfile_func64.zseek64_file != nullptr)
         return (*(pfilefunc->zfile_func64.ztell64_file)) (pfilefunc->zfile_func64.opaque,filestream);
-    else
-    {
-        uLong tell_uLong = (*(pfilefunc->ztell32_file))(pfilefunc->zfile_func64.opaque,filestream);
-        if ((tell_uLong) == (static_cast<uLong>(-1)))
-            return static_cast<ZPOS64_T>(-1);
-        else
-            return tell_uLong;
-    }
+
+    uLong tell_uLong = (*(pfilefunc->ztell32_file))(
+        pfilefunc->zfile_func64.opaque, filestream);
+    if ((tell_uLong) == (static_cast<uLong>(-1)))
+        return static_cast<ZPOS64_T>(-1);
+    return tell_uLong;
 }
 
 /// @cond internal
@@ -98,21 +92,19 @@ voidpf ZCALLBACK qiodevice_open_file_func (
                 // We can use sequential devices only for writing.
                 delete d;
                 return nullptr;
-            } else {
-                if ((desiredMode & QIODevice::WriteOnly) != 0) {
-                    // open for writing, need to seek existing device
-                    if (!iodevice->isSequential()) {
-                        iodevice->seek(0);
-                    } else {
-                        d->pos = iodevice->pos();
-                    }
+            }
+            if ((desiredMode & QIODevice::WriteOnly) != 0) {
+                // open for writing, need to seek existing device
+                if (!iodevice->isSequential()) {
+                  iodevice->seek(0);
+                } else {
+                  d->pos = iodevice->pos();
                 }
             }
             return iodevice;
-        } else {
-            delete d;
-            return nullptr;
         }
+        delete d;
+        return nullptr;
     }
     iodevice->open(desiredMode);
     if (iodevice->isOpen()) {
@@ -121,13 +113,11 @@ voidpf ZCALLBACK qiodevice_open_file_func (
             iodevice->close();
             delete d;
             return nullptr;
-        } else {
-            return iodevice;
         }
-    } else {
-        delete d;
-        return nullptr;
+        return iodevice;
     }
+    delete d;
+    return nullptr;
 }
 
 
@@ -210,10 +200,9 @@ int ZCALLBACK qiodevice_seek_file_func (
                 && offset == 0) {
             // sequential devices are always at end (needed in mdAppend)
             return 0;
-        } else {
-            qWarning("qiodevice_seek_file_func() called for sequential device");
-            return -1;
         }
+        qWarning("qiodevice_seek_file_func() called for sequential device");
+        return -1;
     }
     uLong qiodevice_seek_result=0;
     int ret;
@@ -247,10 +236,9 @@ int ZCALLBACK qiodevice64_seek_file_func (
                 && offset == 0) {
             // sequential devices are always at end (needed in mdAppend)
             return 0;
-        } else {
-            qWarning("qiodevice_seek_file_func() called for sequential device");
-            return -1;
         }
+        qWarning("qiodevice_seek_file_func() called for sequential device");
+        return -1;
     }
     qint64 qiodevice_seek_result=0;
     int ret;

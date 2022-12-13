@@ -298,8 +298,8 @@ bool QuaZipFile::open(OpenMode mode, int *method, int *level, bool raw, const ch
       setOpenMode(mode);
       p->raw=raw;
       return true;
-    } else
-      return false;
+    }
+    return false;
   }
   qWarning("QuaZipFile::open(): open mode %d not supported by this function", (int)mode);
   return false;
@@ -368,8 +368,8 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
         p->uncompressedSize=info.uncompressedSize;
       }
       return true;
-    } else
-      return false;
+    }
+    return false;
   }
   qWarning("QuaZipFile::open(): open mode %d not supported by this function", (int)mode);
   return false;
@@ -395,8 +395,7 @@ qint64 QuaZipFile::pos()const
       // but thankfully bytesAvailable() returns the number of
       // bytes buffered, so we know how far ahead we are.
     return unztell64(p->zip->getUnzFile()) - QIODevice::bytesAvailable();
-  else
-    return p->writePos;
+  return p->writePos;
 }
 
 bool QuaZipFile::atEnd()const
@@ -413,8 +412,7 @@ bool QuaZipFile::atEnd()const
       // the same problem as with pos()
     return QIODevice::bytesAvailable() == 0
         && unzeof(p->zip->getUnzFile())==1;
-  else
-    return true;
+  return true;
 }
 
 qint64 QuaZipFile::size()const
@@ -425,8 +423,7 @@ qint64 QuaZipFile::size()const
   }
   if(openMode()&ReadOnly)
     return p->raw?csize():usize();
-  else
-    return p->writePos;
+  return p->writePos;
 }
 
 qint64 QuaZipFile::csize()const
@@ -457,9 +454,8 @@ bool QuaZipFile::getFileInfo(QuaZipFileInfo *info)
     if (getFileInfo(&info64)) {
         info64.toQuaZipFileInfo(*info);
         return true;
-    } else {
-        return false;
     }
+    return false;
 }
 
 bool QuaZipFile::getFileInfo(QuaZipFileInfo64 *info)
@@ -511,10 +507,8 @@ qint64 QuaZipFile::writeData(const char* data, qint64 maxSize)
   p->setZipError(ZIP_OK);
   p->setZipError(zipWriteInFileInZip(p->zip->getZipFile(), data, static_cast<uint>(maxSize)));
   if(p->zipError!=ZIP_OK) return -1;
-  else {
-    p->writePos+=maxSize;
-    return maxSize;
-  }
+  p->writePos += maxSize;
+  return maxSize;
 }
 
 QString QuaZipFile::getFileName() const
