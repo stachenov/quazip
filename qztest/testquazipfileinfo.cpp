@@ -20,11 +20,6 @@ Q_DECLARE_METATYPE(QList<qint32>);
 Q_DECLARE_METATYPE(QuaExtraFieldHash);
 #endif
 
-TestQuaZipFileInfo::TestQuaZipFileInfo(QObject *parent) :
-    QObject(parent)
-{
-}
-
 void TestQuaZipFileInfo::getNTFSTime()
 {
     QFETCH(QString, zipName);
