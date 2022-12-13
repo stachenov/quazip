@@ -78,10 +78,8 @@ QuaZIODevicePrivate::~QuaZIODevicePrivate()
 #ifdef QUAZIP_ZIODEVICE_DEBUG_INPUT
   indebug.close();
 #endif
-  if (inBuf != nullptr)
-    delete[] inBuf;
-  if (outBuf != nullptr)
-      delete[] outBuf;
+  delete[] inBuf;
+  delete[] outBuf;
 }
 
 bool QuaZIODevicePrivate::flush(int sync)
