@@ -45,6 +45,12 @@ jobs:
           cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
           dir: ${{ github.workspace }}/Qt
 
+    - name: Install libraries
+      run: |
+        apt-get update &&
+        apt-get install -y --no-install-recommends \
+          zlib1g-dev libbz2-dev
+
     - name: Configure CMake
       run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DQUAZIP_ENABLE_TESTS=ON -B "${{github.workspace}}/build"
 

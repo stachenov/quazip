@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.15...3.18)
 
 project(QuaZip VERSION 1.3)
 
+include(cmake/clone-repo.cmake)
+
 set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
 set(QUAZIP_LIB_SOVERSION 1.3.0)
 
@@ -19,6 +21,13 @@ else()
   option(QUAZIP_USE_QT_ZLIB "" OFF)
   option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
 endif()
+
+# Make BZIP2 optional
+option(QUAZIP_BZIP2 "Enables BZIP2 compression" ON)
+
+option(QUAZIP_FETCH_LIBS "Enables fetching third-party libraries if not found" ${WIN32})
+option(QUAZIP_FORCE_FETCH_LIBS "Enables fetching third-party libraries always" OFF)
+
 # Set the default value of `${QUAZIP_QT_MAJOR_VERSION}`.
 # We search quietly for Qt6, Qt5 and Qt4 in that order.
 # Qt6 and Qt5 provide config files for CMake.

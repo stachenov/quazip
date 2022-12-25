@@ -201,7 +201,7 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      * Returns null string if there is no file name set yet. This is the
      * case when this QuaZipFile operates on the existing QuaZip object
      * (constructor QuaZipFile(QuaZip*,QObject*) or setZip() was used).
-     * 
+     *
      * \sa getActualFileName
      **/
     QString getFileName() const;
@@ -323,7 +323,8 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      * use the raw mode (see below).
      *
      * Arguments \a method and \a level specify compression method and
-     * level. The only method supported is Z_DEFLATED, but you may also
+     * level. The only compression methods supported are
+     * Z_DEFLATED and Z_BZIP2ED. But you may also
      * specify 0 for no compression. If all of the files in the archive
      * use both method 0 and either level 0 is explicitly specified or
      * data descriptor writing is disabled with
