@@ -43,38 +43,41 @@ void TestQuaZipFile::zipUnzip_data()
     QTest::addColumn<QStringList>("fileNames");
     QTest::addColumn<QByteArray>("fileNameCodec");
     QTest::addColumn<QByteArray>("password");
-    QTest::addColumn<bool>("bzip");
+    QTest::addColumn<int>("method");
+    QTest::addColumn<int>("level");
     QTest::addColumn<bool>("zip64");
     QTest::addColumn<bool>("utf8");
     QTest::addColumn<int>("size");
     QTest::newRow("simple") << "simple.zip" << (
             QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
-        << QByteArray() << QByteArray() << false << false << false << -1;
+        << QByteArray() << QByteArray() << Z_DEFLATED << Z_DEFAULT_COMPRESSION << false << false << -1;
+ #ifdef HAVE_BZIP2
     QTest::newRow("bzip") << "bzip.zip" << (
             QStringList() << "testb0.txt" << "testdirb/testb.txt"
             << "testdir2b/test2b.txt" << "testdir2b/subdir/test2bsub.txt")
-        << QByteArray() << QByteArray() << true << false << false << -1;
+        << QByteArray() << QByteArray() << Z_BZIP2ED << 9 << false << false << -1;
+#endif
     QTest::newRow("Cyrillic") << "cyrillic.zip" << (
             QStringList()
             << QString::fromUtf8("русское имя файла с пробелами.txt"))
-        << QByteArray("IBM866") << QByteArray() << false << false << false << -1;
+        << QByteArray("IBM866") << QByteArray() << Z_DEFLATED << Z_DEFAULT_COMPRESSION << false << false << -1;
     QTest::newRow("Unicode") << "unicode.zip" << (
             QStringList()
             << QString::fromUtf8("Українське сало.txt")
             << QString::fromUtf8("Vin français.txt")
             << QString::fromUtf8("日本の寿司.txt")
             << QString::fromUtf8("ქართული ხაჭაპური.txt"))
-        << QByteArray("") << QByteArray() << false << false << true << -1;
+        << QByteArray("") << QByteArray() << Z_DEFLATED << Z_DEFAULT_COMPRESSION << false << true << -1;
     QTest::newRow("password") << "password.zip" << (
             QStringList() << "test.txt")
-        << QByteArray() << QByteArray("PassPass") << false << false << false << -1;
+        << QByteArray() << QByteArray("PassPass") << Z_DEFLATED << Z_DEFAULT_COMPRESSION << false << false << -1;
     QTest::newRow("zip64") << "zip64.zip" << (
             QStringList() << "test64.txt")
-        << QByteArray() << QByteArray() << false << true << false << -1;
+        << QByteArray() << QByteArray() << Z_DEFLATED << Z_DEFAULT_COMPRESSION << true << false << -1;
     QTest::newRow("large enough to flush") << "flush.zip" << (
             QStringList() << "flush.txt")
-        << QByteArray() << QByteArray() << false << true << false << 65536 * 2;
+        << QByteArray() << QByteArray() << Z_DEFLATED << Z_DEFAULT_COMPRESSION << true << false << 65536 * 2;
 }
 
 void TestQuaZipFile::zipUnzip()
@@ -83,7 +86,8 @@ void TestQuaZipFile::zipUnzip()
     QFETCH(QStringList, fileNames);
     QFETCH(QByteArray, fileNameCodec);
     QFETCH(QByteArray, password);
-    QFETCH(bool, bzip);
+    QFETCH(int, method);
+    QFETCH(int, level);
     QFETCH(bool, zip64);
     QFETCH(bool, utf8);
     QFETCH(int, size);
@@ -111,12 +115,19 @@ void TestQuaZipFile::zipUnzip()
             QFAIL("Couldn't open input file");
         }
         QuaZipFile outFile(&testZip);
-        QVERIFY(outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileName,
-                        inFile.fileName()),
+        if (
+            !outFile.open(
+                QIODevice::WriteOnly,
+                QuaZipNewInfo(fileName, inFile.fileName()),
                 password.isEmpty() ? NULL : password.constData(),
                 0,
-                bzip ? Z_BZIP2ED : Z_DEFLATED
-                ));
+                method,
+                level
+            )
+        ) {
+            qDebug("outFile.open() backend error, code %d", outFile.getZipError());
+            QFAIL("outFile.open() returned FALSE");
+        }
         for (qint64 pos = 0, len = inFile.size(); pos < len; ) {
             char buf[4096];
             qint64 readSize = qMin(static_cast<qint64>(4096), len - pos);

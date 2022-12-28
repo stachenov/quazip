@@ -4,13 +4,6 @@ include(GNUInstallDirs) # configurable CMAKE_INSTALL_*DIR
 
 cmake_minimum_required(VERSION 3.13)
 
-
-set(QUAZIP_DEP)
-set(QUAZIP_INC)
-set(QUAZIP_LIB)
-set(QUAZIP_LBD)
-
-
 set(QUAZIP_HEADERS
         JlCompress.h
         ioapi.h
@@ -59,63 +52,6 @@ endif()
 
 add_library(${QUAZIP_LIB_TARGET_NAME} ${QUAZIP_SOURCES})
 add_library(QuaZip::QuaZip ALIAS ${QUAZIP_LIB_TARGET_NAME})
-
-
-if(QUAZIP_BZIP2)
-    # Check if bzip2 is present
-    set(QUAZIP_BZIP2 ON)
-
-    if(NOT QUAZIP_FORCE_FETCH_LIBS)
-        find_package(BZip2 QUIET)
-    endif()
-
-    if(BZIP2_FOUND AND NOT QUAZIP_FORCE_FETCH_LIBS)
-        message(STATUS "Using BZIP2 ${BZIP2_VERSION_STRING}")
-
-        list(APPEND QUAZIP_INC ${BZIP2_INCLUDE_DIRS})
-        list(APPEND QUAZIP_LIB ${BZIP2_LIBRARIES})
-        list(APPEND QUAZIP_LBD ${BZIP2_LIBRARY_DIRS})
-
-        set(PC_PRIVATE_LIBS "${PC_PRIVATE_LIBS} -lbzip2")
-    elseif(QUAZIP_FETCH_LIBS)
-        clone_repo(bzip2 https://sourceware.org/git/bzip2.git)
-
-        # BZip2 repository does not support cmake so we have to create
-        # the bzip2 library ourselves
-        set(BZIP2_SRC
-            ${BZIP2_SOURCE_DIR}/blocksort.c
-            ${BZIP2_SOURCE_DIR}/bzlib.c
-            ${BZIP2_SOURCE_DIR}/compress.c
-            ${BZIP2_SOURCE_DIR}/crctable.c
-            ${BZIP2_SOURCE_DIR}/decompress.c
-            ${BZIP2_SOURCE_DIR}/huffman.c
-            ${BZIP2_SOURCE_DIR}/randtable.c)
-
-        set(BZIP2_HDR
-            ${BZIP2_SOURCE_DIR}/bzlib.h
-            ${BZIP2_SOURCE_DIR}/bzlib_private.h)
-
-        add_library(bzip2 STATIC ${BZIP2_SRC} ${BZIP2_HDR})
-
-        if(NOT QUAZIP_BZIP2_STDIO)
-            target_compile_definitions(bzip2 PRIVATE -DBZ_NO_STDIO)
-        endif()
-
-        list(APPEND QUAZIP_DEP bzip2)
-        list(APPEND QUAZIP_LIB bzip2)
-        list(APPEND QUAZIP_INC ${BZIP2_SOURCE_DIR})
-    else()
-        message(STATUS "BZip2 library not found")
-
-        set(QUAZIP_BZIP2 OFF)
-    endif()
-
-    if(QUAZIP_BZIP2)
-        find_package(BZip2)
-        add_compile_definitions(HAVE_BZIP2=1)
-    endif()
-endif()
-
 
 set_target_properties(${QUAZIP_LIB_TARGET_NAME} PROPERTIES
 	VERSION ${QUAZIP_LIB_VERSION}

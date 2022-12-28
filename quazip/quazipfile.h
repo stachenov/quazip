@@ -333,6 +333,10 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
      * format version, should you need that. Except for this, \a level
      * has no other effects with method 0.
      *
+     * If the method is \a Z_BZIP2ED, then the level must be specified
+     * explicitly (1 to 9), as the bzip2 backend doesn't support
+     * \a Z_DEFAULT_COMPRESSION.
+     *
      * If \a raw is \c true, no compression is performed. In this case,
      * \a crc and uncompressedSize field of the \a info are required.
      *

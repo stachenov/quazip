@@ -1,5 +1,5 @@
 /doc
 /build
-/quazip/lib
+/lib
 *.tags
 *.user
