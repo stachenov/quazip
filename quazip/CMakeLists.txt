@@ -97,7 +97,9 @@ if(QUAZIP_BZIP2)
 
         add_library(bzip2 STATIC ${BZIP2_SRC} ${BZIP2_HDR})
 
-        target_compile_definitions(bzip2 PRIVATE -DBZ_NO_STDIO)
+        if(NOT QUAZIP_BZIP2_STDIO)
+            target_compile_definitions(bzip2 PRIVATE -DBZ_NO_STDIO)
+        endif()
 
         list(APPEND QUAZIP_DEP bzip2)
         list(APPEND QUAZIP_LIB bzip2)
