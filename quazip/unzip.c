@@ -224,9 +224,7 @@ local int unz64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def, v
         return UNZ_OK;
     }
 
-    if (ZERROR64(*pzlib_filefunc_def, filestream))
-        return UNZ_ERRNO;
-    return UNZ_EOF;
+    return ZERROR64(*pzlib_filefunc_def, filestream) ? UNZ_ERRNO : UNZ_EOF;
 }
 
 
@@ -869,8 +867,8 @@ extern int ZEXPORT unzGetFileFlags (unzFile file, unsigned* pflags)
 */
 local void unz64local_DosDateToTmuDate (ZPOS64_T ulDosDate, tm_unz* ptm)
 {
-    ZPOS64_T uDate;
-    uDate = (ulDosDate>>16);
+    ZPOS64_T uDate = ulDosDate >> 16;
+
     ptm->tm_mday = (uInt)(uDate&0x1f) ;
     ptm->tm_mon =  (uInt)((((uDate)&0x1E0)/0x20)-1) ;
     ptm->tm_year = (uInt)(((uDate&0x0FE00)/0x0200)+1980) ;
@@ -1944,9 +1942,7 @@ extern int ZEXPORT unzeof (unzFile file)
     if (pfile_in_zip_read_info==NULL)
         return UNZ_PARAMERROR;
 
-    if (pfile_in_zip_read_info->rest_read_uncompressed == 0)
-        return 1;
-    return 0;
+    return pfile_in_zip_read_info->rest_read_uncompressed == 0 ? 1 : 0;
 }
 
 

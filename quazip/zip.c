@@ -368,9 +368,7 @@ local int zip64local_getByte(const zlib_filefunc64_32_def* pzlib_filefunc_def,vo
         return ZIP_OK;
     }
 
-    if (ZERROR64(*pzlib_filefunc_def, filestream))
-        return ZIP_ERRNO;
-    return ZIP_EOF;
+    return ZERROR64(*pzlib_filefunc_def, filestream) ? ZIP_ERRNO : ZIP_EOF;
 }
 
 
