@@ -177,14 +177,12 @@ static void setNTFSTime(QByteArray &extra, const QDateTime &time, int position,
                     timesPos = i - 4; // the beginning of the NTFS times tag
                     ntfsTimesLength = tagsize;
                     break;
-                } else {
-                    i += tagsize;
                 }
+                i += tagsize;
             }
             break; // I ain't going to search for yet another NTFS record!
-        } else {
-            i += length;
         }
+        i += length;
     }
     if (ntfsPos == -1) {
         // No NTFS record, need to create one.

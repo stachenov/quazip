@@ -345,9 +345,8 @@ void TestJlCompress::extractDir_data()
 
 class TemporarilyChangeToRoot {
     QString previousDir;
-    bool success;
+    bool success{false};
 public:
-    TemporarilyChangeToRoot() : success{false} {}
     ~TemporarilyChangeToRoot() {
         if (success) {
             QDir::setCurrent(previousDir); // Let's HOPE it succeeds.

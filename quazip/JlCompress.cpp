@@ -73,9 +73,7 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
 
     // Chiudo i file
     outFile.close();
-    if (outFile.getZipError()!=UNZ_OK) return false;
-
-    return true;
+    return outFile.getZipError() == UNZ_OK;
 }
 
 bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool recursive, QDir::Filters filters) {
@@ -109,8 +107,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
     if (recursive) {
         // Per ogni sotto cartella
         QFileInfoList files = directory.entryInfoList(QDir::AllDirs|QDir::NoDotAndDotDot|filters);
-        for (int index = 0; index < files.size(); ++index ) {
-            const QFileInfo & file( files.at( index ) );
+        for (const auto& file : files) {
             if (!file.isDir()) // needed for Qt < 4.7 because it doesn't understand AllDirs
                 continue;
             // Comprimo la sotto cartella
@@ -120,8 +117,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
 
     // Per ogni file nella cartella
     QFileInfoList files = directory.entryInfoList(QDir::Files|filters);
-    for (int index = 0; index < files.size(); ++index ) {
-        const QFileInfo & file( files.at( index ) );
+    for (const auto& file : files) {
         // Se non e un file o e il file compresso che sto creando
         if(!file.isFile()||file.absoluteFilePath()==zip->getZipName()) continue;
 
@@ -176,9 +172,7 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
 
     if (info.isSymbolicLink()) {
         QString target = QFile::decodeName(inFile.readAll());
-        if (!QFile::link(target, fileDest))
-            return false;
-        return true;
+        return QFile::link(target, fileDest);
     }
 
     // Apro il file risultato
