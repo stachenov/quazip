@@ -57,8 +57,12 @@ QuaZipDir::QuaZipDir(QuaZip *zip, const QString &dir):
 
 QuaZipDir::QuaZipDir(const QuaZipDir &that) = default;
 QuaZipDir::~QuaZipDir() = default;
-QuaZipDir::operator==(const QuaZipDir &that) = default;
 QuaZipDir& QuaZipDir::operator=(const QuaZipDir &that) = default;
+
+bool QuaZipDir::operator==(const QuaZipDir &that)
+{
+    return d->zip == that.d->zip && d->dir == that.d->dir;
+}
 
 QString QuaZipDir::operator[](int pos) const
 {
