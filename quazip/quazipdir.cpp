@@ -33,14 +33,13 @@ class QuaZipDirPrivate: public QSharedData {
     friend class QuaZipDir;
 private:
     QuaZipDirPrivate(QuaZip *zip, const QString &dir = QString()):
-        zip(zip), dir(dir),
-        filter(QDir::NoFilter), sorting(QDir::NoSort) {}
+        zip(zip), dir(dir) {}
     QuaZip *zip;
     QString dir;
     QuaZip::CaseSensitivity caseSensitivity{QuaZip::csDefault};
-    QDir::Filters filter;
+    QDir::Filters filter{QDir::NoFilter};
     QStringList nameFilters;
-    QDir::SortFlags sorting;
+    QDir::SortFlags sorting{QDir::NoSort};
     template<typename TFileInfoList>
     bool entryInfoList(QStringList nameFilters, QDir::Filters filter,
         QDir::SortFlags sort, TFileInfoList &result) const;
@@ -81,8 +80,9 @@ bool QuaZipDir::cd(const QString &directoryName)
         return true;
     }
     QString dirName = directoryName;
-    if (dirName.endsWith(QLatin1String("/")))
+    if (dirName.endsWith(QLatin1String("/"))) {
         dirName.chop(1);
+    }
     if (dirName.contains(QLatin1String("/"))) {
         QuaZipDir dir(*this);
         if (dirName.startsWith(QLatin1String("/"))) {
@@ -105,9 +105,10 @@ bool QuaZipDir::cd(const QString &directoryName)
         }
         d->dir = dir.path();
         return true;
-    } // no '/'
-    if (dirName == QLatin1String("."))
+    }
+    if (dirName == QLatin1String(".")) {
         return true;
+    }
     if (dirName == QLatin1String("..")) {
         if (isRoot())
             return false;
@@ -117,7 +118,7 @@ bool QuaZipDir::cd(const QString &directoryName)
         else
             d->dir = d->dir.left(slashPos);
         return true;
-    } // a simple subdirectory
+    }
     if (exists(dirName)) {
         if (isRoot())
             d->dir = dirName;
@@ -224,8 +225,7 @@ class QuaZipDirComparator
 
 QString QuaZipDirComparator::getExtension(const QString &name)
 {
-        if (name.endsWith(QLatin1String(".")) ||
-            name.indexOf(QLatin1String("."), 1) == -1)
+        if (name.endsWith(QLatin1String(".")) || name.indexOf(QLatin1String("."), 1) == -1)
             return QLatin1String("");
         return name.mid(name.lastIndexOf(QLatin1String(".")) + 1);
 }
@@ -234,13 +234,12 @@ int QuaZipDirComparator::compareStrings(const QString &string1,
         const QString &string2)
 {
     if (sort & QDir::LocaleAware) {
-        if (sort & QDir::IgnoreCase)
+        if (sort & QDir::IgnoreCase) {
             return string1.toLower().localeAwareCompare(string2.toLower());
+        }
         return string1.localeAwareCompare(string2);
     }
-    return string1.compare(string2, (sort & QDir::IgnoreCase)
-                                        ? Qt::CaseInsensitive
-                                        : Qt::CaseSensitive);
+    return string1.compare(string2, (sort & QDir::IgnoreCase) ? Qt::CaseInsensitive : Qt::CaseSensitive);
 }
 
 bool QuaZipDirComparator::operator()(const QuaZipFileInfo64 &info1,
@@ -248,13 +247,13 @@ bool QuaZipDirComparator::operator()(const QuaZipFileInfo64 &info1,
 {
     QDir::SortFlags order = sort
         & (QDir::Name | QDir::Time | QDir::Size | QDir::Type);
-    if ((sort & QDir::DirsFirst) == QDir::DirsFirst
-            || (sort & QDir::DirsLast) == QDir::DirsLast) {
-        if (info1.name.endsWith(QLatin1String("/")) && !info2.name.endsWith(QLatin1String("/")))
+    if ((sort & QDir::DirsFirst) == QDir::DirsFirst || (sort & QDir::DirsLast) == QDir::DirsLast) {
+        if (info1.name.endsWith(QLatin1String("/")) && !info2.name.endsWith(QLatin1String("/"))) {
             return (sort & QDir::DirsFirst) == QDir::DirsFirst;
-        if (!info1.name.endsWith(QLatin1String("/")) &&
-            info2.name.endsWith(QLatin1String("/")))
+        }
+        if (!info1.name.endsWith(QLatin1String("/")) && info2.name.endsWith(QLatin1String("/"))) {
             return (sort & QDir::DirsLast) == QDir::DirsLast;
+        }
     }
     bool result;
     int extDiff;
@@ -376,9 +375,9 @@ QList<QuaZipFileInfo> QuaZipDir::entryInfoList(const QStringList &nameFilters,
     QDir::Filters filters, QDir::SortFlags sort) const
 {
     QList<QuaZipFileInfo> result;
-    if (d->entryInfoList(nameFilters, filters, sort, result))
-        return result;
-    return QList<QuaZipFileInfo>();
+    if (!d->entryInfoList(nameFilters, filters, sort, result))
+        return QList<QuaZipFileInfo>();
+    return result;
 }
 
 QList<QuaZipFileInfo> QuaZipDir::entryInfoList(QDir::Filters filters,
@@ -391,9 +390,9 @@ QList<QuaZipFileInfo64> QuaZipDir::entryInfoList64(const QStringList &nameFilter
     QDir::Filters filters, QDir::SortFlags sort) const
 {
     QList<QuaZipFileInfo64> result;
-    if (d->entryInfoList(nameFilters, filters, sort, result))
-        return result;
-    return QList<QuaZipFileInfo64>();
+    if (!d->entryInfoList(nameFilters, filters, sort, result))
+        return QList<QuaZipFileInfo64>();
+    return result;
 }
 
 QList<QuaZipFileInfo64> QuaZipDir::entryInfoList64(QDir::Filters filters,
@@ -406,9 +405,9 @@ QStringList QuaZipDir::entryList(const QStringList &nameFilters,
     QDir::Filters filters, QDir::SortFlags sort) const
 {
     QStringList result;
-    if (d->entryInfoList(nameFilters, filters, sort, result))
-        return result;
-    return QStringList();
+    if (!d->entryInfoList(nameFilters, filters, sort, result))
+        return QStringList();
+    return result;
 }
 
 QStringList QuaZipDir::entryList(QDir::Filters filters,
