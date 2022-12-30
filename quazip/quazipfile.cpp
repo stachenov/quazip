@@ -294,12 +294,12 @@ bool QuaZipFile::open(OpenMode mode, int *method, int *level, bool raw, const ch
       }
     }
     p->setZipError(unzOpenCurrentFile3(p->zip->getUnzFile(), method, level, static_cast<int>(raw), password));
-    if(p->zipError==UNZ_OK) {
-      setOpenMode(mode);
-      p->raw=raw;
-      return true;
+    if(p->zipError != UNZ_OK) {
+      return false;
     }
-    return false;
+    setOpenMode(mode);
+    p->raw=raw;
+    return true;
   }
   qWarning("QuaZipFile::open(): open mode %d not supported by this function", (int)mode);
   return false;
@@ -359,17 +359,17 @@ bool QuaZipFile::open(OpenMode mode, const QuaZipNewInfo& info,
           (p->zip->getOsCode() << 8) | QUAZIP_VERSION_MADE_BY,
           0,
           p->zip->isZip64Enabled()));
-    if(p->zipError==UNZ_OK) {
-      p->writePos=0;
-      setOpenMode(mode);
-      p->raw=raw;
-      if(raw) {
-        p->crc=crc;
-        p->uncompressedSize=info.uncompressedSize;
-      }
-      return true;
+    if (p->zipError != UNZ_OK) {
+      return false;
     }
-    return false;
+    p->writePos=0;
+    setOpenMode(mode);
+    p->raw=raw;
+    if(raw) {
+      p->crc=crc;
+      p->uncompressedSize=info.uncompressedSize;
+    }
+    return true;
   }
   qWarning("QuaZipFile::open(): open mode %d not supported by this function", (int)mode);
   return false;
@@ -451,11 +451,11 @@ qint64 QuaZipFile::usize()const
 bool QuaZipFile::getFileInfo(QuaZipFileInfo *info)
 {
     QuaZipFileInfo64 info64;
-    if (getFileInfo(&info64)) {
-        info64.toQuaZipFileInfo(*info);
-        return true;
+    if (!getFileInfo(&info64)) {
+        return false;
     }
-    return false;
+    info64.toQuaZipFileInfo(*info);
+    return true;
 }
 
 bool QuaZipFile::getFileInfo(QuaZipFileInfo64 *info)
@@ -506,7 +506,9 @@ qint64 QuaZipFile::writeData(const char* data, qint64 maxSize)
 {
   p->setZipError(ZIP_OK);
   p->setZipError(zipWriteInFileInZip(p->zip->getZipFile(), data, static_cast<uint>(maxSize)));
-  if(p->zipError!=ZIP_OK) return -1;
+  if (p->zipError != ZIP_OK) {
+    return -1;
+  }
   p->writePos += maxSize;
   return maxSize;
 }
