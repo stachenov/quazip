@@ -1,0 +1,14 @@
+digraph "QuaZipFileInfo64"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [label="QuaZipFileInfo64",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Information about a file inside archive (with zip64 support)."];
+  Node2 -> Node1 [dir="back",color="darkorchid3",style="dashed",label=" comment\nname" ];
+  Node2 [label="QString",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",URL="C:/data/pr/quazip/qtcore.tags$qstring.html",tooltip=" "];
+  Node3 -> Node1 [dir="back",color="darkorchid3",style="dashed",label=" dateTime" ];
+  Node3 [label="QDateTime",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",URL="C:/data/pr/quazip/qtcore.tags$qdatetime.html",tooltip=" "];
+  Node4 -> Node1 [dir="back",color="darkorchid3",style="dashed",label=" extra" ];
+  Node4 [label="QByteArray",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",URL="C:/data/pr/quazip/qtcore.tags$qbytearray.html",tooltip=" "];
+}

@@ -1,0 +1,12 @@
+digraph "QuaZipFile"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  Node1 [label="QuaZipFile",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="A file inside ZIP archive."];
+  Node2 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="QIODevice",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",URL="C:/data/pr/quazip/qtcore.tags$qiodevice.html",tooltip=" "];
+  Node3 -> Node2 [dir="back",color="steelblue1",style="solid"];
+  Node3 [label="QObject",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled",URL="C:/data/pr/quazip/qtcore.tags$qobject.html",tooltip=" "];
+}

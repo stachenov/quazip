@@ -1,0 +1,13 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node0 [label="QuaChecksum32",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classQuaChecksum32.html",tooltip="Checksum interface."];
+  Node0 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node1 [label="QuaAdler32",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classQuaAdler32.html",tooltip="Adler32 checksum."];
+  Node0 -> Node2 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="QuaCrc32",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classQuaCrc32.html",tooltip="CRC32 checksum."];
+}

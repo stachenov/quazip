@@ -1,0 +1,17 @@
+digraph "Graphical Class Hierarchy"
+{
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  rankdir="LR";
+  Node0 [label="QObject",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="C:/data/pr/quazip/qtcore.tags$qobject.html",tooltip=" "];
+  Node0 -> Node1 [dir="back",color="steelblue1",style="solid"];
+  Node1 [label="QIODevice",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="C:/data/pr/quazip/qtcore.tags$qiodevice.html",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="steelblue1",style="solid"];
+  Node2 [label="QuaGzipFile",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classQuaGzipFile.html",tooltip="GZIP file."];
+  Node1 -> Node3 [dir="back",color="steelblue1",style="solid"];
+  Node3 [label="QuaZIODevice",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classQuaZIODevice.html",tooltip="A class to compress/decompress QIODevice."];
+  Node1 -> Node4 [dir="back",color="steelblue1",style="solid"];
+  Node4 [label="QuaZipFile",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classQuaZipFile.html",tooltip="A file inside ZIP archive."];
+}
