@@ -1,3 +1,7 @@
+# Quazip
+
+[![Conan Center](https://shields.io/conan/v/quazip)](https://conan.io/center/quazip)
+
 QuaZip is the C++ wrapper for Gilles Vollant's ZIP/UNZIP package
 (AKA Minizip) using Trolltech's Qt library.
 
