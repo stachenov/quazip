@@ -19,7 +19,7 @@ if(@QUAZIP_BZIP2@)
 endif()
 
 if(@QUAZIP_USE_QT_ZLIB@)
-    find_dependency(Qt@QUAZIP_QT_MAJOR_VERSION@ REQUIRED COMPONENTS Zlib)
+    find_dependency(Qt@QUAZIP_QT_MAJOR_VERSION@ REQUIRED COMPONENTS @QUAZIP_QT_ZLIB_COMPONENT@)
 else()
     find_dependency(ZLIB REQUIRED)
 endif()
