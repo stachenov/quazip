@@ -71,7 +71,11 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
             }
             if (size == -1) {
                 QTextStream testStream(&testFile);
+#if QT_VERSION <= QT_VERSION_CHECK(5, 14, 2)
                 testStream << "This is a test file named " << fileName << endl;
+#else
+		testStream << "This is a test file named " << fileName << Qt::endl;
+#endif
             } else {
                 for (int i = 0; i < size; ++i) {
                     testFile.putChar(static_cast<char>('0' + i % 10));
