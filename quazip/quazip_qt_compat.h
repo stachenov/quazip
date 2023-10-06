@@ -105,9 +105,16 @@ inline QString quazip_symlink_target(const QFileInfo &fi) {
 
 // this is not a deprecation but an improvement, for a change
 #include <QtCore/QDateTime>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 2, 0)
+#include <QtCore/QTimeZone>
+#endif
 #if (QT_VERSION >= 0x040700)
 inline quint64 quazip_ntfs_ticks(const QDateTime &time, int fineTicks) {
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+    QDateTime base(QDate(1601, 1, 1), QTime(0, 0), QTimeZone::UTC);
+#else
     QDateTime base(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
+#endif
     return base.msecsTo(time) * 10000 + fineTicks;
 }
 #else
