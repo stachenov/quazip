@@ -74,11 +74,14 @@ set(QUAZIP_PACKAGE_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION})
 if(QUAZIP_QT_MAJOR_VERSION EQUAL 6)
 	find_package(Qt6 REQUIRED COMPONENTS Core Core5Compat
                          OPTIONAL_COMPONENTS Network Test)
-  # Name of the Zlib component has been changed in 6.3.1, and again in 6.6.1...
-  if((Qt6_VERSION VERSION_GREATER_EQUAL "6.3.1") AND (Qt6_VERSION VERSION_LESS "6.6.1"))
-    set(QUAZIP_QT_ZLIB_COMPONENT BundledZLIB)
-  elseif(Qt6_VERSION VERSION_GREATER_EQUAL "6.6.1")
+  message(STATUS "Found Qt version ${Qt6_VERSION} at ${Qt6_DIR}")
+  # Name of the Zlib component appears to be ZlibPrivate, tested Qt versions 6.3.1 to 6.6.2
+  # BundledZLIB fails with: Failed to find Qt component "BundledZLIB". Expected Config file at
+  # "/path/to/Qt6/qtbase/lib/cmake/Qt6BundledZLIB/Qt6BundledZLIBConfig.cmake" does NOT exist
+  if((Qt6_VERSION VERSION_GREATER_EQUAL "6.3.1"))
     set(QUAZIP_QT_ZLIB_COMPONENT ZlibPrivate)
+    # ZlibPrivate seems to expose headers only so tests fail to link.
+    set(QUAZIP_QT_ZLIB_COMPONENT_INCOMPATIBLE_TESTS ON)
   else()
     set(QUAZIP_QT_ZLIB_COMPONENT Zlib)
   endif()
@@ -109,8 +112,11 @@ set(QUAZIP_QT_ZLIB_USED OFF)
 if(QUAZIP_USE_QT_ZLIB)
     find_package(Qt${QUAZIP_QT_MAJOR_VERSION} OPTIONAL_COMPONENTS ${QUAZIP_QT_ZLIB_COMPONENT})
     if(Qt${QUAZIP_QT_MAJOR_VERSION}${QUAZIP_QT_ZLIB_COMPONENT}_FOUND)
+        message(STATUS "Qt component ${QUAZIP_QT_ZLIB_COMPONENT} found")
         set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} Qt${QUAZIP_QT_MAJOR_VERSION}::${QUAZIP_QT_ZLIB_COMPONENT})
         set(QUAZIP_QT_ZLIB_USED ON)
+    else()
+        message(FATAL_ERROR "QUAZIP_USE_QT_ZLIB was set but bundled zlib was not found. Terminating to prevent accidental linking to system libraries.")
     endif()
 endif()
 
@@ -208,6 +214,9 @@ endif()
 add_subdirectory(quazip)
 
 if(QUAZIP_ENABLE_TESTS)
+    if(QUAZIP_QT_ZLIB_USED AND QUAZIP_QT_ZLIB_COMPONENT_INCOMPATIBLE_TESTS)
+        message(FATAL_ERROR "QUAZIP_ENABLE_TESTS with QUAZIP_USE_QT_ZLIB is incompatible with this Qt version. You need to provide system zlib.")
+    endif()
     message(STATUS "Building QuaZip tests")
     enable_testing()
     add_subdirectory(qztest)
