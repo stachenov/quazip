@@ -1,7 +1,7 @@
 # Quazip
 
-![CI](https://github.com/stachenov/quazip/actions/workflows/ci.yml/badge.svg?branch=master) 
-[![Conan Center](https://shields.io/conan/v/quazip)](https://conan.io/center/quazip)
+[![CI](https://github.com/stachenov/quazip/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/stachenov/quazip/actions/workflows/ci.yml)
+[![Conan Center](https://shields.io/conan/v/quazip)](https://conan.io/center/recipes/quazip)
 
 QuaZip is the C++ wrapper for Gilles Vollant's ZIP/UNZIP package
 (AKA Minizip) using Trolltech's Qt library.
