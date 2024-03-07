@@ -123,7 +123,7 @@ This option defaults to OFF, and even when enabled, if it fails to find zlib tha
 
 To install, run
 \verbatim
-$ cmake --build wherever/you/want/your/build/to/be --target install -D CMAKE_INSTALL_PREFIX=/wherever/you/want/to/install
+$ cmake --build wherever/you/want/your/build/to/be --target install
 \endverbatim
 
 %QuaZip installs as CMake package QuaZip-QtX, where X is the major
