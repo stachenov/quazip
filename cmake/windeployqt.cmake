@@ -12,7 +12,6 @@ function(windeployqt target)
             --no-plugins
             --no-translations
             --no-system-d3d-compiler
-            --no-virtualkeyboard
             --no-opengl-sw
             --no-compiler-runtime
             \"$<TARGET_FILE:${target}>\"
