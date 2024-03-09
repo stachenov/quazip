@@ -184,6 +184,10 @@ jobs:
         working-directory: ./build
         run: cmake --build . --config Release
 
+      - name: Debug
+        shell: cmd
+        run: dir build\qztest\Release
+
       - name: Test
         shell: cmd
         working-directory: ./build
