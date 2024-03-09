@@ -134,56 +134,47 @@ jobs:
       - name: Run tests
         run: build/qztest/qztest
 
-  windows-conan:
+  windows:
     if: true
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package_manager: [ conan, vcpkg ]
+        qt_version: [ 6.6.2 ]
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Install Qt6
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ matrix.qt_version }}
+          cache: 'true'
+          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
+          dir: ${{ github.workspace }}/Qt
+          modules: 'qt5compat'
 
       - uses: TheMrMilchmann/setup-msvc-dev@v3
         with:
           arch: x64
 
       - name: Install Conan
-        id: conan
+        if: matrix.package_manager == 'conan'
         uses: turtlebrowser/get-conan@main
 
       - name: Init conan
+        if: matrix.package_manager == 'conan'
         run: conan profile detect
 
-      - name: Install dependencies
+      - name: Install dependencies with conan
+        if: matrix.package_manager == 'conan'
         shell: cmd
         run: conan install . -of build -s build_type=Release -o *:shared=False --build=missing
 
       - name: Configure
         shell: cmd
-        run: cmake --preset conan
-
-      - name: Build
-        shell: cmd
-        working-directory: ./build
-        run: cmake --build . --config Release
-
-      - name: Test
-        shell: cmd
-        working-directory: ./build
-        run: ctest --verbose -C Release
-
-  windows-vcpkg:
-    if: true
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: TheMrMilchmann/setup-msvc-dev@v3
-        with:
-          arch: x64
-
-      - name: vcpkg and configure
-        shell: cmd
-        run: cmake --preset vcpkg
+        run: cmake --preset ${{ matrix.package_manager }}
 
       - name: Build
         shell: cmd
