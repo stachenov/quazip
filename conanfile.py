@@ -1,6 +1,6 @@
 from conan import ConanFile
 
-class Bncsutil(ConanFile):
+class Quazip(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "CMakeDeps", "CMakeToolchain"
 

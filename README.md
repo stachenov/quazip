@@ -55,7 +55,7 @@ cmake --build build --config Release
 ```
 
 If you don't use a package manager you will have to add library and include directories to your PATH or specify them with `CMAKE_PREFIX_PATH`.
-Qt is not installed as a dependency of either vcpkg or  conan.
+Qt is not installed as a dependency of either vcpkg or conan.
 
 ## Additional build options
 If you built Qt from source and installed it, you might need to tell CMake where to find it, for example: `-DCMAKE_PREFIX_PATH="/usr/local/Qt-6.6.2"`.  
