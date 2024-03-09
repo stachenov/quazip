@@ -6,3 +6,6 @@
 *.swp
 .idea/
 cmake-*
+CMakeUserPresets.json
+vcpkg_installed/
+Testing/

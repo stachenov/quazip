@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - master
+      - feature/*
   pull_request:
 
 name: CI
@@ -12,7 +13,8 @@ env:
 
 jobs:
 
-  build:
+  ubuntu:
+    if: true
     runs-on: ubuntu-${{ matrix.ubuntu_version }}
     name: Ubuntu-${{ matrix.ubuntu_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
     strategy:
@@ -24,7 +26,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
                 
     - name: Install Qt6
       if: "startsWith(matrix.qt_version, '6.')"
@@ -62,6 +64,7 @@ jobs:
       run: "ctest --verbose"
 
   macos:
+    if: true
     runs-on: macos-${{ matrix.macos_version }}
     name: macos-${{ matrix.macos_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
     strategy:
@@ -73,7 +76,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Qt6
         if: "startsWith(matrix.qt_version, '6.')"
@@ -105,6 +108,7 @@ jobs:
         run: "ctest --verbose"
 
   alpine:
+    if: true
     name: "cmake on ${{ matrix.runner }}"
     runs-on: "ubuntu-20.04"
     container:
@@ -119,7 +123,7 @@ jobs:
     steps:
       - name: Show OS info
         run: cat /etc/os-release
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install qt and build tools
         run: apk add --update g++ make cmake qt5-qtbase-dev
       - name: Show cmake version
@@ -132,3 +136,60 @@ jobs:
         run: cd build/qztest && VERBOSE=1 make -j8
       - name: Run tests
         run: build/qztest/qztest
+
+  windows:
+    if: true
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package_manager: [ conan, vcpkg ]
+        qt_version: [ 6.6.2 ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt6
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ matrix.qt_version }}
+          cache: 'true'
+          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
+          dir: ${{ github.workspace }}/Qt
+          modules: 'qt5compat'
+
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+
+      - name: Install Conan
+        if: matrix.package_manager == 'conan'
+        uses: turtlebrowser/get-conan@main
+
+      - name: Init conan
+        if: matrix.package_manager == 'conan'
+        run: conan profile detect
+
+      - name: Install dependencies with conan
+        if: matrix.package_manager == 'conan'
+        shell: cmd
+        run: conan install . -of build -s build_type=Release -o *:shared=False --build=missing
+
+      - name: Configure
+        shell: cmd
+        run: cmake --preset ${{ matrix.package_manager }} -DQUAZIP_ENABLE_TESTS=ON
+
+      - name: Build
+        shell: cmd
+        working-directory: ./build
+        run: cmake --build . --config Release
+
+      - name: Debug
+        shell: cmd
+        run: dir build\qztest\Release
+
+      - name: Test
+        if: false
+        shell: cmd
+        working-directory: ./build
+        run: ctest --verbose -C Release

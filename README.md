@@ -26,25 +26,53 @@ Distributed under LGPL, full details in the COPYING file.
 Original ZIP package is copyrighted by Gilles Vollant, see
 quazip/(un)zip.h files for details, but basically it's the zlib license.
 
-## Build
+# Build
 
+## Dependencies
 You need at least the following dependencies:
 - zlib
 - Qt6, Qt5 or Qt4 (searched in that order)
 
+## Linux
+```
+sudo apt-get install zlib1g-dev libbz2-dev
+cmake -B build
+cmake --build build
+```
+
+## Windows
+Using vcpkg
+```
+cmake --preset vcpkg
+cmake --build build --config Release
+```
+
+Using conan v2
+```
+conan install . -of build -s build_type=Release -o *:shared=False --build=missing
+cmake --preset conan
+cmake --build build --config Release
+```
+
+If you don't use a package manager you will have to add library and include directories to your PATH or specify them with `CMAKE_PREFIX_PATH`.
+Qt is not installed as a dependency of either vcpkg or conan.
+
+## Additional build options
 If you built Qt from source and installed it, you might need to tell CMake where to find it, for example: `-DCMAKE_PREFIX_PATH="/usr/local/Qt-6.6.2"`.  
 Alternatively, if you did not install the source build it might look something like: `-DCMAKE_PREFIX_PATH="/home/you/qt-everywhere-src-6.6.2/qtbase/lib/cmake"`.  
 Replace `qtbase` if you used a custom prefix at `configure` step.
 
 Qt installed through Linux distribution packages or official Qt online installer should be detected automatically.
 
-CMake is used to configure and build the project.
+CMake is used to configure and build the project. A typical configure, build, install and clean is shown below.
 
 ```
-cmake -B build
+cmake -B build -DQUAZIP_QT_MAJOR_VERSION=6 -DBUILD_SHARED_LIBS=ON -DQUAZIP_ENABLE_TESTS=ON
 cmake --build build --config Release
 sudo cmake --install build
-cmake --build build --target clean
+cd build
+ctest --verbose -C Release
+cmake --build . --target clean
 ```
 
 CMake options
