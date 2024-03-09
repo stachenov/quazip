@@ -25,7 +25,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
                 
     - name: Install Qt6
       if: "startsWith(matrix.qt_version, '6.')"
@@ -74,7 +74,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Qt6
         if: "startsWith(matrix.qt_version, '6.')"
@@ -120,7 +120,7 @@ jobs:
     steps:
       - name: Show OS info
         run: cat /etc/os-release
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install qt and build tools
         run: apk add --update g++ make cmake qt5-qtbase-dev
       - name: Show cmake version
@@ -174,7 +174,7 @@ jobs:
 
       - name: Configure
         shell: cmd
-        run: cmake --preset ${{ matrix.package_manager }}
+        run: cmake --preset ${{ matrix.package_manager }} -DQUAZIP_ENABLE_TESTS=ON
 
       - name: Build
         shell: cmd
