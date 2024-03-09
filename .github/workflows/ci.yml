@@ -132,3 +132,64 @@ jobs:
         run: cd build/qztest && VERBOSE=1 make -j8
       - name: Run tests
         run: build/qztest/qztest
+
+  windows-conan:
+    if: true
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+
+      - name: Install Conan
+        id: conan
+        uses: turtlebrowser/get-conan@main
+
+      - name: Init conan
+        run: conan profile detect
+
+      - name: Install dependencies
+        shell: cmd
+        run: conan install . -of build -s build_type=Release -o *:shared=False --build=missing
+
+      - name: Configure
+        shell: cmd
+        run: cmake --preset conan
+
+      - name: Build
+        shell: cmd
+        working-directory: ./build
+        run: cmake --build . --config Release
+
+      - name: Test
+        shell: cmd
+        working-directory: ./build
+        run: ctest --verbose -C Release
+
+  windows-vcpkg:
+    if: true
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x64
+
+      - name: vcpkg and configure
+        shell: cmd
+        run: cmake --preset vcpkg
+
+      - name: Build
+        shell: cmd
+        working-directory: ./build
+        run: cmake --build . --config Release
+
+      - name: Test
+        shell: cmd
+        working-directory: ./build
+        run: ctest --verbose -C Release
