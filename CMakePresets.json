@@ -33,6 +33,7 @@
     {
       "name": "conan_x86",
       "binaryDir": "${sourceDir}/build",
+      "architecture": "WIN32",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/conan_toolchain.cmake",
         "CMAKE_POLICY_DEFAULT_CMP0091": "NEW",

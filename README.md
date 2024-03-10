@@ -41,6 +41,8 @@ cmake --build build
 ```
 
 ## Windows
+
+### x64
 Using vcpkg
 ```
 cmake --preset vcpkg
@@ -51,6 +53,22 @@ Using conan v2
 ```
 conan install . -of build -s build_type=Release -o *:shared=False --build=missing
 cmake --preset conan
+cmake --build build --config Release
+```
+
+### x86
+Only Qt5 is tested on x86.
+
+Using vcpkg
+```
+cmake --preset vcpkg_x86
+cmake --build build --config Release
+```
+
+Using conan v2
+```
+conan install . -of build -s build_type=Release -s:h arch=x86 -o *:shared=False --build=missing
+cmake --preset conan_x86
 cmake --build build --config Release
 ```
 
