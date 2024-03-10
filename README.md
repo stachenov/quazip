@@ -41,6 +41,11 @@ cmake --build build
 ```
 
 ## Windows
+
+If you don't use a package manager you will have to add library and include directories to your PATH or specify them with `CMAKE_PREFIX_PATH`.
+Qt is not installed as a dependency of either vcpkg or conan.
+
+### x64
 Using vcpkg
 ```
 cmake --preset vcpkg
@@ -54,8 +59,21 @@ cmake --preset conan
 cmake --build build --config Release
 ```
 
-If you don't use a package manager you will have to add library and include directories to your PATH or specify them with `CMAKE_PREFIX_PATH`.
-Qt is not installed as a dependency of either vcpkg or conan.
+### x86
+Only Qt5 is tested on x86.
+
+Using vcpkg
+```
+cmake --preset vcpkg_x86
+cmake --build build --config Release
+```
+
+Using conan v2
+```
+conan install . -of build -s build_type=Release -s:h arch=x86 -o *:shared=False --build=missing
+cmake --preset conan_x86
+cmake --build build --config Release
+```
 
 ## Additional build options
 If you built Qt from source and installed it, you might need to tell CMake where to find it, for example: `-DCMAKE_PREFIX_PATH="/usr/local/Qt-6.6.2"`.  
