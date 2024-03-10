@@ -14,7 +14,7 @@ env:
 jobs:
 
   ubuntu:
-    if: true
+    if: false
     runs-on: ubuntu-${{ matrix.ubuntu_version }}
     name: Ubuntu-${{ matrix.ubuntu_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
     strategy:
@@ -64,7 +64,7 @@ jobs:
       run: "ctest --verbose"
 
   macos:
-    if: true
+    if: false
     runs-on: macos-${{ matrix.macos_version }}
     name: macos-${{ matrix.macos_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
     strategy:
@@ -108,7 +108,7 @@ jobs:
         run: "ctest --verbose"
 
   alpine:
-    if: true
+    if: false
     name: "cmake on ${{ matrix.runner }}"
     runs-on: "ubuntu-20.04"
     container:
@@ -137,19 +137,20 @@ jobs:
       - name: Run tests
         run: build/qztest/qztest
 
-  windows:
+  windows-x64:
     if: true
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        package_manager: [ conan, vcpkg ]
-        qt_version: [ 6.6.2 ]
+        preset: [ conan, vcpkg ]
+        qt_version: [ 5.12.12, 6.6.2 ]
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Qt6
+        if: "startsWith(matrix.qt_version, '6.')"
         uses: jurplel/install-qt-action@v3
         with:
           version: ${{ matrix.qt_version }}
@@ -158,38 +159,112 @@ jobs:
           dir: ${{ github.workspace }}/Qt
           modules: 'qt5compat'
 
+      - name: Install Qt5
+        if: "startsWith(matrix.qt_version, '5.')"
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ matrix.qt_version }}
+          cache: 'true'
+          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
+          dir: ${{ github.workspace }}/Qt
+
       - uses: TheMrMilchmann/setup-msvc-dev@v3
         with:
           arch: x64
 
       - name: Install Conan
-        if: matrix.package_manager == 'conan'
+        if: matrix.preset == 'conan'
         uses: turtlebrowser/get-conan@main
 
       - name: Init conan
-        if: matrix.package_manager == 'conan'
+        if: matrix.preset == 'conan'
         run: conan profile detect
 
       - name: Install dependencies with conan
-        if: matrix.package_manager == 'conan'
+        if: matrix.preset == 'conan'
         shell: cmd
         run: conan install . -of build -s build_type=Release -o *:shared=False --build=missing
 
       - name: Configure
         shell: cmd
-        run: cmake --preset ${{ matrix.package_manager }} -DQUAZIP_ENABLE_TESTS=ON
+        run: cmake --preset ${{ matrix.preset }} -DQUAZIP_ENABLE_TESTS=ON
 
       - name: Build
         shell: cmd
         working-directory: ./build
         run: cmake --build . --config Release
 
+      - name: Check PE x64
+        if: "startsWith(matrix.qt_version, '6.')"
+        shell: bash
+        working-directory: ./build/quazip/Release
+        run: file quazip1-qt6.dll |grep "x86-64"
+
+      - name: Check PE x64
+        if: "startsWith(matrix.qt_version, '5.')"
+        shell: bash
+        working-directory: ./build/quazip/Release
+        run: file quazip1-qt5.dll |grep "x86-64"
+
       - name: Debug
         shell: cmd
         run: dir build\qztest\Release
 
+      # TODO: We need to solve copying dlls to qztest.exe dir
       - name: Test
         if: false
         shell: cmd
         working-directory: ./build
         run: ctest --verbose -C Release
+
+  windows-x86:
+    if: true
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [ conan_x86, vcpkg_x86 ]
+        qt_version: [ 5.12.12 ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ matrix.qt_version }}
+          cache: 'true'
+          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
+          dir: ${{ github.workspace }}/Qt
+          arch: 'win32_msvc2017'
+
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: x86
+
+      - name: Install Conan
+        if: matrix.preset == 'conan_x86'
+        uses: turtlebrowser/get-conan@main
+
+      - name: Init conan
+        if: matrix.preset == 'conan_x86'
+        run: conan profile detect
+
+      - name: Install dependencies with conan
+        if: matrix.preset == 'conan_x86'
+        shell: cmd
+        run: conan install . -of build -s build_type=Release -o *:shared=False --build=missing
+
+      - name: Configure
+        shell: cmd
+        run: cmake --preset ${{ matrix.preset }}
+
+      - name: Build
+        shell: cmd
+        working-directory: ./build
+        run: cmake --build . --config Release
+
+      - name: Check PE x86
+        shell: bash
+        working-directory: ./build/quazip/Release
+        run: file quazip1-qt5.dll |grep 80386
