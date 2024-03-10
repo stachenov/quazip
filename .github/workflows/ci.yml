@@ -253,7 +253,7 @@ jobs:
       - name: Install dependencies with conan
         if: matrix.preset == 'conan_x86'
         shell: cmd
-        run: conan install . -of build -s build_type=Release s:h arch=x86 -o *:shared=False --build=missing
+        run: conan install . -of build -s build_type=Release -s:h arch=x86 -o *:shared=False --build=missing
 
       - name: Configure
         shell: cmd
