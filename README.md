@@ -26,6 +26,10 @@ Distributed under LGPL, full details in the COPYING file.
 Original ZIP package is copyrighted by Gilles Vollant, see
 quazip/(un)zip.h files for details, but basically it's the zlib license.
 
+> [!IMPORTANT]
+> This project is looking for additional maintainers and code reviewers. While the library is mostly feature complete, there are a couple of big ticket issues that need work.
+> Code review is welcome for all pull requests. If you are well versed in Qt and C/C++ please start helping around and check [#185](https://github.com/stachenov/quazip/issues/185). 
+
 # Build
 
 ## Dependencies
