@@ -63,6 +63,45 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: "ctest --verbose"
 
+  ubuntu-zlibconst:
+    if: true
+    runs-on: ubuntu-${{ matrix.ubuntu_version }}
+    name: Ubuntu-${{ matrix.ubuntu_version }}-Qt-${{ matrix.qt_version }}-shared-zlibconst
+    strategy:
+      fail-fast: false
+      matrix:
+        ubuntu_version: [ 22.04 ]
+        qt_version: [ 6.4.0 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Qt6
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ matrix.qt_version }}
+          cache: 'true'
+          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
+          dir: ${{ github.workspace }}/Qt
+          modules: 'qt5compat'
+
+      - name: Install libraries
+        run: |
+          sudo apt-get update &&
+          sudo apt-get install -y --no-install-recommends \
+            zlib1g-dev libbz2-dev
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=ON -DQUAZIP_ENABLE_TESTS=ON -DZLIB_CONST=ON -B "${{github.workspace}}/build"
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Run tests
+        working-directory: ${{github.workspace}}/build
+        run: "ctest --verbose"
+
   macos:
     if: true
     runs-on: macos-${{ matrix.macos_version }}

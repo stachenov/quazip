@@ -22,6 +22,8 @@ else()
   option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
 endif()
 
+OPTION(ZLIB_CONST "Sets ZLIB_CONST preprocessor definition" OFF)
+
 # Make BZIP2 optional
 option(QUAZIP_BZIP2 "Enables BZIP2 compression" ON)
 option(QUAZIP_BZIP2_STDIO "Output BZIP2 errors to stdio" ON)
@@ -142,7 +144,11 @@ if(NOT QUAZIP_QT_ZLIB_USED)
     else()
       find_package(ZLIB REQUIRED)
       set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} ZLIB::ZLIB)
-    endif()  
+    endif()
+endif()
+
+if (ZLIB_CONST)
+    add_compile_definitions(ZLIB_CONST)
 endif()
 
 set(QUAZIP_DEP)
