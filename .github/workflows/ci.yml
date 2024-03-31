@@ -6,6 +6,7 @@ on:
   pull_request:
 
 name: CI
+permissions: read-all
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
