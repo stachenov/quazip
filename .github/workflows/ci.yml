@@ -10,6 +10,7 @@ permissions: read-all
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  # All aqt options: https://ddalcino.github.io/aqt-list-server/
   BUILD_TYPE: Release
 
 jobs:
@@ -22,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         ubuntu_version: [20.04, 22.04]
-        qt_version: [5.12.12, 5.15.2, 6.4.0]
+        qt_version: [5.12.12, 5.15.2, 6.6.2]
         shared: [ON, OFF]
 
     steps:
@@ -111,7 +112,7 @@ jobs:
       fail-fast: false
       matrix:
         macos_version: [11, 12]
-        qt_version: [5.15.2, 6.4.0]
+        qt_version: [5.15.2, 6.6.2]
         shared: [ON, OFF]
 
     steps:
