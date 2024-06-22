@@ -78,13 +78,13 @@ set(QUAZIP_DIR_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION}-${QUAZIP_LIB_VERSION})
 set(QUAZIP_PACKAGE_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION})
 
 if(QUAZIP_QT_MAJOR_VERSION EQUAL 6)
-    find_package(Qt6 REQUIRED COMPONENTS Core Core5Compat
+    find_package(Qt6 REQUIRED COMPONENTS Core 
             OPTIONAL_COMPONENTS Network Test)
     message(STATUS "Found Qt version ${Qt6_VERSION} at ${Qt6_DIR}")
     set(QUAZIP_QT_ZLIB_COMPONENT BundledZLIB)
     set(QUAZIP_QT_ZLIB_HEADER_COMPONENT ZlibPrivate)
-    set(QUAZIP_LIB_LIBRARIES Qt6::Core Qt6::Core5Compat)
-    set(QUAZIP_TEST_QT_LIBRARIES Qt6::Core Qt6::Core5Compat Qt6::Network Qt6::Test)
+    set(QUAZIP_LIB_LIBRARIES Qt6::Core )
+    set(QUAZIP_TEST_QT_LIBRARIES Qt6::Core Qt6::Network Qt6::Test)
     set(QUAZIP_PKGCONFIG_REQUIRES "zlib, Qt6Core")
 elseif(QUAZIP_QT_MAJOR_VERSION EQUAL 5)
     find_package(Qt5 REQUIRED COMPONENTS Core
