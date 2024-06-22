@@ -2,16 +2,14 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-static QList<QuazipTextCodec*> *static_list_quazip_codecs  = nullptr;
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 
+static QList<QuazipTextCodec*> *static_list_quazip_codecs  = nullptr;
 
 static QHash<QStringConverter::Encoding,QuazipTextCodec*> *static_hash_quazip_codecs  = nullptr;
-#else
-static QHash<QTextCodec*,QuazipTextCodec*> *static_hash_quazip_codecs  = nullptr;
 
-#endif
+
 
 
 
@@ -40,14 +38,17 @@ public:
 //////
 Q_GLOBAL_STATIC(QuazipTextTextCodecCleanup, createQuazipTextTextCodecCleanup)
 
-
+#endif
 
 QuazipTextCodec::QuazipTextCodec()
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+
     QuazipTextCodec::setup();
+    #endif
 }
 
-
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 void QuazipTextCodec::setup()
 {
     if (static_list_quazip_codecs) return;
@@ -58,26 +59,21 @@ void QuazipTextCodec::setup()
 
     static_list_quazip_codecs = new QList<QuazipTextCodec*>;
 
-    #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+
     static_hash_quazip_codecs = new QHash<QStringConverter::Encoding,QuazipTextCodec*>;
 
-
-    #else
-
-    static_hash_quazip_codecs = new QHash<QTextCodec*,QuazipTextCodec*>;
-
-    #endif
 }
 
-
+    #endif
 
 
 QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
 {
-    QuazipTextCodec::setup();
+
 
     ///
     #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        QuazipTextCodec::setup();
         QStringConverter::Encoding  encoding = QStringConverter::Utf8;
 
         std::optional<QStringConverter::Encoding> opt_encoding = QStringConverter::encodingForName(name);
@@ -100,25 +96,7 @@ QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
 
     #else
 
-        QTextCodec *qt_text_codec = QTextCodec::codecForName(name);
-
-        if (qt_text_codec==nullptr)
-        {
-            qt_text_codec = QTextCodec::codecForLocale();
-        }
-
-        if (static_hash_quazip_codecs->contains(qt_text_codec))
-        {
-            return static_hash_quazip_codecs->value(qt_text_codec);
-        }
-        QuazipTextCodec *codec = new QuazipTextCodec();
-        codec->mTextCodec = qt_text_codec;
-        static_hash_quazip_codecs->insert(qt_text_codec,codec);
-
-        static_list_quazip_codecs->append(codec);
-        return codec;
-
-
+    return (QuazipTextCodec*) QTextCodec::codecForName(name);
     #endif
 
 }
@@ -128,8 +106,13 @@ QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
 
 QuazipTextCodec *QuazipTextCodec::codecForLocale()
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
     QuazipTextCodec::setup();
     return QuazipTextCodec::codecForName("System");
+#else
+
+    return (QuazipTextCodec*) QTextCodec::codecForLocale();
+#endif
 }
 
 QByteArray QuazipTextCodec::fromUnicode(const QString &str) const
@@ -138,12 +121,11 @@ QByteArray QuazipTextCodec::fromUnicode(const QString &str) const
     auto from = QStringEncoder(mEncoding);
     return from(str);
 #else
-    if (mTextCodec)
-    {
-        return mTextCodec->fromUnicode(str);
-    }
+
+        return QTextCodec::fromUnicode(str);
+
 #endif
-    return QByteArray();
+
 }
 
 
@@ -153,11 +135,8 @@ QString QuazipTextCodec::toUnicode(const QByteArray &a) const
     auto to = QStringDecoder(mEncoding);
     return to(a);
 #else
-    if (mTextCodec)
-    {
-        return mTextCodec->toUnicode(a);
-    }
-#endif
-    return QString();
-}
 
+        return QTextCodec::toUnicode(a);
+
+#endif
+}

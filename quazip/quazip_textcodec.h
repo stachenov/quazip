@@ -12,8 +12,11 @@
 #endif
 
 
-
-class QuazipTextCodec 
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+class QuazipTextCodec
+#else
+class QuazipTextCodec : public QTextCodec
+#endif
 {
     
 public:
@@ -26,12 +29,9 @@ public:
     static QuazipTextCodec *codecForLocale();
 protected:
 
-    static void setup();
-
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        static void setup();
     QStringConverter::Encoding  mEncoding;
-#else
-    QTextCodec *mTextCodec = nullptr;
 #endif
 
 
@@ -41,3 +41,4 @@ protected:
 };
 
 #endif // QUAZIPTEXTCODEC_H
+
