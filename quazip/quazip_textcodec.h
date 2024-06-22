@@ -2,6 +2,7 @@
 #define QUAZIPTEXTCODEC_H
 
 #include <QByteArray>
+#include "quazip_global.h"
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 #include <QStringConverter>
@@ -11,9 +12,9 @@
 
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-class QuazipTextCodec
+class QUAZIP_EXPORT QuazipTextCodec
 #else
-class QuazipTextCodec : public QTextCodec
+class QUAZIP_EXPORT QuazipTextCodec: public QTextCodec
 #endif
 {
     
@@ -34,9 +35,3 @@ protected:
 };
 
 #endif // QUAZIPTEXTCODEC_H
-
-
-};
-
-#endif // QUAZIPTEXTCODEC_H
-
