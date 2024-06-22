@@ -5,73 +5,50 @@
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 
-static QList<QuazipTextCodec*> *static_list_quazip_codecs  = nullptr;
-
 static QHash<QStringConverter::Encoding,QuazipTextCodec*> *static_hash_quazip_codecs  = nullptr;
-
-
-
-
 
 class QuazipTextTextCodecCleanup
 {
-
 public:
     explicit QuazipTextTextCodecCleanup()
     {
     }
-
     ~QuazipTextTextCodecCleanup()
     {
-        if (static_list_quazip_codecs)
+        if (static_hash_quazip_codecs)
         {
-
-            //qWarning()<<"~QuazipTextTextCodecCleanup()";
-            qDeleteAll(static_list_quazip_codecs->begin(),static_list_quazip_codecs->end());
-            static_list_quazip_codecs->clear();
-            delete static_list_quazip_codecs;
-            static_list_quazip_codecs = nullptr;
+            QList<QuazipTextCodec*>list_quazip_codecs = static_hash_quazip_codecs->values();
+            qDeleteAll(list_quazip_codecs.begin(),list_quazip_codecs.end());
+            static_hash_quazip_codecs->clear();
+            static_hash_quazip_codecs = nullptr;
         }
     }
 };
 
-//////
 Q_GLOBAL_STATIC(QuazipTextTextCodecCleanup, createQuazipTextTextCodecCleanup)
 
 #endif
 
+
 QuazipTextCodec::QuazipTextCodec()
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-
-    QuazipTextCodec::setup();
-    #endif
 }
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-void QuazipTextCodec::setup()
-{
-    if (static_list_quazip_codecs) return;
-      (void)createQuazipTextTextCodecCleanup();
 
-   // qWarning()<<"QuazipTextCodec::setup()";
+    void QuazipTextCodec::setup()
+    {
+        if (static_hash_quazip_codecs) return;
+          (void)createQuazipTextTextCodecCleanup();
 
+        static_hash_quazip_codecs = new QHash<QStringConverter::Encoding,QuazipTextCodec*>;
+    }
 
-    static_list_quazip_codecs = new QList<QuazipTextCodec*>;
-
-
-    static_hash_quazip_codecs = new QHash<QStringConverter::Encoding,QuazipTextCodec*>;
-
-}
-
-    #endif
+#endif
 
 
 QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
 {
-
-
-    ///
     #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
         QuazipTextCodec::setup();
         QStringConverter::Encoding  encoding = QStringConverter::Utf8;
@@ -90,18 +67,15 @@ QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
         /////
         codec->mEncoding = encoding;
         static_hash_quazip_codecs->insert(encoding,codec);
-
-        static_list_quazip_codecs->append(codec);
         return codec;
 
     #else
 
     return (QuazipTextCodec*) QTextCodec::codecForName(name);
+
     #endif
 
 }
-
-
 
 
 QuazipTextCodec *QuazipTextCodec::codecForLocale()
@@ -122,10 +96,9 @@ QByteArray QuazipTextCodec::fromUnicode(const QString &str) const
     return from(str);
 #else
 
-        return QTextCodec::fromUnicode(str);
+    return QTextCodec::fromUnicode(str);
 
 #endif
-
 }
 
 

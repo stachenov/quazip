@@ -3,8 +3,6 @@
 
 #include <QByteArray>
 
-
-
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 #include <QStringConverter>
 #else
@@ -30,12 +28,12 @@ public:
 protected:
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-        static void setup();
+    static void setup();
     QStringConverter::Encoding  mEncoding;
 #endif
+};
 
-
-
+#endif // QUAZIPTEXTCODEC_H
 
 
 };
