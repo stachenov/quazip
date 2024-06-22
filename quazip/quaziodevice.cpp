@@ -239,11 +239,11 @@ qint64 QuaZIODevice::readData(char *data, qint64 maxSize)
       switch (inflate(&d->zins, Z_SYNC_FLUSH)) {
       case Z_OK:
         read = reinterpret_cast<char *>(d->zins.next_out) - data;
-        d->inBufPos = reinterpret_cast<char *>(d->zins.next_in) - d->inBuf;
+        d->inBufPos = reinterpret_cast<z_const char *>(d->zins.next_in) - d->inBuf;
         break;
       case Z_STREAM_END:
         read = reinterpret_cast<char *>(d->zins.next_out) - data;
-        d->inBufPos = reinterpret_cast<char *>(d->zins.next_in) - d->inBuf;
+        d->inBufPos = reinterpret_cast<z_const char *>(d->zins.next_in) - d->inBuf;
         d->atEnd = true;
         return read;
       case Z_BUF_ERROR: // this should never happen, but just in case
@@ -294,7 +294,7 @@ qint64 QuaZIODevice::writeData(const char *data, qint64 maxSize)
     d->zouts.avail_out = QUAZIO_OUTBUFSIZE;
     switch (deflate(&d->zouts, Z_NO_FLUSH)) {
     case Z_OK:
-      written = reinterpret_cast<char *>(d->zouts.next_in) - data;
+      written = reinterpret_cast<z_const char *>(d->zouts.next_in) - data;
       d->outBufSize = reinterpret_cast<char *>(d->zouts.next_out) - d->outBuf;
       break;
     default:
