@@ -20,6 +20,7 @@ public:
             QList<QuazipTextCodec*>list_quazip_codecs = static_hash_quazip_codecs->values();
             qDeleteAll(list_quazip_codecs.begin(),list_quazip_codecs.end());
             static_hash_quazip_codecs->clear();
+            delete static_hash_quazip_codecs;
             static_hash_quazip_codecs = nullptr;
         }
     }
