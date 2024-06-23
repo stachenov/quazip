@@ -230,14 +230,24 @@ if(QUAZIP_BZIP2)
 endif()
 
 #issue Qt5/Qt6 / Core5Compat and QTextCodec
+
+
 if(${QT_VERSION} VERSION_GREATER_EQUAL 6.0.0)
+
+    find_package(Qt6 OPTIONAL_COMPONENTS  Core5Compat)
+
   if(Qt6Core5Compat_FOUND)
+        set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} Qt6::Core5Compat)
+        set(QUAZIP_TEST_QT_LIBRARIES ${QUAZIP_TEST_QT_LIBRARIES} Qt6::Core5Compat)
+  
     add_compile_definitions( QUAZIP_CAN_USE_QTEXTCODEC)
+     message(-- Quazip use QTextCodec)
+    
   endif()
 else()
     add_compile_definitions( QUAZIP_CAN_USE_QTEXTCODEC)
+     message(-- Quazip use QTextCodec)
 endif()
-
 
 
 add_subdirectory(quazip)
