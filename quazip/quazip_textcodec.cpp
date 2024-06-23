@@ -81,12 +81,11 @@ QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
 
 QuazipTextCodec *QuazipTextCodec::codecForLocale()
 {
-#ifndef QUAZIP_CAN_USE_QTEXTCODEC
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+    return (QuazipTextCodec*) QTextCodec::codecForLocale();
+#else
     QuazipTextCodec::setup();
     return QuazipTextCodec::codecForName("System");
-#else
-
-    return (QuazipTextCodec*) QTextCodec::codecForLocale();
 #endif
 }
 
