@@ -241,12 +241,12 @@ if(${QT_VERSION} VERSION_GREATER_EQUAL 6.0.0)
         set(QUAZIP_TEST_QT_LIBRARIES ${QUAZIP_TEST_QT_LIBRARIES} Qt6::Core5Compat)
   
     add_compile_definitions( QUAZIP_CAN_USE_QTEXTCODEC)
-     message(-- Quazip use QTextCodec)
+     message("-- Quazip use QTextCodec")
     
   endif()
 else()
     add_compile_definitions( QUAZIP_CAN_USE_QTEXTCODEC)
-     message(-- Quazip use QTextCodec)
+     message("-- Quazip use QTextCodec")
 endif()
 
 
