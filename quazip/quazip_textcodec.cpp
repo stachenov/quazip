@@ -3,8 +3,8 @@
 #include <QDebug>
 
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 
+#ifndef QUAZIP_CAN_USE_QTEXTCODEC
 static QHash<QStringConverter::Encoding,QuazipTextCodec*> *static_hash_quazip_codecs  = nullptr;
 
 class QuazipTextTextCodecCleanup
@@ -35,7 +35,7 @@ QuazipTextCodec::QuazipTextCodec()
 {
 }
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#ifndef QUAZIP_CAN_USE_QTEXTCODEC
 
     void QuazipTextCodec::setup()
     {
@@ -50,7 +50,7 @@ QuazipTextCodec::QuazipTextCodec()
 
 QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
 {
-    #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    #ifndef QUAZIP_CAN_USE_QTEXTCODEC
         QuazipTextCodec::setup();
         QStringConverter::Encoding  encoding = QStringConverter::Utf8;
 
@@ -81,7 +81,7 @@ QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
 
 QuazipTextCodec *QuazipTextCodec::codecForLocale()
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#ifndef QUAZIP_CAN_USE_QTEXTCODEC
     QuazipTextCodec::setup();
     return QuazipTextCodec::codecForName("System");
 #else
@@ -92,25 +92,21 @@ QuazipTextCodec *QuazipTextCodec::codecForLocale()
 
 QByteArray QuazipTextCodec::fromUnicode(const QString &str) const
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+     return QTextCodec::fromUnicode(str);
+#else
     auto from = QStringEncoder(mEncoding);
     return from(str);
-#else
-
-    return QTextCodec::fromUnicode(str);
-
 #endif
 }
 
 
 QString QuazipTextCodec::toUnicode(const QByteArray &a) const
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+       return QTextCodec::toUnicode(a);
+#else
     auto to = QStringDecoder(mEncoding);
     return to(a);
-#else
-
-        return QTextCodec::toUnicode(a);
-
 #endif
 }

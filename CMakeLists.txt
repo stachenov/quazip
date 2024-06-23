@@ -54,6 +54,10 @@ if (NOT QT_FOUND)
   endif()
 endif()
 
+
+
+
+
 set(QUAZIP_QT_MAJOR_VERSION ${QT_VERSION_MAJOR} CACHE STRING "Qt version to use (4, 5 or 6), defaults to ${QT_VERSION_MAJOR}")
 
 if (QUAZIP_QT_MAJOR_VERSION EQUAL 6)
@@ -63,7 +67,7 @@ else()
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE RELEASE)
+    set(CMAKE_BUILD_TYPE RELEASE)
 endif()
 
 set(CMAKE_AUTOMOC ON)
@@ -102,7 +106,7 @@ elseif(QUAZIP_QT_MAJOR_VERSION EQUAL 4)
     set(QUAZIP_TEST_QT_LIBRARIES Qt4::QtCore Qt4::QtNetwork Qt4::QtTest)
     set(QUAZIP_PKGCONFIG_REQUIRES "zlib, QtCore")
 else()
-	message(FATAL_ERROR "Qt version ${QUAZIP_QT_MAJOR_VERSION} is not supported")
+    message(FATAL_ERROR "Qt version ${QUAZIP_QT_MAJOR_VERSION} is not supported")
 endif()
 
 message(STATUS "Using Qt version ${QUAZIP_QT_MAJOR_VERSION}")
@@ -224,6 +228,17 @@ if(QUAZIP_BZIP2)
         add_compile_definitions(HAVE_BZIP2)
     endif()
 endif()
+
+#issue Qt5/Qt6 / Core5Compat and QTextCodec
+if(${QT_VERSION} VERSION_GREATER_EQUAL 6.0.0)
+  if(Qt6Core5Compat_FOUND)
+    add_compile_definitions( QUAZIP_CAN_USE_QTEXTCODEC)
+  endif()
+else()
+    add_compile_definitions( QUAZIP_CAN_USE_QTEXTCODEC)
+endif()
+
+
 
 add_subdirectory(quazip)
 

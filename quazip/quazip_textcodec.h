@@ -4,17 +4,18 @@
 #include <QByteArray>
 #include "quazip_global.h"
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-#include <QStringConverter>
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+   #include <QTextCodec>
+
 #else
-    #include <QTextCodec>
+    #include <QStringConverter>
 #endif
 
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-class QUAZIP_EXPORT QuazipTextCodec
-#else
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
 class QUAZIP_EXPORT QuazipTextCodec: public QTextCodec
+#else
+class QUAZIP_EXPORT QuazipTextCodec
 #endif
 {
     
@@ -28,7 +29,7 @@ public:
     static QuazipTextCodec *codecForLocale();
 protected:
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#ifndef QUAZIP_CAN_USE_QTEXTCODEC
     static void setup();
     QStringConverter::Encoding  mEncoding;
 #endif
