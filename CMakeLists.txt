@@ -54,6 +54,10 @@ if (NOT QT_FOUND)
   endif()
 endif()
 
+
+
+
+
 set(QUAZIP_QT_MAJOR_VERSION ${QT_VERSION_MAJOR} CACHE STRING "Qt version to use (4, 5 or 6), defaults to ${QT_VERSION_MAJOR}")
 
 if (QUAZIP_QT_MAJOR_VERSION EQUAL 6)
@@ -63,7 +67,7 @@ else()
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
-	set(CMAKE_BUILD_TYPE RELEASE)
+    set(CMAKE_BUILD_TYPE RELEASE)
 endif()
 
 set(CMAKE_AUTOMOC ON)
@@ -78,13 +82,13 @@ set(QUAZIP_DIR_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION}-${QUAZIP_LIB_VERSION})
 set(QUAZIP_PACKAGE_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION})
 
 if(QUAZIP_QT_MAJOR_VERSION EQUAL 6)
-    find_package(Qt6 REQUIRED COMPONENTS Core Core5Compat
+    find_package(Qt6 REQUIRED COMPONENTS Core 
             OPTIONAL_COMPONENTS Network Test)
     message(STATUS "Found Qt version ${Qt6_VERSION} at ${Qt6_DIR}")
     set(QUAZIP_QT_ZLIB_COMPONENT BundledZLIB)
     set(QUAZIP_QT_ZLIB_HEADER_COMPONENT ZlibPrivate)
-    set(QUAZIP_LIB_LIBRARIES Qt6::Core Qt6::Core5Compat)
-    set(QUAZIP_TEST_QT_LIBRARIES Qt6::Core Qt6::Core5Compat Qt6::Network Qt6::Test)
+    set(QUAZIP_LIB_LIBRARIES Qt6::Core )
+    set(QUAZIP_TEST_QT_LIBRARIES Qt6::Core Qt6::Network Qt6::Test)
     set(QUAZIP_PKGCONFIG_REQUIRES "zlib, Qt6Core")
 elseif(QUAZIP_QT_MAJOR_VERSION EQUAL 5)
     find_package(Qt5 REQUIRED COMPONENTS Core
@@ -102,7 +106,7 @@ elseif(QUAZIP_QT_MAJOR_VERSION EQUAL 4)
     set(QUAZIP_TEST_QT_LIBRARIES Qt4::QtCore Qt4::QtNetwork Qt4::QtTest)
     set(QUAZIP_PKGCONFIG_REQUIRES "zlib, QtCore")
 else()
-	message(FATAL_ERROR "Qt version ${QUAZIP_QT_MAJOR_VERSION} is not supported")
+    message(FATAL_ERROR "Qt version ${QUAZIP_QT_MAJOR_VERSION} is not supported")
 endif()
 
 message(STATUS "Using Qt version ${QUAZIP_QT_MAJOR_VERSION}")
@@ -224,6 +228,27 @@ if(QUAZIP_BZIP2)
         add_compile_definitions(HAVE_BZIP2)
     endif()
 endif()
+
+#issue Qt5/Qt6 / Core5Compat and QTextCodec
+
+
+if(${QT_VERSION} VERSION_GREATER_EQUAL 6.0.0)
+
+    find_package(Qt6 OPTIONAL_COMPONENTS  Core5Compat)
+
+  if(Qt6Core5Compat_FOUND)
+        set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} Qt6::Core5Compat)
+        set(QUAZIP_TEST_QT_LIBRARIES ${QUAZIP_TEST_QT_LIBRARIES} Qt6::Core5Compat)
+  
+    add_compile_definitions( QUAZIP_CAN_USE_QTEXTCODEC)
+     message("-- Quazip use QTextCodec")
+    
+  endif()
+else()
+    add_compile_definitions( QUAZIP_CAN_USE_QTEXTCODEC)
+     message("-- Quazip use QTextCodec")
+endif()
+
 
 add_subdirectory(quazip)
 
