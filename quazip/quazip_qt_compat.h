@@ -12,7 +12,7 @@
 #include <QtCore/Qt>
 #include <QtCore/QtGlobal>
 
-#include "quazip_textcodec.h"
+class QuazipTextCodec;
 
 // QSaveFile terribly breaks the is-a idiom (Liskov substitution principle):
 // QSaveFile is-a QIODevice, but it makes close() private and aborts
