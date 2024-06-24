@@ -28,6 +28,8 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include "quazip.h"
 
+#include "quazip_textcodec.h"
+
 #define QUAZIP_OS_UNIX 3u
 
 /// All the internal stuff for the QuaZip class.
