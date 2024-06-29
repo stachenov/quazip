@@ -29,6 +29,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtCore/QMetaType>
 #include <quazip_qt_compat.h>
 
 #include <QtTest/QtTest>
@@ -38,6 +39,8 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
+
+Q_DECLARE_METATYPE(JlCompress::CompressionStrategy)
 
 void TestJlCompress::compressFile_data()
 {
@@ -58,20 +61,30 @@ void TestJlCompress::compressFile()
     if (!createTestFiles(QStringList() << fileName)) {
         QFAIL("Can't create test file");
     }
-    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + fileName));
-    // get the file list and check it
-    QStringList fileList = JlCompress::getFileList(zipName);
-    QCOMPARE(fileList.count(), 1);
-    QVERIFY(fileList[0] == fileName);
-    // now test the QIODevice* overload of getFileList()
-    QFile zipFile(zipName);
-    QVERIFY(zipFile.open(QIODevice::ReadOnly));
-    fileList = JlCompress::getFileList(zipName);
-    QCOMPARE(fileList.count(), 1);
-    QVERIFY(fileList[0] == fileName);
-    zipFile.close();
+    QList<JlCompress::CompressionStrategy> strategies = {
+        JlCompress::Storage,
+        JlCompress::Fastest,
+        JlCompress::Faster,
+        JlCompress::Standard,
+        JlCompress::Better,
+        JlCompress::Best
+    };
+    foreach(JlCompress::CompressionStrategy strategy, strategies) {
+        QVERIFY(JlCompress::compressFile(zipName, "tmp/" + fileName, strategy));
+        // get the file list and check it
+        QStringList fileList = JlCompress::getFileList(zipName);
+        QCOMPARE(fileList.count(), 1);
+        QVERIFY(fileList[0] == fileName);
+        // now test the QIODevice* overload of getFileList()
+        QFile zipFile(zipName);
+        QVERIFY(zipFile.open(QIODevice::ReadOnly));
+        fileList = JlCompress::getFileList(zipName);
+        QCOMPARE(fileList.count(), 1);
+        QVERIFY(fileList[0] == fileName);
+        zipFile.close();
+        curDir.remove(zipName);
+    }
     removeTestFiles(QStringList() << fileName);
-    curDir.remove(zipName);
 }
 
 void TestJlCompress::compressFiles_data()
@@ -102,12 +115,22 @@ void TestJlCompress::compressFiles()
         realNamesList += realName;
         shortNamesList += QFileInfo(realName).fileName();
     }
-    QVERIFY(JlCompress::compressFiles(zipName, realNamesList));
-    // get the file list and check it
-    QStringList fileList = JlCompress::getFileList(zipName);
-    QCOMPARE(fileList, shortNamesList);
+    QList<JlCompress::CompressionStrategy> strategies = {
+            JlCompress::Storage,
+            JlCompress::Fastest,
+            JlCompress::Faster,
+            JlCompress::Standard,
+            JlCompress::Better,
+            JlCompress::Best
+    };
+    foreach(JlCompress::CompressionStrategy strategy, strategies) {
+        QVERIFY(JlCompress::compressFiles(zipName, realNamesList, strategy));
+        // get the file list and check it
+        QStringList fileList = JlCompress::getFileList(zipName);
+        QCOMPARE(fileList, shortNamesList);
+        curDir.remove(zipName);
+    }
     removeTestFiles(fileNames);
-    curDir.remove(zipName);
 }
 
 void TestJlCompress::compressDir_data()
@@ -153,14 +176,24 @@ void TestJlCompress::compressDir()
         }
     }
 #endif
-    QVERIFY(JlCompress::compressDir(zipName, "compressDir_tmp", true, QDir::Hidden));
-    // get the file list and check it
-    QStringList fileList = JlCompress::getFileList(zipName);
-    fileList.sort();
-    expected.sort();
-    QCOMPARE(fileList, expected);
+    QList<JlCompress::CompressionStrategy> strategies = {
+            JlCompress::Storage,
+            JlCompress::Fastest,
+            JlCompress::Faster,
+            JlCompress::Standard,
+            JlCompress::Better,
+            JlCompress::Best
+    };
+    foreach(JlCompress::CompressionStrategy strategy, strategies) {
+        QVERIFY(JlCompress::compressDir(zipName, "compressDir_tmp", true, QDir::Hidden, strategy));
+        // get the file list and check it
+        QStringList fileList = JlCompress::getFileList(zipName);
+        fileList.sort();
+        expected.sort();
+        QCOMPARE(fileList, expected);
+        curDir.remove(zipName);
+    }
     removeTestFiles(fileNames, "compressDir_tmp");
-    curDir.remove(zipName);
 }
 
 void TestJlCompress::extractFile_data()

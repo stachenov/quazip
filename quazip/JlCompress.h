@@ -42,6 +42,22 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
   */
 class QUAZIP_EXPORT JlCompress {
 public:
+    enum CompressionStrategy
+    {
+        /// Storage without compression
+        Storage  = 0x00,
+        /// The fastest compression speed
+        Fastest  = 0x81,
+        /// Relatively fast compression speed
+        Faster   = 0x83,
+        /// Standard compression speed and ratio
+        Standard = 0x85,
+        /// Better compression ratio
+        Better   = 0x87,
+        /// The best compression ratio
+        Best     = 0x89
+    };
+
     static bool copyData(QIODevice &inFile, QIODevice &outFile);
     static QStringList extractDir(QuaZip &zip, const QString &dir);
     static QStringList getFileList(QuaZip *zip);
@@ -52,9 +68,10 @@ public:
       \param zip Opened zip to compress the file to.
       \param fileName The full path to the source file.
       \param fileDest The full name of the file inside the archive.
+      \param strategy The strategy of compression
       \return true if success, false otherwise.
       */
-    static bool compressFile(QuaZip* zip, QString fileName, QString fileDest);
+    static bool compressFile(QuaZip* zip, QString fileName, QString fileDest, CompressionStrategy strategy = Standard);
     /// Compress a subdirectory.
     /**
       \param parentZip Opened zip containing the parent directory.
@@ -63,10 +80,11 @@ public:
       the root of the ZIP.
       \param recursive Whether to pack sub-directories as well or only
       files.
+      \param strategy The strategy of compression
       \return true if success, false otherwise.
       */
     static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive,
-                               QDir::Filters filters);
+                               QDir::Filters filters, CompressionStrategy strategy = Standard);
     /// Extract a single file.
     /**
       \param zip The opened zip archive to extract from.
@@ -86,16 +104,18 @@ public:
     /**
       \param fileCompressed The name of the archive.
       \param file The file to compress.
+      \param strategy The strategy of compression
       \return true if success, false otherwise.
       */
-    static bool compressFile(QString fileCompressed, QString file);
+    static bool compressFile(QString fileCompressed, QString file, CompressionStrategy strategy = Standard);
     /// Compress a list of files.
     /**
       \param fileCompressed The name of the archive.
       \param files The file list to compress.
+      \param strategy The strategy of compression
       \return true if success, false otherwise.
       */
-    static bool compressFiles(QString fileCompressed, QStringList files);
+    static bool compressFiles(QString fileCompressed, QStringList files, CompressionStrategy strategy = Standard);
     /// Compress a whole directory.
     /**
       Does not compress hidden files. See compressDir(QString, QString, bool, QDir::Filters).
@@ -104,9 +124,11 @@ public:
       \param dir The directory to compress.
       \param recursive Whether to pack the subdirectories as well, or
       just regular files.
+      \param strategy The strategy of compression
       \return true if success, false otherwise.
       */
-    static bool compressDir(QString fileCompressed, QString dir = QString(), bool recursive = true);
+    static bool compressDir(QString fileCompressed, QString dir, bool recursive = true,
+                            CompressionStrategy strategy = Standard);
     /**
      * @brief Compress a whole directory.
      *
@@ -121,10 +143,11 @@ public:
      * @param recursive if true, then the subdirectories are packed as well
      * @param filters what to pack, filters are applied both when searching
      * for subdirs (if packing recursively) and when looking for files to pack
+     * @param strategy The strategy of compression
      * @return true on success, false otherwise
      */
-    static bool compressDir(QString fileCompressed, QString dir,
-                            bool recursive, QDir::Filters filters);
+    static bool compressDir(QString fileCompressed, QString dir, bool recursive, QDir::Filters filters,
+                            CompressionStrategy strategy = Standard);
 
     /// Extract a single file.
     /**

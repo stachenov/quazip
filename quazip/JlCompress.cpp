@@ -38,7 +38,8 @@ bool JlCompress::copyData(QIODevice &inFile, QIODevice &outFile)
     return true;
 }
 
-bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
+bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest, CompressionStrategy strategy)
+{
     // zip: oggetto dove aggiungere il file
     // fileName: nome del file reale
     // fileDest: nome del file all'interno del file compresso
@@ -51,7 +52,9 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
 
     // Apro il file risulato
     QuaZipFile outFile(zip);
-    if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName))) return false;
+    int method = strategy >> 4;
+    int level = strategy & 0x0f;
+    if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName), nullptr, 0, method, level)) return false;
 
     QFileInfo input(fileName);
     if (quazip_is_symlink(input)) {
@@ -76,7 +79,8 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
     return outFile.getZipError() == UNZ_OK;
 }
 
-bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool recursive, QDir::Filters filters) {
+bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool recursive,
+                                QDir::Filters filters, CompressionStrategy strategy) {
     // zip: oggetto dove aggiungere il file
     // dir: cartella reale corrente
     // origDir: cartella reale originale
@@ -93,14 +97,14 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
     if (!directory.exists()) return false;
 
     QDir origDirectory(origDir);
-	if (dir != origDir) {
-		QuaZipFile dirZipFile(zip);
-		if (!dirZipFile.open(QIODevice::WriteOnly,
-            QuaZipNewInfo(origDirectory.relativeFilePath(dir) + QLatin1String("/"), dir), nullptr, 0, 0)) {
-				return false;
-		}
-		dirZipFile.close();
-	}
+    if (dir != origDir) {
+        QuaZipFile dirZipFile(zip);
+        if (!dirZipFile.open(QIODevice::WriteOnly,
+                             QuaZipNewInfo(origDirectory.relativeFilePath(dir) + QLatin1String("/"), dir), nullptr, 0, 0)) {
+            return false;
+        }
+        dirZipFile.close();
+    }
 
 
     // Se comprimo anche le sotto cartelle
@@ -111,7 +115,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
             if (!file.isDir()) // needed for Qt < 4.7 because it doesn't understand AllDirs
                 continue;
             // Comprimo la sotto cartella
-            if(!compressSubDir(zip,file.absoluteFilePath(),origDir,recursive,filters)) return false;
+            if(!compressSubDir(zip,file.absoluteFilePath(),origDir,recursive,filters,strategy)) return false;
         }
     }
 
@@ -125,7 +129,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
         QString filename = origDirectory.relativeFilePath(file.absoluteFilePath());
 
         // Comprimo il file
-        if (!compressFile(zip,file.absoluteFilePath(),filename)) return false;
+        if (!compressFile(zip,file.absoluteFilePath(),filename, strategy)) return false;
     }
 
     return true;
@@ -211,7 +215,7 @@ bool JlCompress::removeFile(QStringList listFile) {
     return ret;
 }
 
-bool JlCompress::compressFile(QString fileCompressed, QString file) {
+bool JlCompress::compressFile(QString fileCompressed, QString file, CompressionStrategy strategy) {
     // Creo lo zip
     QuaZip zip(fileCompressed);
     QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
@@ -221,7 +225,7 @@ bool JlCompress::compressFile(QString fileCompressed, QString file) {
     }
 
     // Aggiungo il file
-    if (!compressFile(&zip,file,QFileInfo(file).fileName())) {
+    if (!compressFile(&zip,file,QFileInfo(file).fileName(), strategy)) {
         QFile::remove(fileCompressed);
         return false;
     }
@@ -236,7 +240,7 @@ bool JlCompress::compressFile(QString fileCompressed, QString file) {
     return true;
 }
 
-bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
+bool JlCompress::compressFiles(QString fileCompressed, QStringList files, CompressionStrategy strategy) {
     // Creo lo zip
     QuaZip zip(fileCompressed);
     QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
@@ -250,7 +254,7 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
     for (int index = 0; index < files.size(); ++index ) {
         const QString & file( files.at( index ) );
         info.setFile(file);
-        if (!info.exists() || !compressFile(&zip,file,info.fileName())) {
+        if (!info.exists() || !compressFile(&zip,file,info.fileName(), strategy)) {
             QFile::remove(fileCompressed);
             return false;
         }
@@ -266,12 +270,12 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
     return true;
 }
 
-bool JlCompress::compressDir(QString fileCompressed, QString dir, bool recursive) {
-    return compressDir(fileCompressed, dir, recursive, QDir::Filters());
+bool JlCompress::compressDir(QString fileCompressed, QString dir, bool recursive, CompressionStrategy strategy) {
+    return compressDir(fileCompressed, dir, recursive, QDir::Filters(), strategy);
 }
 
-bool JlCompress::compressDir(QString fileCompressed, QString dir,
-                             bool recursive, QDir::Filters filters)
+bool JlCompress::compressDir(QString fileCompressed, QString dir, bool recursive,
+                             QDir::Filters filters, CompressionStrategy strategy)
 {
     // Creo lo zip
     QuaZip zip(fileCompressed);
@@ -282,7 +286,7 @@ bool JlCompress::compressDir(QString fileCompressed, QString dir,
     }
 
     // Aggiungo i file e le sotto cartelle
-    if (!compressSubDir(&zip,dir,dir,recursive, filters)) {
+    if (!compressSubDir(&zip,dir,dir,recursive,filters,strategy)) {
         QFile::remove(fileCompressed);
         return false;
     }
