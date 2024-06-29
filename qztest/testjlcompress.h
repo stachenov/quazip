@@ -45,12 +45,6 @@ private slots:
     void compressFiles();
     void compressDir_data();
     void compressDir();
-    void compressFileWithStrategy_data();
-    void compressFileWithStrategy();
-    void compressFilesWithStrategy_data();
-    void compressFilesWithStrategy();
-    void compressDirWithStrategy_data();
-    void compressDirWithStrategy();
     void extractFile_data();
     void extractFile();
     void extractFiles_data();
