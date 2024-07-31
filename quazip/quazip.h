@@ -27,7 +27,7 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include "quazip_qt_compat.h"
+
 
 #include "zip.h"
 #include "unzip.h"
@@ -226,10 +226,10 @@ class QUAZIP_EXPORT QuaZip {
      * example, file names with cyrillic letters will be in \c IBM866
      * encoding.
      **/
-    void setFileNameCodec(QTextCodec *fileNameCodec);
+    void setFileNameCodec(QuazipTextCodec *fileNameCodec);
     /// Sets the codec used to encode/decode file names inside archive.
     /** \overload
-     * Equivalent to calling setFileNameCodec(QTextCodec::codecForName(codecName));
+     * Equivalent to calling setFileNameCodec(QuazipTextCodec::codecForName(codecName));
      **/
     void setFileNameCodec(const char *fileNameCodecName);
     /// Sets the OS code (highest 8 bits of the “version made by” field) for new files.
@@ -241,18 +241,18 @@ class QUAZIP_EXPORT QuaZip {
     /// Returns the OS code for new files.
     uint getOsCode() const;
     /// Returns the codec used to encode/decode comments inside archive.
-    QTextCodec* getFileNameCodec() const;
+    QuazipTextCodec* getFileNameCodec() const;
     /// Sets the codec used to encode/decode comments inside archive.
     /** This codec defaults to locale codec, which is probably ok.
      **/
-    void setCommentCodec(QTextCodec *commentCodec);
+    void setCommentCodec(QuazipTextCodec *commentCodec);
     /// Sets the codec used to encode/decode comments inside archive.
     /** \overload
-     * Equivalent to calling setCommentCodec(QTextCodec::codecForName(codecName));
+     * Equivalent to calling setCommentCodec(QuazipTextCodec::codecForName(codecName));
      **/
     void setCommentCodec(const char *commentCodecName);
     /// Returns the codec used to encode/decode comments inside archive.
-    QTextCodec* getCommentCodec() const;
+    QuazipTextCodec* getCommentCodec() const;
     /// Returns the name of the ZIP file.
     /** Returns null string if no ZIP file name has been set, for
      * example when the QuaZip instance is set up to use a QIODevice
@@ -570,7 +570,7 @@ class QUAZIP_EXPORT QuaZip {
      * won't affect the QuaZip instances already created at that moment.
      *
      * The codec specified here can be overriden by calling setFileNameCodec().
-     * If neither function is called, QTextCodec::codecForLocale() will be used
+     * If neither function is called, QuazipTextCodec::codecForLocale() will be used
      * to decode or encode file names. Use this function with caution if
      * the application uses other libraries that depend on QuaZip. Those
      * libraries can either call this function by themselves, thus overriding
@@ -594,11 +594,11 @@ class QUAZIP_EXPORT QuaZip {
      *
      * @param codec The codec to use by default. If null, resets to default.
      */
-    static void setDefaultFileNameCodec(QTextCodec *codec);
+    static void setDefaultFileNameCodec(QuazipTextCodec *codec);
     /**
      * @overload
      * Equivalent to calling
-     * setDefaultFileNameCodec(QTextCodec::codecForName(codecName)).
+     * setDefaultFileNameCodec(QuazipTextCodec::codecForName(codecName)).
      */
     static void setDefaultFileNameCodec(const char *codecName);
     /// Sets default OS code.

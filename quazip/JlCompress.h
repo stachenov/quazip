@@ -160,7 +160,7 @@ public:
       left empty.
       \return The list of the full paths of the files extracted, empty on failure.
       */
-    static QStringList extractDir(QString fileCompressed, QTextCodec* fileNameCodec, QString dir = QString());
+    static QStringList extractDir(QString fileCompressed, QuazipTextCodec* fileNameCodec, QString dir = QString());
     /// Get the file list.
     /**
       \return The list of the files in the archive, or, more precisely, the
@@ -202,7 +202,7 @@ public:
       left empty.
       \return The list of the full paths of the files extracted, empty on failure.
       */
-    static QStringList extractDir(QIODevice* ioDevice, QTextCodec* fileNameCodec, QString dir = QString());
+    static QStringList extractDir(QIODevice* ioDevice, QuazipTextCodec* fileNameCodec, QString dir = QString());
     /// Get the file list.
     /**
       \return The list of the files in the archive, or, more precisely, the
