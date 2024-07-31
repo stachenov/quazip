@@ -26,6 +26,9 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include "quazipfileinfo.h"
 
+
+#include "quazip_textcodec.h"
+
 using namespace std;
 
 #define QUAZIP_VERSION_MADE_BY 0x1Eu

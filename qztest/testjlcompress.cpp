@@ -466,7 +466,7 @@ void TestJlCompress::extractFile()
     srcPerm ^= QFile::WriteOther;
     QVERIFY(srcFile.setPermissions(srcPerm));
     if (!createTestArchive(zipName, fileNames,
-                           QTextCodec::codecForName(encoding))) {
+                           QuazipTextCodec::codecForName(encoding))) {
         QFAIL("Can't create test archive");
     }
     QuaZip::setDefaultFileNameCodec(encoding);
@@ -630,9 +630,9 @@ void TestJlCompress::extractDir()
             QFAIL("Couldn't change to /");
         }
     }
-    QTextCodec *fileNameCodec = NULL;
+    QuazipTextCodec *fileNameCodec = NULL;
     if (!fileNameCodecName.isEmpty())
-        fileNameCodec = QTextCodec::codecForName(fileNameCodecName);
+        fileNameCodec = QuazipTextCodec::codecForName(fileNameCodecName);
     QDir curDir;
     if (!extDir.isEmpty() && !curDir.mkpath(extDir)) {
         QFAIL("Couldn't mkpath extDir");
