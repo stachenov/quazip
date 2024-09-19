@@ -39,6 +39,10 @@ bool JlCompress::copyData(QIODevice &inFile, QIODevice &outFile)
 }
 
 bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
+  return compressFile(zip, fileName, fileDest, JlCompress::Options());
+}
+
+bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest, const Options& options) {
     // zip: object where to add the file
     // fileName: real file name
     // fileDest: file name inside the zip object
@@ -49,7 +53,12 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest) {
         zip->getMode()!=QuaZip::mdAdd) return false;
 
     QuaZipFile outFile(zip);
-    if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName))) return false;
+    if (options.dateTime().isNull()) {
+      if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName))) return false;
+    }
+    else {
+      if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName, options.dateTime()))) return false;
+    }
 
     QFileInfo input(fileName);
     if (quazip_is_symlink(input)) {
@@ -204,6 +213,10 @@ bool JlCompress::removeFile(QStringList listFile) {
 }
 
 bool JlCompress::compressFile(QString fileCompressed, QString file) {
+  return compressFile(fileCompressed, file, JlCompress::Options());
+}
+
+bool JlCompress::compressFile(QString fileCompressed, QString file, const Options& options) {
     // Create zip
     QuaZip zip(fileCompressed);
     QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
@@ -213,7 +226,7 @@ bool JlCompress::compressFile(QString fileCompressed, QString file) {
     }
 
     // Add file
-    if (!compressFile(&zip,file,QFileInfo(file).fileName())) {
+    if (!compressFile(&zip,file,QFileInfo(file).fileName(), options)) {
         QFile::remove(fileCompressed);
         return false;
     }

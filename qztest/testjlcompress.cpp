@@ -74,6 +74,54 @@ void TestJlCompress::compressFile()
     curDir.remove(zipName);
 }
 
+void TestJlCompress::compressFileOptions_data()
+{
+  QTest::addColumn<QString>("zipName");
+  QTest::addColumn<QString>("fileName");
+  QTest::addColumn<QDateTime>("dateTime");
+  QTest::addColumn<QString>("sha256sum");
+  QTest::newRow("simple") << "jlsimplefile.zip"
+                          << "test0.txt"
+                          << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
+                          << "5eedd83aee92cf3381155d167fee54a4ef6e43b8bc7a979c903611d9aa28610a";
+}
+
+void TestJlCompress::compressFileOptions()
+{
+  QFETCH(QString, zipName);
+  QFETCH(QString, fileName);
+  QFETCH(QDateTime, dateTime);
+  QFETCH(QString, sha256sum);
+  QDir curDir;
+  if (curDir.exists(zipName)) {
+    if (!curDir.remove(zipName))
+      QFAIL("Can't remove zip file");
+  }
+  if (!createTestFiles(QStringList() << fileName)) {
+    QFAIL("Can't create test file");
+  }
+
+  const JlCompress::Options options(dateTime);
+  QVERIFY(JlCompress::compressFile(zipName, "tmp/" + fileName, options));
+  // get the file list and check it
+  QStringList fileList = JlCompress::getFileList(zipName);
+  QCOMPARE(fileList.count(), 1);
+  QVERIFY(fileList[0] == fileName);
+  // now test the QIODevice* overload of getFileList()
+  QFile zipFile(zipName);
+  QVERIFY(zipFile.open(QIODevice::ReadOnly));
+  fileList = JlCompress::getFileList(zipName);
+  QCOMPARE(fileList.count(), 1);
+  QVERIFY(fileList[0] == fileName);
+  // Hash is computed on the resulting file externally, then hardcoded in the test data
+  // This should help detecting any library breakage since we compare against a well-known stable result
+  QString hash = QCryptographicHash::hash(zipFile.readAll(), QCryptographicHash::Sha256).toHex();
+  QCOMPARE(sha256sum, hash);
+  zipFile.close();
+  removeTestFiles(QStringList() << fileName);
+  curDir.remove(zipName);
+}
+
 void TestJlCompress::compressFiles_data()
 {
     QTest::addColumn<QString>("zipName");
