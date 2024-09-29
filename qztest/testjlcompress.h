@@ -47,6 +47,8 @@ private slots:
     void compressFiles();
     void compressDir_data();
     void compressDir();
+    void compressDirOptions_data();
+    void compressDirOptions();
     void extractFile_data();
     void extractFile();
     void extractFiles_data();
