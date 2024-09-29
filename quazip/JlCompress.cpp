@@ -53,11 +53,11 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest, c
         zip->getMode()!=QuaZip::mdAdd) return false;
 
     QuaZipFile outFile(zip);
-    if (options.dateTime().isNull()) {
+    if (options.getDateTime().isNull()) {
       if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName))) return false;
     }
     else {
-      if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName, options.dateTime()))) return false;
+      if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName, options.getDateTime()))) return false;
     }
 
     QFileInfo input(fileName);
@@ -104,11 +104,11 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
     if (dir != origDir) {
         QuaZipFile dirZipFile(zip);
         std::unique_ptr<QuaZipNewInfo> qzni;
-        if (options.dateTime().isNull()) {
+        if (options.getDateTime().isNull()) {
           qzni = std::make_unique<QuaZipNewInfo>(origDirectory.relativeFilePath(dir) + QLatin1String("/"), dir);
         }
         else {
-          qzni = std::make_unique<QuaZipNewInfo>(origDirectory.relativeFilePath(dir) + QLatin1String("/"), dir, options.dateTime());
+          qzni = std::make_unique<QuaZipNewInfo>(origDirectory.relativeFilePath(dir) + QLatin1String("/"), dir, options.getDateTime());
         }
         if (!dirZipFile.open(QIODevice::WriteOnly, *qzni, nullptr, 0, 0)) {
           return false;

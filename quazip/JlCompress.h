@@ -47,7 +47,7 @@ public:
       explicit Options(const QDateTime& dateTime = QDateTime())
           : m_dateTime(dateTime) {}
 
-      QDateTime dateTime() const {
+      QDateTime getDateTime() const {
         return m_dateTime;
       }
 
@@ -79,7 +79,7 @@ public:
       \param zip Opened zip to compress the file to.
       \param fileName The full path to the source file.
       \param fileDest The full name of the file inside the archive.
-      \param dateTime Explicitly sets dateTime instead of using last modified of the input file. Useful if you need reproducible archives.
+      \param options Options for fixed file timestamp, compression level, encryption..
       \return true if success, false otherwise.
       */
     static bool compressFile(QuaZip* zip, QString fileName, QString fileDest, const Options& options);
@@ -102,6 +102,9 @@ public:
       \param parentDir The full path to the directory corresponding to
       the root of the ZIP.
       \param recursive Whether to pack sub-directories as well or only
+      \param filters what to pack, filters are applied both when searching
+* for subdirs (if packing recursively) and when looking for files to pack
+      \param options Options for fixed file timestamp, compression level, encryption..
       files.
       \return true if success, false otherwise.
       */
@@ -133,7 +136,7 @@ public:
     /**
       \param fileCompressed The name of the archive.
       \param file The file to compress.
-      \param options Additional options such as fixed last modified time, encryption (tbd)
+      \param options Options for fixed file timestamp, compression level, encryption..
       \return true if success, false otherwise.
       */
     static bool compressFile(QString fileCompressed, QString file, const Options& options);
@@ -148,7 +151,7 @@ public:
     /**
       \param fileCompressed The name of the archive.
       \param files The file list to compress.
-      \param options Additional options such as fixed last modified time, encryption (tbd)
+      \param options Options for fixed file timestamp, compression level, encryption..
       \return true if success, false otherwise.
       */
     static bool compressFiles(QString fileCompressed, QStringList files, const Options& options);
@@ -195,7 +198,7 @@ public:
      * @param recursive if true, then the subdirectories are packed as well
      * @param filters what to pack, filters are applied both when searching
      * for subdirs (if packing recursively) and when looking for files to pack
-     * @param options Additional options such as fixed last modified time, encryption (tbd)
+     * @param options Options for fixed file timestamp, compression level, encryption..
      * @return true on success, false otherwise
      */
     static bool compressDir(QString fileCompressed, QString dir,
