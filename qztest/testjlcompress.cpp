@@ -79,11 +79,13 @@ void TestJlCompress::compressFileOptions_data()
   QTest::addColumn<QString>("zipName");
   QTest::addColumn<QString>("fileName");
   QTest::addColumn<QDateTime>("dateTime");
-  QTest::addColumn<QString>("sha256sum");
+  QTest::addColumn<QString>("sha256sum_unix"); // Due to extra data archives are not identical
+  QTest::addColumn<QString>("sha256sum_win");
   QTest::newRow("simple") << "jlsimplefile.zip"
                           << "test0.txt"
                           << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
-                          << "5eedd83aee92cf3381155d167fee54a4ef6e43b8bc7a979c903611d9aa28610a";
+                          << "5eedd83aee92cf3381155d167fee54a4ef6e43b8bc7a979c903611d9aa28610a"
+                          << "cb1847dff1a5c33a805efde2558fc74024ad4c64c8607f8b12903e4d92385955";
 }
 
 void TestJlCompress::compressFileOptions()
@@ -91,7 +93,8 @@ void TestJlCompress::compressFileOptions()
   QFETCH(QString, zipName);
   QFETCH(QString, fileName);
   QFETCH(QDateTime, dateTime);
-  QFETCH(QString, sha256sum);
+  QFETCH(QString, sha256sum_unix);
+  QFETCH(QString, sha256sum_win);
   QDir curDir;
   if (curDir.exists(zipName)) {
     if (!curDir.remove(zipName))
@@ -116,7 +119,11 @@ void TestJlCompress::compressFileOptions()
   // Hash is computed on the resulting file externally, then hardcoded in the test data
   // This should help detecting any library breakage since we compare against a well-known stable result
   QString hash = QCryptographicHash::hash(zipFile.readAll(), QCryptographicHash::Sha256).toHex();
-  QCOMPARE(sha256sum, hash);
+#ifdef _WIN32
+    QCOMPARE(hash, sha256sum_win);
+#else
+    QCOMPARE(hash, sha256sum_unix);
+#endif
   zipFile.close();
   removeTestFiles(QStringList() << fileName);
   curDir.remove(zipName);
@@ -217,7 +224,8 @@ void TestJlCompress::compressDirOptions_data()
   QTest::addColumn<QStringList>("fileNames");
   QTest::addColumn<QStringList>("expected");
   QTest::addColumn<QDateTime>("dateTime");
-  QTest::addColumn<QString>("sha256sum");
+  QTest::addColumn<QString>("sha256sum_unix");
+  QTest::addColumn<QString>("sha256sum_win");
   QTest::newRow("simple") << "jldir.zip"
                           << (QStringList() << "test0.txt" << "testdir1/test1.txt"
                                             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
@@ -226,7 +234,8 @@ void TestJlCompress::compressDirOptions_data()
                                             << "testdir2/" << "testdir2/test2.txt"
                                             << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
                           << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
-                          << "ed0d5921b2fc11b6b4cb214b3e43ea3ea28987d6ff8080faab54c4756de30af6";
+                          << "ed0d5921b2fc11b6b4cb214b3e43ea3ea28987d6ff8080faab54c4756de30af6"
+                          << "1eba110a33718c07a4ddf3fa515d1b4c6e3f4fc912b2e29e5e32783e2cddf852";
 }
 
 void TestJlCompress::compressDirOptions()
@@ -235,7 +244,8 @@ void TestJlCompress::compressDirOptions()
   QFETCH(QStringList, fileNames);
   QFETCH(QStringList, expected);
   QFETCH(QDateTime, dateTime);
-  QFETCH(QString, sha256sum);
+  QFETCH(QString, sha256sum_unix);
+  QFETCH(QString, sha256sum_win);
   QDir curDir;
   if (curDir.exists(zipName)) {
     if (!curDir.remove(zipName))
@@ -265,7 +275,11 @@ void TestJlCompress::compressDirOptions()
     QFAIL("Can't read output zip file");
   }
   QString hash = QCryptographicHash::hash(zipFile.readAll(), QCryptographicHash::Sha256).toHex();
-  QCOMPARE(sha256sum, hash);
+#ifdef _WIN32
+    QCOMPARE(hash, sha256sum_win);
+#else
+    QCOMPARE(hash, sha256sum_unix);
+#endif
   zipFile.close();
   removeTestFiles(fileNames, "compressDir_tmp");
   curDir.remove(zipName);
