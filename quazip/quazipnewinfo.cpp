@@ -105,6 +105,15 @@ QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
   }
 }
 
+QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file, const QDateTime& dateTime):
+  name(name), dateTime(dateTime), internalAttr(0), externalAttr(0), uncompressedSize(0)
+{
+  QFileInfo info(file);
+  if (info.exists()) {
+    QuaZipNewInfo_setPermissions(this, info.permissions(), info.isDir(), quazip_is_symlink(info));
+  }
+}
+
 void QuaZipNewInfo::setFileDateTime(const QString& file)
 {
   QFileInfo info(file);

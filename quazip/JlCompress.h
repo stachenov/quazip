@@ -42,6 +42,25 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
   */
 class QUAZIP_EXPORT JlCompress {
 public:
+    class Options {
+    public:
+      explicit Options(const QDateTime& dateTime = QDateTime())
+          : m_dateTime(dateTime) {}
+
+      QDateTime getDateTime() const {
+        return m_dateTime;
+      }
+
+      void setDateTime(const QDateTime &dateTime) {
+        m_dateTime = dateTime;
+      }
+
+    private:
+      // If set, used as last modified on file inside the archive.
+      // If compressing a directory, used for all files.
+      QDateTime m_dateTime;
+    };
+
     static bool copyData(QIODevice &inFile, QIODevice &outFile);
     static QStringList extractDir(QuaZip &zip, const QString &dir);
     static QStringList getFileList(QuaZip *zip);
@@ -55,6 +74,15 @@ public:
       \return true if success, false otherwise.
       */
     static bool compressFile(QuaZip* zip, QString fileName, QString fileDest);
+    /// Compress a single file.
+    /**
+      \param zip Opened zip to compress the file to.
+      \param fileName The full path to the source file.
+      \param fileDest The full name of the file inside the archive.
+      \param options Options for fixed file timestamp, compression level, encryption..
+      \return true if success, false otherwise.
+      */
+    static bool compressFile(QuaZip* zip, QString fileName, QString fileDest, const Options& options);
     /// Compress a subdirectory.
     /**
       \param parentZip Opened zip containing the parent directory.
@@ -67,6 +95,21 @@ public:
       */
     static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive,
                                QDir::Filters filters);
+    /// Compress a subdirectory.
+    /**
+      \param parentZip Opened zip containing the parent directory.
+      \param dir The full path to the directory to pack.
+      \param parentDir The full path to the directory corresponding to
+      the root of the ZIP.
+      \param recursive Whether to pack sub-directories as well or only
+      \param filters what to pack, filters are applied both when searching
+* for subdirs (if packing recursively) and when looking for files to pack
+      \param options Options for fixed file timestamp, compression level, encryption..
+      files.
+      \return true if success, false otherwise.
+      */
+    static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive,
+                               QDir::Filters filters, const Options& options);
     /// Extract a single file.
     /**
       \param zip The opened zip archive to extract from.
@@ -89,6 +132,14 @@ public:
       \return true if success, false otherwise.
       */
     static bool compressFile(QString fileCompressed, QString file);
+    /// Compress a single file with advanced options.
+    /**
+      \param fileCompressed The name of the archive.
+      \param file The file to compress.
+      \param options Options for fixed file timestamp, compression level, encryption..
+      \return true if success, false otherwise.
+      */
+    static bool compressFile(QString fileCompressed, QString file, const Options& options);
     /// Compress a list of files.
     /**
       \param fileCompressed The name of the archive.
@@ -96,6 +147,14 @@ public:
       \return true if success, false otherwise.
       */
     static bool compressFiles(QString fileCompressed, QStringList files);
+    /// Compress a list of files.
+    /**
+      \param fileCompressed The name of the archive.
+      \param files The file list to compress.
+      \param options Options for fixed file timestamp, compression level, encryption..
+      \return true if success, false otherwise.
+      */
+    static bool compressFiles(QString fileCompressed, QStringList files, const Options& options);
     /// Compress a whole directory.
     /**
       Does not compress hidden files. See compressDir(QString, QString, bool, QDir::Filters).
@@ -125,6 +184,25 @@ public:
      */
     static bool compressDir(QString fileCompressed, QString dir,
                             bool recursive, QDir::Filters filters);
+    /**
+     * @brief Compress a whole directory.
+     *
+     * Unless filters are specified explicitly, packs
+     * only regular non-hidden files (and subdirs, if @c recursive is true).
+     * If filters are specified, they are OR-combined with
+     * <tt>%QDir::AllDirs|%QDir::NoDotAndDotDot</tt> when searching for dirs
+     * and with <tt>QDir::Files</tt> when searching for files.
+     *
+     * @param fileCompressed path to the resulting archive
+     * @param dir path to the directory being compressed
+     * @param recursive if true, then the subdirectories are packed as well
+     * @param filters what to pack, filters are applied both when searching
+     * for subdirs (if packing recursively) and when looking for files to pack
+     * @param options Options for fixed file timestamp, compression level, encryption..
+     * @return true on success, false otherwise
+     */
+    static bool compressDir(QString fileCompressed, QString dir,
+                            bool recursive, QDir::Filters filters, const Options& options);
 
     /// Extract a single file.
     /**

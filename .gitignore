@@ -1,5 +1,7 @@
 /doc
 /build
+/build_release
+/build_debug
 /lib
 *.tags
 *.user
