@@ -8,7 +8,8 @@ function(windeployqt target)
     add_custom_command(TARGET ${target} POST_BUILD
             COMMAND "${_qt_bin_dir}/windeployqt.exe"
             --verbose 1
-            --release
+            $<$<CONFIG:Debug>:--debug>
+            $<$<CONFIG:Release>:--release>
             --no-plugins
             --no-translations
             --no-system-d3d-compiler

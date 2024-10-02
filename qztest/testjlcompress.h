@@ -41,16 +41,14 @@ class TestJlCompress: public QObject {
 private slots:
     void compressFile_data();
     void compressFile();
+    void compressFileOptions_data();
+    void compressFileOptions();
     void compressFiles_data();
     void compressFiles();
     void compressDir_data();
     void compressDir();
-    void compressFileWithStrategy_data();
-    void compressFileWithStrategy();
-    void compressFilesWithStrategy_data();
-    void compressFilesWithStrategy();
-    void compressDirWithStrategy_data();
-    void compressDirWithStrategy();
+    void compressDirOptions_data();
+    void compressDirOptions();
     void extractFile_data();
     void extractFile();
     void extractFiles_data();

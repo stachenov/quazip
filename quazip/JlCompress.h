@@ -42,33 +42,53 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
   */
 class QUAZIP_EXPORT JlCompress {
 public:
-    /**
-     * The enum values refer to the comments in the open function of the quazipfile.h file.
-     *
-     * The value is represented by two hexadecimal characters,
-     * the left character indicating the compression method,
-     * and the right character indicating the compression level.
-     *
-     * method == 0 indicates that the file is not compressed but rather stored as is.
-     * method == 8(Z_DEFLATED) indicates that zlib compression is used.
-     *
-     * A higher value of level indicates a smaller size of the compressed file,
-     * although it also implies more time consumed during the compression process.
-     */
-    enum CompressionStrategy
-    {
-        /// Storage without compression
-        Storage  = 0x00,
-        /// The fastest compression speed
-        Fastest  = 0x81,
-        /// Relatively fast compression speed
-        Faster   = 0x83,
-        /// Standard compression speed and ratio
-        Standard = 0x85,
-        /// Better compression ratio
-        Better   = 0x87,
-        /// The best compression ratio
-        Best     = 0x89
+    class Options {
+    public:
+        /**
+         * The enum values refer to the comments in the open function of the quazipfile.h file.
+         *
+         * The value is represented by two hexadecimal characters,
+         * the left character indicating the compression method,
+         * and the right character indicating the compression level.
+         *
+         * method == 0 indicates that the file is not compressed but rather stored as is.
+         * method == 8(Z_DEFLATED) indicates that zlib compression is used.
+         *
+         * A higher value of level indicates a smaller size of the compressed file,
+         * although it also implies more time consumed during the compression process.
+         */
+        enum CompressionStrategy
+        {
+            /// Storage without compression
+            Storage  = 0x00,
+            /// The fastest compression speed
+            Fastest  = 0x81,
+            /// Relatively fast compression speed
+            Faster   = 0x83,
+            /// Standard compression speed and ratio
+            Standard = 0x85,
+            /// Better compression ratio
+            Better   = 0x87,
+            /// The best compression ratio
+            Best     = 0x89
+        };
+
+    public:
+      explicit Options(const QDateTime& dateTime = QDateTime())
+          : m_dateTime(dateTime) {}
+
+      QDateTime getDateTime() const {
+        return m_dateTime;
+      }
+
+      void setDateTime(const QDateTime &dateTime) {
+        m_dateTime = dateTime;
+      }
+
+    private:
+      // If set, used as last modified on file inside the archive.
+      // If compressing a directory, used for all files.
+      QDateTime m_dateTime;
     };
 
     static bool copyData(QIODevice &inFile, QIODevice &outFile);
@@ -89,10 +109,10 @@ public:
       \param zip Opened zip to compress the file to.
       \param fileName The full path to the source file.
       \param fileDest The full name of the file inside the archive.
-      \param strategy The strategy of compression
+      \param options Options for fixed file timestamp, compression level, encryption..
       \return true if success, false otherwise.
       */
-    static bool compressFile(QuaZip* zip, QString fileName, QString fileDest, CompressionStrategy strategy);
+    static bool compressFile(QuaZip* zip, QString fileName, QString fileDest, const Options& options);
     /// Compress a subdirectory.
     /**
       \param parentZip Opened zip containing the parent directory.
@@ -111,13 +131,15 @@ public:
       \param dir The full path to the directory to pack.
       \param parentDir The full path to the directory corresponding to
       the root of the ZIP.
-      \param strategy The strategy of compression
       \param recursive Whether to pack sub-directories as well or only
+      \param filters what to pack, filters are applied both when searching
+* for subdirs (if packing recursively) and when looking for files to pack
+      \param options Options for fixed file timestamp, compression level, encryption..
       files.
       \return true if success, false otherwise.
       */
-    static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, CompressionStrategy strategy,
-                               bool recursive, QDir::Filters filters);
+    static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive,
+                               QDir::Filters filters, const Options& options);
     /// Extract a single file.
     /**
       \param zip The opened zip archive to extract from.
@@ -140,14 +162,14 @@ public:
       \return true if success, false otherwise.
       */
     static bool compressFile(QString fileCompressed, QString file);
-    /// Compress a single file.
+    /// Compress a single file with advanced options.
     /**
       \param fileCompressed The name of the archive.
       \param file The file to compress.
-      \param strategy The strategy of compression
+      \param options Options for fixed file timestamp, compression level, encryption..
       \return true if success, false otherwise.
       */
-    static bool compressFile(QString fileCompressed, QString file, CompressionStrategy strategy);
+    static bool compressFile(QString fileCompressed, QString file, const Options& options);
     /// Compress a list of files.
     /**
       \param fileCompressed The name of the archive.
@@ -159,10 +181,10 @@ public:
     /**
       \param fileCompressed The name of the archive.
       \param files The file list to compress.
-      \param strategy The strategy of compression
+      \param options Options for fixed file timestamp, compression level, encryption..
       \return true if success, false otherwise.
       */
-    static bool compressFiles(QString fileCompressed, QStringList files, CompressionStrategy strategy);
+    static bool compressFiles(QString fileCompressed, QStringList files, const Options& options);
     /// Compress a whole directory.
     /**
       Does not compress hidden files. See compressDir(QString, QString, bool, QDir::Filters).
@@ -174,18 +196,6 @@ public:
       \return true if success, false otherwise.
       */
     static bool compressDir(QString fileCompressed, QString dir = QString(), bool recursive = true);
-    /// Compress a whole directory.
-    /**
-      Does not compress hidden files. See compressDir(QString, QString, bool, QDir::Filters).
-
-      \param fileCompressed The name of the archive.
-      \param dir The directory to compress.
-      \param strategy The strategy of compression
-      \param recursive Whether to pack the subdirectories as well, or
-      just regular files.
-      \return true if success, false otherwise.
-      */
-    static bool compressDir(QString fileCompressed, QString dir, CompressionStrategy strategy, bool recursive = true);
     /**
      * @brief Compress a whole directory.
      *
@@ -215,14 +225,14 @@ public:
      *
      * @param fileCompressed path to the resulting archive
      * @param dir path to the directory being compressed
-     * @param strategy The strategy of compression
      * @param recursive if true, then the subdirectories are packed as well
      * @param filters what to pack, filters are applied both when searching
      * for subdirs (if packing recursively) and when looking for files to pack
+     * @param options Options for fixed file timestamp, compression level, encryption..
      * @return true on success, false otherwise
      */
-    static bool compressDir(QString fileCompressed, QString dir, CompressionStrategy strategy,
-                            bool recursive, QDir::Filters filters);
+    static bool compressDir(QString fileCompressed, QString dir,
+                            bool recursive, QDir::Filters filters, const Options& options);
 
     /// Extract a single file.
     /**

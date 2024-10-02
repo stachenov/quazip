@@ -111,9 +111,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        macos_version: [11, 12]
+        macos_version: [14, 13]
         qt_version: [5.15.2, 6.6.2]
         shared: [ON, OFF]
+        exclude:
+          - macos_version: 14
+            qt_version: 5.15.2 #Not available on macos-14 due to ARM arch
 
     steps:
       - name: Checkout

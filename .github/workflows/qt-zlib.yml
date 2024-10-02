@@ -180,7 +180,7 @@ jobs:
       - name: Run tests
         shell: cmd
         working-directory: ${{github.workspace}}/build
-        run: ctest --verbose -C Release
+        run: ctest --verbose --output-on-failure -C Release
 
   use-qt5-zlib-windows:
     if: true
