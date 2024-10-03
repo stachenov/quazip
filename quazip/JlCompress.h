@@ -70,25 +70,37 @@ public:
             /// Better compression ratio
             Better   = 0x87,
             /// The best compression ratio
-            Best     = 0x89
+            Best     = 0x89,
+            /// The default compression strategy, according to the open function of quazipfile.h,
+            /// the value of method is Z_DEFLATED, and the value of level is Z_DEFAULT_COMPRESSION
+            Default  = 0xff
         };
 
     public:
-      explicit Options(const QDateTime& dateTime = QDateTime())
-          : m_dateTime(dateTime) {}
+        explicit Options(const QDateTime& dateTime = QDateTime(), const CompressionStrategy& strategy = Default)
+            : m_dateTime(dateTime), m_compressionStrategy(strategy) {}
 
-      QDateTime getDateTime() const {
+        QDateTime getDateTime() const {
         return m_dateTime;
-      }
+        }
 
-      void setDateTime(const QDateTime &dateTime) {
+        void setDateTime(const QDateTime &dateTime) {
         m_dateTime = dateTime;
-      }
+        }
+
+        CompressionStrategy getCompressionStrategy() const {
+            return m_compressionStrategy;
+        }
+
+        void setCompressionStrategy(const CompressionStrategy &strategy) {
+            m_compressionStrategy = strategy;
+        }
 
     private:
-      // If set, used as last modified on file inside the archive.
-      // If compressing a directory, used for all files.
-      QDateTime m_dateTime;
+        // If set, used as last modified on file inside the archive.
+        // If compressing a directory, used for all files.
+        QDateTime m_dateTime;
+        CompressionStrategy m_compressionStrategy;
     };
 
     static bool copyData(QIODevice &inFile, QIODevice &outFile);
@@ -317,7 +329,7 @@ public:
       list of the entries, including both files and directories if they
       are present separately.
       */
-    static QStringList getFileList(QIODevice *ioDevice); 
+    static QStringList getFileList(QIODevice *ioDevice);
 };
 
 #endif /* JLCOMPRESSFOLDER_H_ */

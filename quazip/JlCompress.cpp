@@ -54,9 +54,13 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest, c
         zip->getMode()!=QuaZip::mdAdd) return false;
 
     QuaZipFile outFile(zip);
-    Options::CompressionStrategy strategy = options.Standard; // todo
-    int method = strategy >> 4;
-    int level = strategy & 0x0f;
+    Options::CompressionStrategy strategy = options.getCompressionStrategy();
+    int method = Z_DEFLATED, level = Z_DEFAULT_COMPRESSION;
+    if(strategy != Options::Default)
+    {
+        method = strategy >> 4;
+        level = strategy & 0x0f;
+    }
     if (options.getDateTime().isNull()) {
       if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName), nullptr, 0, method, level)) return false;
     }
