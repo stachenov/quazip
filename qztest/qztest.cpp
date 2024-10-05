@@ -56,12 +56,30 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
                         testDir.path().toUtf8().constData());
                 return false;
             }
+            //qDebug() << "Created path " << testDir.path();
+            QFile dirFile(curDir.path() + QDir::separator() + testDir.path());
+            if (!dirFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
+                                  QFileDevice::ReadGroup | QFileDevice::ExeGroup |
+                                  QFileDevice::ReadOther | QFileDevice::ExeOther)) {
+                qWarning("Couldn't set permissions for %s",
+                         testDir.path().toUtf8().constData());
+                return false;
+            }
         }
         if (fileName.endsWith('/')) {
             if (!curDir.mkpath(filePath)) {
                 qWarning("Couldn't mkpath %s",
 				fileName.toUtf8().constData());
                 return false;
+            }
+            //qDebug() << "Created path " << filePath;
+            QFile dirFile(curDir.path() + QDir::separator() + filePath);
+            if (!dirFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
+                                   QFileDevice::ReadGroup | QFileDevice::ExeGroup |
+                                   QFileDevice::ReadOther | QFileDevice::ExeOther)) {
+              qWarning("Couldn't set permissions for %s",
+                       filePath.toUtf8().constData());
+              return false;
             }
         } else {
             QFile testFile(filePath);

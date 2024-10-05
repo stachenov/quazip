@@ -60,19 +60,19 @@ public:
         enum CompressionStrategy
         {
             /// Storage without compression
-            Storage  = 0x00,
+            Storage  = 0x00, // Z_NO_COMPRESSION 0
             /// The fastest compression speed
-            Fastest  = 0x81,
+            Fastest  = 0x81, // Z_BEST_SPEED 1
             /// Relatively fast compression speed
             Faster   = 0x83,
             /// Standard compression speed and ratio
-            Standard = 0x85,
+            Standard = 0x86,
             /// Better compression ratio
             Better   = 0x87,
             /// The best compression ratio
-            Best     = 0x89,
+            Best     = 0x89, // Z_BEST_COMPRESSION 9
             /// The default compression strategy, according to the open function of quazipfile.h,
-            /// the value of method is Z_DEFLATED, and the value of level is Z_DEFAULT_COMPRESSION
+            /// the value of method is Z_DEFLATED, and the value of level is Z_DEFAULT_COMPRESSION -1 (equals lvl 6)
             Default  = 0xff
         };
 
@@ -90,6 +90,14 @@ public:
 
         CompressionStrategy getCompressionStrategy() const {
             return m_compressionStrategy;
+        }
+
+        int getCompressionMethod() const {
+            return m_compressionStrategy != Default ? m_compressionStrategy >> 4 : Z_DEFLATED;
+        }
+
+        int getCompressionLevel() const {
+            return m_compressionStrategy != Default ? m_compressionStrategy & 0x0f : Z_DEFAULT_COMPRESSION;
         }
 
         void setCompressionStrategy(const CompressionStrategy &strategy) {
