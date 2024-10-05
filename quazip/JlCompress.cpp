@@ -105,7 +105,6 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
         zip->getMode()!=QuaZip::mdAppend &&
         zip->getMode()!=QuaZip::mdAdd) return false;
 
-    // Controllo la cartella
     QDir directory(dir);
     if (!directory.exists()) return false;
 
@@ -158,11 +157,9 @@ bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
     // filename: real file name
     // fileincompress: file name of the compressed file
 
-    // Controllo l'apertura dello zip
     if (!zip) return false;
     if (zip->getMode()!=QuaZip::mdUnzip) return false;
 
-    // Apro il file compresso
     if (!fileName.isEmpty())
         zip->setCurrentFile(fileName);
     QuaZipFile inFile(zip);

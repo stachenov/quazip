@@ -81,11 +81,11 @@ public:
             : m_dateTime(dateTime), m_compressionStrategy(strategy) {}
 
         QDateTime getDateTime() const {
-        return m_dateTime;
+            return m_dateTime;
         }
 
         void setDateTime(const QDateTime &dateTime) {
-        m_dateTime = dateTime;
+            m_dateTime = dateTime;
         }
 
         CompressionStrategy getCompressionStrategy() const {
