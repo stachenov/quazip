@@ -139,11 +139,11 @@ void TestJlCompress::compressFileOptions()
     QFETCH(QString, sha256sum_win);
     QDir curDir;
     if (curDir.exists(zipName)) {
-    if (!curDir.remove(zipName))
-      QFAIL("Can't remove zip file");
+      if (!curDir.remove(zipName))
+          QFAIL("Can't remove zip file");
     }
     if (!createTestFiles(QStringList() << fileName)) {
-    QFAIL("Can't create test file");
+        QFAIL("Can't create test file");
     }
 
     const JlCompress::Options options(dateTime, strategy);
