@@ -57,7 +57,7 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
                 return false;
             }
             //qDebug() << "Created path " << testDir.path();
-            QFile dirFile(curDir.path() + QDir::separator() + testDir.path());
+            QFile dirFile(testDir.path());
             if (!dirFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
                                   QFileDevice::ReadGroup | QFileDevice::ExeGroup |
                                   QFileDevice::ReadOther | QFileDevice::ExeOther)) {
@@ -73,7 +73,7 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
                 return false;
             }
             //qDebug() << "Created path " << filePath;
-            QFile dirFile(curDir.path() + QDir::separator() + filePath);
+            QFile dirFile(filePath);
             if (!dirFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
                                    QFileDevice::ReadGroup | QFileDevice::ExeGroup |
                                    QFileDevice::ReadOther | QFileDevice::ExeOther)) {
