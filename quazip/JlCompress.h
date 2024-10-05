@@ -44,21 +44,71 @@ class QUAZIP_EXPORT JlCompress {
 public:
     class Options {
     public:
-      explicit Options(const QDateTime& dateTime = QDateTime())
-          : m_dateTime(dateTime) {}
+        /**
+         * The enum values refer to the comments in the open function of the quazipfile.h file.
+         *
+         * The value is represented by two hexadecimal characters,
+         * the left character indicating the compression method,
+         * and the right character indicating the compression level.
+         *
+         * method == 0 indicates that the file is not compressed but rather stored as is.
+         * method == 8(Z_DEFLATED) indicates that zlib compression is used.
+         *
+         * A higher value of level indicates a smaller size of the compressed file,
+         * although it also implies more time consumed during the compression process.
+         */
+        enum CompressionStrategy
+        {
+            /// Storage without compression
+            Storage  = 0x00, // Z_NO_COMPRESSION 0
+            /// The fastest compression speed
+            Fastest  = 0x81, // Z_BEST_SPEED 1
+            /// Relatively fast compression speed
+            Faster   = 0x83,
+            /// Standard compression speed and ratio
+            Standard = 0x86,
+            /// Better compression ratio
+            Better   = 0x87,
+            /// The best compression ratio
+            Best     = 0x89, // Z_BEST_COMPRESSION 9
+            /// The default compression strategy, according to the open function of quazipfile.h,
+            /// the value of method is Z_DEFLATED, and the value of level is Z_DEFAULT_COMPRESSION -1 (equals lvl 6)
+            Default  = 0xff
+        };
 
-      QDateTime getDateTime() const {
-        return m_dateTime;
-      }
+    public:
+        explicit Options(const QDateTime& dateTime = QDateTime(), const CompressionStrategy& strategy = Default)
+            : m_dateTime(dateTime), m_compressionStrategy(strategy) {}
 
-      void setDateTime(const QDateTime &dateTime) {
-        m_dateTime = dateTime;
-      }
+        QDateTime getDateTime() const {
+            return m_dateTime;
+        }
+
+        void setDateTime(const QDateTime &dateTime) {
+            m_dateTime = dateTime;
+        }
+
+        CompressionStrategy getCompressionStrategy() const {
+            return m_compressionStrategy;
+        }
+
+        int getCompressionMethod() const {
+            return m_compressionStrategy != Default ? m_compressionStrategy >> 4 : Z_DEFLATED;
+        }
+
+        int getCompressionLevel() const {
+            return m_compressionStrategy != Default ? m_compressionStrategy & 0x0f : Z_DEFAULT_COMPRESSION;
+        }
+
+        void setCompressionStrategy(const CompressionStrategy &strategy) {
+            m_compressionStrategy = strategy;
+        }
 
     private:
-      // If set, used as last modified on file inside the archive.
-      // If compressing a directory, used for all files.
-      QDateTime m_dateTime;
+        // If set, used as last modified on file inside the archive.
+        // If compressing a directory, used for all files.
+        QDateTime m_dateTime;
+        CompressionStrategy m_compressionStrategy;
     };
 
     static bool copyData(QIODevice &inFile, QIODevice &outFile);
@@ -287,7 +337,7 @@ public:
       list of the entries, including both files and directories if they
       are present separately.
       */
-    static QStringList getFileList(QIODevice *ioDevice); 
+    static QStringList getFileList(QIODevice *ioDevice);
 };
 
 #endif /* JLCOMPRESSFOLDER_H_ */
