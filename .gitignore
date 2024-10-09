@@ -12,3 +12,5 @@ CMakeUserPresets.json
 vcpkg_installed/
 Testing/
 minizip/
+CMakeFiles/
+CMakeCache.txt
