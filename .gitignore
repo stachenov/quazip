@@ -9,3 +9,5 @@ cmake-*
 CMakeUserPresets.json
 vcpkg_installed/
 Testing/
+CMakeFiles/
+CMakeCache.txt
