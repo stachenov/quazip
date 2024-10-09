@@ -41,11 +41,11 @@ extern bool createTestArchive(const QString &zipName,
                               const QString &dir = "tmp");
 extern bool createTestArchive(const QString &zipName,
                               const QStringList &fileNames,
-                              QTextCodec *codec,
+                              QuazipTextCodec *codec,
                               const QString &dir = "tmp");
 extern bool createTestArchive(QIODevice *ioDevice,
                               const QStringList &fileNames,
-                              QTextCodec *codec,
+                              QuazipTextCodec *codec,
                               const QString &dir = "tmp");
 
 #endif // QUAZIP_TEST_QZTEST_H
