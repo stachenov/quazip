@@ -1,93 +1,82 @@
-/* ioapi.c -- IO base function header for compress/uncompress .zip
-   files using zlib + zip or unzip API
+/* ioapi.h -- IO base function header for compress/uncompress .zip
+   part of the MiniZip project - ( http://www.winimage.com/zLibDll/minizip.html )
 
-   Version 1.01e, February 12th, 2005
+   Copyright (C) 1998-2010 Gilles Vollant (minizip) ( http://www.winimage.com/zLibDll/minizip.html )
 
-   Copyright (C) 1998-2005 Gilles Vollant
+    Modifications for Zip64 support
+    Copyright (C) 2009-2010 Mathias Svensson ( http://result42.com )
 
-   Modified by Sergey A. Tachenov to integrate with Qt.
+    For more info read MiniZip_info.txt
+
+    Modified by Sergey A. Tachenov to integrate with Qt.
 */
+
+#if defined(_WIN32) && (!(defined(_CRT_SECURE_NO_WARNINGS)))
+        #define _CRT_SECURE_NO_WARNINGS
+#endif
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <zlib.h>
-
 #include "ioapi.h"
 #include "quazip_global.h"
 #include <QtCore/QIODevice>
 #include "quazip_qt_compat.h"
 
-/* I've found an old Unix (a SunOS 4.1.3_U1) without all SEEK_* defined.... */
-
-#ifndef SEEK_CUR
-#define SEEK_CUR    1
-#endif
-
-#ifndef SEEK_END
-#define SEEK_END    2
-#endif
-
-#ifndef SEEK_SET
-#define SEEK_SET    0
-#endif
-
-voidpf call_zopen64(const zlib_filefunc64_32_def* pfilefunc, voidpf file, int mode)
-{
-    auto func = pfilefunc->zfile_func64.zopen64_file != nullptr
-        ? pfilefunc->zfile_func64.zopen64_file
-        : pfilefunc->zopen32_file;
-    return (*func)(pfilefunc->zfile_func64.opaque, file, mode);
+voidpf call_zopen64 (const zlib_filefunc64_32_def* pfilefunc, voidpf file, int mode) {
+    if (pfilefunc->zfile_func64.zopen64_file != NULL)
+        return (*(pfilefunc->zfile_func64.zopen64_file)) (pfilefunc->zfile_func64.opaque,file,mode);
+    else
+    {
+        return (*(pfilefunc->zopen32_file))(pfilefunc->zfile_func64.opaque,file,mode);
+    }
 }
 
-namespace {
+long call_zseek64 (const zlib_filefunc64_32_def* pfilefunc,voidpf filestream, ZPOS64_T offset, int origin) {
+    if (pfilefunc->zfile_func64.zseek64_file != NULL)
+        return (*(pfilefunc->zfile_func64.zseek64_file)) (pfilefunc->zfile_func64.opaque,filestream,offset,origin);
+    else
+    {
+        uLong offsetTruncated = (uLong)offset;
+        if (offsetTruncated != offset)
+            return -1;
+        else
+            return (*(pfilefunc->zseek32_file))(pfilefunc->zfile_func64.opaque,filestream,offsetTruncated,origin);
+    }
+}
 
-int zseek64(const zlib_filefunc64_32_def* pfilefunc, voidpf filestream, ZPOS64_T offset, int origin)
-{
-    return (*pfilefunc->zfile_func64.zseek64_file)(pfilefunc->zfile_func64.opaque, filestream, offset, origin);
+ZPOS64_T call_ztell64 (const zlib_filefunc64_32_def* pfilefunc, voidpf filestream) {
+    if (pfilefunc->zfile_func64.zseek64_file != NULL)
+        return (*(pfilefunc->zfile_func64.ztell64_file)) (pfilefunc->zfile_func64.opaque,filestream);
+    else
+    {
+        uLong tell_uLong = (uLong)(*(pfilefunc->ztell32_file))(pfilefunc->zfile_func64.opaque,filestream);
+        if ((tell_uLong) == MAXU32)
+            return (ZPOS64_T)-1;
+        else
+            return tell_uLong;
+    }
+}
+
+void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32,const zlib_filefunc_def* p_filefunc32) {
+    p_filefunc64_32->zfile_func64.zopen64_file = nullptr;
+    p_filefunc64_32->zopen32_file = p_filefunc32->zopen_file;
+    p_filefunc64_32->zfile_func64.zerror_file = p_filefunc32->zerror_file;
+    p_filefunc64_32->zfile_func64.zread_file = p_filefunc32->zread_file;
+    p_filefunc64_32->zfile_func64.zwrite_file = p_filefunc32->zwrite_file;
+    p_filefunc64_32->zfile_func64.ztell64_file = nullptr;
+    p_filefunc64_32->zfile_func64.zseek64_file = nullptr;
+    p_filefunc64_32->zfile_func64.zclose_file = p_filefunc32->zclose_file;
+    p_filefunc64_32->zfile_func64.zerror_file = p_filefunc32->zerror_file;
+    p_filefunc64_32->zfile_func64.opaque = p_filefunc32->opaque;
+    p_filefunc64_32->zfile_func64.zfakeclose_file = nullptr;
+    p_filefunc64_32->zseek32_file = p_filefunc32->zseek_file;
+    p_filefunc64_32->ztell32_file = p_filefunc32->ztell_file;
 }
 
 
-int zseek32(const zlib_filefunc64_32_def* pfilefunc, voidpf filestream, ZPOS64_T offset, int origin)
-{
-    uLong offsetTruncated = static_cast<uLong>(offset);
-    if (offsetTruncated != offset)
-        return -1;
-    return (*pfilefunc->zseek32_file)(pfilefunc->zfile_func64.opaque, filestream, offsetTruncated, origin);
-}
-
-}
-
-int call_zseek64(const zlib_filefunc64_32_def* pfilefunc, voidpf filestream, ZPOS64_T offset, int origin)
-{
-    auto func = pfilefunc->zfile_func64.zseek64_file != nullptr ? zseek64 : zseek32;
-    return (*func)(pfilefunc, filestream, offset, origin);
-
-}
-
-namespace {
-
-ZPOS64_T ztell64(const zlib_filefunc64_32_def* pfilefunc, voidpf filestream)
-{
-    return (*pfilefunc->zfile_func64.ztell64_file) (pfilefunc->zfile_func64.opaque, filestream);
-}
-
-ZPOS64_T ztell32(const zlib_filefunc64_32_def* pfilefunc, voidpf filestream)
-{
-    uLong tell_uLong = (*pfilefunc->ztell32_file)(pfilefunc->zfile_func64.opaque, filestream);
-    if (tell_uLong == static_cast<uLong>(-1))
-        return static_cast<ZPOS64_T>(-1);
-    return tell_uLong;
-}
-
-}
-
-ZPOS64_T call_ztell64(const zlib_filefunc64_32_def* pfilefunc, voidpf filestream)
-{
-    auto *func = pfilefunc->zfile_func64.zseek64_file != nullptr ? ztell64 : ztell32;
-    return (*func)(pfilefunc, filestream);
-
-}
 
 /// @cond internal
 struct QIODevice_descriptor {
@@ -96,11 +85,7 @@ struct QIODevice_descriptor {
 };
 /// @endcond
 
-voidpf ZCALLBACK qiodevice_open_file_func (
-   voidpf opaque,
-   voidpf file,
-   int mode)
-{
+voidpf ZCALLBACK qiodevice_open_file_func(voidpf opaque, voidpf file, int mode) {
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(file);
     QIODevice::OpenMode desiredMode;
@@ -146,13 +131,7 @@ voidpf ZCALLBACK qiodevice_open_file_func (
     return nullptr;
 }
 
-
-uLong ZCALLBACK qiodevice_read_file_func (
-   voidpf opaque,
-   voidpf stream,
-   void* buf,
-   uLong size)
-{
+uLong ZCALLBACK qiodevice_read_file_func(voidpf opaque, voidpf stream, void* buf, uLong size) {
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(stream);
     qint64 ret64 = iodevice->read(static_cast<char*>(buf),size);
@@ -164,13 +143,7 @@ uLong ZCALLBACK qiodevice_read_file_func (
     return ret;
 }
 
-
-uLong ZCALLBACK qiodevice_write_file_func (
-   voidpf opaque,
-   voidpf stream,
-   const void* buf,
-   uLong size)
-{
+uLong ZCALLBACK qiodevice_write_file_func(voidpf opaque, voidpf stream, const void* buf, uLong size) {
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(stream);
     uLong ret;
@@ -182,10 +155,7 @@ uLong ZCALLBACK qiodevice_write_file_func (
     return ret;
 }
 
-uLong ZCALLBACK qiodevice_tell_file_func (
-   voidpf opaque,
-   voidpf stream)
-{
+long ZCALLBACK qiodevice_tell_file_func(voidpf opaque, voidpf stream) {
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(stream);
     uLong ret;
@@ -199,10 +169,8 @@ uLong ZCALLBACK qiodevice_tell_file_func (
     return ret;
 }
 
-ZPOS64_T ZCALLBACK qiodevice64_tell_file_func (
-   voidpf opaque,
-   voidpf stream)
-{
+
+ZPOS64_T ZCALLBACK qiodevice64_tell_file_func(voidpf opaque, voidpf stream) {
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(stream);
     qint64 ret;
@@ -214,12 +182,7 @@ ZPOS64_T ZCALLBACK qiodevice64_tell_file_func (
     return static_cast<ZPOS64_T>(ret);
 }
 
-int ZCALLBACK qiodevice_seek_file_func (
-   voidpf /*opaque UNUSED*/,
-   voidpf stream,
-   uLong offset,
-   int origin)
-{
+long ZCALLBACK qiodevice_seek_file_func(voidpf /*opaque UNUSED*/, voidpf stream, uLong offset, int origin) {
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(stream);
     if (iodevice->isSequential()) {
         if (origin == ZLIB_FILEFUNC_SEEK_END && offset == 0) {
@@ -249,12 +212,7 @@ int ZCALLBACK qiodevice_seek_file_func (
     return ret;
 }
 
-int ZCALLBACK qiodevice64_seek_file_func (
-   voidpf /*opaque UNUSED*/,
-   voidpf stream,
-   ZPOS64_T offset,
-   int origin)
-{
+long ZCALLBACK qiodevice64_seek_file_func(voidpf /*opaque UNUSED*/, voidpf stream, ZPOS64_T offset, int origin) {
     QIODevice *iodevice = reinterpret_cast<QIODevice*>(stream);
     if (iodevice->isSequential()) {
         if (origin == ZLIB_FILEFUNC_SEEK_END && offset == 0) {
@@ -284,36 +242,26 @@ int ZCALLBACK qiodevice64_seek_file_func (
     return ret;
 }
 
-int ZCALLBACK qiodevice_close_file_func (
-   voidpf opaque,
-   voidpf stream)
-{
+
+int ZCALLBACK qiodevice_close_file_func(voidpf opaque, voidpf stream) {
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     delete d;
     QIODevice *device = reinterpret_cast<QIODevice*>(stream);
     return quazip_close(device) ? 0 : -1;
 }
 
-int ZCALLBACK qiodevice_fakeclose_file_func (
-   voidpf opaque,
-   voidpf /*stream*/)
-{
+int ZCALLBACK qiodevice_fakeclose_file_func(voidpf opaque, voidpf /*stream*/) {
     QIODevice_descriptor *d = reinterpret_cast<QIODevice_descriptor*>(opaque);
     delete d;
     return 0;
 }
 
-int ZCALLBACK qiodevice_error_file_func (
-   voidpf /*opaque UNUSED*/,
-   voidpf /*stream UNUSED*/)
-{
+int ZCALLBACK qiodevice_error_file_func(voidpf /*opaque UNUSED*/, voidpf /*stream UNUSED*/) {
     // can't check for error due to the QIODevice API limitation
     return 0;
 }
 
-void fill_qiodevice_filefunc (
-  zlib_filefunc_def* pzlib_filefunc_def)
-{
+void fill_qiodevice_filefunc(zlib_filefunc_def* pzlib_filefunc_def) {
     pzlib_filefunc_def->zopen_file = qiodevice_open_file_func;
     pzlib_filefunc_def->zread_file = qiodevice_read_file_func;
     pzlib_filefunc_def->zwrite_file = qiodevice_write_file_func;
@@ -324,9 +272,7 @@ void fill_qiodevice_filefunc (
     pzlib_filefunc_def->opaque = new QIODevice_descriptor;
 }
 
-void fill_qiodevice64_filefunc (
-  zlib_filefunc64_def* pzlib_filefunc_def)
-{
+void fill_qiodevice64_filefunc (zlib_filefunc64_def* pzlib_filefunc_def) {
     // Open functions are the same for Qt.
     pzlib_filefunc_def->zopen64_file = qiodevice_open_file_func;
     pzlib_filefunc_def->zread_file = qiodevice_read_file_func;
@@ -337,21 +283,4 @@ void fill_qiodevice64_filefunc (
     pzlib_filefunc_def->zerror_file = qiodevice_error_file_func;
     pzlib_filefunc_def->opaque = new QIODevice_descriptor;
     pzlib_filefunc_def->zfakeclose_file = qiodevice_fakeclose_file_func;
-}
-
-void fill_zlib_filefunc64_32_def_from_filefunc32(zlib_filefunc64_32_def* p_filefunc64_32,const zlib_filefunc_def* p_filefunc32)
-{
-    p_filefunc64_32->zfile_func64.zopen64_file = nullptr;
-    p_filefunc64_32->zopen32_file = p_filefunc32->zopen_file;
-    p_filefunc64_32->zfile_func64.zerror_file = p_filefunc32->zerror_file;
-    p_filefunc64_32->zfile_func64.zread_file = p_filefunc32->zread_file;
-    p_filefunc64_32->zfile_func64.zwrite_file = p_filefunc32->zwrite_file;
-    p_filefunc64_32->zfile_func64.ztell64_file = nullptr;
-    p_filefunc64_32->zfile_func64.zseek64_file = nullptr;
-    p_filefunc64_32->zfile_func64.zclose_file = p_filefunc32->zclose_file;
-    p_filefunc64_32->zfile_func64.zerror_file = p_filefunc32->zerror_file;
-    p_filefunc64_32->zfile_func64.opaque = p_filefunc32->opaque;
-    p_filefunc64_32->zfile_func64.zfakeclose_file = nullptr;
-    p_filefunc64_32->zseek32_file = p_filefunc32->zseek_file;
-    p_filefunc64_32->ztell32_file = p_filefunc32->ztell_file;
 }
