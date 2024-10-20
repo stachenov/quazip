@@ -36,7 +36,7 @@ void TestQuaZipFileInfo::getNTFSTime()
     if (!createTestFiles(testFiles)) {
         QFAIL("Can't create test file");
     }
-    QDateTime base(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
+    QDateTime base(QDate(1601, 1, 1), QTime(0, 0), QTimeZone::utc());
     quint64 mTicks, aTicks, cTicks;
     QFileInfo fileInfo("tmp/test.txt");
     {
@@ -149,25 +149,25 @@ void TestQuaZipFileInfo::getExtTime_data()
                               << (QList<qint32>() << 1 << 2 << 3)
                               << static_cast<quint16>(5)
                               << (QList<qint32>() << 1)
-                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 1), Qt::UTC)
-                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 2), Qt::UTC)
-                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 3), Qt::UTC);
+                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 1), QTimeZone::utc())
+                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 2), QTimeZone::utc())
+                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 3), QTimeZone::utc());
     QTest::newRow("no ac time") << QString::fromUtf8("noAcTime")
                               << static_cast<quint8>(5)
                               << static_cast<quint16>(9)
                               << (QList<qint32>() << 1 << 3)
                               << static_cast<quint16>(5)
                               << (QList<qint32>() << 1)
-                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 1), Qt::UTC)
+                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 1), QTimeZone::utc())
                               << QDateTime()
-                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 3), Qt::UTC);
+                              << QDateTime(QDate(1970, 1, 1), QTime(0, 0, 3), QTimeZone::utc());
     QTest::newRow("negativeTime") << QString::fromUtf8("negativeTime")
                               << static_cast<quint8>(1)
                               << static_cast<quint16>(5)
                               << (QList<qint32>() << -1)
                               << static_cast<quint16>(5)
                               << (QList<qint32>() << -1)
-                              << QDateTime(QDate(1969, 12, 31), QTime(23, 59, 59), Qt::UTC)
+                              << QDateTime(QDate(1969, 12, 31), QTime(23, 59, 59), QTimeZone::utc())
                               << QDateTime()
                               << QDateTime();
 }
@@ -254,7 +254,7 @@ void TestQuaZipFileInfo::getExtTime_issue43()
     QDateTime actualLocalAcTime = zipFile.getExtAcTime();
     QDateTime actualLocalCrTime = zipFile.getExtCrTime();
     zip.close();
-    QDateTime extModTime(QDate(2019, 7, 2), QTime(15, 43, 47), Qt::UTC);
+    QDateTime extModTime(QDate(2019, 7, 2), QTime(15, 43, 47), QTimeZone::utc());
     QDateTime extAcTime = extModTime;
     QDateTime extCrTime = extModTime;
     QCOMPARE(actualGlobalModTime, extModTime);

@@ -25,7 +25,7 @@ void TestQuaZipNewInfo::setFileNTFSTimes()
     if (!createTestFiles(testFiles)) {
         QFAIL("Can't create test file");
     }
-    QDateTime base(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
+    QDateTime base(QDate(1601, 1, 1), QTime(0, 0), QTimeZone::utc());
     quint64 mTicks, aTicks, cTicks;
     {
         // create

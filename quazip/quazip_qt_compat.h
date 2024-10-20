@@ -103,16 +103,36 @@ inline QString quazip_symlink_target(const QFileInfo &fi) {
 }
 #endif
 
+// deprecation
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+#include <QtCore/QTimeZone>
+inline QDateTime quazip_since_epoch() {
+    return QDateTime(QDate(1970, 1, 1), QTime(0, 0), QTimeZone::utc());
+}
+
+inline QDateTime quazip_since_epoch_ntfs() {
+    return QDateTime(QDate(1601, 1, 1), QTime(0, 0), QTimeZone::utc());
+}
+#else
+inline QDateTime quazip_since_epoch() {
+    return QDateTime(QDate(1970, 1, 1), QTime(0, 0), Qt::UTC);
+}
+
+inline QDateTime quazip_since_epoch_ntfs() {
+    return QDateTime(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
+}
+#endif
+
 // this is not a deprecation but an improvement, for a change
 #include <QtCore/QDateTime>
 #if (QT_VERSION >= 0x040700)
 inline quint64 quazip_ntfs_ticks(const QDateTime &time, int fineTicks) {
-    QDateTime base(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
+    QDateTime base = quazip_since_epoch_ntfs();
     return base.msecsTo(time) * 10000 + fineTicks;
 }
 #else
 inline quint64 quazip_ntfs_ticks(const QDateTime &time, int fineTicks) {
-    QDateTime base(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
+    QDateTime base = quazip_since_epoch_ntfs();
     QDateTime utc = time.toUTC();
     return (static_cast<qint64>(base.date().daysTo(utc.date()))
             * Q_INT64_C(86400000)
