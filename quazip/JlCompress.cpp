@@ -98,8 +98,6 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
         zip->getMode()!=QuaZip::mdAppend &&
         zip->getMode()!=QuaZip::mdAdd) return false;
 
-    zip->setUtf8Enabled(options.getUtf8Enabled());
-
     QDir directory(dir);
     if (!directory.exists()) return false;
 
@@ -264,6 +262,7 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files, const 
   // Create zip
   QuaZip zip(fileCompressed);
   zip.setUtf8Enabled(options.getUtf8Enabled());
+  
   QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
   if(!zip.open(QuaZip::mdCreate)) {
     QFile::remove(fileCompressed);

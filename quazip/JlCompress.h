@@ -118,7 +118,7 @@ public:
         // If set, used as last modified on file inside the archive.
         // If compressing a directory, used for all files.
         QDateTime m_dateTime;
-        
+
         CompressionStrategy m_compressionStrategy;
 
         /* Enables UTF-8 support for filenames and comments.
