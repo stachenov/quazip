@@ -85,6 +85,7 @@ void TestJlCompress::compressFileOptions_data()
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<QDateTime>("dateTime");
     QTest::addColumn<JlCompress::Options::CompressionStrategy>("strategy");
+    QTest::addColumn<bool>("utf8");
     QTest::addColumn<QString>("sha256sum_unix"); // Due to extra data archives are not identical
     QTest::addColumn<QString>("sha256sum_unix_ng"); // zlib-ng
     QTest::addColumn<QString>("sha256sum_win");
@@ -92,13 +93,29 @@ void TestJlCompress::compressFileOptions_data()
                             << "test0.txt"
                             << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                             << JlCompress::Options::Default
+                            << false
                             << "5eedd83aee92cf3381155d167fee54a4ef6e43b8bc7a979c903611d9aa28610a"
                             << "752db50b15db1a19e091f9c1b43ec22b279867b20d43c76bc9a01d7bc0d7ae4f"
                             << "cb1847dff1a5c33a805efde2558fc74024ad4c64c8607f8b12903e4d92385955";
+    QTest::newRow("simple-utf8") << "jlsimplefile-utf8.zip"
+                            << QString::fromUtf8("ありがとう。.txt")
+                            << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
+                            << JlCompress::Options::Default
+                            << true
+                            << ""
+                            << "";
+    QTest::newRow("simple-utf8-bad") << "jlsimplefile-utf8-bad.zip"
+                                 << QString::fromUtf8("ありがとう。.txt")
+                                 << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
+                                 << JlCompress::Options::Default
+                                 << false
+                                 << ""
+                                 << "";
     QTest::newRow("simple-storage") << "jlsimplefile-storage.zip"
                                     << "test0.txt"
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                     << JlCompress::Options::Storage
+                                    << false
                                     << ""
                                     << ""
                                     << "";
@@ -106,6 +123,7 @@ void TestJlCompress::compressFileOptions_data()
                                     << "test0.txt"
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                     << JlCompress::Options::Fastest
+                                    << false
                                     << ""
                                     << ""
                                     << "";
@@ -113,6 +131,7 @@ void TestJlCompress::compressFileOptions_data()
                                    << "test0.txt"
                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                    << JlCompress::Options::Faster
+                                   << false
                                    << ""
                                    << ""
                                    << "";
@@ -120,6 +139,7 @@ void TestJlCompress::compressFileOptions_data()
                                      << "test0.txt"
                                      << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                      << JlCompress::Options::Standard
+                                     << false
                                      << "5eedd83aee92cf3381155d167fee54a4ef6e43b8bc7a979c903611d9aa28610a"
                                      << "752db50b15db1a19e091f9c1b43ec22b279867b20d43c76bc9a01d7bc0d7ae4f"
                                      << "cb1847dff1a5c33a805efde2558fc74024ad4c64c8607f8b12903e4d92385955";
@@ -127,6 +147,7 @@ void TestJlCompress::compressFileOptions_data()
                                    << "test0.txt"
                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                    << JlCompress::Options::Better
+                                   << false
                                    << ""
                                    << ""
                                    << "";
@@ -134,6 +155,7 @@ void TestJlCompress::compressFileOptions_data()
                                  << "test0.txt"
                                  << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                  << JlCompress::Options::Best
+                                 << false
                                  << ""
                                  << ""
                                  << "";
@@ -145,6 +167,7 @@ void TestJlCompress::compressFileOptions()
     QFETCH(QString, fileName);
     QFETCH(QDateTime, dateTime);
     QFETCH(JlCompress::Options::CompressionStrategy, strategy);
+    QFETCH(bool, utf8);
     QFETCH(QString, sha256sum_unix);
     QFETCH(QString, sha256sum_unix_ng);
     QFETCH(QString, sha256sum_win);
@@ -157,7 +180,7 @@ void TestJlCompress::compressFileOptions()
         QFAIL("Can't create test file");
     }
 
-    const JlCompress::Options options(dateTime, strategy);
+    const JlCompress::Options options(dateTime, strategy, utf8);
     QVERIFY(JlCompress::compressFile(zipName, "tmp/" + fileName, options));
     // get the file list and check it
     QStringList fileList = JlCompress::getFileList(zipName);
@@ -179,8 +202,15 @@ void TestJlCompress::compressFileOptions()
 #else
     if (!sha256sum_unix.isEmpty()) QCOMPARE(hash, sha256sum_unix);
 #endif
+
     _zipFile.close();
-    removeTestFiles(QStringList() << fileName);
+
+    // Extract
+    QString flist = JlCompress::extractFile(zipName, fileName);
+    QFileInfo fileInfo(flist);
+    QVERIFY(fileInfo.fileName() == fileName);
+
+    removeTestFiles(QStringList() << fileName << flist);
     curDir.remove(zipName);
 }
 
