@@ -230,6 +230,8 @@ bool JlCompress::compressFile(QString fileCompressed, QString file) {
 bool JlCompress::compressFile(QString fileCompressed, QString file, const Options& options) {
     // Create zip
     QuaZip zip(fileCompressed);
+    zip.setUtf8Enabled(options.getUtf8Enabled());
+
     QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
     if(!zip.open(QuaZip::mdCreate)) {
         QFile::remove(fileCompressed);
@@ -259,6 +261,8 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
 bool JlCompress::compressFiles(QString fileCompressed, QStringList files, const Options& options) {
   // Create zip
   QuaZip zip(fileCompressed);
+  zip.setUtf8Enabled(options.getUtf8Enabled());
+  
   QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
   if(!zip.open(QuaZip::mdCreate)) {
     QFile::remove(fileCompressed);
@@ -301,6 +305,7 @@ bool JlCompress::compressDir(QString fileCompressed, QString dir,
 {
   // Create zip
   QuaZip zip(fileCompressed);
+  zip.setUtf8Enabled(options.getUtf8Enabled());
   QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
   if(!zip.open(QuaZip::mdCreate)) {
     QFile::remove(fileCompressed);

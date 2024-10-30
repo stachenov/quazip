@@ -77,8 +77,10 @@ public:
         };
 
     public:
-        explicit Options(const QDateTime& dateTime = QDateTime(), const CompressionStrategy& strategy = Default)
-            : m_dateTime(dateTime), m_compressionStrategy(strategy) {}
+        explicit Options(const QDateTime& dateTime = QDateTime(),
+                         const CompressionStrategy& strategy = Default,
+                         bool utf8Enabled = false)
+            : m_dateTime(dateTime), m_compressionStrategy(strategy), m_utf8Enabled(utf8Enabled) {}
 
         QDateTime getDateTime() const {
             return m_dateTime;
@@ -104,11 +106,26 @@ public:
             m_compressionStrategy = strategy;
         }
 
+        bool getUtf8Enabled() const {
+            return m_utf8Enabled;
+        }
+
+        bool setUtf8Enabled(bool utf8Enabled) {
+            m_utf8Enabled = utf8Enabled;
+        }
+
     private:
         // If set, used as last modified on file inside the archive.
         // If compressing a directory, used for all files.
         QDateTime m_dateTime;
+
         CompressionStrategy m_compressionStrategy;
+
+        /* Enables UTF-8 support for filenames and comments.
+         * Must be set before QuaZip::open so only applicable to methods that open the zip internally.
+         * For methods which receive QuaZip* zip as an argument, you should set this flag before calling open on QuaZip object.
+         * */
+        bool m_utf8Enabled;
     };
 
     static bool copyData(QIODevice &inFile, QIODevice &outFile);
