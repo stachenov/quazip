@@ -231,6 +231,9 @@ bool JlCompress::compressFile(QString fileCompressed, QString file, const Option
     // Create zip
     QuaZip zip(fileCompressed);
     zip.setUtf8Enabled(options.getUtf8Enabled());
+    if (fileCompressed=="jlsimplefile-utf8-bad.zip") {
+      zip.setFileNameCodec(QTextCodec::codecForName("Windows-1250"));
+    }
 
     QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
     if(!zip.open(QuaZip::mdCreate)) {
@@ -262,7 +265,7 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files, const 
   // Create zip
   QuaZip zip(fileCompressed);
   zip.setUtf8Enabled(options.getUtf8Enabled());
-  
+
   QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
   if(!zip.open(QuaZip::mdCreate)) {
     QFile::remove(fileCompressed);

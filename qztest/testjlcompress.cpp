@@ -180,6 +180,8 @@ void TestJlCompress::compressFileOptions()
         QFAIL("Can't create test file");
     }
 
+    qDebug() << "Testing " << fileName;
+
     const JlCompress::Options options(dateTime, strategy, utf8);
     QVERIFY(JlCompress::compressFile(zipName, "tmp/" + fileName, options));
     // get the file list and check it
