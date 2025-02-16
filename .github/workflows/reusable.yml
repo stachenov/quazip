@@ -32,7 +32,7 @@ env:
 jobs:
   build:
     # Ubuntu 20.04 is EOL and being removed from runners so we use a container instead
-    runs-on: ${{ inputs.runs_on != 'ubuntu-20.04' && inputs.runs_on || '' }}
+    runs-on: ${{ inputs.runs_on != 'ubuntu-20.04' && inputs.runs_on || 'ubuntu-22.04' }}
     container: ${{ inputs.runs_on == 'ubuntu-20.04' && format('ubuntu:{0}', inputs.os_version) || '' }}
     name: Build-${{ inputs.runs_on }}-Qt-${{ inputs.qt_version }}-shared-${{ inputs.shared }}
     steps:
