@@ -48,6 +48,7 @@ jobs:
           cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ inputs.qt_version }}
           dir: ${{ github.workspace }}/Qt
           modules: 'qt5compat'
+          install-deps: ${{ inputs.runs_on != 'ubuntu-20.04' && 'true' || 'nosudo' }}
 
       - name: Install Qt5
         if: "startsWith(inputs.qt_version, '5.')"
@@ -57,6 +58,7 @@ jobs:
           cache: 'true'
           cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ inputs.qt_version }}
           dir: ${{ github.workspace }}/Qt
+          install-deps: ${{ inputs.runs_on != 'ubuntu-20.04' && 'true' || 'nosudo' }}
 
       - name: Install libraries (Linux Only)
         if: contains(inputs.runs_on, 'ubuntu')
