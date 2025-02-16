@@ -37,6 +37,7 @@ jobs:
           cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ inputs.qt_version }}
           dir: ${{ github.workspace }}/Qt
           modules: 'qt5compat'
+          arch: 'win64_msvc2022_64'
 
       - name: Install Qt5
         if: "startsWith(inputs.qt_version, '5.')"
