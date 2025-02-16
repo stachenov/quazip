@@ -8,11 +8,6 @@ on:
 name: CI
 permissions: read-all
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  # All aqt options: https://ddalcino.github.io/aqt-list-server/
-  BUILD_TYPE: Release
-
 jobs:
   ubuntu:
     if: true

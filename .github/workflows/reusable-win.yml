@@ -16,6 +16,11 @@ on:
       GH_TOKEN:
         required: false
 
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  # All aqt options: https://ddalcino.github.io/aqt-list-server/
+  BUILD_TYPE: Release
+
 jobs:
   build:
     runs-on: windows-latest
