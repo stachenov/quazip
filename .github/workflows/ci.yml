@@ -97,7 +97,7 @@ jobs:
 
   windows-x64:
     if: true
-    runs-on: windows-latest
+    name: Win-Qt-${{ matrix.qt_version }}-preset-${{ matrix.preset }}
     strategy:
       fail-fast: false
       matrix:
@@ -111,7 +111,7 @@ jobs:
 
   windows-x86:
     if: true
-    runs-on: windows-latest
+    name: Win-Qt-${{ matrix.qt_version }}-preset-${{ matrix.preset }}
     strategy:
       fail-fast: false
       matrix:
