@@ -1,0 +1,93 @@
+name: Reusable Windows Build Workflow
+
+on:
+  workflow_call:
+    inputs:
+      arch:
+        required: true
+        type: string
+      qt_version:
+        required: true
+        type: string
+      preset:
+        required: true
+        type: string
+    secrets:
+      GH_TOKEN:
+        required: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    name: Windows-${{ inputs.arch }}-Qt-${{ inputs.qt_version }}-Preset-${{ inputs.preset }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt6
+        if: "startsWith(inputs.qt_version, '6.')"
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ inputs.qt_version }}
+          cache: 'true'
+          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ inputs.qt_version }}
+          dir: ${{ github.workspace }}/Qt
+          modules: 'qt5compat'
+
+      - name: Install Qt5
+        if: "startsWith(inputs.qt_version, '5.')"
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ inputs.qt_version }}
+          cache: 'true'
+          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ inputs.qt_version }}
+          dir: ${{ github.workspace }}/Qt
+          arch: ${{ inputs.arch == 'x86' && 'win32_msvc2017' || 'win64_msvc2017' }}
+
+      - uses: TheMrMilchmann/setup-msvc-dev@v3
+        with:
+          arch: ${{ inputs.arch }}
+
+      - name: Install Conan
+        if: contains(inputs.preset, 'conan')
+        uses: turtlebrowser/get-conan@main
+
+      - name: Init Conan
+        if: contains(inputs.preset, 'conan')
+        run: conan profile detect
+
+      - name: Install dependencies with Conan
+        if: contains(inputs.preset, 'conan')
+        shell: cmd
+        run: conan install . -of build -s build_type=Release -o *:shared=False --build=missing ${{ inputs.arch == 'x86' && '-s:h arch=x86' || '' }}
+
+      - name: Configure
+        shell: cmd
+        run: cmake --preset ${{ inputs.preset }} -DQUAZIP_ENABLE_TESTS=ON
+
+      - name: Build
+        shell: cmd
+        working-directory: ./build
+        run: cmake --build . --config Release
+
+      - name: Check PE Architecture
+        shell: bash
+        working-directory: ./build/quazip/Release
+        run: |
+          if [[ "${{ inputs.qt_version }}" =~ ^6 ]]; then
+            file quazip1-qt6.dll | grep "${{ inputs.arch == 'x86' && '80386' || 'x86-64' }}"
+          else
+            file quazip1-qt5.dll | grep "${{ inputs.arch == 'x86' && '80386' || 'x86-64' }}"
+          fi
+
+      - name: Debug
+        shell: cmd
+        run: dir build\qztest\Release
+
+      # TODO: We need to solve copying dlls to qztest.exe dir
+      - name: Test
+        if: false
+        env:
+          TEST_CROSS_PLATFORM: "true"
+        shell: cmd
+        working-directory: ./build
+        run: ctest --verbose -C Release

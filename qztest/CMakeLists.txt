@@ -1,6 +1,7 @@
 set(QZTEST_SOURCES
         qztest.h
         testjlcompress.h
+        testjlcrossplatform.h
         testquachecksum32.h
         testquagzipfile.h
         testquaziodevice.h
@@ -11,6 +12,7 @@ set(QZTEST_SOURCES
         testquazipnewinfo.h
         qztest.cpp
         testjlcompress.cpp
+        testjlcrossplatform.cpp
         testquachecksum32.cpp
         testquagzipfile.cpp
         testquaziodevice.cpp

@@ -14,142 +14,56 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-
   ubuntu:
     if: true
-    runs-on: ubuntu-${{ matrix.ubuntu_version }}
-    name: Ubuntu-${{ matrix.ubuntu_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    name: Ubuntu-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
     strategy:
       fail-fast: false
       matrix:
-        ubuntu_version: [20.04, 22.04]
-        qt_version: [5.12.12, 5.15.2, 6.6.2]
+        os_version: [20.04, 22.04]
+        qt_version: [5.15.2, 6.8.2]
         shared: [ON, OFF]
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-                
-    - name: Install Qt6
-      if: "startsWith(matrix.qt_version, '6.')"
-      uses: jurplel/install-qt-action@v3
-      with:
-          version: ${{ matrix.qt_version }}
-          cache: 'true'
-          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
-          dir: ${{ github.workspace }}/Qt
-          modules: 'qt5compat'
-
-    - name: Install Qt5
-      if: "startsWith(matrix.qt_version, '5.')"
-      uses: jurplel/install-qt-action@v3
-      with:
-          version: ${{ matrix.qt_version }}
-          cache: 'true'
-          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
-          dir: ${{ github.workspace }}/Qt
-
-    - name: Install libraries
-      run: |
-        sudo apt-get update &&
-        sudo apt-get install -y --no-install-recommends \
-          zlib1g-dev libbz2-dev
-
-    - name: Configure CMake
-      run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ matrix.shared }} -DQUAZIP_ENABLE_TESTS=ON -B "${{github.workspace}}/build"
-
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-
-    - name: Run tests
-      working-directory: ${{github.workspace}}/build
-      run: "ctest --verbose"
+    uses: ./.github/workflows/reusable.yml
+    with:
+        runs_on: ubuntu-${{ matrix.os_version }}
+        os_version: ${{ matrix.os_version }}
+        qt_version: ${{ matrix.qt_version }}
+        shared: ${{ matrix.shared }}
 
   ubuntu-zlibconst:
     if: true
-    runs-on: ubuntu-${{ matrix.ubuntu_version }}
-    name: Ubuntu-${{ matrix.ubuntu_version }}-Qt-${{ matrix.qt_version }}-shared-zlibconst
+    name: Ubuntu-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-zlibconst
     strategy:
       fail-fast: false
       matrix:
-        ubuntu_version: [ 22.04 ]
-        qt_version: [ 6.4.0 ]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Qt6
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: ${{ matrix.qt_version }}
-          cache: 'true'
-          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
-          dir: ${{ github.workspace }}/Qt
-          modules: 'qt5compat'
-
-      - name: Install libraries
-        run: |
-          sudo apt-get update &&
-          sudo apt-get install -y --no-install-recommends \
-            zlib1g-dev libbz2-dev
-
-      - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=ON -DQUAZIP_ENABLE_TESTS=ON -DZLIB_CONST=ON -B "${{github.workspace}}/build"
-
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-
-      - name: Run tests
-        working-directory: ${{github.workspace}}/build
-        run: "ctest --verbose"
+        os_version: [ 22.04 ]
+        qt_version: [ 6.8.2 ]
+    uses: ./.github/workflows/reusable.yml
+    with:
+      runs_on: ubuntu-${{ matrix.os_version }}
+      os_version: ${{ matrix.os_version }}
+      qt_version: ${{ matrix.qt_version }}
+      shared: "ON"
+      zlib_const: "ON"
 
   macos:
     if: true
-    runs-on: macos-${{ matrix.macos_version }}
-    name: macos-${{ matrix.macos_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    runs-on: macos-${{ matrix.os_version }}
+    name: macos-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
     strategy:
       fail-fast: false
       matrix:
-        macos_version: [14, 13]
-        qt_version: [5.15.2, 6.6.2]
+        os_version: [14, 13]
+        qt_version: [5.15.2, 6.8.2]
         shared: [ON, OFF]
         exclude:
-          - macos_version: 14
+          - os_version: 14
             qt_version: 5.15.2 #Not available on macos-14 due to ARM arch
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install Qt6
-        if: "startsWith(matrix.qt_version, '6.')"
-        uses: jurplel/install-qt-action@v3
-        with:
-            version: ${{ matrix.qt_version }}
-            cache: 'true'
-            cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
-            dir: ${{ github.workspace }}/Qt
-            modules: 'qt5compat'
-
-      - name: Install Qt5
-        if: "startsWith(matrix.qt_version, '5.')"
-        uses: jurplel/install-qt-action@v3
-        with:
-            version: ${{ matrix.qt_version }}
-            cache: 'true'
-            cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
-            dir: ${{ github.workspace }}/Qt
-
-      - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ matrix.shared }}  -DQUAZIP_ENABLE_TESTS=ON -B "${{github.workspace}}/build"
-        
-      - name: Build
-        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-
-      - name: Run tests
-        working-directory: ${{github.workspace}}/build
-        run: "ctest --verbose"
+    with:
+      runs_on: macos-${{ matrix.os_version }}
+      os_version: ${{ matrix.os_version }}
+      qt_version: ${{ matrix.qt_version }}
+      shared: ${{ matrix.shared }}
 
   alpine:
     if: true
@@ -188,78 +102,12 @@ jobs:
       fail-fast: false
       matrix:
         preset: [ conan, vcpkg ]
-        qt_version: [ 5.12.12, 6.6.2 ]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Qt6
-        if: "startsWith(matrix.qt_version, '6.')"
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: ${{ matrix.qt_version }}
-          cache: 'true'
-          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
-          dir: ${{ github.workspace }}/Qt
-          modules: 'qt5compat'
-
-      - name: Install Qt5
-        if: "startsWith(matrix.qt_version, '5.')"
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: ${{ matrix.qt_version }}
-          cache: 'true'
-          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
-          dir: ${{ github.workspace }}/Qt
-
-      - uses: TheMrMilchmann/setup-msvc-dev@v3
-        with:
-          arch: x64
-
-      - name: Install Conan
-        if: matrix.preset == 'conan'
-        uses: turtlebrowser/get-conan@main
-
-      - name: Init conan
-        if: matrix.preset == 'conan'
-        run: conan profile detect
-
-      - name: Install dependencies with conan
-        if: matrix.preset == 'conan'
-        shell: cmd
-        run: conan install . -of build -s build_type=Release -o *:shared=False --build=missing
-
-      - name: Configure
-        shell: cmd
-        run: cmake --preset ${{ matrix.preset }} -DQUAZIP_ENABLE_TESTS=ON
-
-      - name: Build
-        shell: cmd
-        working-directory: ./build
-        run: cmake --build . --config Release
-
-      - name: Check PE x64
-        if: "startsWith(matrix.qt_version, '6.')"
-        shell: bash
-        working-directory: ./build/quazip/Release
-        run: file quazip1-qt6.dll |grep "x86-64"
-
-      - name: Check PE x64
-        if: "startsWith(matrix.qt_version, '5.')"
-        shell: bash
-        working-directory: ./build/quazip/Release
-        run: file quazip1-qt5.dll |grep "x86-64"
-
-      - name: Debug
-        shell: cmd
-        run: dir build\qztest\Release
-
-      # TODO: We need to solve copying dlls to qztest.exe dir
-      - name: Test
-        if: false
-        shell: cmd
-        working-directory: ./build
-        run: ctest --verbose -C Release
+        qt_version: [ 5.12.12, 6.8.2 ]
+    uses: ./.github/workflows/reusable-win.yml
+    with:
+      arch: x64
+      qt_version: ${{ matrix.qt_version }}
+      preset: ${{ matrix.preset }}
 
   windows-x86:
     if: true
@@ -269,46 +117,7 @@ jobs:
       matrix:
         preset: [ conan_x86, vcpkg_x86 ]
         qt_version: [ 5.12.12 ]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: ${{ matrix.qt_version }}
-          cache: 'true'
-          cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ matrix.qt_version }}
-          dir: ${{ github.workspace }}/Qt
-          arch: 'win32_msvc2017'
-
-      - uses: TheMrMilchmann/setup-msvc-dev@v3
-        with:
-          arch: x86
-
-      - name: Install Conan
-        if: matrix.preset == 'conan_x86'
-        uses: turtlebrowser/get-conan@main
-
-      - name: Init conan
-        if: matrix.preset == 'conan_x86'
-        run: conan profile detect
-
-      - name: Install dependencies with conan
-        if: matrix.preset == 'conan_x86'
-        shell: cmd
-        run: conan install . -of build -s build_type=Release -s:h arch=x86 -o *:shared=False --build=missing
-
-      - name: Configure
-        shell: cmd
-        run: cmake --preset ${{ matrix.preset }}
-
-      - name: Build
-        shell: cmd
-        working-directory: ./build
-        run: cmake --build . --config Release
-
-      - name: Check PE x86
-        shell: bash
-        working-directory: ./build/quazip/Release
-        run: file quazip1-qt5.dll |grep 80386
+    with:
+      arch: x86
+      qt_version: ${{ matrix.qt_version }}
+      preset: ${{ matrix.preset }}

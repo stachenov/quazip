@@ -27,6 +27,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "testquazipfile.h"
 #include "testquachecksum32.h"
 #include "testjlcompress.h"
+#include "testjlcrossplatform.h"
 #include "testquazipdir.h"
 #include "testquagzipfile.h"
 #include "testquaziodevice.h"
@@ -248,6 +249,12 @@ int main(int argc, char **argv)
         TestQuaZipFileInfo testQuaZipFileInfo;
         err = qMax(err, QTest::qExec(&testQuaZipFileInfo, app.arguments()));
     }
+    if (QString(qgetenv("TEST_CROSS_PLATFORM")) == "true")
+    {
+      TestJlCrossPlatform testJlcrossPlatform;
+      err = qMax(err, QTest::qExec(&testJlcrossPlatform, app.arguments()));
+    }
+
     if (err == 0) {
         qDebug("All tests executed successfully");
     } else {
