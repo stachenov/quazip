@@ -28,24 +28,14 @@ env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   # All aqt options: https://ddalcino.github.io/aqt-list-server/
   BUILD_TYPE: Release
-  DEBIAN_FRONTEND: noninteractive
 
 jobs:
   build:
-    # Ubuntu 20.04 is EOL and being removed from runners so we use a container instead
-    runs-on: ${{ inputs.runs_on != 'ubuntu-20.04' && inputs.runs_on || 'ubuntu-22.04' }}
-    container: ${{ inputs.runs_on == 'ubuntu-20.04' && format('ubuntu:{0}', inputs.os_version) || '' }}
+    runs-on:  ${{ inputs.runs_on }}
     name: Build-${{ inputs.runs_on }}-Qt-${{ inputs.qt_version }}-shared-${{ inputs.shared }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install missing packages from container
-        if: inputs.runs_on == 'ubuntu-20.04'
-        run: |
-           apt-get update &&
-           apt-get install -y --no-install-recommends \
-           libc6
 
       - name: Install Qt6
         if: "startsWith(inputs.qt_version, '6.')"
@@ -56,7 +46,6 @@ jobs:
           cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ inputs.qt_version }}
           dir: ${{ github.workspace }}/Qt
           modules: 'qt5compat'
-          install-deps: ${{ inputs.runs_on != 'ubuntu-20.04' && 'true' || 'nosudo' }}
 
       - name: Install Qt5
         if: "startsWith(inputs.qt_version, '5.')"
@@ -66,7 +55,6 @@ jobs:
           cache: 'true'
           cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ inputs.qt_version }}
           dir: ${{ github.workspace }}/Qt
-          install-deps: ${{ inputs.runs_on != 'ubuntu-20.04' && 'true' || 'nosudo' }}
 
       - name: Install libraries (Linux Only)
         if: contains(inputs.runs_on, 'ubuntu')
