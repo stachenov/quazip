@@ -46,7 +46,7 @@ jobs:
           cache: 'true'
           cache-key-prefix: ${{ runner.os }}-Qt-Cache-${{ inputs.qt_version }}
           dir: ${{ github.workspace }}/Qt
-          arch: ${{ inputs.arch == 'x86' && 'win32_msvc2017' || 'win64_msvc2022_64' }}
+          arch: ${{ inputs.arch == 'x86' && 'win32_msvc2017' || 'win64_msvc2017_64' }}
 
       - uses: TheMrMilchmann/setup-msvc-dev@v3
         with:
