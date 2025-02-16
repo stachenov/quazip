@@ -40,6 +40,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install missing packages from container
+        if: inputs.runs_on == 'ubuntu-20.04'
+        run: |
+           apt-get update &&
+           apt-get install -y --no-install-recommends \
+           libc6
+
       - name: Install Qt6
         if: "startsWith(inputs.qt_version, '6.')"
         uses: jurplel/install-qt-action@v3
