@@ -4,9 +4,9 @@ WORKDIR /build
 
 RUN apt-get -y update && apt-get -y install build-essential cmake tar wget python3
 
-RUN wget -qO- https://ftp.fau.de/qtproject/archive/qt/6.6/6.6.2/single/qt-everywhere-src-6.6.2.tar.xz | tar xJ
+RUN wget -qO- https://ftp.fau.de/qtproject/archive/qt/6.8/6.8.2/single/qt-everywhere-src-6.8.2.tar.xz | tar xJ
 
-RUN qt-everywhere-src-6.6.2/configure -qt-zlib \
+RUN qt-everywhere-src-6.8.2/configure -qt-zlib \
 -static \
 -opensource \
 -confirm-license \
@@ -69,4 +69,4 @@ FROM ubuntu:22.04
 
 RUN apt-get -y update && apt-get -y install build-essential cmake
 
-COPY --from=builder /usr/local/Qt-6.6.2 /usr/local/Qt-6.6.2
+COPY --from=builder /usr/local/Qt-6.8.2 /usr/local/Qt-6.8.2
