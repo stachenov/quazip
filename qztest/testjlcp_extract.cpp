@@ -81,7 +81,7 @@ void TestJlCpExtract::extract()
         // macos-13_qt6.8.2_sharedON_cp/cp/
         JlCompress::extractDir(cpZip.absoluteFilePath(), target2.absolutePath());
 
-        QList extractedZipList = target2.entryList(QStringList() << "*.zip", QDir::Files);
+        QList<QString> extractedZipList = target2.entryList(QStringList() << "*.zip", QDir::Files);
         QSet<QString> extractedZipSet(extractedZipList.begin(), extractedZipList.end());
 
         extractedZipSet = extractedZipSet.subtract(zipNames);
@@ -94,7 +94,7 @@ void TestJlCpExtract::extract()
             // macos-13_qt6.8.2_sharedON_cp/cp/jlsimplefile/
 			JlCompress::extractDir(zip.absoluteFilePath(), target3.absolutePath());
 
-			QList extractedFileList = target3.entryList(QDir::Files);
+			QList<QString> extractedFileList = target3.entryList(QDir::Files);
 			QSet<QString> extractedFileSet(extractedFileList.begin(), extractedFileList.end());
 
             extractedFileSet = extractedFileSet.subtract(fileNames);
