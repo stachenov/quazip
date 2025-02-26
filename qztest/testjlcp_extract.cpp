@@ -34,6 +34,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtTest/QtTest>
 
 #include <JlCompress.h>
+#include <quazip_qt_compat.h>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -115,7 +116,7 @@ void TestJlCpExtract::extract()
 
                 QString expectedContent("");
                 QTextStream ss(&expectedContent);
-                ss << "This is a test file named " << fileName << Qt::endl;
+                ss << "This is a test file named " << fileName << quazip_endl;
 
                 QVERIFY(fileContent == expectedContent);
             }
