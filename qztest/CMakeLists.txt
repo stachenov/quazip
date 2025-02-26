@@ -1,7 +1,8 @@
 set(QZTEST_SOURCES
         qztest.h
         testjlcompress.h
-        testjlcrossplatform.h
+        testjlcp_compress.h
+        testjlcp_extract.h
         testquachecksum32.h
         testquagzipfile.h
         testquaziodevice.h
@@ -12,7 +13,8 @@ set(QZTEST_SOURCES
         testquazipnewinfo.h
         qztest.cpp
         testjlcompress.cpp
-        testjlcrossplatform.cpp
+        testjlcp_compress.cpp
+        testjlcp_extract.cpp
         testquachecksum32.cpp
         testquagzipfile.cpp
         testquaziodevice.cpp
@@ -32,7 +34,7 @@ target_link_libraries(qztest
     QuaZip::QuaZip
 )
 
-add_test(NAME qztest_test
+add_test(NAME qztest_all
 	COMMAND qztest
 	WORKING_DIRECTORY ${QUAZIP_BINARY_DIR}/quazip # preliminary hack to find the dll on windows
 )

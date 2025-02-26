@@ -1,5 +1,5 @@
-#ifndef QUAZIP_TEST_JLCROSSPLATFORM_H
-#define QUAZIP_TEST_JLCROSSPLATFORM_H
+#ifndef QUAZIP_TEST_JLCPEXTRACT_H
+#define QUAZIP_TEST_JLCPEXTRACT_H
 
 /*
 Copyright (C) 2025 cen1
@@ -27,23 +27,10 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include <QtCore/QObject>
 
-#ifdef Q_OS_UNIX
-#define QUAZIP_SYMLINK_TEST
-#define QUAZIP_EXTRACT_TO_ROOT_TEST
-#endif
-
-#ifdef Q_OS_WIN
-#define QUAZIP_SYMLINK_EXTRACTION_ON_WINDOWS_TEST
-#endif
-
-class TestJlCrossPlatform: public QObject {
+class TestJlCpExtract: public QObject {
     Q_OBJECT
-private:
-  QStringList archivesToBundle;
 private slots:
-    void compressFileOptions_data();
-    void compressFileOptions();
-    void createBundle();
+    void extract();
 };
 
-#endif // QUAZIP_TEST_JLCROSSPLATFORM_H
+#endif // QUAZIP_TEST_JLCPEXTRACT_H

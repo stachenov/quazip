@@ -22,15 +22,12 @@ Original ZIP package is copyrighted by Gilles Vollant and contributors,
 see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
-#include "testjlcrossplatform.h"
+#include "testjlcp_compress.h"
 
 #include "qztest.h"
 
 #include <QtCore/QDir>
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
 #include <QtCore/QMetaType>
-#include <quazip_qt_compat.h>
 
 #include <QtTest/QtTest>
 
@@ -43,13 +40,13 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 Q_DECLARE_METATYPE(JlCompress::Options::CompressionStrategy)
 
 /*
- * The purpose of this tests is to create bundle archives of most common options
+ * The purpose of these tests is to create bundle archives of most common options
  * on each supported OS platform, NOT delete them after run, upload them to object storage
  * then perform extraction and validation of resulting archives on non-native platforms.
  * For example: produce archives on Windows and Linux, extract and verify on Mac.
  * Repeat for each combination.
  */
-void TestJlCrossPlatform::compressFileOptions_data()
+void TestJlCpCompress::compressFileOptions_data()
 {
     QTest::addColumn<QString>("zipName");
     QTest::addColumn<QString>("fileName");
@@ -65,7 +62,7 @@ void TestJlCrossPlatform::compressFileOptions_data()
                                  << JlCompress::Options::Best;
 }
 
-void TestJlCrossPlatform::compressFileOptions()
+void TestJlCpCompress::compressFileOptions()
 {
     QFETCH(QString, zipName);
     QFETCH(QString, fileName);
@@ -87,7 +84,7 @@ void TestJlCrossPlatform::compressFileOptions()
     archivesToBundle << zipName;
 }
 
-void TestJlCrossPlatform::createBundle()
+void TestJlCpCompress::createBundle()
 {
   QVERIFY(JlCompress::compressFiles("cp.zip", archivesToBundle));
 }

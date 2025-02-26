@@ -23,16 +23,17 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
 #include "qztest.h"
-#include "testquazip.h"
-#include "testquazipfile.h"
-#include "testquachecksum32.h"
 #include "testjlcompress.h"
-#include "testjlcrossplatform.h"
-#include "testquazipdir.h"
+#include "testjlcp_compress.h"
+#include "testjlcp_extract.h"
+#include "testquachecksum32.h"
 #include "testquagzipfile.h"
 #include "testquaziodevice.h"
-#include "testquazipnewinfo.h"
+#include "testquazip.h"
+#include "testquazipdir.h"
+#include "testquazipfile.h"
 #include "testquazipfileinfo.h"
+#include "testquazipnewinfo.h"
 
 #include <quazip.h>
 #include <quazipfile.h>
@@ -249,10 +250,15 @@ int main(int argc, char **argv)
         TestQuaZipFileInfo testQuaZipFileInfo;
         err = qMax(err, QTest::qExec(&testQuaZipFileInfo, app.arguments()));
     }
-    if (QString(qgetenv("TEST_CROSS_PLATFORM")) == "true")
+    if (QString(qgetenv("TEST_CR_COMPRESS")) == "true")
     {
-      TestJlCrossPlatform testJlcrossPlatform;
-      err = qMax(err, QTest::qExec(&testJlcrossPlatform, app.arguments()));
+      TestJlCpCompress testJlCpCompress;
+      err = qMax(err, QTest::qExec(&testJlCpCompress, app.arguments()));
+    }
+    if (QString(qgetenv("TEST_CR_DECOMPRESS")) == "true")
+    {
+      TestJlCpExtract testJlCpExtract;
+      err = qMax(err, QTest::qExec(&testJlCpExtract, app.arguments()));
     }
 
     if (err == 0) {

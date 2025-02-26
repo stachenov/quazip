@@ -20,6 +20,14 @@ on:
       runs_on:
         required: true
         type: string
+      run_tests:
+        required: false
+        default: true
+        type: boolean
+      cross_decompress:
+        required: false
+        default: false
+        type: boolean
     secrets:
         GH_TOKEN:
             required: false
@@ -70,16 +78,33 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Run tests
+        if: inputs.run_tests
         working-directory: ${{github.workspace}}/build
         env:
-          TEST_CROSS_PLATFORM: "true"
+          TEST_CR_COMPRESS: "true"
         run: "ctest --verbose"
 
       - name: Upload cp.zip to GitHub Actions Storage
+        if: inputs.run_tests
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
           overwrite: true
-          name: "${{ inputs.runs_on }}_qt${{ inputs.qt_version }}_shared${{ inputs.shared }}_cp.zip"
+          name: "${{ inputs.runs_on }}_qt${{ inputs.qt_version }}_shared${{ inputs.shared }}_cp"
           path: build/quazip/cp.zip
+
+      - name: Download bundle containing cp.zip
+        if: inputs.cross_decompress
+        uses: actions/download-artifact@v4
+        with:
+          path: build/quazip
+          merge-multiple: true
+
+      - name: Extract
+        if: inputs.cross_decompress
+        working-directory: ${{github.workspace}}/build
+        env:
+          TEST_CR_DECOMPRESS: "true"
+        run: "ctest --verbose"
+
 
