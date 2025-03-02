@@ -78,14 +78,14 @@ jobs:
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
       - name: Run tests
-        if: inputs.run_tests
+        if: inputs.run_tests && !inputs.cross_extract
         working-directory: ${{github.workspace}}/build
         env:
           TEST_CR_COMPRESS: "true"
         run: "ctest --verbose"
 
       - name: Upload cp.zip to GitHub Actions Storage
-        if: inputs.run_tests
+        if: inputs.run_tests && !inputs.cross_extract
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1

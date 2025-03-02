@@ -22,6 +22,10 @@ on:
         required: false
         default: true
         type: boolean
+      cross_extract:
+        required: false
+        default: false
+        type: boolean
     secrets:
       GH_TOKEN:
         required: false
@@ -103,8 +107,8 @@ jobs:
         shell: cmd
         run: dir build\qztest\Release
 
-      - name: Test
-        if: true
+      - name: Run tests
+        if: inputs.run_tests && !inputs.cross_extract
         env:
           TEST_CR_COMPRESS: "true"
         shell: cmd
@@ -112,10 +116,24 @@ jobs:
         run: ctest --verbose -C Release
 
       - name: Upload cp.zip to GitHub Actions Storage
-        if: inputs.run_tests
+        if: inputs.run_tests && !inputs.cross_extract
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
           overwrite: true
-          name: "${{ inputs.runs_on }}_qt${{ inputs.qt_version }}_shared${{ inputs.shared }}_cp"
+          name: "${{ inputs.runs_on }}_${{ inputs.preset }}_qt${{ inputs.qt_version }}_shared${{ inputs.shared }}_cp"
           path: build/quazip/cp.zip
+
+      - name: Download bundle containing cp.zip
+        if: inputs.cross_extract
+        uses: actions/download-artifact@v4
+        with:
+          path: build/quazip
+          merge-multiple: true
+
+      - name: Extract
+        if: inputs.cross_extract
+        working-directory: ${{github.workspace}}/build
+        env:
+          TEST_CR_DECOMPRESS: "true"
+        run: "ctest --verbose"

@@ -139,3 +139,38 @@ jobs:
       qt_version: ${{ matrix.qt_version }}
       shared: ${{ matrix.shared }}
       cross_extract: true
+
+  macos-ci-extract:
+    if: true
+    name: extract-macos-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os_version: [ 14 ]
+        qt_version: [ 6.8.2 ]
+        shared: [ ON ]
+    uses: ./.github/workflows/reusable.yml
+    needs: [ ubuntu, windows-x64, windows-x86 ]
+    with:
+      runs_on: macos-${{ matrix.os_version }}
+      os_version: ${{ matrix.os_version }}
+      qt_version: ${{ matrix.qt_version }}
+      shared: ${{ matrix.shared }}
+      cross_extract: true
+
+  windows-x64-ci-extract:
+    if: true
+    name: extract-Win-Qt-${{ matrix.qt_version }}-preset-${{ matrix.preset }}
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [ vcpkg ]
+        qt_version: [ 6.8.2 ]
+    uses: ./.github/workflows/reusable-win.yml
+    with:
+      runs_on: "win-x64"
+      arch: x64
+      qt_version: ${{ matrix.qt_version }}
+      preset: ${{ matrix.preset }}
+      pe_str: "x86-64"
+      cross_extract: true
