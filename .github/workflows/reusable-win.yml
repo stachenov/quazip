@@ -93,6 +93,7 @@ jobs:
         working-directory: ./build/quazip/Release
         run: |
           DLL_NAME="quazip1-qt${{ startsWith(inputs.qt_version, '6') && '6' || '5' }}.dll"
+          file "$DLL_NAME"
           file "$DLL_NAME" |grep "${{ inputs.pe_str }}"
 
       - name: Debug

@@ -130,7 +130,7 @@ jobs:
         qt_version: [ 6.8.2 ]
         shared: [ ON ]
     uses: ./.github/workflows/reusable.yml
-    needs: [ macos, windows-x64, windows-x86 ]
+    needs: [ macos, windows-x64 ]
     with:
       runs_on: ubuntu-${{ matrix.os_version }}
       os_version: ${{ matrix.os_version }}
