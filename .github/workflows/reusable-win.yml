@@ -9,6 +9,9 @@ on:
       qt_version:
         required: true
         type: string
+      runs_on:
+        required: true
+        type: string
       preset:
         required: true
         type: string
