@@ -100,7 +100,12 @@ jobs:
           path: build/quazip
           merge-multiple: true
 
-      - name: Extract
+      - name: Debug
+        if: inputs.cross_extract
+        working-directory: ${{github.workspace}}/build
+        run: "ls -la && ls -la quazip"
+
+      - name: Extract tests
         if: inputs.cross_extract
         working-directory: ${{github.workspace}}/build
         env:

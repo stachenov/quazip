@@ -131,9 +131,9 @@ jobs:
           path: build/quazip
           merge-multiple: true
 
-      - name: Extract
+      - name: Extract tests
         if: inputs.cross_extract
         working-directory: ${{github.workspace}}/build
         env:
           TEST_CR_DECOMPRESS: "true"
-        run: "ctest --verbose"
+        run: ctest --verbose -C Release
