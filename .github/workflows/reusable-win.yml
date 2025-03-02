@@ -89,9 +89,8 @@ jobs:
         shell: cmd
         run: dir build\qztest\Release
 
-      # TODO: We need to solve copying dlls to qztest.exe dir
       - name: Test
-        if: false
+        if: true
         env:
           TEST_CROSS_PLATFORM: "true"
         shell: cmd

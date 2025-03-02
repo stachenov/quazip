@@ -29,6 +29,8 @@ add_executable(qztest ${QZTEST_SOURCES} qztest.qrc)
 set_target_properties(qztest PROPERTIES AUTORCC ON)
 target_include_directories(qztest PRIVATE ${QUAZIP_INC})
 
+add_dependencies(qztest QuaZip::QuaZip)
+
 target_link_libraries(qztest
     ${QUAZIP_TEST_QT_LIBRARIES}
     QuaZip::QuaZip
@@ -40,10 +42,17 @@ add_test(NAME qztest_all
 )
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose DEPENDS qztest)
 
-# TODO: Copy all Qt dlls to qztest bin so we can run it in CI
 if (WIN32 AND BUILD_SHARED_LIBS)
 	message(STATUS "Setting up windeployqt")
 	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 	include(windeployqt)
 	windeployqt(qztest)
+
+    # This copies quazip1-qt6.dll .dll, zlib1.dll and bz2.dll.
+    # For an unknown reason, bz2.dll is copied on second build only. :insert thinking emoji:
+    add_custom_command(
+        TARGET qztest POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:qztest> $<TARGET_FILE_DIR:qztest>
+        COMMAND_EXPAND_LISTS
+    )
 endif()

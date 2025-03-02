@@ -46,6 +46,9 @@ cmake --build build
 
 ## Windows
 
+When using Qt online installer on Windows with MSVC, make sure to select the box for `MSVC 20XY 64-bit` and under additional libraries, select `Qt 5 Compatibility Module`.
+Finally, add `C:\Qt\6.8.2\msvc20XY_64` to your PATH.
+
 If you don't use a package manager you will have to add library and include directories to your PATH or specify them with `CMAKE_PREFIX_PATH`.
 Qt is not installed as a dependency of either vcpkg or conan.
 
@@ -80,8 +83,8 @@ cmake --build build --config Release
 ```
 
 ## Additional build options
-If you built Qt from source and installed it, you might need to tell CMake where to find it, for example: `-DCMAKE_PREFIX_PATH="/usr/local/Qt-6.6.2"`.  
-Alternatively, if you did not install the source build it might look something like: `-DCMAKE_PREFIX_PATH="/home/you/qt-everywhere-src-6.6.2/qtbase/lib/cmake"`.  
+If you built Qt from source and installed it, you might need to tell CMake where to find it, for example: `-DCMAKE_PREFIX_PATH="/usr/local/Qt-6.8.2"`.  
+Alternatively, if you did not install the source build it might look something like: `-DCMAKE_PREFIX_PATH="/home/you/qt-everywhere-src-6.8.2/qtbase/lib/cmake"`.  
 Replace `qtbase` if you used a custom prefix at `configure` step.
 
 Qt installed through Linux distribution packages or official Qt online installer should be detected automatically.
