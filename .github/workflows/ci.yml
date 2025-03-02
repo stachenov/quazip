@@ -116,6 +116,7 @@ jobs:
       arch: x86
       qt_version: ${{ matrix.qt_version }}
       preset: ${{ matrix.preset }}
+      pe_str: '80386'
 
   # Cross platform extraction jobs
   ubuntu-ci-extract:

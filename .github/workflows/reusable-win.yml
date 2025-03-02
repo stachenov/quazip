@@ -12,6 +12,14 @@ on:
       preset:
         required: true
         type: string
+      pe_str:
+        required: true
+        type: string
+        default: "x86-64"
+      run_tests:
+        required: false
+        default: true
+        type: boolean
     secrets:
       GH_TOKEN:
         required: false
@@ -75,21 +83,18 @@ jobs:
         working-directory: ./build
         run: cmake --build . --config Release
 
-      # This second build is here temporarily until we figure out why qztest .dlls are not copied after first
+      # This second build is here temporarily until we figure out why qztest dep .dlls are not copied after first build
       - name: Build 2
         shell: cmd
         working-directory: ./build
         run: cmake --build . --config Release
 
-      - name: Check PE Architecture
+      - name: Check PE
         shell: bash
         working-directory: ./build/quazip/Release
         run: |
-          if [[ "${{ inputs.qt_version }}" =~ ^6 ]]; then
-            file quazip1-qt6.dll | grep "${{ inputs.arch == 'x86' && '80386' || 'x86-64' }}"
-          else
-            file quazip1-qt5.dll | grep "${{ inputs.arch == 'x86' && '80386' || 'x86-64' }}"
-          fi
+          DLL_NAME="quazip1-qt${{ startsWith(input.qt_version, '6') && '6' || '5' }}.dll"
+          file "$DLL_NAME" |grep "${{ input.pe_str }}"
 
       - name: Debug
         shell: cmd
@@ -98,7 +103,16 @@ jobs:
       - name: Test
         if: true
         env:
-          TEST_CROSS_PLATFORM: "true"
+          TEST_CR_COMPRESS: "true"
         shell: cmd
         working-directory: ./build
         run: ctest --verbose -C Release
+
+      - name: Upload cp.zip to GitHub Actions Storage
+        if: inputs.run_tests
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          overwrite: true
+          name: "${{ inputs.runs_on }}_qt${{ inputs.qt_version }}_shared${{ inputs.shared }}_cp"
+          path: build/quazip/cp.zip
