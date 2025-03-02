@@ -62,23 +62,16 @@ void TestJlCpExtract::extract()
 
     qDebug() << "Performing CP extract tests in " << QDir::currentPath();
 
-    // If artifact is downloaded from GHA iz has a .zip but inside actions it does not..
-	QDirIterator itZipBundles(QDir::currentPath(), QStringList() << "*_cp.zip", QDir::Files, QDirIterator::Subdirectories);
-    QDirIterator itDirBundles(QDir::currentPath(), QStringList() << "*_cp", QDir::Files, QDirIterator::Subdirectories);
+    QDirIterator it(QDir::currentPath(), QStringList() << "*_cp", QDir::Dirs, QDirIterator::Subdirectories);
 
-	auto ext = [&](QDirIterator &it) {
-        QFileInfo bundle(it.next());
+    while (it.hasNext()) {
+        QFileInfo artifact_dir(it.next());
+        qDebug() << "====== Found artifact:" << artifact_dir.fileName() << "======";
 
-		qDebug() << "Found CP BUNDLE:" << bundle.fileName();
-        QDir target(bundle.completeBaseName()); // removes .zip
-        if (target.exists()) target.removeRecursively();
-
-        // macos-13_qt6.8.2_sharedON_cp
-        JlCompress::extractDir(bundle.absoluteFilePath(), target.absolutePath());
-        QFileInfo cpZip(target.absolutePath(), "cp.zip");
+        QFileInfo cpZip(artifact_dir.absoluteFilePath(), "cp.zip");
         QVERIFY(cpZip.exists());
 
-        QDir target2(target.absolutePath()+"/cp");
+        QDir target2(artifact_dir.absoluteFilePath()+"/cp");
         // macos-13_qt6.8.2_sharedON_cp/cp/
         JlCompress::extractDir(cpZip.absoluteFilePath(), target2.absolutePath());
 
@@ -121,12 +114,5 @@ void TestJlCpExtract::extract()
                 QVERIFY(fileContent == expectedContent);
             }
         }
-	};
-
-    while (itZipBundles.hasNext()) {
-    	ext(itZipBundles);
-    }
-    while (itDirBundles.hasNext()) {
-        ext(itDirBundles);
-    }
+	}
 }
