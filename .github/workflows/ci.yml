@@ -102,6 +102,7 @@ jobs:
       arch: x64
       qt_version: ${{ matrix.qt_version }}
       preset: ${{ matrix.preset }}
+      pe_str: "x86-64"
 
   windows-x86:
     if: true

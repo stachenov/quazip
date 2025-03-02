@@ -15,7 +15,6 @@ on:
       pe_str:
         required: true
         type: string
-        default: "x86-64"
       run_tests:
         required: false
         default: true
