@@ -24,7 +24,7 @@ on:
         required: false
         default: true
         type: boolean
-      cross_decompress:
+      cross_extract:
         required: false
         default: false
         type: boolean
@@ -94,14 +94,14 @@ jobs:
           path: build/quazip/cp.zip
 
       - name: Download bundle containing cp.zip
-        if: inputs.cross_decompress
+        if: inputs.cross_extract
         uses: actions/download-artifact@v4
         with:
           path: build/quazip
           merge-multiple: true
 
       - name: Extract
-        if: inputs.cross_decompress
+        if: inputs.cross_extract
         working-directory: ${{github.workspace}}/build
         env:
           TEST_CR_DECOMPRESS: "true"

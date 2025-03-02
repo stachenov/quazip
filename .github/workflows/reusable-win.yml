@@ -75,6 +75,12 @@ jobs:
         working-directory: ./build
         run: cmake --build . --config Release
 
+      # This second build is here temporarily until we figure out why qztest .dlls are not copied after first
+      - name: Build 2
+        shell: cmd
+        working-directory: ./build
+        run: cmake --build . --config Release
+
       - name: Check PE Architecture
         shell: bash
         working-directory: ./build/quazip/Release

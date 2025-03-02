@@ -116,3 +116,22 @@ jobs:
       arch: x86
       qt_version: ${{ matrix.qt_version }}
       preset: ${{ matrix.preset }}
+
+  # Cross platform extraction jobs
+  ubuntu-ci-extract:
+    if: true
+    name: Ubuntu-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os_version: [ 24.04 ]
+        qt_version: [ 6.8.2 ]
+        shared: [ ON ]
+    uses: ./.github/workflows/reusable.yml
+    needs: [ macos, windows-x64, windows-x86 ]
+    with:
+      runs_on: ubuntu-${{ matrix.os_version }}
+      os_version: ${{ matrix.os_version }}
+      qt_version: ${{ matrix.qt_version }}
+      shared: ${{ matrix.shared }}
+      cross_extract: true
