@@ -129,7 +129,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: build/quazip
-          merge-multiple: true
+          merge-multiple: false
 
       - name: Extract tests
         if: inputs.cross_extract
