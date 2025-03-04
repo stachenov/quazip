@@ -100,7 +100,7 @@ jobs:
           path: build/quazip
           merge-multiple: false
 
-      - name: Extract tests
+      - name: Run extract tests
         if: inputs.cross_extract
         working-directory: ${{github.workspace}}/build
         env:
