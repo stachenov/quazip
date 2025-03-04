@@ -64,6 +64,8 @@ void TestJlCpExtract::extract()
 
     QDirIterator it(QDir::currentPath(), QStringList() << "*_cp", QDir::Dirs, QDirIterator::Subdirectories);
 
+    QVERIFY(it.hasNext());
+
     while (it.hasNext()) {
         QFileInfo artifact_dir(it.next());
         qDebug() << "====== Found artifact:" << artifact_dir.fileName() << "======";

@@ -86,14 +86,12 @@ jobs:
 
       - name: Build
         shell: cmd
-        working-directory: ./build
-        run: cmake --build . --config Release
+        run: cmake --build ${{github.workspace}}/build --config Release
 
       # This second build is here temporarily until we figure out why qztest dep .dlls are not copied after first build
       - name: Build 2
         shell: cmd
-        working-directory: ./build
-        run: cmake --build . --config Release
+        run: cmake --build ${{github.workspace}}/build --config Release
 
       - name: Check PE
         shell: bash
@@ -113,7 +111,7 @@ jobs:
           TEST_CR_COMPRESS: "true"
         shell: cmd
         working-directory: ./build
-        run: ctest --verbose -C Release
+        run: ctest --verbose -C Release | cat
 
       - name: Upload cp.zip to GitHub Actions Storage
         if: inputs.run_tests && !inputs.cross_extract
@@ -136,4 +134,8 @@ jobs:
         working-directory: ${{github.workspace}}/build
         env:
           TEST_CR_DECOMPRESS: "true"
-        run: ctest --verbose -C Release
+        run: ctest --verbose -C Release | cat
+
+      - name: Debug
+        shell: cmd
+        run: dir build\quazip

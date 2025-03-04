@@ -82,7 +82,7 @@ jobs:
         working-directory: ${{github.workspace}}/build
         env:
           TEST_CR_COMPRESS: "true"
-        run: "ctest --verbose"
+        run: ctest --verbose
 
       - name: Upload cp.zip to GitHub Actions Storage
         if: inputs.run_tests && !inputs.cross_extract
@@ -100,16 +100,11 @@ jobs:
           path: build/quazip
           merge-multiple: false
 
-      - name: Debug
-        if: inputs.cross_extract
-        working-directory: ${{github.workspace}}/build
-        run: "ls -la && ls -la quazip"
-
       - name: Extract tests
         if: inputs.cross_extract
         working-directory: ${{github.workspace}}/build
         env:
           TEST_CR_DECOMPRESS: "true"
-        run: "ctest --verbose"
+        run: ctest --verbose
 
 
