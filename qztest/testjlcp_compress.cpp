@@ -17,9 +17,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with QuaZip.  If not, see <http://www.gnu.org/licenses/>.
 
 See COPYING file for the full LGPL text.
-
-Original ZIP package is copyrighted by Gilles Vollant and contributors,
-see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
 #include "testjlcp_compress.h"
@@ -28,8 +25,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include <QtCore/QDir>
 #include <QtCore/QMetaType>
-
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 #include <JlCompress.h>
 
@@ -40,11 +36,10 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 Q_DECLARE_METATYPE(JlCompress::Options::CompressionStrategy)
 
 /*
- * The purpose of these tests is to create bundle archives of most common options
+ * The purpose of these tests is to create a bundle of different zip files with most common options
  * on each supported OS platform, NOT delete them after run, upload them to object storage
- * then perform extraction and validation of resulting archives on non-native platforms.
- * For example: produce archives on Windows and Linux, extract and verify on Mac.
- * Repeat for each combination.
+ * and then perform extraction and validation on all other OS platforms.
+ * For example: produce archives on Windows and Linux, extract and verify on Mac. Repeat for all combinations.
  */
 void TestJlCpCompress::compressFileOptions_data()
 {
