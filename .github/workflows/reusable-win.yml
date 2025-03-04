@@ -109,7 +109,7 @@ jobs:
         if: inputs.run_tests && !inputs.cross_extract
         env:
           TEST_CR_COMPRESS: "true"
-        shell: cmd
+        shell: bash
         working-directory: ./build
         run: ctest --verbose -C Release | cat
 
@@ -132,6 +132,7 @@ jobs:
       - name: Extract tests
         if: inputs.cross_extract
         working-directory: ${{github.workspace}}/build
+        shell: bash
         env:
           TEST_CR_DECOMPRESS: "true"
         run: ctest --verbose -C Release | cat
