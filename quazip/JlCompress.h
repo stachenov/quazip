@@ -77,6 +77,9 @@ public:
         };
 
     public:
+      	explicit Options(const CompressionStrategy& strategy)
+          : m_compressionStrategy(strategy) {}
+
         explicit Options(const QDateTime& dateTime = QDateTime(), const CompressionStrategy& strategy = Default)
             : m_dateTime(dateTime), m_compressionStrategy(strategy) {}
 
