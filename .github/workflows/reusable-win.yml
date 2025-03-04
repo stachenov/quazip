@@ -110,6 +110,7 @@ jobs:
         env:
           TEST_CR_COMPRESS: "true"
           QT_LOGGING_TO_CONSOLE: "true"
+          QT_ASSUME_STDERR_HAS_CONSOLE: "true"
         shell: bash
         working-directory: ./build
         run: ctest --verbose -C Release | cat
@@ -137,6 +138,7 @@ jobs:
         env:
           TEST_CR_DECOMPRESS: "true"
           QT_LOGGING_TO_CONSOLE: "true"
+          QT_ASSUME_STDERR_HAS_CONSOLE: "true"
         run: ctest --verbose -C Release | cat
 
       - name: Debug
