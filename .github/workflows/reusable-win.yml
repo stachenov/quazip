@@ -1,5 +1,7 @@
 name: Reusable Windows Build Workflow
 
+permissions: read-all
+
 on:
   workflow_call:
     inputs:

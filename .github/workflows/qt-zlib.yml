@@ -7,6 +7,8 @@ on:
 
 name: qt-zlib
 
+permissions: read-all
+
 env:
   BUILD_TYPE: Release
 
