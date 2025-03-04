@@ -42,11 +42,11 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 Q_DECLARE_METATYPE(JlCompress::Options::CompressionStrategy)
 
-/* Inside the CI env, current directory contains archives like
- * macos-13_qt5.15.2_sharedOFF_cp.zip
- * ubuntu-22.04_qt5.15.2_sharedOFF_cp.zip
- * We extract all, check content. This verifies an archive created on different
- * platform can be unpacked.
+/* Inside the CI env, <build>/quazip directory contains directories like
+ * macos-13_qt5.15.2_sharedOFF_cp
+ * ubuntu-22.04_qt5.15.2_sharedOFF_cp
+ * Inside, there is a cp.zip which is a bundle of several zip files produced by TestJlCpCompress
+ * We extract all, check content. This verifies an archive created on different platform can be properly extracted.
  */
 void TestJlCpExtract::extract()
 {
