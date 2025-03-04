@@ -101,18 +101,13 @@ jobs:
           file "$DLL_NAME"
           file "$DLL_NAME" |grep "${{ inputs.pe_str }}"
 
-      - name: Debug
-        shell: cmd
-        run: dir build\qztest\Release
-
       - name: Run tests
         if: inputs.run_tests && !inputs.cross_extract
         env:
           TEST_CR_COMPRESS: "true"
-          QT_ASSUME_STDERR_HAS_CONSOLE: 1
-        shell: bash
+          QT_ASSUME_STDERR_HAS_CONSOLE: 1 # !! qDebug() is not visible if this is not set on Win runners
         working-directory: ./build
-        run: ctest --verbose -C Release | cat
+        run: ctest --verbose -C Release
 
       - name: Upload cp.zip to GitHub Actions Storage
         if: inputs.run_tests && !inputs.cross_extract
@@ -133,12 +128,7 @@ jobs:
       - name: Run extract tests
         if: inputs.cross_extract
         working-directory: ${{github.workspace}}/build
-        shell: bash
         env:
           TEST_CR_DECOMPRESS: "true"
           QT_ASSUME_STDERR_HAS_CONSOLE: 1
-        run: ctest --verbose -C Release | cat
-
-      - name: Debug
-        shell: cmd
-        run: dir build\quazip
+        run: ctest --verbose -C Release
