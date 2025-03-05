@@ -107,7 +107,7 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
 
 bool createTestArchive(QuaZip &zip, const QString &zipName,
                        const QStringList &fileNames,
-                       QTextCodec *codec,
+                       QuazipTextCodec *codec,
                        const QString &dir)
 {
     if (codec != NULL) {
@@ -180,7 +180,7 @@ bool createTestArchive(const QString &zipName,
 
 bool createTestArchive(QIODevice *ioDevice,
                               const QStringList &fileNames,
-                              QTextCodec *codec,
+                              QuazipTextCodec *codec,
                               const QString &dir)
 {
     QuaZip zip(ioDevice);
@@ -189,7 +189,7 @@ bool createTestArchive(QIODevice *ioDevice,
 
 bool createTestArchive(const QString &zipName,
                               const QStringList &fileNames,
-                              QTextCodec *codec,
+                              QuazipTextCodec *codec,
                               const QString &dir) {
     QuaZip zip(zipName);
     return createTestArchive(zip, zipName, fileNames, codec, dir);
