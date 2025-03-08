@@ -105,7 +105,7 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
     return true;
 }
 
-bool createTestFileLarge(const QString &fileName, long long size, const QString &dir)
+bool createTestFileLarge(const QString &fileName, long long size, const QString &dir, bool useRandomBuffer)
 {
 	QDir curDir;
 	QString filePath = QDir(dir).filePath(fileName);
@@ -134,20 +134,32 @@ bool createTestFileLarge(const QString &fileName, long long size, const QString 
 	                      QFileDevice::ReadGroup | QFileDevice::ReadOther);
 
     constexpr qint64 BUFFER_SIZE = 10 * 1024 * 1024; // 10MB
-    QByteArray buffer1(BUFFER_SIZE, '0');
-    QByteArray buffer2(BUFFER_SIZE, '1');
+	static_assert(BUFFER_SIZE % 4 == 0, "BUFFER_SIZE must be divisible by 4");
+    QByteArray buffer0(BUFFER_SIZE, '0');
+    QByteArray buffer1(BUFFER_SIZE, '1');
+	QList<quint32> randomBuffer;
+	randomBuffer.resize(BUFFER_SIZE / 4); // 4B per entry
 
+	bool useFirstBuffer = true;
     long long remaining = size;
-    bool useFirstBuffer = true;
 
     while (remaining > 0) {
 		long long chunkSize = qMin(remaining, BUFFER_SIZE);
-		if (testFile.write(useFirstBuffer ? buffer1.constData() : buffer2.constData(), chunkSize) != chunkSize) {
-			qWarning("Write error!");
-			return false;
+		if (useRandomBuffer) {
+			QRandomGenerator::global()->fillRange(randomBuffer.data(), randomBuffer.size());
+			if (testFile.write(reinterpret_cast<const char*>(randomBuffer.data()), chunkSize) != chunkSize) {
+				qWarning("Write error!");
+				return false;
+			}
+		}
+		else {
+			if (testFile.write(useFirstBuffer ? buffer0.constData() : buffer1.constData(), chunkSize) != chunkSize) {
+				qWarning("Write error!");
+				return false;
+			}
+			useFirstBuffer = !useFirstBuffer; // Alternate buffers
 		}
 		remaining -= chunkSize;
-		useFirstBuffer = !useFirstBuffer;  // Alternate buffers
     }
 
   return true;

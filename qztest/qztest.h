@@ -36,7 +36,8 @@ extern bool createTestFiles(const QStringList &fileNames,
                             const QString &dir = "tmp");
 extern bool createTestFileLarge(const QString &fileName,
                                 long long size,
-                                const QString &dir = "tmp");
+                                const QString &dir = "tmp",
+                    			bool useRandomBuffer = false);
 extern void removeTestFiles(const QStringList &fileNames, const QString
         &dir = "tmp");
 extern bool createTestArchive(const QString &zipName, 
