@@ -192,11 +192,11 @@ void TestQuaZipFile::zipUnzip()
 
 void TestQuaZipFile::zipUnzipLarge_data()
 {
-  QTest::addColumn<QString>("zipName");
-  QTest::addColumn<QString>("fileName");
-  QTest::addColumn<long long>("size");
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QString>("fileName");
+    QTest::addColumn<long long>("size");
 
-  QTest::newRow("zip64_large") << "zip64_large.zip" << "largefile64.txt" << 5LL * 1024 * 1024 * 1024; // 5GB
+    QTest::newRow("zip64_large") << "zip64_large.zip" << "largefile64.txt" << 5LL * 1024 * 1024 * 1024; // 5GB
 }
 
 void TestQuaZipFile::zipUnzipLarge()
