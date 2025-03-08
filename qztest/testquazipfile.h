@@ -33,6 +33,8 @@ class TestQuaZipFile: public QObject {
 private slots:
     void zipUnzip_data();
     void zipUnzip();
+    void zipUnzipLarge_data();
+    void zipUnzipLarge();
     void bytesAvailable_data();
     void bytesAvailable();
     void atEnd_data();

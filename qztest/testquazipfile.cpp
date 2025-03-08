@@ -52,7 +52,7 @@ void TestQuaZipFile::zipUnzip_data()
             QStringList() << "test0.txt" << "testdir1/test1.txt"
             << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
         << QByteArray() << QByteArray() << Z_DEFLATED << Z_DEFAULT_COMPRESSION << false << false << -1;
- #ifdef HAVE_BZIP2
+#ifdef HAVE_BZIP2
     QTest::newRow("bzip") << "bzip.zip" << (
             QStringList() << "testb0.txt" << "testdirb/testb.txt"
             << "testdir2b/test2b.txt" << "testdir2b/subdir/test2bsub.txt")
@@ -188,6 +188,97 @@ void TestQuaZipFile::zipUnzip()
     // clean up
     removeTestFiles(fileNames);
     testFile.remove();
+}
+
+void TestQuaZipFile::zipUnzipLarge_data()
+{
+  QTest::addColumn<QString>("zipName");
+  QTest::addColumn<QString>("fileName");
+  QTest::addColumn<long long>("size");
+
+  QTest::newRow("zip64_large") << "zip64_large.zip" << "largefile64.txt" << 5LL * 1024 * 1024 * 1024; // 5GB
+}
+
+void TestQuaZipFile::zipUnzipLarge()
+{
+    if (!QVariant(qgetenv("TEST_ZIP_UNZIP_LARGE")).toBool()) {
+       qDebug() <<  "Skipping expensive large file test, set TEST_ZIP_UNZIP_LARGE=true to turn on";
+       return;
+    }
+	QFETCH(QString, zipName);
+	QFETCH(QString, fileName);
+	QFETCH(long long, size);
+	QFile testFile(zipName);
+	if (testFile.exists()) {
+		if (!testFile.remove()) {
+			QFAIL("Couldn't remove existing archive to create a new one");
+		}
+	}
+	if (!createTestFileLarge(fileName, size)) {
+        QFAIL("Couldn't create test files for zipping");
+	}
+	QuaZip testZip(&testFile);
+	testZip.setZip64Enabled(true);
+	QVERIFY(testZip.open(QuaZip::mdCreate));
+	QFile inFile("tmp/" + fileName);
+	if (!inFile.open(QIODevice::ReadOnly)) {
+        qDebug("File name: %s", fileName.toUtf8().constData());
+        QFAIL("Couldn't open input file");
+	}
+	QuaZipFile outFile(&testZip);
+	if (
+	!outFile.open(
+	    QIODevice::WriteOnly,
+	    QuaZipNewInfo(fileName, inFile.fileName())
+	    )
+	) {
+        qDebug("outFile.open() backend error, code %d", outFile.getZipError());
+		QFAIL("outFile.open() returned FALSE");
+	}
+	for (qint64 pos = 0, len = inFile.size(); pos < len; ) {
+		char buf[1 * 1024 * 1024];
+		qint64 readSize = qMin(static_cast<qint64>(1 * 1024 * 1024), len - pos);
+		qint64 l;
+		if ((l = inFile.read(buf, readSize)) != readSize) {
+			qDebug("Reading %ld bytes from %s at %ld returned %ld",
+		       static_cast<long>(readSize),
+		       fileName.toUtf8().constData(),
+		       static_cast<long>(pos),
+		       static_cast<long>(l));
+			QFAIL("Read failure");
+		}
+		QVERIFY(outFile.write(buf, readSize));
+		pos += readSize;
+	}
+	inFile.close();
+	outFile.close();
+	QCOMPARE(outFile.getZipError(), ZIP_OK);
+
+	testZip.close();
+	QCOMPARE(testZip.getZipError(), ZIP_OK);
+	// now test unzip
+	QuaZip testUnzip(&testFile);
+	QVERIFY(testUnzip.open(QuaZip::mdUnzip));
+	QVERIFY(testUnzip.goToFirstFile());
+
+	QuaZipFileInfo64 info;
+	QVERIFY(testUnzip.getCurrentFileInfo(&info));
+	QCOMPARE(info.name, fileName);
+	QFile original("tmp/" + fileName);
+	QVERIFY(original.open(QIODevice::ReadOnly));
+	QuaZipFile archived(&testUnzip);
+	QVERIFY(archived.open(QIODevice::ReadOnly, NULL));
+
+    QString originalHash = QCryptographicHash::hash(original.readAll(), QCryptographicHash::Sha256).toHex();
+    QString extractedHash = QCryptographicHash::hash(archived.readAll(), QCryptographicHash::Sha256).toHex();
+	QCOMPARE(originalHash, extractedHash);
+	testUnzip.goToNextFile();
+
+	testUnzip.close();
+	QCOMPARE(testUnzip.getZipError(), UNZ_OK);
+	// clean up
+	removeTestFiles(QStringList() << fileName);
+	testFile.remove();
 }
 
 void TestQuaZipFile::bytesAvailable_data()

@@ -105,6 +105,54 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
     return true;
 }
 
+bool createTestFileLarge(const QString &fileName, long long size, const QString &dir)
+{
+	QDir curDir;
+	QString filePath = QDir(dir).filePath(fileName);
+	QDir testDir = QFileInfo(filePath).dir();
+	if (!testDir.exists()) {
+		if (!curDir.mkpath(testDir.path())) {
+			qWarning("Couldn't mkpath %s",
+			         testDir.path().toUtf8().constData());
+			return false;
+		}
+		QFile dirFile(testDir.path());
+		if (!dirFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
+		                            QFileDevice::ReadGroup | QFileDevice::ExeGroup |
+		                            QFileDevice::ReadOther | QFileDevice::ExeOther)) {
+		  qWarning("Couldn't set permissions for %s", testDir.path().toUtf8().constData());
+		  return false;
+		}
+	}
+
+	QFile testFile(filePath);
+	if (!testFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		qWarning("Couldn't create %s", fileName.toUtf8().constData());
+		return false;
+	}
+	testFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner |
+	                      QFileDevice::ReadGroup | QFileDevice::ReadOther);
+
+    constexpr qint64 BUFFER_SIZE = 10 * 1024 * 1024; // 10MB
+    QByteArray buffer1(BUFFER_SIZE, '0');
+    QByteArray buffer2(BUFFER_SIZE, '1');
+
+    long long remaining = size;
+    bool useFirstBuffer = true;
+
+    while (remaining > 0) {
+		long long chunkSize = qMin(remaining, BUFFER_SIZE);
+		if (testFile.write(useFirstBuffer ? buffer1.constData() : buffer2.constData(), chunkSize) != chunkSize) {
+			qWarning("Write error!");
+			return false;
+		}
+		remaining -= chunkSize;
+		useFirstBuffer = !useFirstBuffer;  // Alternate buffers
+    }
+
+  return true;
+}
+
 bool createTestArchive(QuaZip &zip, const QString &zipName,
                        const QStringList &fileNames,
                        QTextCodec *codec,

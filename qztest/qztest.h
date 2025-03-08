@@ -34,6 +34,9 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 extern bool createTestFiles(const QStringList &fileNames,
                             int size = -1,
                             const QString &dir = "tmp");
+extern bool createTestFileLarge(const QString &fileName,
+                                long long size,
+                                const QString &dir = "tmp");
 extern void removeTestFiles(const QStringList &fileNames, const QString
         &dir = "tmp");
 extern bool createTestArchive(const QString &zipName, 
