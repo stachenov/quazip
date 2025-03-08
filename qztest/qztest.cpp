@@ -138,7 +138,7 @@ bool createTestFileLarge(const QString &fileName, long long size, const QString 
     QByteArray buffer0(BUFFER_SIZE, '0');
     QByteArray buffer1(BUFFER_SIZE, '1');
 	QList<quint32> randomBuffer;
-	randomBuffer.resize(BUFFER_SIZE / 4); // 4B per entry
+	randomBuffer.fill(0, BUFFER_SIZE / 4); // 4B per entry
 
 	bool useFirstBuffer = true;
     long long remaining = size;
