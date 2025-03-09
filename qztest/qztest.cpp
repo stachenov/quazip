@@ -105,6 +105,65 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
     return true;
 }
 
+bool createTestFileLarge(const QString &fileName, long long size, const QString &dir, bool useRandomBuffer)
+{
+	QDir curDir;
+	QString filePath = QDir(dir).filePath(fileName);
+	QDir testDir = QFileInfo(filePath).dir();
+	if (!testDir.exists()) {
+		if (!curDir.mkpath(testDir.path())) {
+			qWarning("Couldn't mkpath %s",
+			         testDir.path().toUtf8().constData());
+			return false;
+		}
+		QFile dirFile(testDir.path());
+		if (!dirFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
+		                            QFileDevice::ReadGroup | QFileDevice::ExeGroup |
+		                            QFileDevice::ReadOther | QFileDevice::ExeOther)) {
+		  qWarning("Couldn't set permissions for %s", testDir.path().toUtf8().constData());
+		  return false;
+		}
+	}
+
+	QFile testFile(filePath);
+	if (!testFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		qWarning("Couldn't create %s", fileName.toUtf8().constData());
+		return false;
+	}
+	testFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner |
+	                      QFileDevice::ReadGroup | QFileDevice::ReadOther);
+
+	constexpr qint64 BUFFER_SIZE = 10 * 1024 * 1024; // 10MB, need to use heap because stack has size limits
+	static_assert(BUFFER_SIZE % 4 == 0, "BUFFER_SIZE must be divisible by 4");
+	auto buffer0 = std::make_unique<QByteArray>(BUFFER_SIZE, '0');
+	auto buffer1 = std::make_unique<QByteArray>(BUFFER_SIZE, '1');
+	auto randomBuffer = std::make_unique<QVector<quint32>>();
+	randomBuffer->resize(BUFFER_SIZE / 4);
+
+	bool useFirstBuffer = true;
+    long long remaining = size;
+
+    while (remaining > 0) {
+		long long chunkSize = qMin(remaining, BUFFER_SIZE);
+		if (useRandomBuffer) {
+			QRandomGenerator::global()->fillRange(randomBuffer->data(), randomBuffer->size());
+			if (testFile.write(reinterpret_cast<const char*>(randomBuffer->data()), chunkSize) != chunkSize) {
+				qWarning("Write error!");
+				return false;
+			}
+		}
+		else {
+			if (testFile.write(useFirstBuffer ? buffer0->constData() : buffer1->constData(), chunkSize) != chunkSize) {
+				qWarning("Write error!");
+				return false;
+			}
+			useFirstBuffer = !useFirstBuffer; // Alternate buffers
+		}
+		remaining -= chunkSize;
+    }
+	return true;
+}
+
 bool createTestArchive(QuaZip &zip, const QString &zipName,
                        const QStringList &fileNames,
                        QTextCodec *codec,

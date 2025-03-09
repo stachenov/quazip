@@ -62,26 +62,33 @@ jobs:
 
   alpine:
     if: true
-    name: "cmake on ${{ matrix.runner }}"
+    name: "${{ matrix.qt_version }} on ${{ matrix.runner }}"
     runs-on: "ubuntu-22.04"
     container:
       image: "${{ matrix.runner }}"
     strategy:
       matrix:
         runner:
-          - "alpine:3.13"  # cmake 3.15, qt 5.15
+          - "alpine:3.21"
+        qt_version:
+          - "qt5"
+          - "qt6"
     env:
       DEBIAN_FRONTEND: noninteractive
+      TEST_ZIP_UNZIP_LARGE: true
     steps:
       - name: Show OS info
         run: cat /etc/os-release
       - uses: actions/checkout@v4
-      - name: Install qt and build tools
-        run: apk add --update g++ make cmake qt5-qtbase-dev
+      - name: Install build tools
+        run: apk add --update g++ make cmake ${{ matrix.qt_version }}-qtbase-dev
+      - name: Install compat
+        if: ${{ matrix.qt_version == 'qt6' }}
+        run: apk add qt6-qt5compat-dev
       - name: Show cmake version
         run: cmake --version
       - name: Run cmake
-        run: cmake -S . -B build -DQUAZIP_ENABLE_TESTS=ON
+        run: cmake -B build -DQUAZIP_ENABLE_TESTS=ON
       - name: Build quazip
         run: cd build && VERBOSE=1 make -j8
       - name: Build tests

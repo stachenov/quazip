@@ -84,6 +84,7 @@ jobs:
         working-directory: ${{github.workspace}}/build
         env:
           TEST_CR_COMPRESS: "true"
+          #TEST_ZIP_UNZIP_LARGE: true
         run: ctest --verbose
 
       - name: Upload cp.zip to GitHub Actions Storage
