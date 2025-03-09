@@ -225,8 +225,8 @@ void TestQuaZipFile::zipUnzipLarge()
 		QFAIL("outFile.open() returned FALSE");
 	}
 	for (qint64 pos = 0, len = inFile.size(); pos < len;) {
-		char buf[1 * 1024 * 1024];
-		qint64 readSize = qMin(static_cast<qint64>(1 * 1024 * 1024), len - pos);
+		char buf[256 * 1024];
+		qint64 readSize = qMin(static_cast<qint64>(256 * 1024), len - pos);
 		qint64 l;
 		if ((l = inFile.read(buf, readSize)) != readSize) {
 			qDebug("Reading %ld bytes from %s at %ld returned %ld",
