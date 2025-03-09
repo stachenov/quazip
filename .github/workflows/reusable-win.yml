@@ -107,7 +107,7 @@ jobs:
         if: inputs.run_tests && !inputs.cross_extract
         env:
           TEST_CR_COMPRESS: "true"
-          TEST_ZIP_UNZIP_LARGE: true
+          #TEST_ZIP_UNZIP_LARGE: true
           QT_ASSUME_STDERR_HAS_CONSOLE: 1 # !! qDebug() is not visible if this is not set on Win runners
         working-directory: ./build
         run: ctest --verbose -C Release

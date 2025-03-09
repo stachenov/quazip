@@ -62,7 +62,7 @@ jobs:
 
   alpine:
     if: true
-    name: "cmake on ${{ matrix.runner }}"
+    name: "${{ matrix.qt_version }} on ${{ matrix.runner }}"
     runs-on: "ubuntu-22.04"
     container:
       image: "${{ matrix.runner }}"
