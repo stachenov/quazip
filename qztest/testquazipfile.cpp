@@ -258,9 +258,40 @@ void TestQuaZipFile::zipUnzipLarge()
 	QuaZipFile archived(&testUnzip);
 	QVERIFY(archived.open(QIODevice::ReadOnly, NULL));
 
-	QString originalHash = QCryptographicHash::hash(original.readAll(), QCryptographicHash::Sha256).toHex();
-	QString extractedHash = QCryptographicHash::hash(archived.readAll(), QCryptographicHash::Sha256).toHex();
-	QCOMPARE(originalHash, extractedHash);
+	QCryptographicHash originalHash(QCryptographicHash::Sha256);
+	QCryptographicHash extractedHash(QCryptographicHash::Sha256);
+
+	// readAll fails for large files in Qt5, there is also a deprecation for .addData so we need to do all this below..
+	char buffer[256 * 1024];
+	qint64 bytesRead;
+	while ((bytesRead = original.read(buffer, sizeof(buffer))) > 0) {
+#ifdef QT_VERSION_CHECK
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		QByteArrayView view(buffer, bytesRead);
+		originalHash.addData(view);
+#else
+		originalHash.addData(buffer, bytesRead);
+#endif
+#endif
+	}
+	while ((bytesRead = archived.read(buffer, sizeof(buffer))) > 0) {
+#ifdef QT_VERSION_CHECK
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+		QByteArrayView view(buffer, bytesRead);
+		extractedHash.addData(view);
+#else
+		extractedHash.addData(buffer, bytesRead);
+#endif
+#endif
+	}
+
+	QString originalHashHex = originalHash.result().toHex();
+	QString extractedHashHex = extractedHash.result().toHex();
+
+	qDebug() << "Original file hash: " << originalHashHex;
+	qDebug() << "Extracted file hash: " << extractedHashHex;
+
+	QCOMPARE(originalHashHex, extractedHashHex);
 	testUnzip.goToNextFile();
 
 	testUnzip.close();
