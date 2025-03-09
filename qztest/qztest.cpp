@@ -133,12 +133,12 @@ bool createTestFileLarge(const QString &fileName, long long size, const QString 
 	testFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner |
 	                      QFileDevice::ReadGroup | QFileDevice::ReadOther);
 
-    constexpr qint64 BUFFER_SIZE = 1 * 1024 * 1024; // 1MB
+	constexpr qint64 BUFFER_SIZE = 10 * 1024 * 1024; // 10MB, need to use heap because stack has size limits
 	static_assert(BUFFER_SIZE % 4 == 0, "BUFFER_SIZE must be divisible by 4");
-    QByteArray buffer0(BUFFER_SIZE, '0');
-    QByteArray buffer1(BUFFER_SIZE, '1');
-	QVector<quint32> randomBuffer;
-	randomBuffer.resize(BUFFER_SIZE / 4); // 4B per entry
+	auto buffer0 = std::make_unique<QByteArray>(BUFFER_SIZE, '0');
+	auto buffer1 = std::make_unique<QByteArray>(BUFFER_SIZE, '1');
+	auto randomBuffer = std::make_unique<QVector<quint32>>();
+	randomBuffer->resize(BUFFER_SIZE / 4);
 
 	bool useFirstBuffer = true;
     long long remaining = size;
@@ -146,14 +146,14 @@ bool createTestFileLarge(const QString &fileName, long long size, const QString 
     while (remaining > 0) {
 		long long chunkSize = qMin(remaining, BUFFER_SIZE);
 		if (useRandomBuffer) {
-			QRandomGenerator::global()->fillRange(randomBuffer.data(), randomBuffer.size());
-			if (testFile.write(reinterpret_cast<const char*>(randomBuffer.data()), chunkSize) != chunkSize) {
+			QRandomGenerator::global()->fillRange(randomBuffer->data(), randomBuffer->size());
+			if (testFile.write(reinterpret_cast<const char*>(randomBuffer->data()), chunkSize) != chunkSize) {
 				qWarning("Write error!");
 				return false;
 			}
 		}
 		else {
-			if (testFile.write(useFirstBuffer ? buffer0.constData() : buffer1.constData(), chunkSize) != chunkSize) {
+			if (testFile.write(useFirstBuffer ? buffer0->constData() : buffer1->constData(), chunkSize) != chunkSize) {
 				qWarning("Write error!");
 				return false;
 			}
