@@ -161,8 +161,7 @@ bool createTestFileLarge(const QString &fileName, long long size, const QString 
 		}
 		remaining -= chunkSize;
     }
-
-  return true;
+	return true;
 }
 
 bool createTestArchive(QuaZip &zip, const QString &zipName,
