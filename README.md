@@ -1,6 +1,7 @@
 # Quazip
 
 [![CI](https://github.com/stachenov/quazip/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/stachenov/quazip/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/stachenov/quazip/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/stachenov/quazip/actions/workflows/github-code-scanning/codeql)
 [![Conan Center](https://shields.io/conan/v/quazip)](https://conan.io/center/recipes/quazip)
 
 QuaZip is the C++ wrapper for Gilles Vollant's ZIP/UNZIP package
