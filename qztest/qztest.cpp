@@ -133,7 +133,7 @@ bool createTestFileLarge(const QString &fileName, long long size, const QString 
 	testFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner |
 	                      QFileDevice::ReadGroup | QFileDevice::ReadOther);
 
-    constexpr qint64 BUFFER_SIZE = 10 * 1024 * 1024; // 10MB
+    constexpr qint64 BUFFER_SIZE = 1 * 1024 * 1024; // 1MB
 	static_assert(BUFFER_SIZE % 4 == 0, "BUFFER_SIZE must be divisible by 4");
     QByteArray buffer0(BUFFER_SIZE, '0');
     QByteArray buffer1(BUFFER_SIZE, '1');

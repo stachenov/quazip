@@ -37,8 +37,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include <QtTest/QtTest>
 
-void
-TestQuaZipFile::zipUnzip_data()
+void TestQuaZipFile::zipUnzip_data()
 {
 	QTest::addColumn<QString>("zipName");
 	QTest::addColumn<QStringList>("fileNames");
@@ -69,8 +68,7 @@ TestQuaZipFile::zipUnzip_data()
 	                                       << QByteArray() << QByteArray() << Z_DEFLATED << Z_DEFAULT_COMPRESSION << true << false << 65536 * 2;
 }
 
-void
-TestQuaZipFile::zipUnzip()
+void TestQuaZipFile::zipUnzip()
 {
 	QFETCH(QString, zipName);
 	QFETCH(QStringList, fileNames);
@@ -178,8 +176,7 @@ TestQuaZipFile::zipUnzip()
 	testFile.remove();
 }
 
-void
-TestQuaZipFile::zipUnzipLarge_data()
+void TestQuaZipFile::zipUnzipLarge_data()
 {
 	QTest::addColumn<QString>("zipName");
 	QTest::addColumn<QString>("fileName");
@@ -188,8 +185,7 @@ TestQuaZipFile::zipUnzipLarge_data()
 	QTest::newRow("zip64_large") << "zip64_large.zip" << "largefile64.txt" << 5LL * 1024 * 1024 * 1024; // 5GB
 }
 
-void
-TestQuaZipFile::zipUnzipLarge()
+void TestQuaZipFile::zipUnzipLarge()
 {
 	if (!QVariant(qgetenv("TEST_ZIP_UNZIP_LARGE")).toBool()) {
 		qDebug() << "Skipping expensive large file test, set TEST_ZIP_UNZIP_LARGE=true to turn on";
@@ -274,8 +270,7 @@ TestQuaZipFile::zipUnzipLarge()
 	testFile.remove();
 }
 
-void
-TestQuaZipFile::bytesAvailable_data()
+void TestQuaZipFile::bytesAvailable_data()
 {
 	QTest::addColumn<QString>("zipName");
 	QTest::addColumn<QStringList>("fileNames");
@@ -287,8 +282,7 @@ TestQuaZipFile::bytesAvailable_data()
 	  << "flush.zip" << (QStringList() << "test.txt") << 65536 * 4;
 }
 
-void
-TestQuaZipFile::bytesAvailable()
+void TestQuaZipFile::bytesAvailable()
 {
 	QFETCH(QString, zipName);
 	QFETCH(QStringList, fileNames);
@@ -319,14 +313,12 @@ TestQuaZipFile::bytesAvailable()
 	curDir.remove(zipName);
 }
 
-void
-TestQuaZipFile::atEnd_data()
+void TestQuaZipFile::atEnd_data()
 {
 	bytesAvailable_data();
 }
 
-void
-TestQuaZipFile::atEnd()
+void TestQuaZipFile::atEnd()
 {
 	QFETCH(QString, zipName);
 	QFETCH(QStringList, fileNames);
@@ -357,14 +349,12 @@ TestQuaZipFile::atEnd()
 	curDir.remove(zipName);
 }
 
-void
-TestQuaZipFile::posRead_data()
+void TestQuaZipFile::posRead_data()
 {
 	bytesAvailable_data();
 }
 
-void
-TestQuaZipFile::posRead()
+void TestQuaZipFile::posRead()
 {
 	QFETCH(QString, zipName);
 	QFETCH(QStringList, fileNames);
@@ -395,14 +385,12 @@ TestQuaZipFile::posRead()
 	curDir.remove(zipName);
 }
 
-void
-TestQuaZipFile::posWrite_data()
+void TestQuaZipFile::posWrite_data()
 {
 	posRead_data();
 }
 
-void
-TestQuaZipFile::posWrite()
+void TestQuaZipFile::posWrite()
 {
 	QFETCH(QString, zipName);
 	QFETCH(QStringList, fileNames);
@@ -432,8 +420,7 @@ TestQuaZipFile::posWrite()
 	curDir.remove(zipName);
 }
 
-void
-TestQuaZipFile::getZip()
+void TestQuaZipFile::getZip()
 {
 	QuaZip testZip;
 	QuaZipFile f1(&testZip);
@@ -444,8 +431,7 @@ TestQuaZipFile::getZip()
 	QCOMPARE(f2.getZip(), &testZip);
 }
 
-void
-TestQuaZipFile::setZipName()
+void TestQuaZipFile::setZipName()
 {
 	QString testFileName = "testZipName.txt";
 	QString testZipName = "testZipName.zip";
@@ -462,8 +448,7 @@ TestQuaZipFile::setZipName()
 	curDir.remove(testZipName);
 }
 
-void
-TestQuaZipFile::getFileInfo()
+void TestQuaZipFile::getFileInfo()
 {
 	QuaZipFileInfo info32;
 	QuaZipFileInfo64 info64;
@@ -501,8 +486,7 @@ TestQuaZipFile::getFileInfo()
 	curDir.remove(testZipName);
 }
 
-void
-TestQuaZipFile::setFileName()
+void TestQuaZipFile::setFileName()
 {
 	QString testFileName = "testZipName.txt";
 	QString testZipName = "testZipName.zip";
@@ -531,8 +515,7 @@ TestQuaZipFile::setFileName()
 	curDir.remove(testZipName);
 }
 
-void
-TestQuaZipFile::constructorDestructor()
+void TestQuaZipFile::constructorDestructor()
 {
 	// Just test that all constructors and destructors are available.
 	// (So there are none that are declared but not defined.)
@@ -546,8 +529,7 @@ TestQuaZipFile::constructorDestructor()
 	QuaZipFile f5("zipName.zip", "fileName.txt", QuaZip::csDefault, &parent);
 }
 
-void
-TestQuaZipFile::setFileAttrs()
+void TestQuaZipFile::setFileAttrs()
 {
 	QuaZip testZip("setFileAttrs.zip");
 	QVERIFY(testZip.open(QuaZip::mdCreate));
@@ -595,8 +577,7 @@ TestQuaZipFile::setFileAttrs()
 	QDir().remove(testZip.getZipName());
 }
 
-void
-TestQuaZipFile::largeFile()
+void TestQuaZipFile::largeFile()
 {
 	QDir curDir;
 	QVERIFY(curDir.mkpath("tmp"));
