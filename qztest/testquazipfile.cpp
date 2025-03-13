@@ -168,6 +168,7 @@ void TestQuaZipFile::zipUnzip()
         QByteArray originalData = original.readAll();
         QByteArray archivedData = archived.readAll();
         QVERIFY(archivedData != originalData);
+        QVERIFY(archived.getZipError() < 0);
     }
     testUnzip.close();
     QCOMPARE(testUnzip.getZipError(), UNZ_OK);
