@@ -98,17 +98,20 @@ void TestJlCompress::compressFileOptions_data()
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                     << JlCompress::Options::Storage
                                     << ""
+                                    << ""
                                     << "";
     QTest::newRow("simple-fastest") << "jlsimplefile-fastest.zip"
                                     << "test0.txt"
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                     << JlCompress::Options::Fastest
                                     << ""
+                                    << ""
                                     << "";
     QTest::newRow("simple-faster") << "jlsimplefile-faster.zip"
                                    << "test0.txt"
                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                    << JlCompress::Options::Faster
+                                   << ""
                                    << ""
                                    << "";
     QTest::newRow("simple-standard") << "jlsimplefile-standard.zip"
@@ -123,11 +126,13 @@ void TestJlCompress::compressFileOptions_data()
                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                    << JlCompress::Options::Better
                                    << ""
+                                   << ""
                                    << "";
     QTest::newRow("simple-best") << "jlsimplefile-best.zip"
                                  << "test0.txt"
                                  << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                  << JlCompress::Options::Best
+                                 << ""
                                  << ""
                                  << "";
 }
@@ -298,6 +303,7 @@ void TestJlCompress::compressDirOptions_data()
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                     << JlCompress::Options::Storage
                                     << ""
+                                    << ""
                                     << "";
     QTest::newRow("simple-fastest") << "jldir-fastest.zip"
                                     << (QStringList() << "test0.txt" << "testdir1/test1.txt"
@@ -309,6 +315,7 @@ void TestJlCompress::compressDirOptions_data()
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                     << JlCompress::Options::Fastest
                                     << ""
+                                    << ""
                                     << "";
     QTest::newRow("simple-faster") << "jldir-faster.zip"
                                     << (QStringList() << "test0.txt" << "testdir1/test1.txt"
@@ -319,6 +326,7 @@ void TestJlCompress::compressDirOptions_data()
                                                       << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                     << JlCompress::Options::Faster
+                                    << ""
                                     << ""
                                     << "";
     QTest::newRow("simple-standard") << "jldir-standard.zip"
@@ -343,6 +351,7 @@ void TestJlCompress::compressDirOptions_data()
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                     << JlCompress::Options::Better
                                     << ""
+                                    << ""
                                     << "";
     QTest::newRow("simple-best") << "jldir-best.zip"
                                     << (QStringList() << "test0.txt" << "testdir1/test1.txt"
@@ -353,6 +362,7 @@ void TestJlCompress::compressDirOptions_data()
                                                       << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
                                     << JlCompress::Options::Best
+                                    << ""
                                     << ""
                                     << "";
 }
