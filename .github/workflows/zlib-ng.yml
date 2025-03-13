@@ -1,0 +1,31 @@
+on:
+  push:
+    branches:
+      - master
+      - feature/*
+  pull_request:
+
+name: fedora-zlib-ng
+permissions: read-all
+
+jobs:
+  fedora:
+    if: true
+    name: "${{ matrix.qt_version }} on ${{ matrix.runner }}"
+    runs-on: "ubuntu-22.04"
+    container:
+      image: "${{ matrix.runner }}"
+    strategy:
+      matrix:
+        runner:
+          - "fedora:42"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build tools
+        run: dnf -y install g++ make cmake qt6-qtbase-devel qt6-qt5compat-devel zlib-ng-devel zlib-ng-compat-devel
+      - name: Run cmake
+        run: cmake -B build -DQUAZIP_ENABLE_TESTS=ON
+      - name: Build quazip
+        run: cd build && VERBOSE=1 make -j8
+      - name: Run tests
+        run: build/qztest/qztest
