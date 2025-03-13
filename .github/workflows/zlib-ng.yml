@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build tools
-        run: dnf -y install g++ make cmake qt6-qtbase-devel qt6-qt5compat-devel zlib-ng
+        run: dnf -y install g++ make cmake qt6-qtbase-devel qt6-qt5compat-devel zlib-ng-devel zlib-ng-compat-devel
       - name: Run cmake
         run: cmake -B build -DQUAZIP_ENABLE_TESTS=ON
       - name: Build quazip
