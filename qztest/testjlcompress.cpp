@@ -31,6 +31,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QFileInfo>
 #include <QtCore/QMetaType>
 #include <QtCore/QTimeZone>
+#include <QtCore/QCryptographicHash>
 #include <quazip_qt_compat.h>
 
 #include <QtTest/QTest>
