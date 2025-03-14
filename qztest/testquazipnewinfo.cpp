@@ -4,7 +4,8 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
-#include <QtTest/QtTest>
+#include <QtCore/QTimeZone>
+#include <QtTest/QTest>
 
 #include <quazip.h>
 #include <quazipfile.h>

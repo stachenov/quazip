@@ -23,6 +23,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
 #include <QtCore/QFile>
+#include <zlib.h>
 
 #include "quagzipfile.h"
 

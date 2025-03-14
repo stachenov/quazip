@@ -6,8 +6,10 @@
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtCore/QPair>
+#include <QtCore/QTimeZone>
+#include <QtCore/QBuffer>
 
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 #include <quazip.h>
 #include <quazipfile.h>
