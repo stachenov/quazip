@@ -8,6 +8,7 @@
 #include <QtCore/QPair>
 #include <QtCore/QTimeZone>
 #include <QtCore/QBuffer>
+#include <QtCore/QDataStream>
 
 #include <QtTest/QTest>
 
