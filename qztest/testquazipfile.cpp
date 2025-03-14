@@ -35,6 +35,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QBuffer>
+#include <QtCore/QDataStream>
 
 #include <QtTest/QTest>
 
