@@ -34,8 +34,11 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QFile>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
+#include <QtCore/QBuffer>
+#include <QtCore/QDataStream>
+#include <QtCore/QCryptographicHash>
 
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 void TestQuaZipFile::zipUnzip_data()
 {
