@@ -189,7 +189,7 @@ void TestQuaZip::setFileNameCodec()
         QFAIL("Can't create test file");
     }
     if (!createTestArchive(zipName, fileNames,
-                           QTextCodec::codecForName(encoding))) {
+                           QuazipTextCodec::codecForName(encoding))) {
         QFAIL("Can't create test archive");
     }
     QuaZip testZip(zipName);
@@ -370,7 +370,7 @@ void TestQuaZip::setCommentCodec()
     zipFile.close();
     zip.close();
     QVERIFY(zip.open(QuaZip::mdUnzip));
-    zip.setCommentCodec(QTextCodec::codecForName("KOI8-R"));
+    zip.setCommentCodec(QuazipTextCodec::codecForName("KOI8-R"));
     QCOMPARE(zip.getComment(), QString::fromUtf8("бНОПНЯ"));
     zip.close();
     QDir().remove(zip.getZipName());
