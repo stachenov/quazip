@@ -35,14 +35,16 @@ quazip/(un)zip.h files for details, but basically it's the zlib license.
 
 ## Dependencies
 You need at least the following dependencies:
-- zlib
+- miniconda
+- `cmake>=3.15`
 - Qt6 or Qt5 (searched in that order)
+
 
 ## Linux
 ```
-sudo apt-get install zlib1g-dev libbz2-dev
-cmake -B build
-cmake --build build
+conda env create -f dependencies.yml --prefix zlib
+cmake -DZLIB_ROOT=quazip_project_directory/zlib/Library -B build
+cmake --build build --config Release
 ```
 
 ## Windows
@@ -56,14 +58,16 @@ Qt is not installed as a dependency of either vcpkg or conan.
 ### x64
 Using vcpkg
 ```
-cmake --preset vcpkg
+conda env create -f dependencies.yml --prefix zlib
+cmake -DZLIB_ROOT=quazip_project_directory\zlib\Library -B build --preset vcpkg
 cmake --build build --config Release
 ```
 
 Using conan v2
 ```
+conda env create -f dependencies.yml --prefix zlib
 conan install . -of build -s build_type=Release -o *:shared=False --build=missing
-cmake --preset conan
+cmake -DZLIB_ROOT=quazip_project_directory\zlib\Library -B build --preset conan
 cmake --build build --config Release
 ```
 
@@ -72,23 +76,34 @@ Only Qt5 is tested on x86.
 
 Using vcpkg
 ```
-cmake --preset vcpkg_x86
+conda env create -f dependencies.yml --prefix zlib
+cmake -DZLIB_ROOT=quazip_project_directory\zlib\Library -B build --preset vcpkg_x86
 cmake --build build --config Release
 ```
 
 Using conan v2
 ```
+conda env create -f dependencies.yml --prefix zlib
 conan install . -of build -s build_type=Release -s:h arch=x86 -o *:shared=False --build=missing
-cmake --preset conan_x86
+cmake -DZLIB_ROOT=quazip_project_directory\zlib\Library -B build --preset conan_x86
 cmake --build build --config Release
 ```
 
 ## Additional build options
-If you built Qt from source and installed it, you might need to tell CMake where to find it, for example: `-DCMAKE_PREFIX_PATH="/usr/local/Qt-6.8.2"`.  
-Alternatively, if you did not install the source build it might look something like: `-DCMAKE_PREFIX_PATH="/home/you/qt-everywhere-src-6.8.2/qtbase/lib/cmake"`.  
-Replace `qtbase` if you used a custom prefix at `configure` step.
+If you built Qt from source and installed it, you might need to tell CMake where to find it, for example: `-DCMAKE_PREFIX_PATH="/usr/local/Qt-6.8.2"`. Alternatively, if you did not install the source build it might look something like: `-DCMAKE_PREFIX_PATH="/home/you/qt-everywhere-src-6.8.2/qtbase/lib/cmake"`. Replace `qtbase` if you used a custom prefix at `configure` step.
 
 Qt installed through Linux distribution packages or official Qt online installer should be detected automatically.
+
+If you wish to build in debug mode, then in the cmake configuration command add: `-DCMAKE_BUILD_TYPE=Debug` and in the cmake build command and change `Release` to `Debug`: `cmake --build build --config Debug`.
+
+You may also build without BZIP2 when configuring the project with cmake: `-DQUAZIP_BZIP2=OFF`.
+
+Specifying a directory to install the build is also possible when running the cmake configure and build commands, like so:
+
+```
+cmake -DCMAKE_INSTALL_PREFIX=/path/to/install
+cmake --build build --config Release --target install
+```
 
 CMake is used to configure and build the project. A typical configure, build, install and clean is shown below.
 
