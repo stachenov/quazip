@@ -37,11 +37,29 @@ quazip/(un)zip.h files for details, but basically it's the zlib license.
 You need at least the following dependencies:
 - `cmake>=3.15`
 - Qt6 or Qt5 (searched in that order)
+- Optional dependencies (choose one):
+    * `miniconda`
+    * `conan`
+    * `vcpkg`
 
 ## Linux
+Using miniconda
 ```
 conda env create -f dependencies.yml --prefix zlib
-cmake -DZLIB_ROOT=quazip_project_directory/zlib/Library -B build
+cmake -DZLIB_ROOT=/quazip_project_root_dir/zlib/Library -B build
+cmake --build build --config Release
+```
+
+Using conan v2
+```
+conan install . -of build -s build_type=Release -o *:shared=False --build=missing
+cmake --preset conan
+cmake --build build --config Release
+```
+
+Using vcpkg
+```
+cmake -B build --preset vcpkg
 cmake --build build --config Release
 ```
 
@@ -54,9 +72,10 @@ If you don't use a package manager you will have to add library and include dire
 Qt is not installed as a dependency of either vcpkg or conan.
 
 ### x64
-Using vcpkg
+Using miniconda
 ```
-cmake -B build --preset vcpkg
+conda env create -f dependencies.yml --prefix dependencies
+cmake -DZLIB_ROOT=quazip_project_root_dir\dependencies\Library -B build
 cmake --build build --config Release
 ```
 
@@ -64,6 +83,12 @@ Using conan v2
 ```
 conan install . -of build -s build_type=Release -o *:shared=False --build=missing
 cmake --preset conan
+cmake --build build --config Release
+```
+
+Using vcpkg
+```
+cmake -B build --preset vcpkg
 cmake --build build --config Release
 ```
 
