@@ -7,7 +7,7 @@ macro(clone_repo name url)
         set(${name_upper}_REPOSITORY ${url})
     endif()
     if(NOT ${name_upper}_TAG)
-        set(${name_upper}_TAG master)
+        set(${name_upper}_TAG bzip2-1.0.8)
     endif()
 
     message(STATUS "Fetching ${name} ${${name_upper}_REPOSITORY} ${${name_upper}_TAG}")
