@@ -46,7 +46,7 @@ You need at least the following dependencies:
 Using miniconda
 ```
 conda env create -f dependencies.yml --prefix zlib
-cmake -DZLIB_ROOT=/quazip_project_root_dir/zlib/Library -B build
+cmake -DZLIB_ROOT=./zlib/bin -B build
 cmake --build build --config Release
 ```
 
@@ -74,8 +74,8 @@ Qt is not installed as a dependency of either vcpkg or conan.
 ### x64
 Using miniconda
 ```
-conda env create -f dependencies.yml --prefix dependencies
-cmake -DZLIB_ROOT=quazip_project_root_dir\dependencies\Library -B build
+conda env create -f dependencies.yml --prefix zlib
+cmake -DZLIB_ROOT=%cd%\zlib\Library -B build
 cmake --build build --config Release
 ```
 
