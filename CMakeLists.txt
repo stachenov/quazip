@@ -173,6 +173,8 @@ if(QUAZIP_BZIP2)
         list(APPEND QUAZIP_LBD ${BZIP2_LIBRARY_DIRS})
 
         set(PC_PRIVATE_LIBS "${PC_PRIVATE_LIBS} -lbzip2")
+
+        set(QUAZIP_BZIP2_BUILD FALSE)
     elseif(QUAZIP_FETCH_LIBS)
         clone_repo(bzip2 https://sourceware.org/git/bzip2.git)
 
@@ -193,6 +195,14 @@ if(QUAZIP_BZIP2)
 
         add_library(bzip2 STATIC ${BZIP2_SRC} ${BZIP2_HDR})
 
+        set_target_properties(bzip2 PROPERTIES
+            PUBLIC_HEADER "${BZIP2_SOURCE_DIR}/bzlib.h"
+        )
+        target_include_directories(bzip2 PUBLIC
+          $<BUILD_INTERFACE:${BZIP2_SOURCE_DIR}>
+          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_INCLUDE_PATH}>
+        )
+
         if(NOT QUAZIP_BZIP2_STDIO)
             target_compile_definitions(bzip2 PRIVATE -DBZ_NO_STDIO)
         endif()
@@ -200,6 +210,8 @@ if(QUAZIP_BZIP2)
         list(APPEND QUAZIP_DEP bzip2)
         list(APPEND QUAZIP_LIB bzip2)
         list(APPEND QUAZIP_INC ${BZIP2_SOURCE_DIR})
+
+        set(QUAZIP_BZIP2_BUILD ON)
     else()
         message(STATUS "BZip2 library not found")
 

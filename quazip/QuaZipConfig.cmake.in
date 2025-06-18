@@ -14,7 +14,7 @@ else()
     message(FATAL_ERROR "Qt version QUAZIP_QT_MAJOR_VERSION=@QUAZIP_QT_MAJOR_VERSION@ is unsupported")
 endif()
 
-if(@QUAZIP_BZIP2@)
+if(@QUAZIP_BZIP2@ AND NOT @QUAZIP_BZIP2_BUILD@)
     find_dependency(BZip2 REQUIRED)
 endif()
 
