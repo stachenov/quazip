@@ -293,8 +293,8 @@ bool QuaZipDirComparator::operator()(const QuaZipFileInfo64 &info1,
 }
 
 template<typename TFileInfoList>
-bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
-    QDir::Filters filter, QDir::SortFlags sort, TFileInfoList &result) const
+bool QuaZipDirPrivate::entryInfoList(QStringList _nameFilters,
+    QDir::Filters _filter, QDir::SortFlags sort, TFileInfoList &result) const
 {
     QString basePath = simplePath();
     if (!basePath.isEmpty())
@@ -305,12 +305,12 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
     if (!zip->goToFirstFile()) {
         return zip->getZipError() == UNZ_OK;
     }
-    QDir::Filters fltr = filter;
+    QDir::Filters fltr = _filter;
     if (fltr == QDir::NoFilter)
         fltr = this->filter;
     if (fltr == QDir::NoFilter)
         fltr = QDir::AllEntries;
-    QStringList nmfltr = nameFilters;
+    QStringList nmfltr = _nameFilters;
     if (nmfltr.isEmpty())
         nmfltr = this->nameFilters;
     QSet<QString> dirsFound;
