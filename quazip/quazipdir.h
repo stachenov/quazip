@@ -220,4 +220,9 @@ public:
     QDir::SortFlags sorting() const;
 };
 
+QuaZipFileInfo64 QuaZipDir_getFileInfo(QuaZip *zip,
+                                       bool *ok,
+                                       const QString &relativeName,
+                                       bool isReal);
+
 #endif // QUAZIP_QUAZIPDIR_H
