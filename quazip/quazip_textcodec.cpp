@@ -3,7 +3,6 @@ Copyright (C) 2024 Gregory EUSTACHE, cen1
 
 QuazipTextCodec is a wrapper/abstraction around QTextCodec
 
-
 This file is part of QuaZip.
 
 QuaZip is free software: you can redistribute it and/or modify
@@ -23,11 +22,9 @@ See COPYING file for the full LGPL text.
 */
 
 #include "quazip_textcodec.h"
-#include <QCoreApplication>
-#include <QDebug>
 
 #ifndef QUAZIP_CAN_USE_QTEXTCODEC
-static QHash<QStringConverter::Encoding,QuazipTextCodec*> *static_hash_quazip_codecs  = nullptr;
+static QHash<QStringConverter::Encoding,QuazipTextCodec*> *static_hash_quazip_codecs = nullptr;
 
 class QuazipTextTextCodecCleanup
 {
@@ -49,26 +46,21 @@ public:
 };
 
 Q_GLOBAL_STATIC(QuazipTextTextCodecCleanup, createQuazipTextTextCodecCleanup)
-
 #endif
-
 
 QuazipTextCodec::QuazipTextCodec()
 {
 }
 
 #ifndef QUAZIP_CAN_USE_QTEXTCODEC
+void QuazipTextCodec::setup()
+{
+    if (static_hash_quazip_codecs) return;
+      (void)createQuazipTextTextCodecCleanup();
 
-    void QuazipTextCodec::setup()
-    {
-        if (static_hash_quazip_codecs) return;
-          (void)createQuazipTextTextCodecCleanup();
-
-        static_hash_quazip_codecs = new QHash<QStringConverter::Encoding,QuazipTextCodec*>;
-    }
-
+    static_hash_quazip_codecs = new QHash<QStringConverter::Encoding,QuazipTextCodec*>;
+}
 #endif
-
 
 QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
 {
@@ -87,7 +79,7 @@ QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
         }
 
         QuazipTextCodec *codec = new QuazipTextCodec();
-        /////
+
         codec->mEncoding = encoding;
         static_hash_quazip_codecs->insert(encoding,codec);
         return codec;
@@ -97,9 +89,7 @@ QuazipTextCodec *QuazipTextCodec::codecForName(const QByteArray &name)
     return (QuazipTextCodec*) QTextCodec::codecForName(name);
 
     #endif
-
 }
-
 
 QuazipTextCodec *QuazipTextCodec::codecForLocale()
 {
@@ -120,7 +110,6 @@ QByteArray QuazipTextCodec::fromUnicode(const QString &str) const
     return from(str);
 #endif
 }
-
 
 QString QuazipTextCodec::toUnicode(const QByteArray &a) const
 {
