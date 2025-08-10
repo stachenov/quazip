@@ -1,8 +1,10 @@
+#ifndef QUAZIPTEXTCODEC_H
+#define QUAZIPTEXTCODEC_H
+
 /*
-Copyright (C) 2024 Gregory EUSTACHE
+Copyright (C) 2024 Gregory EUSTACHE, cen1
 
 QuazipTextCodec is a wrapper/abstraction around QTextCodec
-
 
 This file is part of QuaZip.
 
@@ -20,11 +22,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with QuaZip.  If not, see <http://www.gnu.org/licenses/>.
 
 See COPYING file for the full LGPL text.
-
 */
-
-#ifndef QUAZIPTEXTCODEC_H
-#define QUAZIPTEXTCODEC_H
 
 #include <QByteArray>
 #include "quazip_global.h"

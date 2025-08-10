@@ -23,6 +23,7 @@ else()
 endif()
 
 OPTION(ZLIB_CONST "Sets ZLIB_CONST preprocessor definition" OFF)
+option(ENABLE_QTEXTCODEC "Enable use of QTextCodec (requires Qt5 or Qt6 Core5Compat)" ON)
 
 # Make BZIP2 optional
 option(QUAZIP_BZIP2 "Enables BZIP2 compression" ON)
@@ -215,8 +216,6 @@ if(QUAZIP_BZIP2)
 endif()
 
 #issue Qt5/Qt6 / Core5Compat and QTextCodec
-
-
 if(${QT_VERSION} VERSION_GREATER_EQUAL 6.0.0)
 
     find_package(Qt6 OPTIONAL_COMPONENTS  Core5Compat)
@@ -234,6 +233,25 @@ else()
      message("-- Quazip use QTextCodec")
 endif()
 
+if(QUAZIP_ENABLE_QTEXTCODEC)
+    if(${QT_VERSION} VERSION_GREATER_EQUAL 6.0.0)
+        find_package(Qt6 OPTIONAL_COMPONENTS Core5Compat)
+        if(Qt6Core5Compat_FOUND)
+            set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} Qt6::Core5Compat)
+            set(QUAZIP_TEST_QT_LIBRARIES ${QUAZIP_TEST_QT_LIBRARIES} Qt6::Core5Compat)
+
+            add_compile_definitions(QUAZIP_CAN_USE_QTEXTCODEC)
+            message("-- Quazip can use QTextCodec")
+        else()
+            message("-- Core5Compat not found, QTextCodec support disabled")
+        endif()
+    else()
+        add_compile_definitions(QUAZIP_CAN_USE_QTEXTCODEC)
+        message("-- Quazip can use QTextCodec")
+    endif()
+else()
+    message("-- QTextCodec explicitly disabled by QUAZIP_ENABLE_QTEXTCODEC=OFF")
+endif()
 
 add_subdirectory(quazip)
 

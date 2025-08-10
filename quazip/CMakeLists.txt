@@ -16,9 +16,7 @@ set(QUAZIP_HEADERS
         quazip.h
         quazip_global.h
         quazip_qt_compat.h
-
         quazip_textcodec.h
-
         quazipdir.h
         quazipfile.h
         quazipfileinfo.h
@@ -39,9 +37,7 @@ set(QUAZIP_SOURCES
         quagzipfile.cpp
         quaziodevice.cpp
         quazip.cpp
-
         quazip_textcodec.cpp
-
         quazipdir.cpp
         quazipfile.cpp
         quazipfileinfo.cpp

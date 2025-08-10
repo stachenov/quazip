@@ -385,7 +385,7 @@ QStringList JlCompress::extractFiles(QuaZip &zip, const QStringList &files, cons
 }
 
 QStringList JlCompress::extractDir(QString fileCompressed, QuazipTextCodec* fileNameCodec, QString dir) {
-    // Apro lo zip
+    // Open zip
     QuaZip zip(fileCompressed);
     if (fileNameCodec)
         zip.setFileNameCodec(fileNameCodec);
