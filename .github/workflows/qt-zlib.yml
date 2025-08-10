@@ -4,6 +4,7 @@ on:
       - master
       - feature/*
   pull_request:
+  workflow_dispatch:
 
 name: qt-zlib
 
