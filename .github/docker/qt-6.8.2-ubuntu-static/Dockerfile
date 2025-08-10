@@ -61,7 +61,8 @@ RUN qt-everywhere-src-6.8.2/configure -qt-zlib \
 -skip qtcanvas3d \
 -skip qtgamepad \
 -skip qtpurchasing \
--skip qtscript
+-skip qtscript \
+-no-feature-timezone
 
 RUN cmake --build . --parallel --target install
 

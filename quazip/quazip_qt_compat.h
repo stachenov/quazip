@@ -161,4 +161,23 @@ const auto quazip_endl = Qt::endl;
 const auto quazip_endl = endl;
 #endif
 
+// We want to support Qt5, Qt6 up to 6.5 and Qt 6.5+ compiled without timezone feature.
+#if QT_CONFIG(timezone)
+#include <QTimeZone>
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 5, 0)
+// Qt 6.5+ has QTimeZone::UTC
+#define COMPAT_UTC_TZ QTimeZone(QTimeZone::UTC)
+#else
+// Qt 5.x and Qt 6.0–6.4 use utc()
+#define COMPAT_UTC_TZ QTimeZone::utc()
+#endif
+
+#else // timezone feature disabled
+#include <QtCore/Qt>
+
+#define COMPAT_UTC_TZ Qt::UTC
+
+#endif
+
 #endif // QUAZIP_QT_COMPAT_H
