@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2024 Gregory EUSTACHE
+Copyright (C) 2024 Gregory EUSTACHE, cen1
 
 QuazipTextCodec is a wrapper/abstraction around QTextCodec
 
@@ -20,15 +20,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with QuaZip.  If not, see <http://www.gnu.org/licenses/>.
 
 See COPYING file for the full LGPL text.
-
 */
-
 
 #include "quazip_textcodec.h"
 #include <QCoreApplication>
 #include <QDebug>
-
-
 
 #ifndef QUAZIP_CAN_USE_QTEXTCODEC
 static QHash<QStringConverter::Encoding,QuazipTextCodec*> *static_hash_quazip_codecs  = nullptr;
