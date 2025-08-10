@@ -1,0 +1,9 @@
+BasedOnStyle: Mozilla
+IndentWidth: 4
+UseTab: Never
+
+ColumnLimit: 0
+BreakBeforeBraces: Stroustrup
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+PointerAlignment: Left

@@ -23,6 +23,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
 #include <QtCore/QFile>
+#include <zlib.h>
 
 #include "quagzipfile.h"
 
@@ -32,8 +33,8 @@ class QuaGzipFilePrivate {
     QString fileName;
     gzFile gzd;
     inline QuaGzipFilePrivate(): gzd(nullptr) {}
-    inline QuaGzipFilePrivate(const QString &fileName): 
-        fileName(fileName), gzd(nullptr) {}
+    inline QuaGzipFilePrivate(const QString &_fileName):
+        fileName(_fileName), gzd(nullptr) {}
     template<typename FileId> bool open(FileId id, 
         QIODevice::OpenMode mode, QString &error);
     gzFile open(int fd, const char *modeString);

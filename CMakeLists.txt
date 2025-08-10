@@ -1,12 +1,12 @@
 # require 3.15 for GNUInstallDirs
 cmake_minimum_required(VERSION 3.15...3.18)
 
-project(QuaZip VERSION 1.4)
+project(QuaZip VERSION 1.5)
 
 include(cmake/clone-repo.cmake)
 
 set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
-set(QUAZIP_LIB_SOVERSION 1.4.0)
+set(QUAZIP_LIB_SOVERSION 1.5.0)
 
 if(EMSCRIPTEN)
   #option(ZLIB_INCLUDE "Path to include dir" "")
@@ -36,25 +36,16 @@ if (QUAZIP_USE_QT_ZLIB AND BUILD_SHARED_LIBS)
 endif()
 
 # Set the default value of `${QUAZIP_QT_MAJOR_VERSION}`.
-# We search quietly for Qt6, Qt5 and Qt4 in that order.
-# Qt6 and Qt5 provide config files for CMake.
-# Qt4 relies on `FindQt4.cmake`.
+# We search quietly for Qt6 and Qt5 in that order.
 find_package(
   QT NAMES Qt6 Qt5
   QUIET COMPONENTS Core
 )
 if (NOT QT_FOUND)
-  find_package(Qt4 QUIET COMPONENTS QtCore)
-  if (Qt4_FOUND)
-    set(QT_VERSION_MAJOR 4)
-  else()
-    # If neither 6, 5 nor 4 are found, we default to 5.
-    # The setup will fail further down.
-    set(QT_VERSION_MAJOR 5)
-  endif()
+    set(QT_VERSION_MAJOR 6)
 endif()
 
-set(QUAZIP_QT_MAJOR_VERSION ${QT_VERSION_MAJOR} CACHE STRING "Qt version to use (4, 5 or 6), defaults to ${QT_VERSION_MAJOR}")
+set(QUAZIP_QT_MAJOR_VERSION ${QT_VERSION_MAJOR} CACHE STRING "Qt version to use (6 or 5), defaults to ${QT_VERSION_MAJOR}")
 
 if (QUAZIP_QT_MAJOR_VERSION EQUAL 6)
     set(CMAKE_CXX_STANDARD 17)
@@ -77,6 +68,9 @@ set(QUAZIP_LIB_TARGET_NAME QuaZip)
 set(QUAZIP_DIR_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION}-${QUAZIP_LIB_VERSION})
 set(QUAZIP_PACKAGE_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION})
 
+message(STATUS "QUAZIP_QT_MAJOR_VERSION set to ${QUAZIP_QT_MAJOR_VERSION}")
+message(STATUS "CMAKE_CXX_STANDARD set to ${CMAKE_CXX_STANDARD}")
+
 if(QUAZIP_QT_MAJOR_VERSION EQUAL 6)
     find_package(Qt6 REQUIRED COMPONENTS Core 
             OPTIONAL_COMPONENTS Network Test)
@@ -94,13 +88,6 @@ elseif(QUAZIP_QT_MAJOR_VERSION EQUAL 5)
     set(QUAZIP_LIB_LIBRARIES Qt5::Core)
     set(QUAZIP_TEST_QT_LIBRARIES Qt5::Core Qt5::Network Qt5::Test)
     set(QUAZIP_PKGCONFIG_REQUIRES "zlib, Qt5Core")
-elseif(QUAZIP_QT_MAJOR_VERSION EQUAL 4)
-    find_package(Qt4 4.5.0 REQUIRED COMPONENTS QtCore
-            OPTIONAL_COMPONENTS QtNetwork QtTest)
-    set(QUAZIP_QT_ZLIB_COMPONENT Zlib)
-    set(QUAZIP_LIB_LIBRARIES Qt4::QtCore)
-    set(QUAZIP_TEST_QT_LIBRARIES Qt4::QtCore Qt4::QtNetwork Qt4::QtTest)
-    set(QUAZIP_PKGCONFIG_REQUIRES "zlib, QtCore")
 else()
 	message(FATAL_ERROR "Qt version ${QUAZIP_QT_MAJOR_VERSION} is not supported")
 endif()

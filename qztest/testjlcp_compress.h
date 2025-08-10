@@ -1,8 +1,8 @@
-#ifndef QUAZIP_TEST_JLCOMPRESS_H
-#define QUAZIP_TEST_JLCOMPRESS_H
+#ifndef QUAZIP_TEST_JLCP_COMPRESS_H
+#define QUAZIP_TEST_JLCP_COMPRESS_H
 
 /*
-Copyright (C) 2005-2014 Sergey A. Tachenov
+Copyright (C) 2025 cen1
 
 This file is part of QuaZip test suite.
 
@@ -20,9 +20,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with QuaZip.  If not, see <http://www.gnu.org/licenses/>.
 
 See COPYING file for the full LGPL text.
-
-Original ZIP package is copyrighted by Gilles Vollant and contributors,
-see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
 #include <QtCore/QObject>
@@ -36,32 +33,14 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #define QUAZIP_SYMLINK_EXTRACTION_ON_WINDOWS_TEST
 #endif
 
-class TestJlCompress: public QObject {
+class TestJlCpCompress: public QObject {
     Q_OBJECT
+private:
+  QStringList archivesToBundle;
 private slots:
-    void compressFile_data();
-    void compressFile();
     void compressFileOptions_data();
     void compressFileOptions();
-    void compressFiles_data();
-    void compressFiles();
-    void compressDir_data();
-    void compressDir();
-    void compressDirOptions_data();
-    void compressDirOptions();
-    void extractFile_data();
-    void extractFile();
-    void extractFiles_data();
-    void extractFiles();
-    void extractDir_data();
-    void extractDir();
-    void zeroPermissions();
-#ifdef QUAZIP_SYMLINK_TEST
-    void symlinkHandling();
-#endif
-#ifdef QUAZIP_SYMLINK_EXTRACTION_ON_WINDOWS_TEST
-    void symlinkExtractionOnWindows();
-#endif
+    void createBundle();
 };
 
-#endif // QUAZIP_TEST_JLCOMPRESS_H
+#endif // QUAZIP_TEST_JLCP_COMPRESS_H

@@ -1,5 +1,7 @@
 /doc
 /build
+/build_release
+/build_debug
 /lib
 *.tags
 *.user
@@ -11,3 +13,4 @@ vcpkg_installed/
 Testing/
 CMakeFiles/
 CMakeCache.txt
+minizip/

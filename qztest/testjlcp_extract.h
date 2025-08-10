@@ -1,5 +1,8 @@
+#ifndef QUAZIP_TEST_JLCPEXTRACT_H
+#define QUAZIP_TEST_JLCPEXTRACT_H
+
 /*
-Copyright (C) 2005-2014 Sergey A. Tachenov
+Copyright (C) 2025 cen1
 
 This file is part of QuaZip test suite.
 
@@ -22,29 +25,12 @@ Original ZIP package is copyrighted by Gilles Vollant and contributors,
 see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
-#include "testquachecksum32.h"
+#include <QtCore/QObject>
 
-#include <quaadler32.h>
-#include <quacrc32.h>
+class TestJlCpExtract: public QObject {
+    Q_OBJECT
+private slots:
+    void extract();
+};
 
-#include <QtTest/QTest>
-
-void TestQuaChecksum32::calculate()
-{
-    QuaCrc32 crc32;
-    QCOMPARE(crc32.calculate("Wikipedia"), 0xADAAC02Eu);
-    QuaAdler32 adler32;
-    QCOMPARE(adler32.calculate("Wikipedia"), 0x11E60398u);
-}
-
-void TestQuaChecksum32::update()
-{
-    QuaCrc32 crc32;
-    crc32.update("Wiki");
-    crc32.update("pedia");
-    QCOMPARE(crc32.value(), 0xADAAC02Eu);
-    QuaAdler32 adler32;
-    adler32.update("Wiki");
-    adler32.update("pedia");
-    QCOMPARE(adler32.value(), 0x11E60398u);
-}
+#endif // QUAZIP_TEST_JLCPEXTRACT_H

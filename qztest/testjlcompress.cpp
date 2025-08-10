@@ -29,15 +29,20 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtCore/QMetaType>
+#include <QtCore/QTimeZone>
+#include <QtCore/QCryptographicHash>
 #include <quazip_qt_compat.h>
 
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 #include <JlCompress.h>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
 #endif
+
+Q_DECLARE_METATYPE(JlCompress::Options::CompressionStrategy)
 
 void TestJlCompress::compressFile_data()
 {
@@ -69,6 +74,111 @@ void TestJlCompress::compressFile()
     fileList = JlCompress::getFileList(zipName);
     QCOMPARE(fileList.count(), 1);
     QVERIFY(fileList[0] == fileName);
+    zipFile.close();
+    removeTestFiles(QStringList() << fileName);
+    curDir.remove(zipName);
+}
+
+void TestJlCompress::compressFileOptions_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QString>("fileName");
+    QTest::addColumn<QDateTime>("dateTime");
+    QTest::addColumn<JlCompress::Options::CompressionStrategy>("strategy");
+    QTest::addColumn<QString>("sha256sum_unix"); // Due to extra data archives are not identical
+    QTest::addColumn<QString>("sha256sum_unix_ng"); // zlib-ng
+    QTest::addColumn<QString>("sha256sum_win");
+    QTest::newRow("simple") << "jlsimplefile.zip"
+                            << "test0.txt"
+                            << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                            << JlCompress::Options::Default
+                            << "5eedd83aee92cf3381155d167fee54a4ef6e43b8bc7a979c903611d9aa28610a"
+                            << "752db50b15db1a19e091f9c1b43ec22b279867b20d43c76bc9a01d7bc0d7ae4f"
+                            << "cb1847dff1a5c33a805efde2558fc74024ad4c64c8607f8b12903e4d92385955";
+    QTest::newRow("simple-storage") << "jlsimplefile-storage.zip"
+                                    << "test0.txt"
+                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                    << JlCompress::Options::Storage
+                                    << ""
+                                    << ""
+                                    << "";
+    QTest::newRow("simple-fastest") << "jlsimplefile-fastest.zip"
+                                    << "test0.txt"
+                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                    << JlCompress::Options::Fastest
+                                    << ""
+                                    << ""
+                                    << "";
+    QTest::newRow("simple-faster") << "jlsimplefile-faster.zip"
+                                   << "test0.txt"
+                                   << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                   << JlCompress::Options::Faster
+                                   << ""
+                                   << ""
+                                   << "";
+    QTest::newRow("simple-standard") << "jlsimplefile-standard.zip"
+                                     << "test0.txt"
+                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                     << JlCompress::Options::Standard
+                                     << "5eedd83aee92cf3381155d167fee54a4ef6e43b8bc7a979c903611d9aa28610a"
+                                     << "752db50b15db1a19e091f9c1b43ec22b279867b20d43c76bc9a01d7bc0d7ae4f"
+                                     << "cb1847dff1a5c33a805efde2558fc74024ad4c64c8607f8b12903e4d92385955";
+    QTest::newRow("simple-better") << "jlsimplefile-better.zip"
+                                   << "test0.txt"
+                                   << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                   << JlCompress::Options::Better
+                                   << ""
+                                   << ""
+                                   << "";
+    QTest::newRow("simple-best") << "jlsimplefile-best.zip"
+                                 << "test0.txt"
+                                 << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                 << JlCompress::Options::Best
+                                 << ""
+                                 << ""
+                                 << "";
+}
+
+void TestJlCompress::compressFileOptions()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QString, fileName);
+    QFETCH(QDateTime, dateTime);
+    QFETCH(JlCompress::Options::CompressionStrategy, strategy);
+    QFETCH(QString, sha256sum_unix);
+    QFETCH(QString, sha256sum_unix_ng);
+    QFETCH(QString, sha256sum_win);
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+      if (!curDir.remove(zipName))
+          QFAIL("Can't remove zip file");
+    }
+    if (!createTestFiles(QStringList() << fileName)) {
+        QFAIL("Can't create test file");
+    }
+
+    const JlCompress::Options options(dateTime, strategy);
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + fileName, options));
+    // get the file list and check it
+    QStringList fileList = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList.count(), 1);
+    QVERIFY(fileList[0] == fileName);
+    // now test the QIODevice* overload of getFileList()
+    QFile zipFile(zipName);
+    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    fileList = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList.count(), 1);
+    QVERIFY(fileList[0] == fileName);
+    // Hash is computed on the resulting file externally, then hardcoded in the test data
+    // This should help detecting any library breakage since we compare against a well-known stable result
+    QString hash = QCryptographicHash::hash(zipFile.readAll(), QCryptographicHash::Sha256).toHex();
+#if defined Q_OS_WIN
+    if (!sha256sum_win.isEmpty()) QCOMPARE(hash, sha256sum_win);
+#elif defined ZLIBNG_VERSION
+    if (!sha256sum_unix_ng.isEmpty()) QCOMPARE(hash, sha256sum_unix_ng);
+#else
+    if (!sha256sum_unix.isEmpty()) QCOMPARE(hash, sha256sum_unix);
+#endif
     zipFile.close();
     removeTestFiles(QStringList() << fileName);
     curDir.remove(zipName);
@@ -159,6 +269,153 @@ void TestJlCompress::compressDir()
     fileList.sort();
     expected.sort();
     QCOMPARE(fileList, expected);
+    removeTestFiles(fileNames, "compressDir_tmp");
+    curDir.remove(zipName);
+}
+
+void TestJlCompress::compressDirOptions_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QStringList>("fileNames");
+    QTest::addColumn<QStringList>("expected");
+    QTest::addColumn<QDateTime>("dateTime");
+    QTest::addColumn<JlCompress::Options::CompressionStrategy>("strategy");
+    QTest::addColumn<QString>("sha256sum_unix");
+    QTest::addColumn<QString>("sha256sum_unix_ng");
+    QTest::addColumn<QString>("sha256sum_win");
+    QTest::newRow("simple") << "jldir.zip"
+                            << (QStringList() << "test0.txt" << "testdir1/test1.txt"
+                                              << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+                            << (QStringList() << "test0.txt"
+                                              << "testdir1/" << "testdir1/test1.txt"
+                                              << "testdir2/" << "testdir2/test2.txt"
+                                              << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
+                            << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                            << JlCompress::Options::Default
+                            << "ed0d5921b2fc11b6b4cb214b3e43ea3ea28987d6ff8080faab54c4756de30af6"
+                            << "299cd566069754a4ca1deb025e279be3cca80e454132b51fa2a22e41c8ef1299"
+                            << "1eba110a33718c07a4ddf3fa515d1b4c6e3f4fc912b2e29e5e32783e2cddf852";
+    QTest::newRow("simple-storage") << "jldir-storage.zip"
+                                    << (QStringList() << "test0.txt" << "testdir1/test1.txt"
+                                                      << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+                                    << (QStringList() << "test0.txt"
+                                                      << "testdir1/" << "testdir1/test1.txt"
+                                                      << "testdir2/" << "testdir2/test2.txt"
+                                                      << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
+                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                    << JlCompress::Options::Storage
+                                    << ""
+                                    << ""
+                                    << "";
+    QTest::newRow("simple-fastest") << "jldir-fastest.zip"
+                                    << (QStringList() << "test0.txt" << "testdir1/test1.txt"
+                                                      << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+                                    << (QStringList() << "test0.txt"
+                                                      << "testdir1/" << "testdir1/test1.txt"
+                                                      << "testdir2/" << "testdir2/test2.txt"
+                                                      << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
+                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                    << JlCompress::Options::Fastest
+                                    << ""
+                                    << ""
+                                    << "";
+    QTest::newRow("simple-faster") << "jldir-faster.zip"
+                                    << (QStringList() << "test0.txt" << "testdir1/test1.txt"
+                                                      << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+                                    << (QStringList() << "test0.txt"
+                                                      << "testdir1/" << "testdir1/test1.txt"
+                                                      << "testdir2/" << "testdir2/test2.txt"
+                                                      << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
+                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                    << JlCompress::Options::Faster
+                                    << ""
+                                    << ""
+                                    << "";
+    QTest::newRow("simple-standard") << "jldir-standard.zip"
+                                    << (QStringList() << "test0.txt" << "testdir1/test1.txt"
+                                                      << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+                                    << (QStringList() << "test0.txt"
+                                                      << "testdir1/" << "testdir1/test1.txt"
+                                                      << "testdir2/" << "testdir2/test2.txt"
+                                                      << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
+                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                    << JlCompress::Options::Standard
+                                    << "ed0d5921b2fc11b6b4cb214b3e43ea3ea28987d6ff8080faab54c4756de30af6"
+                                    << "299cd566069754a4ca1deb025e279be3cca80e454132b51fa2a22e41c8ef1299"
+                                    << "1eba110a33718c07a4ddf3fa515d1b4c6e3f4fc912b2e29e5e32783e2cddf852";
+    QTest::newRow("simple-better") << "jldir-better.zip"
+                                    << (QStringList() << "test0.txt" << "testdir1/test1.txt"
+                                                      << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+                                    << (QStringList() << "test0.txt"
+                                                      << "testdir1/" << "testdir1/test1.txt"
+                                                      << "testdir2/" << "testdir2/test2.txt"
+                                                      << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
+                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                    << JlCompress::Options::Better
+                                    << ""
+                                    << ""
+                                    << "";
+    QTest::newRow("simple-best") << "jldir-best.zip"
+                                    << (QStringList() << "test0.txt" << "testdir1/test1.txt"
+                                                      << "testdir2/test2.txt" << "testdir2/subdir/test2sub.txt")
+                                    << (QStringList() << "test0.txt"
+                                                      << "testdir1/" << "testdir1/test1.txt"
+                                                      << "testdir2/" << "testdir2/test2.txt"
+                                                      << "testdir2/subdir/" << "testdir2/subdir/test2sub.txt")
+                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                    << JlCompress::Options::Best
+                                    << ""
+                                    << ""
+                                    << "";
+}
+
+void TestJlCompress::compressDirOptions()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QStringList, fileNames);
+    QFETCH(QStringList, expected);
+    QFETCH(QDateTime, dateTime);
+    QFETCH(JlCompress::Options::CompressionStrategy, strategy);
+    QFETCH(QString, sha256sum_unix);
+    QFETCH(QString, sha256sum_unix_ng);
+    QFETCH(QString, sha256sum_win);
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    if (!createTestFiles(fileNames, -1, "compressDir_tmp")) {
+        QFAIL("Can't create test files");
+    }
+#ifdef Q_OS_WIN
+    for (int i = 0; i < fileNames.size(); ++i) {
+        if (fileNames.at(i).startsWith(".")) {
+            QString fn = "compressDir_tmp\\" + fileNames.at(i);
+            SetFileAttributesW(reinterpret_cast<LPCWSTR>(fn.utf16()),
+                               FILE_ATTRIBUTE_HIDDEN);
+        }
+    }
+#endif
+    const JlCompress::Options options(dateTime, strategy);
+    QVERIFY(JlCompress::compressDir(zipName, "compressDir_tmp", true, QDir::Hidden, options));
+    // get the file list and check it
+    QStringList fileList = JlCompress::getFileList(zipName);
+    fileList.sort();
+    expected.sort();
+    QCOMPARE(fileList, expected);
+    QFile zipFile(curDir.absoluteFilePath(zipName));
+    if (!zipFile.open(QIODevice::ReadOnly)) {
+        QFAIL("Can't read output zip file");
+    }
+    QString hash = QCryptographicHash::hash(zipFile.readAll(), QCryptographicHash::Sha256).toHex();
+#ifdef Q_OS_WIN
+    if (!sha256sum_win.isEmpty()) QCOMPARE(hash, sha256sum_win);
+#elif defined ZLIBNG_VERSION
+    if (!sha256sum_unix_ng.isEmpty()) QCOMPARE(hash, sha256sum_unix_ng);
+#else
+    if (!sha256sum_unix.isEmpty()) QCOMPARE(hash, sha256sum_unix);
+#endif
+    zipFile.close();
     removeTestFiles(fileNames, "compressDir_tmp");
     curDir.remove(zipName);
 }

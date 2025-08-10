@@ -26,7 +26,7 @@ macro(clone_repo name url)
         FetchContent_GetProperties(${name} POPULATED ${name_lower}_POPULATED)
 
         if(NOT ${name_lower}_POPULATED)
-            FetchContent_Populate(${name})
+            FetchContent_MakeAvailable(${name})
         endif()
 
         set(${name_upper}_SOURCE_DIR ${${name_lower}_SOURCE_DIR})

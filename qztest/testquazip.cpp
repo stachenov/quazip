@@ -35,9 +35,10 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #endif
 #include <QtNetwork/QTcpServer>
 #include <QtNetwork/QTcpSocket>
+#include <QtCore/QBuffer>
 #include <quazip_qt_compat.h>
 
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
 
 #include <quazip.h>
 #include <JlCompress.h>

@@ -32,8 +32,8 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 class QuaZipDirPrivate: public QSharedData {
     friend class QuaZipDir;
 private:
-    QuaZipDirPrivate(QuaZip *zip, const QString &dir = QString()):
-        zip(zip), dir(dir) {}
+    QuaZipDirPrivate(QuaZip *_zip, const QString &_dir = QString()):
+        zip(_zip), dir(_dir) {}
     QuaZip *zip;
     QString dir;
     QuaZip::CaseSensitivity caseSensitivity{QuaZip::csDefault};
@@ -199,8 +199,8 @@ static void QuaZipDir_convertInfoList(const QList<QuaZipFileInfo64> &from,
   */
 class QuaZipDirRestoreCurrent {
 public:
-    inline QuaZipDirRestoreCurrent(QuaZip *zip):
-        zip(zip), currentFile(zip->getCurrentFileName()) {}
+    inline QuaZipDirRestoreCurrent(QuaZip *_zip):
+        zip(_zip), currentFile(zip->getCurrentFileName()) {}
     inline ~QuaZipDirRestoreCurrent()
     {
         zip->setCurrentFile(currentFile);
@@ -219,7 +219,7 @@ class QuaZipDirComparator
         static QString getExtension(const QString &name);
         int compareStrings(const QString &string1, const QString &string2);
     public:
-        inline QuaZipDirComparator(QDir::SortFlags sort): sort(sort) {}
+        inline QuaZipDirComparator(QDir::SortFlags _sort): sort(_sort) {}
         bool operator()(const QuaZipFileInfo64 &info1, const QuaZipFileInfo64 &info2);
 };
 
@@ -293,8 +293,8 @@ bool QuaZipDirComparator::operator()(const QuaZipFileInfo64 &info1,
 }
 
 template<typename TFileInfoList>
-bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
-    QDir::Filters filter, QDir::SortFlags sort, TFileInfoList &result) const
+bool QuaZipDirPrivate::entryInfoList(QStringList _nameFilters,
+    QDir::Filters _filter, QDir::SortFlags sort, TFileInfoList &result) const
 {
     QString basePath = simplePath();
     if (!basePath.isEmpty())
@@ -305,12 +305,12 @@ bool QuaZipDirPrivate::entryInfoList(QStringList nameFilters,
     if (!zip->goToFirstFile()) {
         return zip->getZipError() == UNZ_OK;
     }
-    QDir::Filters fltr = filter;
+    QDir::Filters fltr = _filter;
     if (fltr == QDir::NoFilter)
         fltr = this->filter;
     if (fltr == QDir::NoFilter)
         fltr = QDir::AllEntries;
-    QStringList nmfltr = nameFilters;
+    QStringList nmfltr = _nameFilters;
     if (nmfltr.isEmpty())
         nmfltr = this->nameFilters;
     QSet<QString> dirsFound;

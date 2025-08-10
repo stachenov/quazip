@@ -4,8 +4,11 @@ on:
       - master
       - feature/*
   pull_request:
+  workflow_dispatch:
 
 name: qt-zlib
+
+permissions: read-all
 
 env:
   BUILD_TYPE: Release
@@ -20,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qt_version: [ 5.15.12, 6.4.3, 6.6.2 ]
+        qt_version: [ 5.15.12, 6.4.3, 6.8.2 ]
 
     steps:
       - name: Checkout
@@ -43,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qt_version: [ 6.6.2 ]
+        qt_version: [ 6.8.2 ]
 
     steps:
       - name: Checkout
@@ -72,7 +75,7 @@ jobs:
         if: steps.cache-qt-restore.outputs.cache-hit != 'true' && steps.cache-qt-zip-restore.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          curl https://ftp.fau.de/qtproject/archive/qt/6.6/${{ matrix.qt_version }}/single/qt-everywhere-src-${{ matrix.qt_version }}.zip --output qt-everywhere-src-${{ matrix.qt_version }}.zip
+          curl https://ftp.fau.de/qtproject/archive/qt/6.8/${{ matrix.qt_version }}/single/qt-everywhere-src-${{ matrix.qt_version }}.zip --output qt-everywhere-src-${{ matrix.qt_version }}.zip
 
       - name: Save Qt zip
         if: steps.cache-qt-restore.outputs.cache-hit != 'true' && steps.cache-qt-zip-restore.outputs.cache-hit != 'true'
@@ -180,7 +183,7 @@ jobs:
       - name: Run tests
         shell: cmd
         working-directory: ${{github.workspace}}/build
-        run: ctest --verbose -C Release
+        run: ctest --verbose --output-on-failure -C Release
 
   use-qt5-zlib-windows:
     if: true

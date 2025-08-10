@@ -1,6 +1,7 @@
 # Quazip
 
 [![CI](https://github.com/stachenov/quazip/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/stachenov/quazip/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/stachenov/quazip/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/stachenov/quazip/actions/workflows/github-code-scanning/codeql)
 [![Conan Center](https://shields.io/conan/v/quazip)](https://conan.io/center/recipes/quazip)
 
 QuaZip is the C++ wrapper for Gilles Vollant's ZIP/UNZIP package
@@ -35,7 +36,7 @@ quazip/(un)zip.h files for details, but basically it's the zlib license.
 ## Dependencies
 You need at least the following dependencies:
 - zlib
-- Qt6, Qt5 or Qt4 (searched in that order)
+- Qt6 or Qt5 (searched in that order)
 
 ## Linux
 ```
@@ -45,6 +46,9 @@ cmake --build build
 ```
 
 ## Windows
+
+When using Qt online installer on Windows with MSVC, make sure to select the box for `MSVC 20XY 64-bit` and under additional libraries, select `Qt 5 Compatibility Module`.
+Finally, add `C:\Qt\6.8.2\msvc20XY_64` to your PATH.
 
 If you don't use a package manager you will have to add library and include directories to your PATH or specify them with `CMAKE_PREFIX_PATH`.
 Qt is not installed as a dependency of either vcpkg or conan.
@@ -80,8 +84,8 @@ cmake --build build --config Release
 ```
 
 ## Additional build options
-If you built Qt from source and installed it, you might need to tell CMake where to find it, for example: `-DCMAKE_PREFIX_PATH="/usr/local/Qt-6.6.2"`.  
-Alternatively, if you did not install the source build it might look something like: `-DCMAKE_PREFIX_PATH="/home/you/qt-everywhere-src-6.6.2/qtbase/lib/cmake"`.  
+If you built Qt from source and installed it, you might need to tell CMake where to find it, for example: `-DCMAKE_PREFIX_PATH="/usr/local/Qt-6.8.2"`.  
+Alternatively, if you did not install the source build it might look something like: `-DCMAKE_PREFIX_PATH="/home/you/qt-everywhere-src-6.8.2/qtbase/lib/cmake"`.  
 Replace `qtbase` if you used a custom prefix at `configure` step.
 
 Qt installed through Linux distribution packages or official Qt online installer should be detected automatically.
@@ -99,13 +103,13 @@ cmake --build . --target clean
 
 CMake options
 
-| Option                   | Description                                                                                                         | Default |
-|--------------------------|---------------------------------------------------------------------------------------------------------------------|---------|
-| `QUAZIP_QT_MAJOR_VERSION`| Specifies which major Qt version should be searched for (6, 5 or 4). By default it tries to find the most recent.   |         |
-| `BUILD_SHARED_LIBS`      | Build QuaZip as a shared library                                                                                    | `ON`    |
-| `QUAZIP_INSTALL`         | Enable installation                                                                                                 | `ON`    |
+| Option                   | Description                                                                                                                                                   | Default |
+|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| `QUAZIP_QT_MAJOR_VERSION`| Specifies which major Qt version should be searched for (6 or 5). By default it tries to find the most recent.                                                |         |
+| `BUILD_SHARED_LIBS`      | Build QuaZip as a shared library                                                                                                                              | `ON`    |
+| `QUAZIP_INSTALL`         | Enable installation                                                                                                                                           | `ON`    |
 | `QUAZIP_USE_QT_ZLIB`     | Use Qt's bundled zlib instead of system zlib (**not recommended**). Qt must be built with `-qt-zlib` and `-static`. Incompatible with `BUILD_SHARED_LIBS=ON`. | `OFF`   |
-| `QUAZIP_ENABLE_TESTS`    | Build QuaZip tests                                                                                                  | `OFF`   |
-| `QUAZIP_BZIP2`           | Enable BZIP2 compression                                                                                            | `ON`    |
-| `QUAZIP_BZIP2_STDIO`     | Output BZIP2 errors to stdio when BZIP2 compression is enabled                                                      | `ON`    |
+| `QUAZIP_ENABLE_TESTS`    | Build QuaZip tests                                                                                                                                            | `OFF`   |
+| `QUAZIP_BZIP2`           | Enable BZIP2 compression                                                                                                                                      | `ON`    |
+| `QUAZIP_BZIP2_STDIO`     | Output BZIP2 errors to stdio when BZIP2 compression is enabled                                                                                                | `ON`    |
 

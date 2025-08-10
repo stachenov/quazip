@@ -22,6 +22,8 @@ Original ZIP package is copyrighted by Gilles Vollant and contributors,
 see quazip/(un)zip.h files for details. Basically it's the zlib license.
 */
 
+#include <zlib.h>
+
 #include "quaziodevice.h"
 
 #define QUAZIO_INBUFSIZE 4096
@@ -48,9 +50,9 @@ class QuaZIODevicePrivate {
     int doFlush(QString &error);
 };
 
-QuaZIODevicePrivate::QuaZIODevicePrivate(QIODevice *io, QuaZIODevice *q):
-  io(io),
-  q(q)
+QuaZIODevicePrivate::QuaZIODevicePrivate(QIODevice *_io, QuaZIODevice *_q):
+  io(_io),
+  q(_q)
 {
   zins.zalloc = (alloc_func) nullptr;
   zins.zfree = (free_func) nullptr;

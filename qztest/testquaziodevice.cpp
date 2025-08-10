@@ -26,7 +26,8 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <quaziodevice.h>
 #include <QtCore/QBuffer>
 #include <QtCore/QByteArray>
-#include <QtTest/QtTest>
+#include <QtTest/QTest>
+#include <zlib.h>
 
 void TestQuaZIODevice::read()
 {
