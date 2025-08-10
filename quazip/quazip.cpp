@@ -132,8 +132,6 @@ class QuaZipPrivate {
       fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QuazipTextCodec::codecForLocale()),
       ioDevice(_ioDevice),
-      commentCodec(QTextCodec::codecForLocale()),
-      ioDevice(_ioDevice),
       mode(QuaZip::mdNotOpen),
       hasCurrentFile_f(false),
       zipError(UNZ_OK),
