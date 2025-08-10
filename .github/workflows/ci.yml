@@ -41,6 +41,23 @@ jobs:
       shared: "ON"
       zlib_const: "ON"
 
+  # Qt6 with Qt5Compat but explicitly disabled QTextCodec support
+  ubuntu-no-qtextcodec:
+    if: true
+    name: Ubuntu-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-no-qtextcodec
+    strategy:
+      fail-fast: true
+      matrix:
+        os_version: [ 24.04 ]
+        qt_version: [ 6.8.2 ]
+    uses: ./.github/workflows/reusable.yml
+    with:
+      runs_on: ubuntu-${{ matrix.os_version }}
+      os_version: ${{ matrix.os_version }}
+      qt_version: ${{ matrix.qt_version }}
+      shared: "ON"
+      qtextcodec: 'OFF'
+
   macos:
     if: true
     name: macos-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
