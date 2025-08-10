@@ -29,11 +29,9 @@ See COPYING file for the full LGPL text.
 
 #ifdef QUAZIP_CAN_USE_QTEXTCODEC
    #include <QTextCodec>
-
 #else
     #include <QStringConverter>
 #endif
-
 
 #ifdef QUAZIP_CAN_USE_QTEXTCODEC
 class QUAZIP_EXPORT QuazipTextCodec: public QTextCodec

@@ -23,6 +23,8 @@ See COPYING file for the full LGPL text.
 
 #include "quazip_textcodec.h"
 
+#include <QHash>
+
 #ifndef QUAZIP_CAN_USE_QTEXTCODEC
 static QHash<QStringConverter::Encoding,QuazipTextCodec*> *static_hash_quazip_codecs = nullptr;
 
