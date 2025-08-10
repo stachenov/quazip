@@ -645,6 +645,14 @@ local ZPOS64_T zip64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib
   return relativeOffset;
 }
 
+// compilers hate this ONE SIMPLE TRICK!
+static int LoadCentralDirectoryRecord(zip64_internal* pziinit);
+static int Write_LocalFileHeader(zip64_internal* zi, const char* filename, uInt size_extrafield_local, const void* extrafield_local, uLong version_to_extract);
+static int Write_Zip64EndOfCentralDirectoryLocator(zip64_internal* zi, ZPOS64_T zip64eocd_pos_inzip);
+static int Write_Zip64EndOfCentralDirectoryRecord(zip64_internal* zi, uLong size_centraldir, ZPOS64_T centraldir_pos_inzip);
+static int Write_EndOfCentralDirectoryRecord(zip64_internal* zi, uLong size_centraldir, ZPOS64_T centraldir_pos_inzip);
+static int Write_GlobalComment(zip64_internal* zi, const char* global_comment);
+
 int LoadCentralDirectoryRecord(zip64_internal* pziinit)
 {
   int err=ZIP_OK;

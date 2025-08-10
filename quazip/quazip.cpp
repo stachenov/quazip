@@ -84,8 +84,8 @@ class QuaZipPrivate {
         return defaultFileNameCodec;
     }
     /// The constructor for the corresponding QuaZip constructor.
-    inline QuaZipPrivate(QuaZip *q):
-      q(q),
+    inline QuaZipPrivate(QuaZip *_q):
+      q(_q),
       fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QTextCodec::codecForLocale()),
       ioDevice(nullptr),
@@ -104,11 +104,11 @@ class QuaZipPrivate {
         lastMappedDirectoryEntry.pos_in_zip_directory = 0;
     }
     /// The constructor for the corresponding QuaZip constructor.
-    inline QuaZipPrivate(QuaZip *q, const QString &zipName):
-      q(q),
+    inline QuaZipPrivate(QuaZip *_q, const QString &_zipName):
+      q(_q),
       fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QTextCodec::codecForLocale()),
-      zipName(zipName),
+      zipName(_zipName),
       ioDevice(nullptr),
       mode(QuaZip::mdNotOpen),
       hasCurrentFile_f(false),
@@ -125,11 +125,11 @@ class QuaZipPrivate {
         lastMappedDirectoryEntry.pos_in_zip_directory = 0;
     }
     /// The constructor for the corresponding QuaZip constructor.
-    inline QuaZipPrivate(QuaZip *q, QIODevice *ioDevice):
-      q(q),
+    inline QuaZipPrivate(QuaZip *_q, QIODevice *_ioDevice):
+      q(_q),
       fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QTextCodec::codecForLocale()),
-      ioDevice(ioDevice),
+      ioDevice(_ioDevice),
       mode(QuaZip::mdNotOpen),
       hasCurrentFile_f(false),
       zipError(UNZ_OK),

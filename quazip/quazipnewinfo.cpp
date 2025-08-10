@@ -86,14 +86,14 @@ QuaZipNewInfo::QuaZipNewInfo(const QuaZipFileInfo64 &existing)
     QuaZipNewInfo_init(*this, existing);
 }
 
-QuaZipNewInfo::QuaZipNewInfo(const QString& name):
-  name(name), dateTime(QDateTime::currentDateTime()), internalAttr(0), externalAttr(0),
+QuaZipNewInfo::QuaZipNewInfo(const QString& _name):
+  name(_name), dateTime(QDateTime::currentDateTime()), internalAttr(0), externalAttr(0),
   uncompressedSize(0)
 {
 }
 
-QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
-  name(name), internalAttr(0), externalAttr(0), uncompressedSize(0)
+QuaZipNewInfo::QuaZipNewInfo(const QString& _name, const QString& file):
+  name(_name), internalAttr(0), externalAttr(0), uncompressedSize(0)
 {
   QFileInfo info(file);
   QDateTime lm = info.lastModified();
@@ -105,8 +105,8 @@ QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file):
   }
 }
 
-QuaZipNewInfo::QuaZipNewInfo(const QString& name, const QString& file, const QDateTime& dateTime):
-  name(name), dateTime(dateTime), internalAttr(0), externalAttr(0), uncompressedSize(0)
+QuaZipNewInfo::QuaZipNewInfo(const QString& _name, const QString& file, const QDateTime& _dateTime):
+  name(_name), dateTime(_dateTime), internalAttr(0), externalAttr(0), uncompressedSize(0)
 {
   QFileInfo info(file);
   if (info.exists()) {

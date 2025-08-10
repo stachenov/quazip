@@ -50,9 +50,9 @@ class QuaZIODevicePrivate {
     int doFlush(QString &error);
 };
 
-QuaZIODevicePrivate::QuaZIODevicePrivate(QIODevice *io, QuaZIODevice *q):
-  io(io),
-  q(q)
+QuaZIODevicePrivate::QuaZIODevicePrivate(QIODevice *_io, QuaZIODevice *_q):
+  io(_io),
+  q(_q)
 {
   zins.zalloc = (alloc_func) nullptr;
   zins.zfree = (free_func) nullptr;
