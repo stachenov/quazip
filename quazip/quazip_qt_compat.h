@@ -107,11 +107,11 @@ inline QString quazip_symlink_target(const QFileInfo &fi) {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
 #include <QtCore/QTimeZone>
 inline QDateTime quazip_since_epoch() {
-    return QDateTime(QDate(1970, 1, 1), QTime(0, 0), QTimeZone::utc());
+    return QDateTime(QDate(1970, 1, 1), QTime(0, 0), QTimeZone::UTC);
 }
 
 inline QDateTime quazip_since_epoch_ntfs() {
-    return QDateTime(QDate(1601, 1, 1), QTime(0, 0), QTimeZone::utc());
+    return QDateTime(QDate(1601, 1, 1), QTime(0, 0), QTimeZone::UTC);
 }
 #else
 inline QDateTime quazip_since_epoch() {
