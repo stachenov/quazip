@@ -172,9 +172,10 @@ void TestQuaZipFile::zipUnzip()
         QByteArray archivedData = archived.readAll();
         QVERIFY(archivedData != originalData);
 
+        QVERIFY(archivedData.isEmpty());
         int readError = archived.getZipError();
         qDebug("After reading with wrong password, getZipError() is %d", readError);
-        QVERIFY(readError < 0);
+        QVERIFY(readError != ZIP_OK);
     }
     testUnzip.close();
     QCOMPARE(testUnzip.getZipError(), UNZ_OK);
