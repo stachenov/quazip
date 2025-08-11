@@ -28,19 +28,16 @@ See COPYING file for the full LGPL text.
 #include "quazip_global.h"
 
 #ifdef QUAZIP_CAN_USE_QTEXTCODEC
-   #include <QTextCodec>
+#include <QTextCodec>
+typedef QTextCodec QuazipTextCodec;
 #else
-    #include <QStringConverter>
+#include <QStringConverter>
 #endif
 
-#ifdef QUAZIP_CAN_USE_QTEXTCODEC
-class QUAZIP_EXPORT QuazipTextCodec: public QTextCodec
-#else
+#ifndef QUAZIP_CAN_USE_QTEXTCODEC
 class QUAZIP_EXPORT QuazipTextCodec
-#endif
 {
-    
-public:
+  public:
     explicit QuazipTextCodec();
 
     QByteArray fromUnicode(const QString &str) const;
@@ -48,12 +45,10 @@ public:
 
     static QuazipTextCodec *codecForName(const QByteArray &name);
     static QuazipTextCodec *codecForLocale();
-protected:
-
-#ifndef QUAZIP_CAN_USE_QTEXTCODEC
+  protected:
     static void setup();
-    QStringConverter::Encoding  mEncoding;
-#endif
+    QStringConverter::Encoding mEncoding;
 };
+#endif // QUAZIP_CAN_USE_QTEXTCODEC
 
 #endif // QUAZIPTEXTCODEC_H
