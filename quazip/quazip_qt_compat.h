@@ -12,6 +12,8 @@
 #include <QtCore/Qt>
 #include <QtCore/QtGlobal>
 
+#include "quazip_textcodec.h"
+
 // QSaveFile terribly breaks the is-a idiom (Liskov substitution principle):
 // QSaveFile is-a QIODevice, but it makes close() private and aborts
 // if you call it through the base class. Hence this ugly hack:

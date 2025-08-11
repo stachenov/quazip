@@ -35,7 +35,6 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include <JlCompress.h>
 #include <quazip_qt_compat.h>
-#include <quazip_textcodec.h>
 
 #ifdef Q_OS_WIN
 #include <windows.h>

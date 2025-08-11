@@ -27,14 +27,13 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-
+#include "quazip_qt_compat.h"
 
 #include "zip.h"
 #include "unzip.h"
 
 #include "quazip_global.h"
 #include "quazipfileinfo.h"
-#include "quazip_textcodec.h"
 
 // just in case it will be defined in the later versions of the ZIP/UNZIP
 #ifndef UNZ_OPENERROR
