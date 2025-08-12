@@ -143,7 +143,7 @@ if(NOT QUAZIP_QT_ZLIB_USED)
 
       set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} ${ZLIB_LIBRARY})
     else()
-      find_package(ZLIB REQUIRED)
+      find_package(ZLIB 1.3.1 EXACT REQUIRED)
       set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} ZLIB::ZLIB)
     endif()
 endif()
@@ -162,7 +162,7 @@ if(QUAZIP_BZIP2)
     set(QUAZIP_BZIP2 ON)
 
     if(NOT QUAZIP_FORCE_FETCH_LIBS)
-        find_package(BZip2 QUIET)
+        find_package(BZip2 1.0.8 EXACT QUIET)
     endif()
 
     if(BZIP2_FOUND AND NOT QUAZIP_FORCE_FETCH_LIBS)
