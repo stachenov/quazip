@@ -200,7 +200,7 @@ if(QUAZIP_BZIP2)
         )
         target_include_directories(bzip2 PUBLIC
           $<BUILD_INTERFACE:${BZIP2_SOURCE_DIR}>
-          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_INCLUDE_PATH}>
+          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         )
 
         if(NOT QUAZIP_BZIP2_STDIO)
