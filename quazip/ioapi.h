@@ -133,11 +133,11 @@ extern "C" {
  #endif
 #endif
 
-typedef voidpf   (ZCALLBACK *open_file_func)      OF((voidpf opaque, voidpf file, int mode));
-typedef uLong    (ZCALLBACK *read_file_func)      OF((voidpf opaque, voidpf stream, void* buf, uLong size));
-typedef uLong    (ZCALLBACK *write_file_func)     OF((voidpf opaque, voidpf stream, const void* buf, uLong size));
-typedef int      (ZCALLBACK *close_file_func)     OF((voidpf opaque, voidpf stream));
-typedef int      (ZCALLBACK *testerror_file_func) OF((voidpf opaque, voidpf stream));
+typedef voidpf   (ZCALLBACK *open_file_func)      (voidpf opaque, voidpf file, int mode);
+typedef uLong    (ZCALLBACK *read_file_func)      (voidpf opaque, voidpf stream, void* buf, uLong size);
+typedef uLong    (ZCALLBACK *write_file_func)     (voidpf opaque, voidpf stream, const void* buf, uLong size);
+typedef int      (ZCALLBACK *close_file_func)     (voidpf opaque, voidpf stream);
+typedef int      (ZCALLBACK *testerror_file_func) (voidpf opaque, voidpf stream);
 
 typedef long     (ZCALLBACK *tell_file_func)      (voidpf opaque, voidpf stream);
 typedef long     (ZCALLBACK *seek_file_func)      (voidpf opaque, voidpf stream, uLong offset, int origin);
@@ -186,16 +186,16 @@ typedef struct zlib_filefunc64_32_def_s
     close_file_func     zfakeclose_file; // for no-auto-close flag
 } zlib_filefunc64_32_def;
 
-voidpf   ZCALLBACK qiodevice_open_file_func      OF((voidpf opaque, voidpf file, int mode));
-uLong    ZCALLBACK qiodevice_read_file_func      OF((voidpf opaque, voidpf stream, void* buf, uLong size));
-uLong    ZCALLBACK qiodevice_write_file_func     OF((voidpf opaque, voidpf stream, const void* buf, uLong size));
-uLong    ZCALLBACK qiodevice_tell_file_func      OF((voidpf opaque, voidpf stream));
-ZPOS64_T ZCALLBACK qiodevice64_tell_file_func    OF((voidpf opaque, voidpf stream));
-int      ZCALLBACK qiodevice_seek_file_func      OF((voidpf opaque, voidpf stream, uLong offset, int origin));
-int      ZCALLBACK qiodevice64_seek_file_func    OF((voidpf opaque, voidpf stream, ZPOS64_T offset, int origin));
-int      ZCALLBACK qiodevice_close_file_func     OF((voidpf opaque, voidpf stream));
-int      ZCALLBACK qiodevice_fakeclose_file_func OF((voidpf opaque, voidpf stream));
-int      ZCALLBACK qiodevice_error_file_func     OF((voidpf opaque, voidpf stream));
+voidpf   ZCALLBACK qiodevice_open_file_func      (voidpf opaque, voidpf file, int mode);
+uLong    ZCALLBACK qiodevice_read_file_func      (voidpf opaque, voidpf stream, void* buf, uLong size);
+uLong    ZCALLBACK qiodevice_write_file_func     (voidpf opaque, voidpf stream, const void* buf, uLong size);
+uLong    ZCALLBACK qiodevice_tell_file_func      (voidpf opaque, voidpf stream);
+ZPOS64_T ZCALLBACK qiodevice64_tell_file_func    (voidpf opaque, voidpf stream);
+int      ZCALLBACK qiodevice_seek_file_func      (voidpf opaque, voidpf stream, uLong offset, int origin);
+int      ZCALLBACK qiodevice64_seek_file_func    (voidpf opaque, voidpf stream, ZPOS64_T offset, int origin);
+int      ZCALLBACK qiodevice_close_file_func     (voidpf opaque, voidpf stream);
+int      ZCALLBACK qiodevice_fakeclose_file_func (voidpf opaque, voidpf stream);
+int      ZCALLBACK qiodevice_error_file_func     (voidpf opaque, voidpf stream);
 
 #define ZREAD64(filefunc,filestream,buf,size)     ((*((filefunc).zfile_func64.zread_file))   ((filefunc).zfile_func64.opaque,filestream,buf,size))
 #define ZWRITE64(filefunc,filestream,buf,size)    ((*((filefunc).zfile_func64.zwrite_file))  ((filefunc).zfile_func64.opaque,filestream,buf,size))
