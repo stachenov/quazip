@@ -107,7 +107,7 @@ CMake options
 |-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
 | `QUAZIP_QT_MAJOR_VERSION`   | Specifies which major Qt version should be searched for (6 or 5). By default it tries to find the most recent.                                                |         |
 | `BUILD_SHARED_LIBS`         | Build QuaZip as a shared library                                                                                                                              | `ON`    |
-| `QUAZIP_LIB_FILE_NAME`   | Specifies output libname.                                                                                                                                        | `quazip<quazip-version>-qt<qt-version>` |
+| `QUAZIP_LIB_FILE_NAME`      | Specifies output libname.                                                                                                                                     | `quazip<quazip-version>-qt<qt-version>` |
 | `QUAZIP_INSTALL`            | Enable installation                                                                                                                                           | `ON`    |
 | `QUAZIP_USE_QT_ZLIB`        | Use Qt's bundled zlib instead of system zlib (**not recommended**). Qt must be built with `-qt-zlib` and `-static`. Incompatible with `BUILD_SHARED_LIBS=ON`. | `OFF`   |
 | `QUAZIP_ENABLE_TESTS`       | Build QuaZip tests                                                                                                                                            | `OFF`   |
