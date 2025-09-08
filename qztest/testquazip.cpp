@@ -170,8 +170,13 @@ void TestQuaZip::setFileNameCodec_data()
     QTest::addColumn<QString>("zipName");
     QTest::addColumn<QStringList>("fileNames");
     QTest::addColumn<QByteArray>("encoding");
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
     QTest::newRow("russian") << QString::fromUtf8("russian.zip") << (
         QStringList() << QString::fromUtf8("тест.txt")) << QByteArray("IBM866");
+#else
+    QTest::newRow("latin1") << QString::fromUtf8("latin1.zip") << (
+        QStringList() << QString("tést.txt")) << QByteArray("Latin1");
+#endif
 }
 
 void TestQuaZip::setFileNameCodec()
@@ -189,7 +194,7 @@ void TestQuaZip::setFileNameCodec()
         QFAIL("Can't create test file");
     }
     if (!createTestArchive(zipName, fileNames,
-                           QTextCodec::codecForName(encoding))) {
+                           QuazipTextCodec::codecForName(encoding))) {
         QFAIL("Can't create test archive");
     }
     QuaZip testZip(zipName);
@@ -359,8 +364,11 @@ void TestQuaZip::setIoDevice()
     QDir().remove(file.fileName());
 }
 
+// When not using QTextCodec the list of supported encodings is reduced:
+// https://doc.qt.io/qt-6/qstringconverter.html#Encoding-enum
 void TestQuaZip::setCommentCodec()
 {
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
     QuaZip zip("commentCodec.zip");
     QVERIFY(zip.open(QuaZip::mdCreate));
     zip.setCommentCodec("WINDOWS-1251");
@@ -370,10 +378,25 @@ void TestQuaZip::setCommentCodec()
     zipFile.close();
     zip.close();
     QVERIFY(zip.open(QuaZip::mdUnzip));
-    zip.setCommentCodec(QTextCodec::codecForName("KOI8-R"));
+    zip.setCommentCodec(QuazipTextCodec::codecForName("KOI8-R"));
     QCOMPARE(zip.getComment(), QString::fromUtf8("бНОПНЯ"));
     zip.close();
     QDir().remove(zip.getZipName());
+#else
+    QuaZip zip("commentCodecLatin1.zip");
+    QVERIFY(zip.open(QuaZip::mdCreate));
+    zip.setCommentCodec("Latin1");
+    zip.setComment("café");
+    QuaZipFile zipFile(&zip);
+    QVERIFY(zipFile.open(QIODevice::WriteOnly, QuaZipNewInfo("test.txt")));
+    zipFile.close();
+    zip.close();
+    QVERIFY(zip.open(QuaZip::mdUnzip));
+    zip.setCommentCodec(QuazipTextCodec::codecForName("Latin1"));
+    QCOMPARE(zip.getComment(), "café");
+    zip.close();
+    QDir().remove(zip.getZipName());
+#endif
 }
 
 void TestQuaZip::setAutoClose()

@@ -103,14 +103,15 @@ cmake --build . --target clean
 
 CMake options
 
-| Option                   | Description                                                                                                                                                   | Default                                    |
-|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| `QUAZIP_QT_MAJOR_VERSION`| Specifies which major Qt version should be searched for (6 or 5). By default it tries to find the most recent.                                                |                                            |
-| `BUILD_SHARED_LIBS`      | Build QuaZip as a shared library                                                                                                                              | `ON`                                       |
-| `QUAZIP_LIB_FILE_NAME`   | Specifies output libname.                                                                                                                                     | `quazip<quazip-version>-qt<qt-version>`    |
-| `QUAZIP_INSTALL`         | Enable installation                                                                                                                                           | `ON`                                       |
-| `QUAZIP_ENABLE_TESTS`    | Build QuaZip tests                                                                                                                                            | `OFF`                                      |
-| `QUAZIP_USE_QT_ZLIB`     | Use Qt's bundled zlib instead of system zlib (**not recommended**). Qt must be built with `-qt-zlib` and `-static`. Incompatible with `BUILD_SHARED_LIBS=ON`. | `OFF`                                      |
-| `QUAZIP_BZIP2`           | Enable BZIP2 compression                                                                                                                                      | `ON`                                       |
-| `QUAZIP_BZIP2_STDIO`     | Output BZIP2 errors to stdio when BZIP2 compression is enabled                                                                                                | `ON`                                       |
+| Option                      | Description                                                                                                                                                   | Default |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| `QUAZIP_QT_MAJOR_VERSION`   | Specifies which major Qt version should be searched for (6 or 5). By default it tries to find the most recent.                                                |         |
+| `BUILD_SHARED_LIBS`         | Build QuaZip as a shared library                                                                                                                              | `ON`    |
+| `QUAZIP_LIB_FILE_NAME`      | Specifies output libname.                                                                                                                                     | `quazip<quazip-version>-qt<qt-version>` |
+| `QUAZIP_INSTALL`            | Enable installation                                                                                                                                           | `ON`    |
+| `QUAZIP_USE_QT_ZLIB`        | Use Qt's bundled zlib instead of system zlib (**not recommended**). Qt must be built with `-qt-zlib` and `-static`. Incompatible with `BUILD_SHARED_LIBS=ON`. | `OFF`   |
+| `QUAZIP_ENABLE_TESTS`       | Build QuaZip tests                                                                                                                                            | `OFF`   |
+| `QUAZIP_BZIP2`              | Enable BZIP2 compression                                                                                                                                      | `ON`    |
+| `QUAZIP_BZIP2_STDIO`        | Output BZIP2 errors to stdio when BZIP2 compression is enabled                                                                                                | `ON`    |
+| `QUAZIP_ENABLE_QTEXTCODEC`  | Set to OFF to explicitely disable the use of QTextCodec on Qt6 even if Core5Compat is available. This uses [QStringConverter](https://doc.qt.io/qt-6/qstringconverter.html) in the background with less supported encodings. | `ON`    |
 
