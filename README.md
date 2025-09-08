@@ -113,5 +113,5 @@ CMake options
 | `QUAZIP_ENABLE_TESTS`       | Build QuaZip tests                                                                                                                                            | `OFF`   |
 | `QUAZIP_BZIP2`              | Enable BZIP2 compression                                                                                                                                      | `ON`    |
 | `QUAZIP_BZIP2_STDIO`        | Output BZIP2 errors to stdio when BZIP2 compression is enabled                                                                                                | `ON`    |
-| `QUAZIP_ENABLE_QTEXTCODEC`  | Set to OFF to explicitely disable the use of QTextCodec on Qt6 even if Core5Compat is available.                                                              | `ON`    |
+| `QUAZIP_ENABLE_QTEXTCODEC`  | Set to OFF to explicitely disable the use of QTextCodec on Qt6 even if Core5Compat is available. This uses [QStringConverter](https://doc.qt.io/qt-6/qstringconverter.html) in the background with less supported encodings. | `ON`    |
 

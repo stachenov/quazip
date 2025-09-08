@@ -29,13 +29,13 @@ See COPYING file for the full LGPL text.
 
 static QHash<QStringConverter::Encoding,QuazipTextCodec*> *static_hash_quazip_codecs = nullptr;
 
-class QuazipTextTextCodecCleanup
+class QuazipTextCodecCleanup
 {
 public:
-    explicit QuazipTextTextCodecCleanup()
+    explicit QuazipTextCodecCleanup()
     {
     }
-    ~QuazipTextTextCodecCleanup()
+    ~QuazipTextCodecCleanup()
     {
         if (static_hash_quazip_codecs)
         {
@@ -48,7 +48,7 @@ public:
     }
 };
 
-Q_GLOBAL_STATIC(QuazipTextTextCodecCleanup, createQuazipTextTextCodecCleanup)
+Q_GLOBAL_STATIC(QuazipTextCodecCleanup, createQuazipTextCodecCleanup)
 
 QuazipTextCodec::QuazipTextCodec()
 {
@@ -57,7 +57,7 @@ QuazipTextCodec::QuazipTextCodec()
 void QuazipTextCodec::setup()
 {
     if (static_hash_quazip_codecs) return;
-      (void)createQuazipTextTextCodecCleanup();
+      (void)createQuazipTextCodecCleanup();
 
     static_hash_quazip_codecs = new QHash<QStringConverter::Encoding,QuazipTextCodec*>;
 }
