@@ -536,7 +536,10 @@ void TestJlCompress::extractFiles()
         QCOMPARE(fileInfo.size(), extInfo.size());
         QCOMPARE(fileInfo.permissions(), extInfo.permissions());
         curDir.remove("jlext/jlfiles/" + fileName);
-        curDir.rmpath(fileInfo.dir().path());
+        QString dirPath = fileInfo.dir().path();
+        if (!dirPath.isEmpty()) {
+            curDir.rmpath(dirPath);
+        }
     }
     // now test the QIODevice* overload
     QFile zipFile(zipName);
@@ -549,7 +552,10 @@ void TestJlCompress::extractFiles()
         QCOMPARE(fileInfo.size(), extInfo.size());
         QCOMPARE(fileInfo.permissions(), extInfo.permissions());
         curDir.remove("jlext/jlfiles/" + fileName);
-        curDir.rmpath(fileInfo.dir().path());
+        QString dirPath = fileInfo.dir().path();
+        if (!dirPath.isEmpty()) {
+            curDir.rmpath(dirPath);
+        }
     }
     zipFile.close();
     curDir.rmpath("jlext/jlfiles");
@@ -658,7 +664,10 @@ void TestJlCompress::extractDir()
             QCOMPARE(fileInfo.size(), extInfo.size());
         QCOMPARE(fileInfo.permissions(), extInfo.permissions());
         curDir.remove(fullName);
-        curDir.rmpath(fileInfo.dir().path());
+        QString dirPath = fileInfo.dir().path();
+        if (!dirPath.isEmpty()) {
+            curDir.rmpath(dirPath);
+        }
         QString absolutePath = QDir(dir).absoluteFilePath(fileName);
         if (fileInfo.isDir() && !absolutePath.endsWith('/'))
             absolutePath += '/';
@@ -680,14 +689,19 @@ void TestJlCompress::extractDir()
             QCOMPARE(fileInfo.size(), extInfo.size());
         QCOMPARE(fileInfo.permissions(), extInfo.permissions());
         curDir.remove(fullName);
-        curDir.rmpath(fileInfo.dir().path());
+        QString dirPath = fileInfo.dir().path();
+        if (!dirPath.isEmpty()) {
+            curDir.rmpath(dirPath);
+        }
         QString absolutePath = QDir(dir).absoluteFilePath(fileName);
         if (fileInfo.isDir() && !absolutePath.endsWith('/'))
             absolutePath += '/';
         QVERIFY(extracted.contains(absolutePath));
     }
     zipFile.close();
-    curDir.rmpath(extDir);
+    if (!extDir.isEmpty()) {
+        curDir.rmpath(extDir);
+    }
     removeTestFiles(fileNames);
     //curDir.remove(zipName);
 }

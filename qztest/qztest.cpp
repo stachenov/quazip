@@ -265,7 +265,10 @@ void removeTestFiles(const QStringList &fileNames, const QString &dir)
         QDir fileDir = QFileInfo(QDir(dir).filePath(fileName)).dir();
         if (fileDir.exists()) {
             // Non-empty dirs won't get removed, and that's good.
-            curDir.rmpath(fileDir.path());
+            QString dirPath = fileDir.path();
+            if (!dirPath.isEmpty()) {
+                curDir.rmpath(dirPath);
+            }
         }
     }
 }

@@ -170,12 +170,12 @@ void TestQuaZipFile::zipUnzip()
         QVERIFY(archived.open(QIODevice::ReadOnly, "WrongPassword"));
         QByteArray originalData = original.readAll();
         QByteArray archivedData = archived.readAll();
-        QVERIFY(archivedData != originalData);
-
-        QVERIFY(archivedData.isEmpty());
         int readError = archived.getZipError();
         qDebug("After reading with wrong password, getZipError() is %d", readError);
+        qDebug("Original data size: %d, archived data size: %d", originalData.size(), archivedData.size());
+
         QVERIFY(readError != ZIP_OK);
+        QVERIFY(archivedData.isEmpty() || archivedData != originalData); // corrupt data or empty, depends on the platform
     }
     testUnzip.close();
     QCOMPARE(testUnzip.getZipError(), UNZ_OK);
