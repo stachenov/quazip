@@ -956,29 +956,29 @@ local int unz64local_GetCurrentFileInfoInternal(unzFile file,
             {
                 uLong _uL;
 
-                if(file_info.uncompressed_size == (ZPOS64_T)0xFFFFFFFFu)
+                if(file_info.uncompressed_size == MAXU32)
                 {
                     if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.uncompressed_size) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info.compressed_size == (ZPOS64_T)0xFFFFFFFFu)
+                if(file_info.compressed_size == MAXU32)
                 {
                     if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info.compressed_size) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info_internal.offset_curfile == (ZPOS64_T)0xFFFFFFFFu)
+                if(file_info_internal.offset_curfile == MAXU32)
                 {
                     /* Relative Header offset */
                     if (unz64local_getLong64(&s->z_filefunc, s->filestream,&file_info_internal.offset_curfile) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
-                if(file_info.disk_num_start == 0xFFFFFFFFu)
+                if(file_info.disk_num_start == 0xffff)
                 {
                     /* Disk Start Number */
-                    if (unz64local_getLong(&s->z_filefunc, s->filestream, &_uL) != UNZ_OK)
+                    if (unz64local_getLong(&s->z_filefunc, s->filestream,&file_info.disk_num_start) != UNZ_OK)
                         err=UNZ_ERRNO;
                 }
 
@@ -1343,12 +1343,12 @@ local int unz64local_CheckCurrentFileCoherencyHeader(unz64_s* s, uInt* piSizeVar
 
     if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* size compr */
         err=UNZ_ERRNO;
-    else if (uData != 0xFFFFFFFF && (err==UNZ_OK) && (uData!=s->cur_file_info.compressed_size) && ((uFlags & 8)==0))
+    else if (uData != MAXU32 && (err==UNZ_OK) && (uData!=s->cur_file_info.compressed_size) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
     if (unz64local_getLong(&s->z_filefunc, s->filestream,&uData) != UNZ_OK) /* size uncompr */
         err=UNZ_ERRNO;
-    else if (uData != 0xFFFFFFFF && (err==UNZ_OK) && (uData!=s->cur_file_info.uncompressed_size) && ((uFlags & 8)==0))
+    else if (uData != MAXU32 && (err==UNZ_OK) && (uData!=s->cur_file_info.uncompressed_size) && ((uFlags & 8)==0))
         err=UNZ_BADZIPFILE;
 
     if (unz64local_getShort(&s->z_filefunc, s->filestream,&size_filename) != UNZ_OK)
