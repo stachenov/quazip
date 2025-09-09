@@ -268,9 +268,9 @@ void TestQuaZip::setDataDescriptorWritingEnabled()
     QCOMPARE(readZipFile.csize(), static_cast<qint64>(contents.size()));
     readZipFile.close();
     QCOMPARE(QFileInfo(zipName).size(), static_cast<qint64>(171));
-    QFile zipFile(zipName);
-    QVERIFY(zipFile.open(QIODevice::ReadOnly));
-    QDataStream zipData(&zipFile);
+    QFile _zipFile(zipName);
+    QVERIFY(_zipFile.open(QIODevice::ReadOnly));
+    QDataStream zipData(&_zipFile);
     zipData.setByteOrder(QDataStream::LittleEndian);
     quint32 magic = 0;
     quint16 versionNeeded = 0;
@@ -278,7 +278,7 @@ void TestQuaZip::setDataDescriptorWritingEnabled()
     zipData >> versionNeeded;
     QCOMPARE(magic, static_cast<quint32>(0x04034b50));
     QCOMPARE(versionNeeded, static_cast<quint16>(10));
-    zipFile.close();
+    _zipFile.close();
     curDir.remove(zipName);
     // now test 2.0
     zipName = "zip20.zip";
@@ -373,9 +373,9 @@ void TestQuaZip::setCommentCodec()
     QVERIFY(zip.open(QuaZip::mdCreate));
     zip.setCommentCodec("WINDOWS-1251");
     zip.setComment(QString::fromUtf8("Вопрос"));
-    QuaZipFile zipFile(&zip);
-    QVERIFY(zipFile.open(QIODevice::WriteOnly, QuaZipNewInfo("test.txt")));
-    zipFile.close();
+    QuaZipFile _zipFile(&zip);
+    QVERIFY(_zipFile.open(QIODevice::WriteOnly, QuaZipNewInfo("test.txt")));
+    _zipFile.close();
     zip.close();
     QVERIFY(zip.open(QuaZip::mdUnzip));
     zip.setCommentCodec(QuazipTextCodec::codecForName("KOI8-R"));
@@ -387,9 +387,9 @@ void TestQuaZip::setCommentCodec()
     QVERIFY(zip.open(QuaZip::mdCreate));
     zip.setCommentCodec("Latin1");
     zip.setComment("café");
-    QuaZipFile zipFile(&zip);
-    QVERIFY(zipFile.open(QIODevice::WriteOnly, QuaZipNewInfo("test.txt")));
-    zipFile.close();
+    QuaZipFile _zipFile(&zip);
+    QVERIFY(_zipFile.open(QIODevice::WriteOnly, QuaZipNewInfo("test.txt")));
+    _zipFile.close();
     zip.close();
     QVERIFY(zip.open(QuaZip::mdUnzip));
     zip.setCommentCodec(QuazipTextCodec::codecForName("Latin1"));
@@ -460,11 +460,11 @@ void TestQuaZip::testSequential()
     zip.setAutoClose(false);
     QVERIFY(zip.open(QuaZip::mdCreate));
     QVERIFY(socket.isOpen());
-    QuaZipFile zipFile(&zip);
+    QuaZipFile _zipFile(&zip);
     QuaZipNewInfo info("test.txt");
-    QVERIFY(zipFile.open(QIODevice::WriteOnly, info, NULL, 0, 0));
-    QCOMPARE(zipFile.write("test"), static_cast<qint64>(4));
-    zipFile.close();
+    QVERIFY(_zipFile.open(QIODevice::WriteOnly, info, NULL, 0, 0));
+    QCOMPARE(_zipFile.write("test"), static_cast<qint64>(4));
+    _zipFile.close();
     zip.close();
     QVERIFY(socket.isOpen());
     socket.disconnectFromHost();

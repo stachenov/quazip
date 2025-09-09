@@ -69,12 +69,12 @@ void TestJlCompress::compressFile()
     QCOMPARE(fileList.count(), 1);
     QVERIFY(fileList[0] == fileName);
     // now test the QIODevice* overload of getFileList()
-    QFile zipFile(zipName);
-    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    QFile _zipFile(zipName);
+    QVERIFY(_zipFile.open(QIODevice::ReadOnly));
     fileList = JlCompress::getFileList(zipName);
     QCOMPARE(fileList.count(), 1);
     QVERIFY(fileList[0] == fileName);
-    zipFile.close();
+    _zipFile.close();
     removeTestFiles(QStringList() << fileName);
     curDir.remove(zipName);
 }
@@ -164,14 +164,14 @@ void TestJlCompress::compressFileOptions()
     QCOMPARE(fileList.count(), 1);
     QVERIFY(fileList[0] == fileName);
     // now test the QIODevice* overload of getFileList()
-    QFile zipFile(zipName);
-    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    QFile _zipFile(zipName);
+    QVERIFY(_zipFile.open(QIODevice::ReadOnly));
     fileList = JlCompress::getFileList(zipName);
     QCOMPARE(fileList.count(), 1);
     QVERIFY(fileList[0] == fileName);
     // Hash is computed on the resulting file externally, then hardcoded in the test data
     // This should help detecting any library breakage since we compare against a well-known stable result
-    QString hash = QCryptographicHash::hash(zipFile.readAll(), QCryptographicHash::Sha256).toHex();
+    QString hash = QCryptographicHash::hash(_zipFile.readAll(), QCryptographicHash::Sha256).toHex();
 #if defined Q_OS_WIN
     if (!sha256sum_win.isEmpty()) QCOMPARE(hash, sha256sum_win);
 #elif defined ZLIBNG_VERSION
@@ -179,7 +179,7 @@ void TestJlCompress::compressFileOptions()
 #else
     if (!sha256sum_unix.isEmpty()) QCOMPARE(hash, sha256sum_unix);
 #endif
-    zipFile.close();
+    _zipFile.close();
     removeTestFiles(QStringList() << fileName);
     curDir.remove(zipName);
 }
@@ -403,11 +403,11 @@ void TestJlCompress::compressDirOptions()
     fileList.sort();
     expected.sort();
     QCOMPARE(fileList, expected);
-    QFile zipFile(curDir.absoluteFilePath(zipName));
-    if (!zipFile.open(QIODevice::ReadOnly)) {
+    QFile _zipFile(curDir.absoluteFilePath(zipName));
+    if (!_zipFile.open(QIODevice::ReadOnly)) {
         QFAIL("Can't read output zip file");
     }
-    QString hash = QCryptographicHash::hash(zipFile.readAll(), QCryptographicHash::Sha256).toHex();
+    QString hash = QCryptographicHash::hash(_zipFile.readAll(), QCryptographicHash::Sha256).toHex();
 #ifdef Q_OS_WIN
     if (!sha256sum_win.isEmpty()) QCOMPARE(hash, sha256sum_win);
 #elif defined ZLIBNG_VERSION
@@ -415,7 +415,7 @@ void TestJlCompress::compressDirOptions()
 #else
     if (!sha256sum_unix.isEmpty()) QCOMPARE(hash, sha256sum_unix);
 #endif
-    zipFile.close();
+    _zipFile.close();
     removeTestFiles(fileNames, "compressDir_tmp");
     curDir.remove(zipName);
 }
@@ -478,9 +478,9 @@ void TestJlCompress::extractFile()
     QCOMPARE(destInfo.permissions(), srcInfo.permissions());
     curDir.remove("jlext/jlfile/" + destName);
     // now test the QIODevice* overload
-    QFile zipFile(zipName);
-    QVERIFY(zipFile.open(QIODevice::ReadOnly));
-    QVERIFY(!JlCompress::extractFile(&zipFile, fileToExtract,
+    QFile _zipFile(zipName);
+    QVERIFY(_zipFile.open(QIODevice::ReadOnly));
+    QVERIFY(!JlCompress::extractFile(&_zipFile, fileToExtract,
                 "jlext/jlfile/" + destName).isEmpty());
     destInfo = QFileInfo("jlext/jlfile/" + destName);
     QCOMPARE(destInfo.size(), srcInfo.size());
@@ -494,7 +494,7 @@ void TestJlCompress::extractFile()
         QVERIFY(JlCompress::extractFile(zipName, fileToExtract,
                     "jlext/jlfile/" + destName).isEmpty());
     }
-    zipFile.close();
+    _zipFile.close();
     // Here we either delete the target dir or the dir created in the
     // test above.
     curDir.rmpath("jlext/jlfile/" + destName);
@@ -542,9 +542,9 @@ void TestJlCompress::extractFiles()
         }
     }
     // now test the QIODevice* overload
-    QFile zipFile(zipName);
-    QVERIFY(zipFile.open(QIODevice::ReadOnly));
-    QVERIFY(!JlCompress::extractFiles(&zipFile, filesToExtract,
+    QFile _zipFile(zipName);
+    QVERIFY(_zipFile.open(QIODevice::ReadOnly));
+    QVERIFY(!JlCompress::extractFiles(&_zipFile, filesToExtract,
                 "jlext/jlfiles").isEmpty());
     foreach (QString fileName, filesToExtract) {
         QFileInfo fileInfo("jlext/jlfiles/" + fileName);
@@ -557,7 +557,7 @@ void TestJlCompress::extractFiles()
             curDir.rmpath(dirPath);
         }
     }
-    zipFile.close();
+    _zipFile.close();
     curDir.rmpath("jlext/jlfiles");
     removeTestFiles(fileNames);
     curDir.remove(zipName);
@@ -674,12 +674,12 @@ void TestJlCompress::extractDir()
         QVERIFY(extracted.contains(absolutePath));
     }
     // now test the QIODevice* overload
-    QFile zipFile(zipName);
-    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    QFile _zipFile(zipName);
+    QVERIFY(_zipFile.open(QIODevice::ReadOnly));
     if (fileNameCodec == NULL)
-        extracted = JlCompress::extractDir(&zipFile, extDir);
+        extracted = JlCompress::extractDir(&_zipFile, extDir);
     else // test both overloads here
-        extracted = JlCompress::extractDir(&zipFile, fileNameCodec, extDir);
+        extracted = JlCompress::extractDir(&_zipFile, fileNameCodec, extDir);
     QCOMPARE(extracted.count(), expectedExtracted.count());
     foreach (QString fileName, expectedExtracted) {
         QString fullName = dir + fileName;
@@ -698,7 +698,7 @@ void TestJlCompress::extractDir()
             absolutePath += '/';
         QVERIFY(extracted.contains(absolutePath));
     }
-    zipFile.close();
+    _zipFile.close();
     if (!extDir.isEmpty()) {
         curDir.rmpath(extDir);
     }

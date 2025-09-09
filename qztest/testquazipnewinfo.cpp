@@ -32,7 +32,7 @@ void TestQuaZipNewInfo::setFileNTFSTimes()
         // create
         QuaZip zip(zipName);
         QVERIFY(zip.open(QuaZip::mdCreate));
-        QuaZipFile zipFile(&zip);
+        QuaZipFile _zipFile(&zip);
         QFileInfo fileInfo("tmp/test.txt");
         QDateTime lm = fileInfo.lastModified().toUTC();
         QDateTime lr = fileInfo.lastRead().toUTC();
@@ -51,8 +51,8 @@ void TestQuaZipNewInfo::setFileNTFSTimes()
             * Q_UINT64_C(10000);
         QuaZipNewInfo newInfo("test.txt", "tmp/test.txt");
         newInfo.setFileNTFSTimes("tmp/test.txt");
-        QVERIFY(zipFile.open(QIODevice::WriteOnly, newInfo));
-        zipFile.close();
+        QVERIFY(_zipFile.open(QIODevice::WriteOnly, newInfo));
+        _zipFile.close();
         zip.close();
     }
     {

@@ -46,7 +46,7 @@ void TestQuaZipFileInfo::getNTFSTime()
         // create
         QuaZip zip(zipName);
         QVERIFY(zip.open(QuaZip::mdCreate));
-        QuaZipFile zipFile(&zip);
+        QuaZipFile _zipFile(&zip);
         QDateTime lm = fileInfo.lastModified().toUTC();
         QDateTime lr = fileInfo.lastRead().toUTC();
         QDateTime cr = quazip_ctime(fileInfo).toUTC();
@@ -95,8 +95,8 @@ void TestQuaZipFileInfo::getNTFSTime()
         }
         newInfo.extraLocal = extra;
         newInfo.extraGlobal = extra;
-        QVERIFY(zipFile.open(QIODevice::WriteOnly, newInfo));
-        zipFile.close();
+        QVERIFY(_zipFile.open(QIODevice::WriteOnly, newInfo));
+        _zipFile.close();
         zip.close();
     }
     {
@@ -225,13 +225,13 @@ void TestQuaZipFileInfo::getExtTime()
     QVERIFY(zip.goToFirstFile());
     QuaZipFileInfo64 fileInfo;
     QVERIFY(zip.getCurrentFileInfo(&fileInfo));
-    QuaZipFile zipFile(&zip);
-    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    QuaZipFile _zipFile(&zip);
+    QVERIFY(_zipFile.open(QIODevice::ReadOnly));
     QDateTime actualGlobalModTime = fileInfo.getExtModTime();
-    QDateTime actualLocalModTime = zipFile.getExtModTime();
-    QDateTime actualLocalAcTime = zipFile.getExtAcTime();
-    QDateTime actualLocalCrTime = zipFile.getExtCrTime();
-    zipFile.close();
+    QDateTime actualLocalModTime = _zipFile.getExtModTime();
+    QDateTime actualLocalAcTime = _zipFile.getExtAcTime();
+    QDateTime actualLocalCrTime = _zipFile.getExtCrTime();
+    _zipFile.close();
     QCOMPARE(actualGlobalModTime, expectedModTime);
     QCOMPARE(actualLocalModTime, expectedModTime);
     QCOMPARE(actualLocalAcTime, expectedAcTime);
@@ -250,12 +250,12 @@ void TestQuaZipFileInfo::getExtTime_issue43()
     QuaZipFileInfo64 zipFileInfo;
     QVERIFY(zip.getCurrentFileInfo(&zipFileInfo));
     zip.goToFirstFile();
-    QuaZipFile zipFile(&zip);
-    QVERIFY(zipFile.open(QIODevice::ReadOnly));
+    QuaZipFile _zipFile(&zip);
+    QVERIFY(_zipFile.open(QIODevice::ReadOnly));
     QDateTime actualGlobalModTime = zipFileInfo.getExtModTime();
-    QDateTime actualLocalModTime = zipFile.getExtModTime();
-    QDateTime actualLocalAcTime = zipFile.getExtAcTime();
-    QDateTime actualLocalCrTime = zipFile.getExtCrTime();
+    QDateTime actualLocalModTime = _zipFile.getExtModTime();
+    QDateTime actualLocalAcTime = _zipFile.getExtAcTime();
+    QDateTime actualLocalCrTime = _zipFile.getExtCrTime();
     zip.close();
     QDateTime extModTime(QDate(2019, 7, 2), QTime(15, 43, 47), COMPAT_UTC_TZ);
     QDateTime extAcTime = extModTime;

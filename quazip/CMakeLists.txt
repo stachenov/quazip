@@ -76,6 +76,10 @@ else()
 endif()
 target_link_directories(${QUAZIP_LIB_TARGET_NAME} PUBLIC ${QUAZIP_LBD})
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(${QUAZIP_LIB_TARGET_NAME} PRIVATE -Wshadow -Werror=shadow)
+endif()    
+
 include(CMakePackageConfigHelpers)
 
 if(QUAZIP_INSTALL)

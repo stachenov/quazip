@@ -29,6 +29,10 @@ add_executable(qztest ${QZTEST_SOURCES} qztest.qrc)
 set_target_properties(qztest PROPERTIES AUTORCC ON)
 target_include_directories(qztest PRIVATE ${QUAZIP_INC})
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(qztest PRIVATE -Wshadow -Werror=shadow)
+endif()    
+
 add_dependencies(qztest QuaZip::QuaZip)
 
 target_link_libraries(qztest
