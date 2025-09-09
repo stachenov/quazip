@@ -337,14 +337,14 @@ void TestQuaZipFile::bytesAvailable()
     foreach (QString fileName, fileNames) {
         QFileInfo fileInfo("tmp/" + fileName);
         QVERIFY(testZip.setCurrentFile(fileName));
-        QuaZipFile zipFile(&testZip);
-        QVERIFY(zipFile.open(QIODevice::ReadOnly));
-        QCOMPARE(zipFile.bytesAvailable(), fileInfo.size());
-        QCOMPARE(zipFile.read(1).size(), 1);
-        QCOMPARE(zipFile.bytesAvailable(), fileInfo.size() - 1);
-        QCOMPARE(zipFile.read(fileInfo.size() - 1).size(),
+        QuaZipFile _zipFile(&testZip);
+        QVERIFY(_zipFile.open(QIODevice::ReadOnly));
+        QCOMPARE(_zipFile.bytesAvailable(), fileInfo.size());
+        QCOMPARE(_zipFile.read(1).size(), 1);
+        QCOMPARE(_zipFile.bytesAvailable(), fileInfo.size() - 1);
+        QCOMPARE(_zipFile.read(fileInfo.size() - 1).size(),
                  static_cast<int>(fileInfo.size() - 1));
-        QCOMPARE(zipFile.bytesAvailable(), (qint64)0);
+        QCOMPARE(_zipFile.bytesAvailable(), (qint64)0);
     }
     removeTestFiles(fileNames);
     testZip.close();
@@ -373,14 +373,14 @@ void TestQuaZipFile::atEnd()
     foreach (QString fileName, fileNames) {
         QFileInfo fileInfo("tmp/" + fileName);
         QVERIFY(testZip.setCurrentFile(fileName));
-        QuaZipFile zipFile(&testZip);
-        QVERIFY(zipFile.open(QIODevice::ReadOnly));
-        QCOMPARE(zipFile.atEnd(), false);
-        QCOMPARE(zipFile.read(1).size(), 1);
-        QCOMPARE(zipFile.atEnd(), false);
-        QCOMPARE(zipFile.read(fileInfo.size() - 1).size(),
+        QuaZipFile _zipFile(&testZip);
+        QVERIFY(_zipFile.open(QIODevice::ReadOnly));
+        QCOMPARE(_zipFile.atEnd(), false);
+        QCOMPARE(_zipFile.read(1).size(), 1);
+        QCOMPARE(_zipFile.atEnd(), false);
+        QCOMPARE(_zipFile.read(fileInfo.size() - 1).size(),
                  static_cast<int>(fileInfo.size() - 1));
-        QCOMPARE(zipFile.atEnd(), true);
+        QCOMPARE(_zipFile.atEnd(), true);
     }
     removeTestFiles(fileNames);
     testZip.close();
@@ -409,14 +409,14 @@ void TestQuaZipFile::posRead()
     foreach (QString fileName, fileNames) {
         QFileInfo fileInfo("tmp/" + fileName);
         QVERIFY(testZip.setCurrentFile(fileName));
-        QuaZipFile zipFile(&testZip);
-        QVERIFY(zipFile.open(QIODevice::ReadOnly));
-        QCOMPARE(zipFile.pos(), (qint64)0);
-        QCOMPARE(zipFile.read(1).size(), 1);
-        QCOMPARE(zipFile.pos(), (qint64)1);
-        QCOMPARE(zipFile.read(fileInfo.size() - 1).size(),
+        QuaZipFile _zipFile(&testZip);
+        QVERIFY(_zipFile.open(QIODevice::ReadOnly));
+        QCOMPARE(_zipFile.pos(), (qint64)0);
+        QCOMPARE(_zipFile.read(1).size(), 1);
+        QCOMPARE(_zipFile.pos(), (qint64)1);
+        QCOMPARE(_zipFile.read(fileInfo.size() - 1).size(),
                  static_cast<int>(fileInfo.size() - 1));
-        QCOMPARE(zipFile.pos(), fileInfo.size());
+        QCOMPARE(_zipFile.pos(), fileInfo.size());
     }
     removeTestFiles(fileNames);
     testZip.close();
@@ -439,20 +439,20 @@ void TestQuaZipFile::posWrite()
     QuaZip testZip(zipName);
     QVERIFY(testZip.open(QuaZip::mdCreate));
     foreach (QString fileName, fileNames) {
-        QuaZipFile zipFile(&testZip);
-        QVERIFY(zipFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileName)));
-        QCOMPARE(zipFile.pos(), (qint64)0);
-        zipFile.putChar('0');
-        QCOMPARE(zipFile.pos(), (qint64)1);
+        QuaZipFile _zipFile(&testZip);
+        QVERIFY(_zipFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileName)));
+        QCOMPARE(_zipFile.pos(), (qint64)0);
+        _zipFile.putChar('0');
+        QCOMPARE(_zipFile.pos(), (qint64)1);
         QByteArray buffer(size / 2 - 1, '\0');
         for (int i = 0; i < buffer.size(); ++i)
             buffer[i] = static_cast<char>(i);
-        zipFile.write(buffer);
-        QCOMPARE(zipFile.pos(), qint64(size / 2));
+        _zipFile.write(buffer);
+        QCOMPARE(_zipFile.pos(), qint64(size / 2));
         for (int i = 0; i < size - size / 2; ++i) {
-            zipFile.putChar(static_cast<char>(i));
+            _zipFile.putChar(static_cast<char>(i));
         }
-        QCOMPARE(zipFile.pos(), qint64(size));
+        QCOMPARE(_zipFile.pos(), qint64(size));
     }
     testZip.close();
     curDir.remove(zipName);
@@ -571,11 +571,11 @@ void TestQuaZipFile::setFileAttrs()
 {
     QuaZip testZip("setFileAttrs.zip");
     QVERIFY(testZip.open(QuaZip::mdCreate));
-    QuaZipFile zipFile(&testZip);
+    QuaZipFile _zipFile(&testZip);
     QuaZipNewInfo newInfo("testPerm.txt");
     newInfo.setPermissions(QFile::ReadOwner);
-    QVERIFY(zipFile.open(QIODevice::WriteOnly, newInfo));
-    zipFile.close();
+    QVERIFY(_zipFile.open(QIODevice::WriteOnly, newInfo));
+    _zipFile.close();
     QString fileTestAttr = "testAttr.txt";
     QStringList fileNames;
     fileNames << fileTestAttr;
@@ -583,8 +583,8 @@ void TestQuaZipFile::setFileAttrs()
     newInfo.name = fileTestAttr;
     newInfo.setFileDateTime("tmp/" + fileTestAttr);
     newInfo.setFilePermissions("tmp/" + fileTestAttr);
-    QVERIFY(zipFile.open(QIODevice::WriteOnly, newInfo));
-    zipFile.close();
+    QVERIFY(_zipFile.open(QIODevice::WriteOnly, newInfo));
+    _zipFile.close();
     testZip.close();
     QuaZipFileInfo64 info;
     {

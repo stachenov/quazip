@@ -29,6 +29,8 @@ add_executable(qztest ${QZTEST_SOURCES} qztest.qrc)
 set_target_properties(qztest PROPERTIES AUTORCC ON)
 target_include_directories(qztest PRIVATE ${QUAZIP_INC})
 
+target_compile_options(qztest PRIVATE -Wshadow -Werror=shadow)
+
 add_dependencies(qztest QuaZip::QuaZip)
 
 target_link_libraries(qztest

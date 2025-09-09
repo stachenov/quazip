@@ -83,9 +83,9 @@ void TestJlCpExtract::extract()
         extractedZipSet = extractedZipSet.subtract(zipNames);
         QVERIFY(extractedZipSet.isEmpty());
 
-        for (const QString &zipFile : zipNames) {
-        	qDebug() << "Found ZIP:" << zipFile;
-            QFileInfo zip(target2, zipFile);
+        for (const QString &_zipFile : zipNames) {
+        	qDebug() << "Found ZIP:" << _zipFile;
+            QFileInfo zip(target2, _zipFile);
 			QDir target3(target2.absolutePath()+"/"+zip.completeBaseName());
             // macos-13_qt6.8.2_sharedON_cp/cp/jlsimplefile/
 			JlCompress::extractDir(zip.absoluteFilePath(), target3.absolutePath());

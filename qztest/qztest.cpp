@@ -180,7 +180,7 @@ bool createTestArchive(QuaZip &zip, const QString &zipName,
     int i = 0;
     QDateTime dt1;
     foreach (QString fileName, fileNames) {
-        QuaZipFile zipFile(&zip);
+        QuaZipFile _zipFile(&zip);
         QString filePath = QDir(dir).filePath(fileName);
         QFileInfo fileInfo(filePath);
         QuaZipNewInfo newInfo(fileName, filePath);
@@ -190,7 +190,7 @@ bool createTestArchive(QuaZip &zip, const QString &zipName,
             dt1 = newInfo.dateTime;
         else if (i == 2) // to test identical timestamps
             newInfo.dateTime = dt1;
-        if (!zipFile.open(QIODevice::WriteOnly,
+        if (!_zipFile.open(QIODevice::WriteOnly,
                 newInfo, NULL, 0,
                 fileInfo.isDir() ? 0 : 8)) {
             qWarning("Couldn't open %s in %s", fileName.toUtf8()
@@ -212,7 +212,7 @@ bool createTestArchive(QuaZip &zip, const QString &zipName,
                         .constData());
                     return false;
                 }
-                if (zipFile.write(buf, l) != l) {
+                if (_zipFile.write(buf, l) != l) {
                     qWarning("Couldn't write to %s in %s",
                         filePath.toUtf8().constData(),
                         zipName.toUtf8().constData());
@@ -221,7 +221,7 @@ bool createTestArchive(QuaZip &zip, const QString &zipName,
             }
             file.close();
         }
-        zipFile.close();
+        _zipFile.close();
         ++i;
     }
     zip.setComment(QString("This is the test archive"));
