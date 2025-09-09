@@ -201,6 +201,8 @@ void TestQuaZipFile::zipUnzipLarge()
     QFETCH(QString, zipName);
     QFETCH(QString, fileName);
     QFETCH(long long, size);
+    
+    QString testComment = "ZIP64 large file test comment";
     QFile testFile(zipName);
     if (testFile.exists()) {
         if (!testFile.remove()) {
@@ -214,6 +216,8 @@ void TestQuaZipFile::zipUnzipLarge()
     QuaZip testZip(&testFile);
     testZip.setZip64Enabled(true);
     QVERIFY(testZip.open(QuaZip::mdCreate));
+    
+    testZip.setComment(testComment);
     QFile inFile("tmp/" + fileName);
     if (!inFile.open(QIODevice::ReadOnly)) {
         qDebug("File name: %s", fileName.toUtf8().constData());
@@ -255,6 +259,11 @@ void TestQuaZipFile::zipUnzipLarge()
     // now test unzip
     QuaZip testUnzip(&testFile);
     QVERIFY(testUnzip.open(QuaZip::mdUnzip));
+    
+    // Verify comment is preserved in ZIP64 archive (issue #158)
+    QString readComment = testUnzip.getComment();
+    QCOMPARE(readComment, testComment);
+    
     QVERIFY(testUnzip.goToFirstFile());
 
     QuaZipFileInfo64 info;
