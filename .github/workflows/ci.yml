@@ -69,9 +69,9 @@ jobs:
         shared: [ON, OFF]
         exclude:
           - os_version: 14
-            qt_version: 5.15.2 #Not available on macos-14 due to ARM arch
+            qt_version: 5.15.2 #Not available due to ARM arch
           - os_version: 15
-            qt_version: 5.15.2 #Not available on macos-14 due to ARM arch
+            qt_version: 5.15.2 #Not available due to ARM arch
     uses: ./.github/workflows/reusable.yml
     with:
       runs_on: macos-${{ matrix.os_version }}
