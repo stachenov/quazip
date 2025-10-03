@@ -64,11 +64,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os_version: [14, 13]
-        qt_version: [5.15.2, 6.8.2]
+        os_version: [15, 14, macos-15-intel]
+        qt_version: [6.8.2, 5.15.2]
         shared: [ON, OFF]
         exclude:
           - os_version: 14
+            qt_version: 5.15.2 #Not available on macos-14 due to ARM arch
+          - os_version: 15
             qt_version: 5.15.2 #Not available on macos-14 due to ARM arch
     uses: ./.github/workflows/reusable.yml
     with:
@@ -170,7 +172,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os_version: [ 14 ]
+        os_version: [ 15 ]
         qt_version: [ 6.8.2 ]
         shared: [ ON ]
     uses: ./.github/workflows/reusable.yml
