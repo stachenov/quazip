@@ -64,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os_version: [15, 14, macos-15-intel]
+        os_version: [15, 14, 15-intel]
         qt_version: [6.8.2, 5.15.2]
         shared: [ON, OFF]
         exclude:
