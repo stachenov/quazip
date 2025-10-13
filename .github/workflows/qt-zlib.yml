@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qt_version: [ 5.15.12, 6.4.3, 6.8.2 ]
+        qt_version: [ 5.15.12, 6.4.3, 6.8.4 ]
 
     steps:
       - name: Checkout
@@ -46,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qt_version: [ 6.8.2 ]
+        qt_version: [ 6.8.4 ]
 
     steps:
       - name: Checkout
