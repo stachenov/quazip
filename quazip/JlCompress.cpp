@@ -267,8 +267,8 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files, const 
 
   // Compress files
   QFileInfo info;
-  for (int index = 0; index < files.size(); ++index ) {
-    const QString & file( files.at( index ) );
+  for (int index = 0; index < files.size(); ++index) {
+    const QString & file(files.at(index));
     info.setFile(file);
     if (!info.exists() || !compressFile(&zip,file,info.fileName(), options)) {
       QFile::remove(fileCompressed);
@@ -308,7 +308,8 @@ bool JlCompress::compressDir(QString fileCompressed, QString dir,
   }
 
   // Add the files and subdirectories
-  if (!compressSubDir(&zip,dir,dir,recursive, filters, options)) {
+  // Adds dir contents but not the dir itself
+  if (!compressSubDir(&zip, dir, dir, recursive, filters, options)) {
     QFile::remove(fileCompressed);
     return false;
   }
@@ -344,8 +345,8 @@ bool JlCompress::addFiles(QString fileCompressed, QStringList files, const Optio
 
   // Add files
   QFileInfo info;
-  for (int index = 0; index < files.size(); ++index ) {
-    const QString & file( files.at( index ) );
+  for (int index = 0; index < files.size(); ++index) {
+    const QString & file( files.at( index ));
     info.setFile(file);
     if (!info.exists() || !compressFile(&zip,file,info.fileName(), options)) {
       return false;
@@ -366,14 +367,13 @@ bool JlCompress::addDir(QString fileCompressed, QString dir, bool recursive) {
 }
 
 bool JlCompress::addDir(QString fileCompressed, QString dir,
-                        bool recursive, QDir::Filters filters)
-{
+                        bool recursive, QDir::Filters filters) {
     return addDir(fileCompressed, dir, recursive, filters, Options());
 }
 
 bool JlCompress::addDir(QString fileCompressed, QString dir,
-                        bool recursive, QDir::Filters filters, const Options& options)
-{
+                        bool recursive, QDir::Filters filters, const Options& options) {
+
   // Open existing zip
   QuaZip zip(fileCompressed);
   if(!zip.open(QuaZip::mdAdd)) {
@@ -381,7 +381,7 @@ bool JlCompress::addDir(QString fileCompressed, QString dir,
   }
 
   // Add the files and subdirectories
-  if (!compressSubDir(&zip,dir,dir,recursive, filters, options)) {
+  if (!compressSubDir(&zip, dir, dir, recursive, filters, options)) {
     return false;
   }
 

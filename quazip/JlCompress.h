@@ -220,6 +220,9 @@ public:
 
     /// Add a single file to an existing archive.
     /**
+      The file is stored in the archive using only its filename,
+      without any directory path components.
+
       \param fileCompressed The name of the existing archive.
       \param file The file to add.
       \return true if success, false otherwise.
@@ -228,6 +231,9 @@ public:
 
     /// Add a single file to an existing archive with advanced options.
     /**
+      The file is stored in the archive using only its filename,
+      without any directory path components.
+
       \param fileCompressed The name of the existing archive.
       \param file The file to add.
       \param options Options for fixed file timestamp, compression level, encryption..
@@ -237,6 +243,9 @@ public:
 
     /// Add a list of files to an existing archive.
     /**
+      Each file is stored in the archive using only its filename,
+      without any directory path components.
+
       \param fileCompressed The name of the existing archive.
       \param files The file list to add.
       \return true if success, false otherwise.
@@ -245,6 +254,9 @@ public:
 
     /// Add a list of files to an existing archive.
     /**
+      Each file is stored in the archive using only its filename,
+      without any directory path components.
+
       \param fileCompressed The name of the existing archive.
       \param files The file list to add.
       \param options Options for fixed file timestamp, compression level, encryption..
@@ -256,6 +268,8 @@ public:
     /**
       Does not add hidden files. See addDir(QString, QString, bool, QDir::Filters).
 
+      The relative directory structure is preserved in the archive.
+
       \param fileCompressed The name of the existing archive.
       \param dir The directory to add.
       \param recursive Whether to add the subdirectories as well, or
@@ -263,43 +277,45 @@ public:
       \return true if success, false otherwise.
       */
     static bool addDir(QString fileCompressed, QString dir = QString(), bool recursive = true);
-
+    /// Add a whole directory to an existing archive.
     /**
-     * @brief Add a whole directory to an existing archive.
-     *
-     * Unless filters are specified explicitly, adds
-     * only regular non-hidden files (and subdirs, if @c recursive is true).
-     * If filters are specified, they are OR-combined with
-     * <tt>%QDir::AllDirs|%QDir::NoDotAndDotDot</tt> when searching for dirs
-     * and with <tt>QDir::Files</tt> when searching for files.
-     *
-     * @param fileCompressed path to the existing archive
-     * @param dir path to the directory being added
-     * @param recursive if true, then the subdirectories are added as well
-     * @param filters what to add, filters are applied both when searching
-     * for subdirs (if adding recursively) and when looking for files to add
-     * @return true on success, false otherwise
-     */
+      Unless filters are specified explicitly, adds
+      only regular non-hidden files (and subdirs, if recursive is true).
+      If filters are specified, they are OR-combined with
+      QDir::AllDirs|QDir::NoDotAndDotDot when searching for dirs
+      and with QDir::Files when searching for files.
+
+      The relative directory structure is preserved in the archive.
+
+      \param fileCompressed The name of the existing archive.
+      \param dir The directory to add.
+      \param recursive Whether to add the subdirectories as well, or
+      just regular files.
+      \param filters What to add, filters are applied both when searching
+      for subdirs (if adding recursively) and when looking for files to add.
+      \return true if success, false otherwise.
+      */
     static bool addDir(QString fileCompressed, QString dir,
                        bool recursive, QDir::Filters filters);
-
+    /// Add a whole directory to an existing archive.
     /**
-     * @brief Add a whole directory to an existing archive.
-     *
-     * Unless filters are specified explicitly, adds
-     * only regular non-hidden files (and subdirs, if @c recursive is true).
-     * If filters are specified, they are OR-combined with
-     * <tt>%QDir::AllDirs|%QDir::NoDotAndDotDot</tt> when searching for dirs
-     * and with <tt>QDir::Files</tt> when searching for files.
-     *
-     * @param fileCompressed path to the existing archive
-     * @param dir path to the directory being added
-     * @param recursive if true, then the subdirectories are added as well
-     * @param filters what to add, filters are applied both when searching
-     * for subdirs (if adding recursively) and when looking for files to add
-     * @param options Options for fixed file timestamp, compression level, encryption..
-     * @return true on success, false otherwise
-     */
+      Unless filters are specified explicitly, adds
+      only regular non-hidden files (and subdirs, if recursive is true).
+      If filters are specified, they are OR-combined with
+      QDir::AllDirs|QDir::NoDotAndDotDot when searching for dirs
+      and with QDir::Files when searching for files.
+
+      The relative directory structure is preserved in the archive.
+
+      \param fileCompressed The name of the existing archive.
+      \param dir The directory to add.
+      \param recursive Whether to add the subdirectories as well, or
+      just regular files.
+      \param filters What to add, filters are applied both when searching
+      for subdirs (if adding recursively) and when looking for files to add.
+      \param options Options for fixed file timestamp, compression level, encryption..
+      \return true if success, false otherwise.
+      */
     static bool addDir(QString fileCompressed, QString dir,
                        bool recursive, QDir::Filters filters, const Options& options);
 
