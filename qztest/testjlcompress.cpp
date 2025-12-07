@@ -1175,3 +1175,177 @@ void TestJlCompress::addDirOptions()
     curDir.rmpath("jlext/addDirOptions");
     curDir.remove(zipName);
 }
+
+void TestJlCompress::addFileNonExistingArchive()
+{
+    QDir curDir;
+    QString zipName = "jladdfile-nonexist.zip";
+    QString testFile = "test0.txt";
+
+    // Make sure archive doesn't exist
+    if (curDir.exists(zipName)) {
+        curDir.remove(zipName);
+    }
+
+    // Create test file
+    if (!createTestFiles(QStringList() << testFile)) {
+        QFAIL("Can't create test file");
+    }
+
+    // Try to add file to non-existing archive - should fail
+    QVERIFY(!JlCompress::addFile(zipName, "tmp/" + testFile));
+
+    // Verify archive was NOT created
+    QVERIFY(!QFile::exists(zipName));
+
+    removeTestFiles(QStringList() << testFile);
+}
+
+void TestJlCompress::addFilesCollision()
+{
+    QDir curDir;
+    QString zipName = "jladdfiles-collision.zip";
+    QString initialFile = "test0.txt";
+
+    // Clean up
+    if (curDir.exists(zipName)) {
+        curDir.remove(zipName);
+    }
+
+    // Create test files with same basename but different content
+    curDir.mkdir("tmp");
+    QFile f1("tmp/" + initialFile);
+    if (!f1.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QFAIL("Can't create tmp test file");
+    }
+    f1.write("CONTENT FROM TMP\n");
+    f1.close();
+
+    curDir.mkdir("subdir1");
+    QFile f2("subdir1/" + initialFile);
+    if (!f2.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QFAIL("Can't create subdir1 test file");
+    }
+    f2.write("CONTENT FROM SUBDIR1\n");
+    f2.close();
+
+    curDir.mkdir("subdir2");
+    QFile f3("subdir2/" + initialFile);
+    if (!f3.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QFAIL("Can't create subdir2 test file");
+    }
+    f3.write("CONTENT FROM SUBDIR2\n");
+    f3.close();
+
+    // Create initial archive
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + initialFile));
+
+    // Add files with same basename from different directories
+    // ZIP format allows duplicate filenames - they don't overwrite
+    QStringList filesToAdd;
+    filesToAdd << "subdir1/" + initialFile << "subdir2/" + initialFile;
+    QVERIFY(JlCompress::addFiles(zipName, filesToAdd));
+
+    // Verify archive contains 3 duplicate entries with the same name
+    // ZIP format permits multiple files with identical names
+    QStringList fileList = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList.count(), 3);
+    // All three should have the same name
+    QVERIFY(fileList[0] == initialFile);
+    QVERIFY(fileList[1] == initialFile);
+    QVERIFY(fileList[2] == initialFile);
+
+    // Extract and verify behavior with duplicate filenames
+    QString extractDir = "extracted_collision";
+    curDir.mkdir(extractDir);
+    QStringList extracted = JlCompress::extractDir(zipName, extractDir);
+
+    // extractDir returns all 3 paths (with duplicates)
+    QCOMPARE(extracted.count(), 3);
+
+    // But only 1 file exists on disk (overwrites happened)
+    QStringList extractedFiles = curDir.entryList(QDir::Files, QDir::Name);
+    int filesInExtractDir = QDir(extractDir).entryList(QDir::Files).count();
+    QCOMPARE(filesInExtractDir, 1);
+
+    // The last entry should have won (subdir2 was added last)
+    QFile resultFile(extractDir + "/" + initialFile);
+    QVERIFY(resultFile.open(QIODevice::ReadOnly));
+    QString content = QString::fromUtf8(resultFile.readAll());
+    resultFile.close();
+    // Content should be from subdir2 file (the last one added)
+    QVERIFY(content.contains("CONTENT FROM SUBDIR2"));
+
+    // Cleanup
+    curDir.remove("tmp/" + initialFile);
+    curDir.rmdir("tmp");
+    curDir.remove("subdir1/" + initialFile);
+    curDir.rmdir("subdir1");
+    curDir.remove("subdir2/" + initialFile);
+    curDir.rmdir("subdir2");
+    JlCompress::removeFile(extracted);
+    curDir.rmdir(extractDir);
+    curDir.remove(zipName);
+}
+
+void TestJlCompress::addFilesWithDirectory()
+{
+    QDir curDir;
+    QString zipName = "jladdfiles-withdir.zip";
+    QString initialFile = "test0.txt";
+    QString testFile = "test1.txt";
+    QString testFile2 = "test2.txt";
+
+    // Clean up
+    if (curDir.exists(zipName)) {
+        curDir.remove(zipName);
+    }
+
+    // Create test files and directory
+    if (!createTestFiles(QStringList() << initialFile << testFile << testFile2)) {
+        QFAIL("Can't create test files");
+    }
+    curDir.mkpath("tmp/testdir");
+
+    // Case 1: Directory comes FIRST - should fail immediately, no files added
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + initialFile));
+
+    QStringList filesToAdd1;
+    filesToAdd1 << "tmp/testdir" << "tmp/" + testFile;
+    QVERIFY(!JlCompress::addFiles(zipName, filesToAdd1));
+
+    // Verify testFile was NOT added (clean failure)
+    QStringList fileList1 = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList1.count(), 1);  // Only initialFile
+    QVERIFY(fileList1.contains(initialFile));
+    QVERIFY(!fileList1.contains(testFile));
+
+    // Archive should still be valid
+    QuaZip zip1(zipName);
+    QVERIFY(zip1.open(QuaZip::mdUnzip));
+    zip1.close();
+
+    // Case 2: File comes BEFORE directory - file gets added, then fails (partial corruption)
+    curDir.remove(zipName);
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + initialFile));
+
+    QStringList filesToAdd2;
+    filesToAdd2 << "tmp/" + testFile << "tmp/testdir" << "tmp/" + testFile2;
+    QVERIFY(!JlCompress::addFiles(zipName, filesToAdd2));
+
+    // Verify testFile WAS added but testFile2 was NOT (partial corruption)
+    QStringList fileList2 = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList2.count(), 2);  // initialFile + testFile
+    QVERIFY(fileList2.contains(initialFile));
+    QVERIFY(fileList2.contains(testFile));
+    QVERIFY(!fileList2.contains(testFile2));  // This was after the directory
+
+    // Archive should still be valid (closed properly)
+    QuaZip zip2(zipName);
+    QVERIFY(zip2.open(QuaZip::mdUnzip));
+    zip2.close();
+
+    removeTestFiles(QStringList() << initialFile << testFile << testFile2);
+    curDir.rmpath("tmp/testdir");
+    curDir.remove(zipName);
+}

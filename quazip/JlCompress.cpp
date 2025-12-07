@@ -337,6 +337,11 @@ bool JlCompress::addFiles(QString fileCompressed, QStringList files) {
 }
 
 bool JlCompress::addFiles(QString fileCompressed, QStringList files, const Options& options) {
+  // Verify archive exists
+  if (!QFile::exists(fileCompressed)) {
+    return false;
+  }
+
   // Open existing zip
   QuaZip zip(fileCompressed);
   if(!zip.open(QuaZip::mdAdd)) {
@@ -346,9 +351,10 @@ bool JlCompress::addFiles(QString fileCompressed, QStringList files, const Optio
   // Add files
   QFileInfo info;
   for (int index = 0; index < files.size(); ++index) {
-    const QString & file( files.at( index ));
+    const QString& file(files.at( index));
     info.setFile(file);
-    if (!info.exists() || !compressFile(&zip,file,info.fileName(), options)) {
+    if (!info.exists() || !info.isFile() || !compressFile(&zip,file,info.fileName(), options)) {
+      zip.close();
       return false;
     }
   }
@@ -373,6 +379,10 @@ bool JlCompress::addDir(QString fileCompressed, QString dir,
 
 bool JlCompress::addDir(QString fileCompressed, QString dir,
                         bool recursive, QDir::Filters filters, const Options& options) {
+  // Verify archive exists
+  if (!QFile::exists(fileCompressed)) {
+    return false;
+  }
 
   // Open existing zip
   QuaZip zip(fileCompressed);
@@ -382,6 +392,7 @@ bool JlCompress::addDir(QString fileCompressed, QString dir,
 
   // Add the files and subdirectories
   if (!compressSubDir(&zip, dir, dir, recursive, filters, options)) {
+    zip.close();
     return false;
   }
 

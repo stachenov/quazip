@@ -68,6 +68,9 @@ private slots:
     void addDir();
     void addDirOptions_data();
     void addDirOptions();
+    void addFileNonExistingArchive();
+    void addFilesCollision();
+    void addFilesWithDirectory();
 #ifdef QUAZIP_SYMLINK_TEST
     void symlinkHandling();
 #endif

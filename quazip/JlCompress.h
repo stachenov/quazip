@@ -246,6 +246,13 @@ public:
       Each file is stored in the archive using only its filename,
       without any directory path components.
 
+      \warning The archive must already exist, or the operation will fail.
+      \warning Only regular files are accepted. Directories and symlinks will
+      cause the operation to fail.
+      \warning Files with the same basename will create duplicate entries in the
+      archive since only the filename is used. ZIP format permits multiple files
+      with identical names.
+
       \param fileCompressed The name of the existing archive.
       \param files The file list to add.
       \return true if success, false otherwise.
@@ -256,6 +263,15 @@ public:
     /**
       Each file is stored in the archive using only its filename,
       without any directory path components.
+
+      \warning The archive must already exist, or the operation will fail.
+      \warning Only regular files are accepted. Directories and symlinks will
+      cause the operation to fail.
+      \warning Files with the same basename will create duplicate entries in the
+      archive since only the filename is used. ZIP format permits multiple files
+      with identical names.
+      \warning On failure, the archive may be left in a partially modified state
+      with some files already added.
 
       \param fileCompressed The name of the existing archive.
       \param files The file list to add.
@@ -306,6 +322,10 @@ public:
       and with QDir::Files when searching for files.
 
       The relative directory structure is preserved in the archive.
+
+      \warning The archive must already exist, or the operation will fail.
+      \warning On failure, the archive may be left in a partially modified state
+      with some files/directories already added.
 
       \param fileCompressed The name of the existing archive.
       \param dir The directory to add.
