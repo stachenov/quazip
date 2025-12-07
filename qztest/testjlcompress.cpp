@@ -765,7 +765,7 @@ void TestJlCompress::symlinkExtractionOnWindows()
     zipWithSymlinks.close();
     QCOMPARE(zipWithSymlinks.getZipError(), ZIP_OK);
     // The best we can do here is to test that extraction works at all,
-    // because it's hard to say what should be the “correct” result when
+    // because it's hard to say what should be the "correct" result when
     // trying to extract symbolic links on Windows.
     QVERIFY(!JlCompress::extractDir("withSymlinks.zip", "symlinksOnWindows").isEmpty());
     QDir curDir;
@@ -774,3 +774,404 @@ void TestJlCompress::symlinkExtractionOnWindows()
 }
 
 #endif
+
+void TestJlCompress::addFile_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QString>("initialFile");
+    QTest::addColumn<QString>("fileToAdd");
+    QTest::newRow("simple") << "jladdfile.zip" << "test0.txt" << "test1.txt";
+}
+
+void TestJlCompress::addFile()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QString, initialFile);
+    QFETCH(QString, fileToAdd);
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    if (!createTestFiles(QStringList() << initialFile << fileToAdd)) {
+        QFAIL("Can't create test files");
+    }
+    // Create initial archive with one file
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + initialFile));
+    // Verify initial archive has 1 file
+    QStringList fileList = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList.count(), 1);
+    QVERIFY(fileList[0] == initialFile);
+
+    // Add another file to existing archive
+    QVERIFY(JlCompress::addFile(zipName, "tmp/" + fileToAdd));
+
+    // Verify archive now has 2 files
+    fileList = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList.count(), 2);
+    QVERIFY(fileList.contains(initialFile));
+    QVERIFY(fileList.contains(fileToAdd));
+
+    removeTestFiles(QStringList() << initialFile << fileToAdd);
+    curDir.remove(zipName);
+}
+
+void TestJlCompress::addFileOptions_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QString>("initialFile");
+    QTest::addColumn<QString>("fileToAdd");
+    QTest::addColumn<QDateTime>("dateTime");
+    QTest::addColumn<JlCompress::Options::CompressionStrategy>("strategy");
+    QTest::newRow("simple") << "jladdfileoptions.zip"
+                            << "test0.txt"
+                            << "test1.txt"
+                            << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                            << JlCompress::Options::Default;
+}
+
+void TestJlCompress::addFileOptions()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QString, initialFile);
+    QFETCH(QString, fileToAdd);
+    QFETCH(QDateTime, dateTime);
+    QFETCH(JlCompress::Options::CompressionStrategy, strategy);
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    if (!createTestFiles(QStringList() << initialFile << fileToAdd)) {
+        QFAIL("Can't create test files");
+    }
+
+    // Create initial archive with one file
+    const JlCompress::Options options(dateTime, strategy);
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + initialFile, options));
+
+    // Add another file with options
+    QVERIFY(JlCompress::addFile(zipName, "tmp/" + fileToAdd, options));
+
+    // Verify archive has 2 files
+    QStringList fileList = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList.count(), 2);
+    QVERIFY(fileList.contains(initialFile));
+    QVERIFY(fileList.contains(fileToAdd));
+
+    removeTestFiles(QStringList() << initialFile << fileToAdd);
+    curDir.remove(zipName);
+}
+
+void TestJlCompress::addFiles_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QString>("initialFile");
+    QTest::addColumn<QStringList>("filesToAdd");
+    QTest::newRow("simple") << "jladdfiles.zip"
+                            << "test0.txt"
+                            << (QStringList() << "test1.txt" << "test2.txt");
+    QTest::newRow("subdirs") << "jladdfiles-subdirs.zip"
+                             << "test0.txt"
+                             << (QStringList() << "subdir1/test1.txt" << "subdir2/test2.txt");
+}
+
+void TestJlCompress::addFiles()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QString, initialFile);
+    QFETCH(QStringList, filesToAdd);
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    QStringList allFiles = QStringList() << initialFile;
+    allFiles.append(filesToAdd);
+    if (!createTestFiles(allFiles)) {
+        QFAIL("Can't create test files");
+    }
+
+    // Create initial archive with one file
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + initialFile));
+
+    // Prepare full paths for files to add
+    QStringList realNamesList;
+    QStringList shortNamesList;
+    foreach (QString fileName, filesToAdd) {
+        QString realName = "tmp/" + fileName;
+        realNamesList += realName;
+        shortNamesList += QFileInfo(realName).fileName();
+    }
+
+    // Add files to existing archive
+    QVERIFY(JlCompress::addFiles(zipName, realNamesList));
+
+    // Verify archive has all files
+    QStringList fileList = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList.count(), 1 + shortNamesList.count());
+    QVERIFY(fileList.contains(initialFile));
+    foreach (QString fileName, shortNamesList) {
+        QVERIFY(fileList.contains(fileName));
+    }
+
+    removeTestFiles(allFiles);
+    curDir.remove(zipName);
+}
+
+void TestJlCompress::addFilesOptions_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::newRow("multiple batches") << "jladdfilesoptions.zip";
+}
+
+void TestJlCompress::addFilesOptions()
+{
+    QFETCH(QString, zipName);
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+
+    QStringList allFiles;
+    allFiles << "test0.txt" << "test1.txt" << "test2.txt" << "test3.txt" << "test4.txt" << "test5.txt";
+    if (!createTestFiles(allFiles)) {
+        QFAIL("Can't create test files");
+    }
+
+    // Create initial archive with first file using Default compression
+    const JlCompress::Options defaultOptions(QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ),
+                                              JlCompress::Options::Default);
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/test0.txt", defaultOptions));
+
+    // Add batch 1 (2 files) with Storage compression
+    const JlCompress::Options storageOptions(QDateTime(QDate(2024, 9, 20), QTime(12, 0, 0), COMPAT_UTC_TZ),
+                                              JlCompress::Options::Storage);
+    QStringList batch1;
+    batch1 << "tmp/test1.txt" << "tmp/test2.txt";
+    QVERIFY(JlCompress::addFiles(zipName, batch1, storageOptions));
+
+    // Add batch 2 (2 files) with Best compression
+    const JlCompress::Options bestOptions(QDateTime(QDate(2024, 9, 21), QTime(15, 30, 0), COMPAT_UTC_TZ),
+                                           JlCompress::Options::Best);
+    QStringList batch2;
+    batch2 << "tmp/test3.txt" << "tmp/test4.txt";
+    QVERIFY(JlCompress::addFiles(zipName, batch2, bestOptions));
+
+    // Add batch 3 (1 file) with Fastest compression
+    const JlCompress::Options fastestOptions(QDateTime(QDate(2024, 9, 22), QTime(18, 0, 0), COMPAT_UTC_TZ),
+                                              JlCompress::Options::Fastest);
+    QStringList batch3;
+    batch3 << "tmp/test5.txt";
+    QVERIFY(JlCompress::addFiles(zipName, batch3, fastestOptions));
+
+    // Verify archive has all 6 files
+    QStringList fileList = JlCompress::getFileList(zipName);
+    QCOMPARE(fileList.count(), 6);
+    foreach (QString fileName, allFiles) {
+        QVERIFY(fileList.contains(fileName));
+    }
+
+    // Extract all files and verify they match originals
+    curDir.mkpath("jlext/addFilesOptions");
+    QStringList extracted = JlCompress::extractDir(zipName, "jlext/addFilesOptions");
+    QCOMPARE(extracted.count(), 6);
+
+    // Verify each extracted file matches the original
+    foreach (QString fileName, allFiles) {
+        QFile original("tmp/" + fileName);
+        QFile extractedFile(curDir.absoluteFilePath("jlext/addFilesOptions/" + fileName));
+        QVERIFY(original.open(QIODevice::ReadOnly));
+        QVERIFY(extractedFile.open(QIODevice::ReadOnly));
+        QCOMPARE(extractedFile.readAll(), original.readAll());
+        original.close();
+        extractedFile.close();
+    }
+
+    removeTestFiles(allFiles);
+    removeTestFiles(allFiles, "jlext/addFilesOptions");
+    curDir.rmpath("jlext/addFilesOptions");
+    curDir.remove(zipName);
+}
+
+void TestJlCompress::addDir_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QString>("initialFile");
+    QTest::addColumn<QStringList>("dirFiles");
+    QTest::addColumn<bool>("recursive");
+    QTest::addColumn<QStringList>("expectedAdded");
+    QTest::addColumn<QStringList>("expectedNotAdded");
+
+    // Non-recursive: should only add top-level files, NOT subdirectories
+    QTest::newRow("non-recursive") << "jladddir-nonrecursive.zip"
+                                   << "test0.txt"
+                                   << (QStringList() << "toplevel1.txt" << "toplevel2.txt"
+                                       << "subdir1/nested1.txt" << "subdir2/nested2.txt")
+                                   << false  // recursive = false
+                                   << (QStringList() << "toplevel1.txt" << "toplevel2.txt")
+                                   << (QStringList() << "subdir1/" << "subdir1/nested1.txt"
+                                       << "subdir2/" << "subdir2/nested2.txt");
+
+    // Recursive: should add ALL files and directories
+    QTest::newRow("recursive") << "jladddir-recursive.zip"
+                               << "test0.txt"
+                               << (QStringList() << "toplevel.txt" << "dir1/file1.txt"
+                                   << "dir1/subdir/file2.txt" << "dir2/file3.txt")
+                               << true  // recursive = true
+                               << (QStringList() << "toplevel.txt"
+                                   << "dir1/" << "dir1/file1.txt"
+                                   << "dir1/subdir/" << "dir1/subdir/file2.txt"
+                                   << "dir2/" << "dir2/file3.txt")
+                               << (QStringList());  // Nothing should be excluded
+}
+
+void TestJlCompress::addDir()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QString, initialFile);
+    QFETCH(QStringList, dirFiles);
+    QFETCH(bool, recursive);
+    QFETCH(QStringList, expectedAdded);
+    QFETCH(QStringList, expectedNotAdded);
+
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    if (!createTestFiles(QStringList() << initialFile)) {
+        QFAIL("Can't create initial test file");
+    }
+    if (!createTestFiles(dirFiles, -1, "addDir_tmp")) {
+        QFAIL("Can't create test directory files");
+    }
+
+    // Create initial archive with one file
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + initialFile));
+
+    // Add directory to existing archive with specified recursive flag
+    QVERIFY(JlCompress::addDir(zipName, "addDir_tmp", recursive));
+
+    // Verify archive has initial file plus all expected added files
+    QStringList fileList = JlCompress::getFileList(zipName);
+    QVERIFY(fileList.contains(initialFile));
+
+    foreach (QString fileName, expectedAdded) {
+        if (!fileList.contains(fileName)) {
+            qDebug() << "Missing expected file:" << fileName;
+        }
+        QVERIFY(fileList.contains(fileName));
+    }
+
+    // Verify that files that should NOT be added are indeed not present
+    foreach (QString fileName, expectedNotAdded) {
+        if (fileList.contains(fileName)) {
+            qDebug() << "Unexpectedly found file:" << fileName;
+        }
+        QVERIFY(!fileList.contains(fileName));
+    }
+
+    removeTestFiles(QStringList() << initialFile);
+    removeTestFiles(dirFiles, "addDir_tmp");
+    curDir.remove(zipName);
+}
+
+void TestJlCompress::addDirOptions_data()
+{
+    QTest::addColumn<QString>("zipName");
+    QTest::addColumn<QString>("initialFile");
+    QTest::addColumn<QStringList>("dirFiles");
+    QTest::addColumn<QStringList>("expectedAdded");
+    QTest::addColumn<QDateTime>("dateTime");
+    QTest::addColumn<JlCompress::Options::CompressionStrategy>("strategy");
+    QTest::newRow("simple") << "jladddir-options.zip"
+                            << "test0.txt"
+                            << (QStringList() << "addtest1.txt" << "adddir1/addtest2.txt")
+                            << (QStringList() << "addtest1.txt"
+                                << "adddir1/" << "adddir1/addtest2.txt")
+                            << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                            << JlCompress::Options::Default;
+    QTest::newRow("empty dir") << "jladddir-empty.zip"
+                               << "test0.txt"
+                               << (QStringList() << "empty1/" << "parent/empty2/")
+                               << (QStringList() << "empty1/" << "parent/"
+                                   << "parent/empty2/")
+                               << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                               << JlCompress::Options::Default;
+}
+
+void TestJlCompress::addDirOptions()
+{
+    QFETCH(QString, zipName);
+    QFETCH(QString, initialFile);
+    QFETCH(QStringList, dirFiles);
+    QFETCH(QStringList, expectedAdded);
+    QFETCH(QDateTime, dateTime);
+    QFETCH(JlCompress::Options::CompressionStrategy, strategy);
+    QDir curDir;
+    if (curDir.exists(zipName)) {
+        if (!curDir.remove(zipName))
+            QFAIL("Can't remove zip file");
+    }
+    if (!createTestFiles(QStringList() << initialFile)) {
+        QFAIL("Can't create initial test file");
+    }
+    if (!createTestFiles(dirFiles, -1, "addDir_tmp")) {
+        QFAIL("Can't create test directory files");
+    }
+
+    // Create initial archive with one file
+    const JlCompress::Options options(dateTime, strategy);
+    QVERIFY(JlCompress::compressFile(zipName, "tmp/" + initialFile, options));
+
+    // Add directory with options
+    QVERIFY(JlCompress::addDir(zipName, "addDir_tmp", true, QDir::Filters(), options));
+
+    // Verify archive has initial file plus all added files
+    QStringList fileList = JlCompress::getFileList(zipName);
+    QVERIFY(fileList.contains(initialFile));
+    foreach (QString fileName, expectedAdded) {
+        QVERIFY(fileList.contains(fileName));
+    }
+
+    // Extract and verify
+    curDir.mkpath("jlext/addDirOptions");
+    QStringList extracted = JlCompress::extractDir(zipName, "jlext/addDirOptions");
+    QVERIFY(!extracted.isEmpty());
+
+    // Verify initial file was extracted
+    QVERIFY(QFile::exists("jlext/addDirOptions/" + initialFile));
+
+    // Verify all expected files/directories were extracted
+    foreach (QString fileName, expectedAdded) {
+        QString extractedPath = "jlext/addDirOptions/" + fileName;
+        QFileInfo extractedInfo(extractedPath);
+
+        if (fileName.endsWith("/")) {
+            // It's a directory - verify it exists as a directory
+            QVERIFY2(extractedInfo.exists(), qPrintable("Directory not found: " + extractedPath));
+            QVERIFY2(extractedInfo.isDir(), qPrintable("Not a directory: " + extractedPath));
+
+            // If directory name contains "empty", verify it's actually empty
+            if (fileName.contains("empty", Qt::CaseInsensitive)) {
+                QDir extractedDir(extractedPath);
+                QStringList entries = extractedDir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
+                QVERIFY2(entries.isEmpty(),
+                        qPrintable("Directory should be empty but contains: " + entries.join(", ") + " in " + extractedPath));
+            }
+        } else {
+            // It's a file - verify it exists and content matches
+            QVERIFY2(extractedInfo.exists(), qPrintable("File not found: " + extractedPath));
+            QVERIFY2(extractedInfo.isFile(), qPrintable("Not a file: " + extractedPath));
+        }
+    }
+
+    removeTestFiles(QStringList() << initialFile);
+    removeTestFiles(dirFiles, "addDir_tmp");
+    removeTestFiles(QStringList() << initialFile, "jlext/addDirOptions");
+    removeTestFiles(dirFiles, "jlext/addDirOptions");
+    curDir.rmpath("jlext/addDirOptions");
+    curDir.remove(zipName);
+}

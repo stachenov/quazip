@@ -323,6 +323,77 @@ bool JlCompress::compressDir(QString fileCompressed, QString dir,
   return true;
 }
 
+bool JlCompress::addFile(QString fileCompressed, QString file) {
+  return addFiles(fileCompressed, QStringList() << file);
+}
+
+bool JlCompress::addFile(QString fileCompressed, QString file, const Options& options) {
+    return addFiles(fileCompressed, QStringList() << file, options);
+}
+
+bool JlCompress::addFiles(QString fileCompressed, QStringList files) {
+    return addFiles(fileCompressed, files, Options());
+}
+
+bool JlCompress::addFiles(QString fileCompressed, QStringList files, const Options& options) {
+  // Open existing zip
+  QuaZip zip(fileCompressed);
+  if(!zip.open(QuaZip::mdAdd)) {
+    return false;
+  }
+
+  // Add files
+  QFileInfo info;
+  for (int index = 0; index < files.size(); ++index ) {
+    const QString & file( files.at( index ) );
+    info.setFile(file);
+    if (!info.exists() || !compressFile(&zip,file,info.fileName(), options)) {
+      return false;
+    }
+  }
+
+  // Close zip
+  zip.close();
+  if(zip.getZipError()!=0) {
+    return false;
+  }
+
+  return true;
+}
+
+bool JlCompress::addDir(QString fileCompressed, QString dir, bool recursive) {
+    return addDir(fileCompressed, dir, recursive, QDir::Filters());
+}
+
+bool JlCompress::addDir(QString fileCompressed, QString dir,
+                        bool recursive, QDir::Filters filters)
+{
+    return addDir(fileCompressed, dir, recursive, filters, Options());
+}
+
+bool JlCompress::addDir(QString fileCompressed, QString dir,
+                        bool recursive, QDir::Filters filters, const Options& options)
+{
+  // Open existing zip
+  QuaZip zip(fileCompressed);
+  if(!zip.open(QuaZip::mdAdd)) {
+    return false;
+  }
+
+  // Add the files and subdirectories
+  if (!compressSubDir(&zip,dir,dir,recursive, filters, options)) {
+    return false;
+  }
+
+  // Close zip
+  zip.close();
+  if(zip.getZipError()!=0) {
+    return false;
+  }
+
+  return true;
+}
+
 QString JlCompress::extractFile(QString fileCompressed, QString fileName, QString fileDest) {
     // Open zip
     QuaZip zip(fileCompressed);

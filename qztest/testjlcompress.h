@@ -56,6 +56,18 @@ private slots:
     void extractDir_data();
     void extractDir();
     void zeroPermissions();
+    void addFile_data();
+    void addFile();
+    void addFileOptions_data();
+    void addFileOptions();
+    void addFiles_data();
+    void addFiles();
+    void addFilesOptions_data();
+    void addFilesOptions();
+    void addDir_data();
+    void addDir();
+    void addDirOptions_data();
+    void addDirOptions();
 #ifdef QUAZIP_SYMLINK_TEST
     void symlinkHandling();
 #endif
