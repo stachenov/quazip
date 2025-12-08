@@ -291,6 +291,7 @@ public:
       \return true if success, false otherwise.
       */
     static bool addDir(QString fileCompressed, QString dir = QString(), bool recursive = true);
+
     /// Add a whole directory to an existing archive.
     /**
       Unless filters are specified explicitly, adds
@@ -311,6 +312,7 @@ public:
       */
     static bool addDir(QString fileCompressed, QString dir,
                        bool recursive, QDir::Filters filters);
+
     /// Add a whole directory to an existing archive.
     /**
       Unless filters are specified explicitly, adds
