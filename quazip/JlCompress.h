@@ -247,8 +247,7 @@ public:
       without any directory path components.
 
       \warning The archive must already exist, or the operation will fail.
-      \warning Only regular files are accepted. Directories and symlinks will
-      cause the operation to fail.
+      \warning Directories will cause the operation to fail.
       \warning Files with the same basename will create duplicate entries in the
       archive since only the filename is used. ZIP format permits multiple files
       with identical names.
@@ -265,8 +264,7 @@ public:
       without any directory path components.
 
       \warning The archive must already exist, or the operation will fail.
-      \warning Only regular files are accepted. Directories and symlinks will
-      cause the operation to fail.
+      \warning Directories will cause the operation to fail.
       \warning Files with the same basename will create duplicate entries in the
       archive since only the filename is used. ZIP format permits multiple files
       with identical names.

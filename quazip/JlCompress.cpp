@@ -350,9 +350,9 @@ bool JlCompress::addFiles(QString fileCompressed, QStringList files, const Optio
 
   // Add files
   QFileInfo info;
-  for (int index = 0; index < files.size(); ++index) {
-    const QString& file(files.at( index));
+  for (const QString& file : files) {
     info.setFile(file);
+    // Check isFile() to reject directories (but accept symlinks, since isFile() follows symlinks)
     if (!info.exists() || !info.isFile() || !compressFile(&zip,file,info.fileName(), options)) {
       zip.close();
       return false;
@@ -361,11 +361,7 @@ bool JlCompress::addFiles(QString fileCompressed, QStringList files, const Optio
 
   // Close zip
   zip.close();
-  if(zip.getZipError()!=0) {
-    return false;
-  }
-
-  return true;
+  return zip.getZipError() == 0;
 }
 
 bool JlCompress::addDir(QString fileCompressed, QString dir, bool recursive) {
@@ -398,11 +394,7 @@ bool JlCompress::addDir(QString fileCompressed, QString dir,
 
   // Close zip
   zip.close();
-  if(zip.getZipError()!=0) {
-    return false;
-  }
-
-  return true;
+  return zip.getZipError() == 0;
 }
 
 QString JlCompress::extractFile(QString fileCompressed, QString fileName, QString fileDest) {

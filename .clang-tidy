@@ -5,6 +5,7 @@ Checks: >
   # Best practices and maintainability
   cppcoreguidelines-*,
   modernize-*,
+  -modernize-use-trailing-return-type,
   performance-*,
   readability-*,
 
