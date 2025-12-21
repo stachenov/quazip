@@ -30,6 +30,8 @@ See COPYING file for the full LGPL text.
 
 #include <QuaCompress.h>
 
+Q_DECLARE_METATYPE(JlCompress::Options::CompressionStrategy)
+
 // Test data for fluent API chaining
 void TestQuaCompress::fluentApiChaining_data()
 {
