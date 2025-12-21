@@ -101,7 +101,7 @@ void TestJlCompress::compressFileOptions_data()
                             << "cb1847dff1a5c33a805efde2558fc74024ad4c64c8607f8b12903e4d92385955";
     QTest::newRow("simple-utf8") << "jlsimplefile-utf8.zip"
                             << QString::fromUtf8("ありがとう。.txt")
-                            << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
+                            << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                             << JlCompress::Options::Default
                             << true
                             << QByteArray()
@@ -110,7 +110,7 @@ void TestJlCompress::compressFileOptions_data()
                             << "";
     QTest::newRow("simple-utf8-bad") << "jlsimplefile-utf8-bad.zip"
                                  << QString::fromUtf8("ありがとう。.txt")
-                                 << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), QTimeZone::utc())
+                                 << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                  << JlCompress::Options::Default
                                  << false
                                  << QByteArray()
