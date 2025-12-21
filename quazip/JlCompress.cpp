@@ -436,8 +436,8 @@ QString JlCompress::extractFile(QuaZip &zip, QString fileName, QString fileDest)
     // Extract file
     if (fileDest.isEmpty())
         fileDest = fileName;
-    auto [success, skipped] = extractFile(&zip, fileName, fileDest);
-    if (!success) {
+    std::pair<bool, bool> result = extractFile(&zip, fileName, fileDest);
+    if (!result.first) {
         return QString();
     }
 
@@ -470,12 +470,12 @@ QStringList JlCompress::extractFiles(QuaZip &zip, const QStringList &files, cons
     QStringList extracted;
     for (int i=0; i<files.count(); i++) {
         QString absPath = QDir(dir).absoluteFilePath(files.at(i));
-        auto [success, skipped] = extractFile(&zip, files.at(i), absPath, absCleanDir);
-        if (!success) {
+        std::pair<bool, bool> result = extractFile(&zip, files.at(i), absPath, absCleanDir);
+        if (!result.first) {
             removeFile(extracted);
             return QStringList();
         }
-        if (!skipped) {
+        if (!result.second) {
             extracted.append(absPath);
         }
     }
@@ -519,12 +519,12 @@ QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
         QString name = zip.getCurrentFileName();
         QString absFilePath = directory.absoluteFilePath(name);
         // Path traversal validation is done inside extractFile
-        auto [success, skipped] = extractFile(&zip, QLatin1String(""), absFilePath, absCleanDir);
-        if (!success) {
+        std::pair<bool, bool> result = extractFile(&zip, QLatin1String(""), absFilePath, absCleanDir);
+        if (!result.first) {
             removeFile(extracted);
             return QStringList();
         }
-        if (!skipped) {
+        if (!result.second) {
             extracted.append(absFilePath);
         }
     } while (zip.goToNextFile());
@@ -613,8 +613,8 @@ QString JlCompress::extractFile(QString fileCompressed, QString fileName, QStrin
     }
     if (fileDest.isEmpty())
         fileDest = fileName;
-    auto [success, skipped] = extractFile(&zip, fileName, fileDest, password);
-    if (!success) {
+    std::pair<bool, bool> result = extractFile(&zip, fileName, fileDest, password);
+    if (!result.first) {
         return QString();
     }
     zip.close();
@@ -639,12 +639,12 @@ QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, 
     QStringList extracted;
     for (int i=0; i<files.count(); i++) {
         QString absPath = QDir(dir).absoluteFilePath(files.at(i));
-        auto [success, skipped] = extractFile(&zip, files.at(i), absPath, password, absCleanDir);
-        if (!success) {
+        std::pair<bool, bool> result = extractFile(&zip, files.at(i), absPath, password, absCleanDir);
+        if (!result.first) {
             removeFile(extracted);
             return QStringList();
         }
-        if (!skipped) {
+        if (!result.second) {
             extracted.append(absPath);
         }
     }
@@ -672,12 +672,12 @@ QStringList JlCompress::extractDir(QString fileCompressed, QString dir, const QB
         QString name = zip.getCurrentFileName();
         QString absFilePath = directory.absoluteFilePath(name);
         // Path traversal validation is done inside extractFile
-        auto [success, skipped] = extractFile(&zip, "", absFilePath, password, absCleanDir);
-        if (!success) {
+        std::pair<bool, bool> result = extractFile(&zip, "", absFilePath, password, absCleanDir);
+        if (!result.first) {
             removeFile(extracted);
             return QStringList();
         }
-        if (!skipped) {
+        if (!result.second) {
             extracted.append(absFilePath);
         }
     } while (zip.goToNextFile());
