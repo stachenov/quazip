@@ -4,6 +4,7 @@ set(QZTEST_SOURCES
         testjlcp_compress.h
         testjlcp_extract.h
         testquachecksum32.h
+        testquacompress.h
         testquagzipfile.h
         testquaziodevice.h
         testquazip.h
@@ -16,6 +17,7 @@ set(QZTEST_SOURCES
         testjlcp_compress.cpp
         testjlcp_extract.cpp
         testquachecksum32.cpp
+        testquacompress.cpp
         testquagzipfile.cpp
         testquaziodevice.cpp
         testquazip.cpp

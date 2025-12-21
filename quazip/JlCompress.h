@@ -82,8 +82,9 @@ public:
 
         explicit Options(const QDateTime& dateTime = QDateTime(),
                          const CompressionStrategy& strategy = Default,
-                         bool utf8Enabled = false)
-            : m_dateTime(dateTime), m_compressionStrategy(strategy), m_utf8Enabled(utf8Enabled) {}
+                         bool utf8Enabled = false,
+                         const QByteArray& password = QByteArray())
+            : m_dateTime(dateTime), m_compressionStrategy(strategy), m_utf8Enabled(utf8Enabled), m_password(password) {}
 
         QDateTime getDateTime() const {
             return m_dateTime;
@@ -117,6 +118,14 @@ public:
             m_utf8Enabled = utf8Enabled;
         }
 
+        QByteArray getPassword() const {
+            return m_password;
+        }
+
+        void setPassword(const QByteArray &password) {
+            m_password = password;
+        }
+
     private:
         // If set, used as last modified on file inside the archive.
         // If compressing a directory, used for all files.
@@ -125,10 +134,28 @@ public:
         CompressionStrategy m_compressionStrategy;
 
         /* Enables UTF-8 support for filenames and comments.
-         * Must be set before QuaZip::open so only applicable to methods that open the zip internally.
-         * For methods which receive QuaZip* zip as an argument, you should set this flag before calling open on QuaZip object.
+         *
+         * For methods that create new archives (compressFile, compressFiles, compressDir):
+         *   - This flag determines the encoding for all files in the new archive.
+         *
+         * For methods that add to existing archives (addFile, addFiles, addDir):
+         *   - This flag MUST match the encoding already used in the existing archive.
+         *   - QuaZip does not auto-detect the existing encoding.
+         *   - Mismatched encoding will create an inconsistent archive.
+         *
+         * For methods that receive QuaZip* zip as an argument:
+         *   - This flag is ignored (zip is already opened).
+         *   - You must call setUtf8Enabled() on the QuaZip object before open().
          * */
         bool m_utf8Enabled;
+
+        /* Password for encryption/decryption.
+         *
+         * If set during compression, the files will be encrypted with this password.
+         * If set during extraction, this password will be used to decrypt the files.
+         * Empty password means no encryption/decryption.
+         * */
+        QByteArray m_password;
     };
 
     static bool copyData(QIODevice &inFile, QIODevice &outFile);
@@ -190,9 +217,17 @@ public:
       \param zip The opened zip archive to extract from.
       \param fileName The full name of the file to extract.
       \param fileDest The full path to the destination file.
-      \return true if success, false otherwise.
+      \param baseDir Base directory for path traversal validation (optional).
+      \param password Password for encrypted files (optional, second overload only).
+      \return std::pair<bool, bool> where:
+              - first: success status (true if extraction succeeded or file was safely skipped, false on error)
+              - second: wasSkipped status (true if file was skipped due to path traversal protection, false otherwise)
+
+      When path traversal is detected (file attempting to escape baseDir), the function returns {true, true}
+      to allow processing to continue while skipping the malicious file.
       */
-    static bool extractFile(QuaZip* zip, QString fileName, QString fileDest);
+    static std::pair<bool, bool> extractFile(QuaZip* zip, QString fileName, QString fileDest, const QString& baseDir = QString());
+    static std::pair<bool, bool> extractFile(QuaZip* zip, QString fileName, QString fileDest, const QByteArray& password, const QString& baseDir = QString());
 
     /// Remove some files.
     /**
@@ -445,6 +480,38 @@ public:
       \return The list of the full paths of the files extracted, empty on failure.
       */
     static QStringList extractDir(QString fileCompressed, QuazipTextCodec* fileNameCodec, QString dir = QString());
+
+    /// Extract a single file with password.
+    /**
+      \param fileCompressed The name of the archive.
+      \param fileName The file to extract.
+      \param fileDest The destination file, assumed to be identical to
+      \a fileName if left empty.
+      \param password Password for decryption (empty for no encryption).
+      \return The full path of the extracted file, empty on failure.
+      */
+    static QString extractFile(QString fileCompressed, QString fileName, QString fileDest, const QByteArray& password);
+
+    /// Extract a list of files with password.
+    /**
+      \param fileCompressed The name of the archive.
+      \param files The file list to extract.
+      \param dir The directory to put the files to, the current
+      directory if left empty.
+      \param password Password for decryption (empty for no encryption).
+      \return The list of the full paths of the files extracted, empty on failure.
+      */
+    static QStringList extractFiles(QString fileCompressed, QStringList files, QString dir, const QByteArray& password);
+
+    /// Extract a whole archive with password.
+    /**
+      \param fileCompressed The name of the archive.
+      \param dir The directory to extract to, the current directory if
+      left empty.
+      \param password Password for decryption (empty for no encryption).
+      \return The list of the full paths of the files extracted, empty on failure.
+      */
+    static QStringList extractDir(QString fileCompressed, QString dir, const QByteArray& password);
 
     /// Get the file list.
     /**

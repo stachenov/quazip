@@ -115,3 +115,7 @@ CMake options
 | `QUAZIP_BZIP2_STDIO`        | Output BZIP2 errors to stdio when BZIP2 compression is enabled                                                                                                | `ON`    |
 | `QUAZIP_ENABLE_QTEXTCODEC`  | Set to OFF to explicitely disable the use of QTextCodec on Qt6 even if Core5Compat is available. This uses [QStringConverter](https://doc.qt.io/qt-6/qstringconverter.html) in the background with less supported encodings. | `ON`    |
 
+# Usage
+
+See [EXAMPLES.md](EXAMPLES.md) for code examples showing how to use QuaZip's three API levels: low-level QuaZip/QuaZipFile, JlCompress utility functions, and QuaCompress fluent interface.
+

@@ -585,7 +585,7 @@ QString QuaZip::getCurrentFileName()const
   }
   else {
     //QString pp = p->fileNameCodec->toUnicode(fileName);
-    qDebug() << p->fileNameCodec->name();
+    qDebug() << "Using default codec";
   }
 
   QString result = (file_info.flag & UNZ_ENCODING_UTF8)

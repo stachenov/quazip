@@ -27,6 +27,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "testjlcp_compress.h"
 #include "testjlcp_extract.h"
 #include "testquachecksum32.h"
+#include "testquacompress.h"
 #include "testquagzipfile.h"
 #include "testquaziodevice.h"
 #include "testquazip.h"
@@ -292,6 +293,10 @@ int main(int argc, char **argv)
     {
         TestJlCompress testJlCompress;
         err = qMax(err, QTest::qExec(&testJlCompress, app.arguments()));
+    }
+    {
+        TestQuaCompress testQuaCompress;
+        err = qMax(err, QTest::qExec(&testQuaCompress, app.arguments()));
     }
     {
         TestQuaZipDir testQuaZipDir;
