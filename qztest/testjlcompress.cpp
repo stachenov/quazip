@@ -35,7 +35,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <quazip_qt_compat.h>
 
 #ifdef QUAZIP_CAN_USE_QTEXTCODEC
-#include <QtCore/QTextCodec>
+#include <QTextCodec>
 #endif
 
 #include <QtTest/QTest>
