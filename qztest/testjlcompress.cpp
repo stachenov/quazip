@@ -232,21 +232,24 @@ void TestJlCompress::compressFileOptions()
 
     // Detect if platform defaults to UTF-8
     bool platformIsUtf8 = false;
+    QString codecInfo;
 #ifdef QUAZIP_CAN_USE_QTEXTCODEC
     QTextCodec *defaultCodec = QTextCodec::codecForLocale();
     if (defaultCodec) {
         QByteArray codecName = defaultCodec->name().toLower();
         platformIsUtf8 = codecName.contains("utf-8") || codecName.contains("utf8");
+        codecInfo = QString::fromLatin1(defaultCodec->name());
     }
 #else
     // Qt6: check locale environment
     QByteArray locale = qgetenv("LC_ALL");
     if (locale.isEmpty()) locale = qgetenv("LANG");
     platformIsUtf8 = locale.contains("UTF-8") || locale.contains("utf8");
+    codecInfo = QString::fromLatin1(locale);
 #endif
 
     if (!utf8) {
-        qDebug() << "Using default codec";
+        qDebug() << "Using default codec:" << codecInfo;
     } else {
         qDebug() << "Using UTF8";
     }
