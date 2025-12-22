@@ -72,8 +72,10 @@ void TestUtf8Decompress::decompressUtf8Files()
             qDebug() << "Extracted files:" << extracted;
 
             // Verify files exist (even with mangled names)
+            // Note: We include QDir::Hidden because UTF-8 filenames can get so mangled in C locale
+            // that only the extension remains (e.g., "файл.txt" -> ".txt"), which is a hidden file
             QDir extractedDir(extractDir);
-            QStringList extractedFiles = extractedDir.entryList(QDir::Files);
+            QStringList extractedFiles = extractedDir.entryList(QDir::Files | QDir::Hidden);
             QVERIFY2(!extractedFiles.isEmpty(), qPrintable(QString("No files found after extraction from: %1").arg(archiveFile)));
 
             // In C locale, UTF-8 filenames should be mangled (not properly decoded)

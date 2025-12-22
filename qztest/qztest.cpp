@@ -297,65 +297,69 @@ int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     int err = 0;
-    {
-        TestQuaZip testQuaZip;
-        err = qMax(err, QTest::qExec(&testQuaZip, app.arguments()));
-    }
-    {
-        TestQuaZipFile testQuaZipFile;
-        err = qMax(err, QTest::qExec(&testQuaZipFile, app.arguments()));
-    }
-    {
-        TestQuaChecksum32 testQuaChecksum32;
-        err = qMax(err, QTest::qExec(&testQuaChecksum32, app.arguments()));
-    }
-    {
-        TestJlCompress testJlCompress;
-        err = qMax(err, QTest::qExec(&testJlCompress, app.arguments()));
-    }
-    {
-        TestQuaCompress testQuaCompress;
-        err = qMax(err, QTest::qExec(&testQuaCompress, app.arguments()));
-    }
-    {
-        TestQuaZipDir testQuaZipDir;
-        err = qMax(err, QTest::qExec(&testQuaZipDir, app.arguments()));
-    }
-    {
-        TestQuaZIODevice testQuaZIODevice;
-        err = qMax(err, QTest::qExec(&testQuaZIODevice, app.arguments()));
-    }
-    {
-        TestQuaGzipFile testQuaGzipFile;
-        err = qMax(err, QTest::qExec(&testQuaGzipFile, app.arguments()));
-    }
-    {
-        TestQuaZipNewInfo testQuaZipNewInfo;
-        err = qMax(err, QTest::qExec(&testQuaZipNewInfo, app.arguments()));
-    }
-    {
-        TestQuaZipFileInfo testQuaZipFileInfo;
-        err = qMax(err, QTest::qExec(&testQuaZipFileInfo, app.arguments()));
-    }
+
     if (QString(qgetenv("TEST_CR_COMPRESS")) == "true")
     {
-      TestJlCpCompress testJlCpCompress;
-      err = qMax(err, QTest::qExec(&testJlCpCompress, app.arguments()));
+        TestJlCpCompress testJlCpCompress;
+        err = qMax(err, QTest::qExec(&testJlCpCompress, app.arguments()));
     }
-    if (QString(qgetenv("TEST_CR_DECOMPRESS")) == "true")
+    else if (QString(qgetenv("TEST_CR_DECOMPRESS")) == "true")
     {
-      TestJlCpExtract testJlCpExtract;
-      err = qMax(err, QTest::qExec(&testJlCpExtract, app.arguments()));
+        TestJlCpExtract testJlCpExtract;
+        err = qMax(err, QTest::qExec(&testJlCpExtract, app.arguments()));
     }
-    if (QString(qgetenv("TEST_UTF8_COMPRESS")) == "true")
+    else if (QString(qgetenv("TEST_UTF8_COMPRESS")) == "true")
     {
-      TestUtf8Compress testUtf8Compress;
-      err = qMax(err, QTest::qExec(&testUtf8Compress, app.arguments()));
+        TestUtf8Compress testUtf8Compress;
+        err = qMax(err, QTest::qExec(&testUtf8Compress, app.arguments()));
     }
-    if (QString(qgetenv("TEST_UTF8_DECOMPRESS")) == "true")
+    else if (QString(qgetenv("TEST_UTF8_DECOMPRESS")) == "true")
     {
-      TestUtf8Decompress testUtf8Decompress;
-      err = qMax(err, QTest::qExec(&testUtf8Decompress, app.arguments()));
+        TestUtf8Decompress testUtf8Decompress;
+        err = qMax(err, QTest::qExec(&testUtf8Decompress, app.arguments()));
+    }
+    else
+    {
+        {
+            TestQuaZip testQuaZip;
+            err = qMax(err, QTest::qExec(&testQuaZip, app.arguments()));
+        }
+        {
+            TestQuaZipFile testQuaZipFile;
+            err = qMax(err, QTest::qExec(&testQuaZipFile, app.arguments()));
+        }
+        {
+            TestQuaChecksum32 testQuaChecksum32;
+            err = qMax(err, QTest::qExec(&testQuaChecksum32, app.arguments()));
+        }
+        {
+            TestJlCompress testJlCompress;
+            err = qMax(err, QTest::qExec(&testJlCompress, app.arguments()));
+        }
+        {
+            TestQuaCompress testQuaCompress;
+            err = qMax(err, QTest::qExec(&testQuaCompress, app.arguments()));
+        }
+        {
+            TestQuaZipDir testQuaZipDir;
+            err = qMax(err, QTest::qExec(&testQuaZipDir, app.arguments()));
+        }
+        {
+            TestQuaZIODevice testQuaZIODevice;
+            err = qMax(err, QTest::qExec(&testQuaZIODevice, app.arguments()));
+        }
+        {
+            TestQuaGzipFile testQuaGzipFile;
+            err = qMax(err, QTest::qExec(&testQuaGzipFile, app.arguments()));
+        }
+        {
+            TestQuaZipNewInfo testQuaZipNewInfo;
+            err = qMax(err, QTest::qExec(&testQuaZipNewInfo, app.arguments()));
+        }
+        {
+            TestQuaZipFileInfo testQuaZipFileInfo;
+            err = qMax(err, QTest::qExec(&testQuaZipFileInfo, app.arguments()));
+        }
     }
 
     if (err == 0) {
