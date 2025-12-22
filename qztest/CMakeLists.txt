@@ -12,6 +12,8 @@ set(QZTEST_SOURCES
         testquazipfile.h
         testquazipfileinfo.h
         testquazipnewinfo.h
+        testutf8_compress.h
+        testutf8_decompress.h
         qztest.cpp
         testjlcompress.cpp
         testjlcp_compress.cpp
@@ -25,6 +27,8 @@ set(QZTEST_SOURCES
         testquazipfile.cpp
         testquazipfileinfo.cpp
         testquazipnewinfo.cpp
+        testutf8_compress.cpp
+        testutf8_decompress.cpp
 )
 
 add_executable(qztest ${QZTEST_SOURCES} qztest.qrc)

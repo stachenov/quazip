@@ -1,0 +1,88 @@
+on:
+  push:
+    branches:
+      - master
+      - feature/*
+  pull_request:
+  workflow_dispatch:
+
+name: UTF-8 Filename Tests
+
+permissions: read-all
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  # Compression job - creates UTF-8 archives with UTF-8 locale
+  utf8-compress:
+    if: true
+    runs-on: ubuntu-22.04
+    name: utf8-compress-Qt-${{ matrix.qt_version }}
+    container: ghcr.io/cen1/qt:${{ matrix.qt_version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        qt_version: [ 6.8.2 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
+
+      - name: Build
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - name: Run UTF-8 compression tests
+        working-directory: build
+        env:
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+          TEST_UTF8_COMPRESS: "true"
+        run: ctest --verbose -C Release
+
+      - name: Upload UTF-8 archives to GitHub Actions Storage
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          overwrite: true
+          name: "utf8_archives_qt${{ matrix.qt_version }}"
+          path: build/quazip/utf8_*.zip
+
+  # Decompression job - extracts UTF-8 archives with C locale, expects mangled output
+  utf8-decompress:
+    if: true
+    runs-on: ubuntu-22.04
+    name: utf8-decompress-Qt-${{ matrix.qt_version }}
+    container: ghcr.io/cen1/qt:${{ matrix.qt_version }}
+    needs: [ utf8-compress ]
+    strategy:
+      fail-fast: false
+      matrix:
+        qt_version: [ 6.8.2 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
+
+      - name: Build
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - name: Download UTF-8 archives
+        uses: actions/download-artifact@v4
+        with:
+          path: build/quazip
+          merge-multiple: false
+
+      - name: Run UTF-8 decompression tests
+        working-directory: build
+        env:
+          LC_ALL: C
+          LANG: C
+          TEST_UTF8_DECOMPRESS: "true"
+        run: ctest --verbose -C Release

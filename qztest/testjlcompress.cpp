@@ -219,6 +219,12 @@ void TestJlCompress::compressFileOptions()
     QFETCH(QString, sha256sum_unix);
     QFETCH(QString, sha256sum_unix_ng);
     QFETCH(QString, sha256sum_win);
+
+    // Skip UTF-8 tests if platform doesn't support UTF-8
+    if (utf8 && !isPlatformUtf8()) {
+        QSKIP("Skipping UTF-8 test on non-UTF-8 platform");
+    }
+
     QDir curDir;
     if (curDir.exists(zipName)) {
       if (!curDir.remove(zipName))

@@ -35,6 +35,8 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "testquazipfile.h"
 #include "testquazipfileinfo.h"
 #include "testquazipnewinfo.h"
+#include "testutf8_compress.h"
+#include "testutf8_decompress.h"
 
 #include <quazip.h>
 #include <quazipfile.h>
@@ -274,6 +276,23 @@ void removeTestFiles(const QStringList &fileNames, const QString &dir)
     }
 }
 
+bool isPlatformUtf8()
+{
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+    QTextCodec *defaultCodec = QTextCodec::codecForLocale();
+    if (defaultCodec) {
+        QByteArray codecName = defaultCodec->name().toLower();
+        return codecName.contains("utf-8") || codecName.contains("utf8");
+    }
+    return false;
+#else
+    // Qt6: check locale environment
+    QByteArray locale = qgetenv("LC_ALL");
+    if (locale.isEmpty()) locale = qgetenv("LANG");
+    return locale.contains("UTF-8") || locale.contains("utf8");
+#endif
+}
+
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
@@ -327,6 +346,16 @@ int main(int argc, char **argv)
     {
       TestJlCpExtract testJlCpExtract;
       err = qMax(err, QTest::qExec(&testJlCpExtract, app.arguments()));
+    }
+    if (QString(qgetenv("TEST_UTF8_COMPRESS")) == "true")
+    {
+      TestUtf8Compress testUtf8Compress;
+      err = qMax(err, QTest::qExec(&testUtf8Compress, app.arguments()));
+    }
+    if (QString(qgetenv("TEST_UTF8_DECOMPRESS")) == "true")
+    {
+      TestUtf8Decompress testUtf8Decompress;
+      err = qMax(err, QTest::qExec(&testUtf8Decompress, app.arguments()));
     }
 
     if (err == 0) {

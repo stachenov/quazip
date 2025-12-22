@@ -145,6 +145,11 @@ void TestQuaCompress::compressFile()
     QFETCH(JlCompress::Options::CompressionStrategy, compression);
     QFETCH(QByteArray, password);
 
+    // Skip UTF-8 tests if platform doesn't support UTF-8
+    if (utf8 && !isPlatformUtf8()) {
+        QSKIP("Skipping UTF-8 test on non-UTF-8 platform");
+    }
+
     QDir curDir;
     if (curDir.exists(zipName)) {
         if (!curDir.remove(zipName))
@@ -225,6 +230,11 @@ void TestQuaCompress::compressFiles()
     QFETCH(QStringList, fileNames);
     QFETCH(bool, utf8);
 
+    // Skip UTF-8 tests if platform doesn't support UTF-8
+    if (utf8 && !isPlatformUtf8()) {
+        QSKIP("Skipping UTF-8 test on non-UTF-8 platform");
+    }
+
     QDir curDir;
     if (curDir.exists(zipName)) {
         if (!curDir.remove(zipName))
@@ -291,6 +301,11 @@ void TestQuaCompress::compressDir()
     QFETCH(int, expectedMinFiles);
     QFETCH(bool, recursive);
     QFETCH(bool, utf8);
+
+    // Skip UTF-8 tests if platform doesn't support UTF-8
+    if (utf8 && !isPlatformUtf8()) {
+        QSKIP("Skipping UTF-8 test on non-UTF-8 platform");
+    }
 
     QDir curDir;
     if (curDir.exists(zipName)) {
@@ -393,6 +408,11 @@ void TestQuaCompress::addFile()
     QFETCH(QString, initialFile);
     QFETCH(QString, addedFile);
     QFETCH(bool, utf8);
+
+    // Skip UTF-8 tests if platform doesn't support UTF-8
+    if (utf8 && !isPlatformUtf8()) {
+        QSKIP("Skipping UTF-8 test on non-UTF-8 platform");
+    }
 
     QDir curDir;
     if (curDir.exists(zipName)) {

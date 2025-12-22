@@ -24,7 +24,6 @@ jobs:
       fail-fast: false
       matrix:
         qt_version: [ 5.15.12, 6.4.3, 6.8.2 ]
-        locale: [ 'C.UTF-8', 'C' ]
 
     steps:
       - name: Checkout
@@ -38,9 +37,6 @@ jobs:
 
       - name: Run tests
         working-directory: build
-        env:
-          LC_ALL: ${{ matrix.locale }}
-          LANG: ${{ matrix.locale }}
         run: ctest --verbose -C Release
 
   use-qt6-zlib-windows:
