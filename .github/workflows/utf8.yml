@@ -23,14 +23,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qt_version: [ 6.8.2 ]
+        qt_version: [ 5.15.12, 6.4.3, 6.8.2 ]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
 
       - name: Build
         run: cmake --build build --config ${{env.BUILD_TYPE}}
@@ -61,14 +61,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qt_version: [ 6.8.2 ]
+        qt_version: [ 5.15.12, 6.4.3, 6.8.2 ]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
 
       - name: Build
         run: cmake --build build --config ${{env.BUILD_TYPE}}

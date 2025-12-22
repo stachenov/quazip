@@ -43,7 +43,9 @@ void TestUtf8Decompress::decompressUtf8Files()
     // Find artifact directories containing UTF-8 archives
     QDirIterator it(QDir::currentPath(), QStringList() << "utf8_archives_*", QDir::Dirs, QDirIterator::Subdirectories);
 
-    QVERIFY(it.hasNext());
+    QVERIFY2(it.hasNext(), "No UTF-8 archive artifacts found");
+
+    int totalArchivesProcessed = 0;
 
     while (it.hasNext()) {
         QFileInfo artifactDir(it.next());
@@ -52,7 +54,7 @@ void TestUtf8Decompress::decompressUtf8Files()
         QDir dir(artifactDir.absoluteFilePath());
         QStringList zipFiles = dir.entryList(QStringList() << "utf8_*.zip", QDir::Files);
 
-        QVERIFY(!zipFiles.isEmpty());
+        QVERIFY2(!zipFiles.isEmpty(), qPrintable(QString("No UTF-8 zip files found in artifact directory: %1").arg(artifactDir.fileName())));
 
         for (const QString &archiveFile : zipFiles) {
             QString zipPath = dir.absoluteFilePath(archiveFile);
@@ -65,27 +67,30 @@ void TestUtf8Decompress::decompressUtf8Files()
             QStringList extracted = JlCompress::extractDir(zipPath, extractDir);
 
             // We expect extraction to succeed, but filenames will be mangled in C locale
-            QVERIFY(!extracted.isEmpty());
+            QVERIFY2(!extracted.isEmpty(), qPrintable(QString("Failed to extract any files from: %1").arg(archiveFile)));
 
             qDebug() << "Extracted files:" << extracted;
 
             // Verify files exist (even with mangled names)
             QDir extractedDir(extractDir);
             QStringList extractedFiles = extractedDir.entryList(QDir::Files);
-            QVERIFY(!extractedFiles.isEmpty());
+            QVERIFY2(!extractedFiles.isEmpty(), qPrintable(QString("No files found after extraction from: %1").arg(archiveFile)));
 
             // In C locale, UTF-8 filenames should be mangled (not properly decoded)
             // We just verify that extraction doesn't crash and produces some output
             for (const QString &extractedFile : extractedFiles) {
                 QString filePath = extractedDir.absoluteFilePath(extractedFile);
-                QVERIFY(QFile::exists(filePath));
+                QVERIFY2(QFile::exists(filePath), qPrintable(QString("Extracted file does not exist: %1").arg(filePath)));
                 qDebug() << "Found extracted file (possibly mangled):" << extractedFile;
             }
 
             // Cleanup
             extractedDir.removeRecursively();
+
+            totalArchivesProcessed++;
         }
     }
 
-    qDebug() << "UTF-8 decompression tests completed successfully";
+    QVERIFY2(totalArchivesProcessed > 0, "No UTF-8 archives were processed");
+    qDebug() << "UTF-8 decompression tests completed successfully. Processed" << totalArchivesProcessed << "archives.";
 }
