@@ -53,8 +53,6 @@ void TestUtf8Compress::compressUtf8Files()
         QString zipName = QString("utf8_%1.zip").arg(fileIndex++);
         QString filePath = "tmp/" + fileName;
 
-        qDebug() << "Creating UTF-8 archive:" << zipName << "with file:" << fileName;
-
         JlCompress::Options options;
         options.setUtf8Enabled(true);
 

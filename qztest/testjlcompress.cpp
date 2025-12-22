@@ -254,12 +254,6 @@ void TestJlCompress::compressFileOptions()
     codecInfo = QString::fromLatin1(locale);
 #endif
 
-    if (!utf8) {
-        qDebug() << "Using default codec:" << codecInfo;
-    } else {
-        qDebug() << "Using UTF8";
-    }
-
     JlCompress::Options options(dateTime, strategy, utf8, password);
     QVERIFY(JlCompress::compressFile(zipName, "tmp/" + fileName, options));
 
@@ -270,7 +264,6 @@ void TestJlCompress::compressFileOptions()
     bool isUtf8BadTest = zipName == "jlsimplefile-utf8-bad.zip";
     if (!utf8 && !platformIsUtf8) {
         // On non-UTF-8 platforms without UTF-8 mode, filenames might be mangled
-        qDebug() << "Non-UTF-8 platform: expected mangled filename. Got:" << fileList[0] << "vs" << fileName;
         // Just verify we got a filename, even if mangled
         QVERIFY(!fileList[0].isEmpty());
     } else {
@@ -321,7 +314,6 @@ void TestJlCompress::compressFileOptions()
         if (!platformIsUtf8) {
             // On non-UTF-8 platforms, filename might be mangled even with UTF-8 enabled
             // because the locale codec can't represent the UTF-8 characters
-            qDebug() << "Expected mangled filename on non-UTF-8 platform:" << fileInfo.fileName() << "vs" << fileName;
             // Just verify extraction succeeded
             QVERIFY(!flist.isEmpty());
         } else {
@@ -340,7 +332,6 @@ void TestJlCompress::compressFileOptions()
         if (!platformIsUtf8) {
             // On non-UTF-8 platforms, filename might be mangled even with UTF-8 enabled
             // because the locale codec can't represent the UTF-8 characters
-            qDebug() << "Expected mangled filename on non-UTF-8 platform:" << fileInfo.fileName() << "vs" << fileName;
             // Just verify extraction succeeded
             QVERIFY(!flist.isEmpty());
         } else {

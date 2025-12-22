@@ -50,6 +50,10 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 
 #include <QtTest/QTest>
 
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+#include <QTextCodec>
+#endif
+
 bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
 {
     QDir curDir;
