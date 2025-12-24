@@ -183,13 +183,10 @@ void TestQuaCompress::compressFile()
         QCOMPARE(extracted.size(), 1);
         QVERIFY(QFile::exists("tmp/quacompress_extracted/" + fileName));
 
-        // Also test parameter-based extraction
-        QDir("tmp/quacompress_extracted").removeRecursively();
-        extracted = QuaCompress().extractDir(zipName, "tmp/quacompress_extracted", password);
-        QCOMPARE(extracted.size(), 1);
-
         // Test wrong password fails
-        QStringList wrongExtract = QuaCompress().extractDir(zipName, "tmp/quacompress_wrong", QByteArray("wrong"));
+        QStringList wrongExtract = QuaCompress()
+            .withPassword(QByteArray("wrong"))
+            .extractDir(zipName, "tmp/quacompress_wrong");
         QCOMPARE(wrongExtract.size(), 0);
         QDir("tmp/quacompress_wrong").removeRecursively();
     } else {

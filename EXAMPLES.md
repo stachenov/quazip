@@ -26,7 +26,8 @@ if (!inFile.open(QIODevice::ReadOnly)) {
 }
 
 QuaZipFile outFile(&zip);
-if (!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo("document.txt"))) {
+// QuaZipNewInfo(name, file): name in archive, file to read metadata from
+if (!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(inFile.fileName(), inFile.fileName()))) {
     return;
 }
 
@@ -44,29 +45,43 @@ zip.close();
 #include <QuaZip.h>
 #include <QuaZipFile.h>
 #include <QFile>
+#include <QDir>
 
-// Open ZIP archive and extract a file
+// Open ZIP archive and extract all files
 QuaZip zip("archive.zip");
 if (!zip.open(QuaZip::mdUnzip)) {
     return;
 }
 
-zip.setCurrentFile("document.txt");
+// Loop through all files in the archive
+for (bool more = zip.goToFirstFile(); more; more = zip.goToNextFile()) {
+    QuaZipFile inFile(&zip);
+    if (!inFile.open(QIODevice::ReadOnly)) {
+        return;
+    }
 
-QuaZipFile inFile(&zip);
-if (!inFile.open(QIODevice::ReadOnly)) {
-    return;
+    // Get current file info to get the filename
+    QuaZipFileInfo64 fileInfo;
+    if (!zip.getCurrentFileInfo(&fileInfo)) {
+        return;
+    }
+
+    // Create output file
+    QString outPath = "output/" + fileInfo.name;
+    QDir().mkpath(QFileInfo(outPath).absolutePath());  // Create directories if needed
+
+    QFile outFile(outPath);
+    if (!outFile.open(QIODevice::WriteOnly)) {
+        return;
+    }
+
+    // Copy data
+    outFile.write(inFile.readAll());
+
+    outFile.close();
+    inFile.close();
 }
 
-QFile outFile("extracted_document.txt");
-if (!outFile.open(QIODevice::WriteOnly)) {
-    return;
-}
-
-outFile.write(inFile.readAll());
-
-outFile.close();
-inFile.close();
 zip.close();
 ```
 
@@ -115,7 +130,7 @@ QString extracted = JlCompress::extractFile("archive.zip", "document.txt", "outp
 
 ## QuaCompress API
 
-Use for readable, fluent chaining of operations with sensible defaults.
+Use for readable, fluent chaining of operations.
 
 ### Compress
 
@@ -153,10 +168,6 @@ QStringList files = QuaCompress()
 files = QuaCompress()
     .withPassword(QByteArray("password123"))
     .extractDir("archive.zip", "output_dir");
-
-// Or pass password as parameter
-files = QuaCompress()
-    .extractDir("archive.zip", "output_dir", QByteArray("password123"));
 
 // Get file list
 QStringList fileNames = QuaCompress()

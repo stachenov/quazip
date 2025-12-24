@@ -581,13 +581,13 @@ QString QuaZip::getCurrentFileName()const
     return QString();
   fileName.resize(file_info.size_filename);
 
-  if (file_info.flag & UNZ_ENCODING_UTF8) {
+  /*if (file_info.flag & UNZ_ENCODING_UTF8) {
     qDebug() << "Using UTF8";
   }
   else {
     //QString pp = p->fileNameCodec->toUnicode(fileName);
     qDebug() << "Using default codec";
-  }
+  }*/
 
   QString result = (file_info.flag & UNZ_ENCODING_UTF8)
     ? QString::fromUtf8(fileName) : p->fileNameCodec->toUnicode(fileName);

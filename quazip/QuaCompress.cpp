@@ -61,89 +61,72 @@ QuaCompress& QuaCompress::withPassword(const QByteArray& password)
 
 // ==================== Compression Methods ====================
 
-bool QuaCompress::compressFile(QString fileCompressed, QString file)
+bool QuaCompress::compressFile(QString newArchive, QString file)
 {
-    return JlCompress::compressFile(fileCompressed, file, m_options);
+    return JlCompress::compressFile(newArchive, file, m_options);
 }
 
-bool QuaCompress::compressFiles(QString fileCompressed, QStringList files)
+bool QuaCompress::compressFiles(QString newArchive, QStringList files)
 {
-    return JlCompress::compressFiles(fileCompressed, files, m_options);
+    return JlCompress::compressFiles(newArchive, files, m_options);
 }
 
-bool QuaCompress::compressDir(QString fileCompressed, QString dir,
+bool QuaCompress::compressDir(QString newArchive, QString dir,
                                bool recursive, QDir::Filters filters)
 {
-    return JlCompress::compressDir(fileCompressed, dir, recursive, filters, m_options);
+    return JlCompress::compressDir(newArchive, dir, recursive, filters, m_options);
 }
 
 // ==================== Add to Existing Archive ====================
 
-bool QuaCompress::addFile(QString fileCompressed, QString file)
+bool QuaCompress::addFile(QString existingArchive, QString file)
 {
-    return JlCompress::addFile(fileCompressed, file, m_options);
+    return JlCompress::addFile(existingArchive, file, m_options);
 }
 
-bool QuaCompress::addFiles(QString fileCompressed, QStringList files)
+bool QuaCompress::addFiles(QString existingArchive, QStringList files)
 {
-    return JlCompress::addFiles(fileCompressed, files, m_options);
+    return JlCompress::addFiles(existingArchive, files, m_options);
 }
 
-bool QuaCompress::addDir(QString fileCompressed, QString dir,
+bool QuaCompress::addDir(QString existingArchive, QString dir,
                          bool recursive, QDir::Filters filters)
 {
-    return JlCompress::addDir(fileCompressed, dir, recursive, filters, m_options);
+    return JlCompress::addDir(existingArchive, dir, recursive, filters, m_options);
 }
 
 // ==================== Extraction Methods ====================
 
-QString QuaCompress::extractFile(QString fileCompressed, QString fileName, QString fileDest)
+QString QuaCompress::extractFile(QString archive, QString fileName, QString fileDest)
 {
     // Use password from options if set
     if (!m_options.getPassword().isEmpty()) {
-        return JlCompress::extractFile(fileCompressed, fileName, fileDest, m_options.getPassword());
+        return JlCompress::extractFile(archive, fileName, fileDest, m_options.getPassword());
     }
-    return JlCompress::extractFile(fileCompressed, fileName, fileDest);
+    return JlCompress::extractFile(archive, fileName, fileDest);
 }
 
-QStringList QuaCompress::extractFiles(QString fileCompressed, QStringList files, QString dir)
+QStringList QuaCompress::extractFiles(QString archive, QStringList files, QString dir)
 {
     // Use password from options if set
     if (!m_options.getPassword().isEmpty()) {
-        return JlCompress::extractFiles(fileCompressed, files, dir, m_options.getPassword());
+        return JlCompress::extractFiles(archive, files, dir, m_options.getPassword());
     }
-    return JlCompress::extractFiles(fileCompressed, files, dir);
+    return JlCompress::extractFiles(archive, files, dir);
 }
 
-QStringList QuaCompress::extractDir(QString fileCompressed, QString dir)
+QStringList QuaCompress::extractDir(QString archive, QString dir)
 {
     // Use password from options if set
     if (!m_options.getPassword().isEmpty()) {
-        return JlCompress::extractDir(fileCompressed, dir, m_options.getPassword());
+        return JlCompress::extractDir(archive, dir, m_options.getPassword());
     }
-    return JlCompress::extractDir(fileCompressed, dir);
+    return JlCompress::extractDir(archive, dir);
 }
 
-QStringList QuaCompress::extractDir(QString fileCompressed, QuazipTextCodec* fileNameCodec, QString dir)
+QStringList QuaCompress::extractDir(QString archive, QuazipTextCodec* fileNameCodec, QString dir)
 {
-    return JlCompress::extractDir(fileCompressed, fileNameCodec, dir);
-}
-
-// ==================== Extraction with Password ====================
-
-QString QuaCompress::extractFile(QString fileCompressed, QString fileName, QString fileDest, const QByteArray& password)
-{
-    return JlCompress::extractFile(fileCompressed, fileName, fileDest, password);
-}
-
-QStringList QuaCompress::extractFiles(QString fileCompressed, QStringList files, QString dir, const QByteArray& password)
-{
-    return JlCompress::extractFiles(fileCompressed, files, dir, password);
-}
-
-QStringList QuaCompress::extractDir(QString fileCompressed, QString dir, const QByteArray& password)
-{
-    return JlCompress::extractDir(fileCompressed, dir, password);
+    return JlCompress::extractDir(archive, fileNameCodec, dir);
 }
 
 // ==================== Extraction from QIODevice ====================
@@ -165,9 +148,9 @@ QStringList QuaCompress::extractDir(QIODevice* ioDevice, QuazipTextCodec* fileNa
 
 // ==================== Information Methods ====================
 
-QStringList QuaCompress::getFileList(QString fileCompressed)
+QStringList QuaCompress::getFileList(QString archive)
 {
-    return JlCompress::getFileList(fileCompressed);
+    return JlCompress::getFileList(archive);
 }
 
 QStringList QuaCompress::getFileList(QIODevice* ioDevice)

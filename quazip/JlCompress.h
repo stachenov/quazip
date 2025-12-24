@@ -212,23 +212,6 @@ public:
     static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive,
                                QDir::Filters filters, const Options& options);
 
-    /// Extract a single file.
-    /**
-      \param zip The opened zip archive to extract from.
-      \param fileName The full name of the file to extract.
-      \param fileDest The full path to the destination file.
-      \param baseDir Base directory for path traversal validation (optional).
-      \param password Password for encrypted files (optional, second overload only).
-      \return std::pair<bool, bool> where:
-              - first: success status (true if extraction succeeded or file was safely skipped, false on error)
-              - second: wasSkipped status (true if file was skipped due to path traversal protection, false otherwise)
-
-      When path traversal is detected (file attempting to escape baseDir), the function returns {true, true}
-      to allow processing to continue while skipping the malicious file.
-      */
-    static std::pair<bool, bool> extractFile(QuaZip* zip, QString fileName, QString fileDest, const QString& baseDir = QString());
-    static std::pair<bool, bool> extractFile(QuaZip* zip, QString fileName, QString fileDest, const QByteArray& password, const QString& baseDir = QString());
-
     /// Remove some files.
     /**
       \param listFile The list of files to remove.
