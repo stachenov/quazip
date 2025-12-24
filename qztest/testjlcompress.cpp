@@ -225,6 +225,15 @@ void TestJlCompress::compressFileOptions()
         QSKIP("Skipping UTF-8 test on non-UTF-8 platform");
     }
 
+#ifdef Q_OS_WIN
+    // Skip utf8-bad test on Windows - mangled filenames contain invalid characters
+    // (e.g., "??????.txt" where ? is not allowed in Windows filenames)
+    bool isUtf8BadTest = zipName == "jlsimplefile-utf8-bad.zip";
+    if (isUtf8BadTest && !isPlatformUtf8()) {
+        QSKIP("Skipping UTF-8-bad test on Windows non-UTF-8 - produces invalid filenames");
+    }
+#endif
+
     QDir curDir;
     if (curDir.exists(zipName)) {
       if (!curDir.remove(zipName))
@@ -261,7 +270,6 @@ void TestJlCompress::compressFileOptions()
     QStringList fileList = JlCompress::getFileList(zipName);
     QCOMPARE(fileList.count(), 1);
 
-    bool isUtf8BadTest = zipName == "jlsimplefile-utf8-bad.zip";
     if (!utf8 && !platformIsUtf8) {
         // On non-UTF-8 platforms without UTF-8 mode, filenames might be mangled
         // Just verify we got a filename, even if mangled
