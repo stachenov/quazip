@@ -44,25 +44,48 @@ void TestUtf8Compress::compressUtf8Files()
     testFiles << QString::fromUtf8("Привет.txt");      // Cyrillic
     testFiles << QString::fromUtf8("测试.txt");         // Chinese
 
+    // Check if we're in C locale to demonstrate filename mangling
+    bool isCompressBad = qgetenv("TEST_UTF8_COMPRESS_BAD") == "true";
+
+    if (isCompressBad) {
+        qDebug() << "\n========================================";
+        qDebug() << "Compressing UTF-8 filenames WITHOUT UTF-8 flag";
+        qDebug() << "Locale:" << (qgetenv("LC_ALL").isEmpty() ? qgetenv("LANG") : qgetenv("LC_ALL"));
+        qDebug() << "On non-UTF-8 systems, filenames will be mangled";
+        qDebug() << "========================================";
+    }
+
     // Create test files
     QVERIFY(createTestFiles(testFiles));
 
-    // Compress each file individually with UTF-8 enabled
+    // Compress each file individually
     int fileIndex = 0;
     for (const QString &fileName : testFiles) {
         QString zipName = QString("utf8_%1.zip").arg(fileIndex++);
         QString filePath = "tmp/" + fileName;
 
         JlCompress::Options options;
-        options.setUtf8Enabled(true);
+        options.setUtf8Enabled(!isCompressBad);  // Disable UTF-8 for "bad" test
 
         QVERIFY(JlCompress::compressFile(zipName, filePath, options));
         QVERIFY(QFile::exists(zipName));
 
-        // Verify the archive contains the correct filename
+        // Get the filename as stored in archive
         QStringList fileList = JlCompress::getFileList(zipName);
         QCOMPARE(fileList.size(), 1);
-        QCOMPARE(fileList[0], fileName);
+
+        if (isCompressBad) {
+            // In C locale without UTF-8 flag, show what actually happens
+            qDebug() << "Original filename:" << fileName;
+            qDebug() << "Filename in archive:" << fileList[0];
+            qDebug() << "Raw bytes:" << fileList[0].toLocal8Bit().toHex();
+            qDebug() << "---";
+            // Note: On Qt6 Linux, Qt forces UTF-8 so filenames may look correct
+            // On Qt5 or Windows with non-UTF-8 locale, we'll see actual mangling
+        } else {
+            // With UTF-8 flag, filename should match
+            QCOMPARE(fileList[0], fileName);
+        }
     }
 
     // Cleanup test files

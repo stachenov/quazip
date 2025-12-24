@@ -51,6 +51,36 @@ jobs:
           name: "utf8_archives_qt${{ matrix.qt_version }}"
           path: build/quazip/utf8_*.zip
 
+  # Compression job with C locale - demonstrates filename mangling when UTF-8 flag is not used
+  utf8-compress-bad:
+    if: true
+    runs-on: ubuntu-22.04
+    name: utf8-compress-bad-Qt-${{ matrix.qt_version }}
+    container: ghcr.io/cen1/qt:${{ matrix.qt_version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        qt_version: [ 5.15.12, 6.8.2 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
+
+      - name: Build
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - name: Compress UTF-8 filenames WITHOUT UTF-8 flag in C locale
+        working-directory: build
+        env:
+          LC_ALL: C
+          LANG: C
+          TEST_UTF8_COMPRESS: "true"
+          TEST_UTF8_COMPRESS_BAD: "true"
+        run: ctest --verbose -C Release
+
   # Decompression job - extracts UTF-8 archives with C locale, expects mangled output
   utf8-decompress:
     if: true
