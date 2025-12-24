@@ -81,6 +81,60 @@ jobs:
           TEST_UTF8_COMPRESS_BAD: "true"
         run: ctest --verbose -C Release
 
+  # Compression job with Latin1 locale - demonstrates '?' replacement vs character dropping
+  utf8-compress-bad-latin1:
+    if: true
+    runs-on: ubuntu-22.04
+    name: utf8-compress-bad-latin1-Qt-${{ matrix.qt_version }}
+    container: ghcr.io/cen1/qt:${{ matrix.qt_version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        qt_version: [ 5.15.12 ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install and generate Latin1 locale
+        run: |
+          apt-get update
+          apt-get install -y locales
+          locale-gen en_US.ISO-8859-1
+          locale -a
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
+
+      - name: Build
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - name: Compress UTF-8 filenames WITHOUT UTF-8 flag in Latin1 locale
+        working-directory: build
+        env:
+          LC_ALL: en_US.ISO-8859-1
+          LANG: en_US.ISO-8859-1
+          TEST_UTF8_COMPRESS: "true"
+          TEST_UTF8_COMPRESS_BAD: "true"
+        run: ctest --verbose -C Release
+
+  utf8-compress-bad-win-x64:
+    name: Win-Qt-${{ matrix.qt_version }}-preset-${{ matrix.preset }}
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [ conan ]
+        qt_version: [ 5.15.2, 6.8.2 ]
+    uses: ./.github/workflows/reusable-win.yml
+    with:
+      runs_on: "win-x64"
+      arch: x64
+      qt_version: ${{ matrix.qt_version }}
+      preset: ${{ matrix.preset }}
+      pe_str: "x86-64"
+      test_utf8_compress: true
+      test_utf8_compress_bad: true
+
   # Decompression job - extracts UTF-8 archives with C locale, expects mangled output
   utf8-decompress:
     if: true
