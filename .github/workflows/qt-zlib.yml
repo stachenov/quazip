@@ -180,6 +180,37 @@ jobs:
         shell: cmd
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+      - name: Debug - Check qztest.exe exists
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        run: |
+          echo "=== Searching for qztest.exe ==="
+          find . -name "qztest.exe" -ls || true
+          echo "=== Contents of qztest directory ==="
+          ls -la qztest/ || true
+          ls -la qztest/Release/ || true
+
+      - name: Debug - Try running qztest.exe directly
+        shell: bash
+        working-directory: ${{github.workspace}}/build
+        continue-on-error: true
+        run: |
+          echo "=== Attempting to run qztest.exe directly ==="
+          if [ -f "qztest/Release/qztest.exe" ]; then
+            echo "Found qztest.exe, attempting to run..."
+            ./qztest/Release/qztest.exe --help || echo "Exit code: $?"
+          else
+            echo "qztest.exe not found in expected location"
+          fi
+
+      - name: Debug - Check environment
+        shell: bash
+        run: |
+          echo "=== PATH ==="
+          echo "$PATH"
+          echo "=== Qt location ==="
+          ls -la "${{github.workspace}}/Qt/bin" || true
+
       - name: Run tests
         shell: cmd
         working-directory: ${{github.workspace}}/build
@@ -316,7 +347,40 @@ jobs:
       - name: Build
         run: cmake --build build --config ${{env.BUILD_TYPE}}
 
+      - name: Debug - Check qztest.exe exists
+        shell: bash
+        working-directory: build
+        run: |
+          echo "=== Searching for qztest.exe ==="
+          find . -name "qztest.exe" -ls || true
+          echo "=== Contents of qztest directory ==="
+          ls -la qztest/ || true
+          ls -la qztest/Release/ || true
+
+      - name: Debug - Try running qztest.exe directly
+        shell: bash
+        working-directory: build
+        continue-on-error: true
+        run: |
+          echo "=== Attempting to run qztest.exe directly ==="
+          if [ -f "qztest/Release/qztest.exe" ]; then
+            echo "Found qztest.exe, attempting to run..."
+            ./qztest/Release/qztest.exe --help || echo "Exit code: $?"
+          else
+            echo "qztest.exe not found in expected location"
+          fi
+
+      - name: Debug - Check environment
+        shell: bash
+        run: |
+          echo "=== PATH ==="
+          echo "$PATH"
+          echo "=== Qt location ==="
+          ls -la "${{github.workspace}}/Qt/bin" || true
+
       - name: Run tests
         shell: cmd
         working-directory: build
+        env:
+          QT_ASSUME_STDERR_HAS_CONSOLE: 1 # !! qDebug() is not visible if this is not set on Win runners
         run: ctest --extra-verbose -C Release
