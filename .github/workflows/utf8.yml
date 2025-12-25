@@ -96,24 +96,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install and generate Latin1 locale
-        run: |
-          apt-get update
-          apt-get install -y locales
-          locale-gen en_US.ISO-8859-1
-          locale -a
-
       - name: Configure CMake
         run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
 
       - name: Build
         run: cmake --build build --config ${{env.BUILD_TYPE}}
 
+      - name: Setup Latin-1 locale
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y locales
+          echo "de_DE ISO-8859-1" | sudo tee -a /etc/locale.gen
+          sudo locale-gen
+
       - name: Compress UTF-8 filenames WITHOUT UTF-8 flag in Latin1 locale
         working-directory: build
         env:
-          LC_ALL: en_US.ISO-8859-1
-          LANG: en_US.ISO-8859-1
+          LC_ALL: de_DE ISO-8859-1
+          LANG: de_DE ISO-8859-1
           TEST_UTF8_COMPRESS: "true"
           TEST_UTF8_COMPRESS_BAD: "true"
         run: ctest --verbose -C Release
