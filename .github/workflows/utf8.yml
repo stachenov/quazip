@@ -104,8 +104,8 @@ jobs:
 
       - name: Setup Latin-1 locale
         run: |
-          sudo apt-get update
-          sudo apt-get install -y locales
+          apt-get update
+          apt-get install -y locales
           echo "de_DE ISO-8859-1" | sudo tee -a /etc/locale.gen
           sudo locale-gen
 
