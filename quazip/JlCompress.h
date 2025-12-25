@@ -164,6 +164,15 @@ public:
     static QString extractFile(QuaZip &zip, QString fileName, QString fileDest);
     static QStringList extractFiles(QuaZip &zip, const QStringList &files, const QString &dir);
 
+    /// Extract a single file.
+    /**
+      \param zip The opened zip archive to extract from.
+      \param fileName The full name of the file to extract.
+      \param fileDest The full path to the destination file.
+      \return true if success, false otherwise.
+      */
+    static bool extractFile(QuaZip* zip, QString fileName, QString fileDest);
+
     /// Compress a single file.
     /**
       \param zip Opened zip to compress the file to.

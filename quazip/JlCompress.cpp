@@ -452,6 +452,13 @@ QString JlCompress::extractFile(QuaZip &zip, QString fileName, QString fileDest)
     return extractFileSingleInternal(zip, fileName, fileDest);
 }
 
+bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest)
+{
+    if (!zip) return false;
+    std::pair<bool, bool> result = extractFileInternal(zip, fileName, fileDest, QByteArray());
+    return result.first;
+}
+
 QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, QString dir) {
     // Delegate to password-enabled version with empty password
     return extractFiles(fileCompressed, files, dir, QByteArray());

@@ -41,7 +41,7 @@ See COPYING file for the full LGPL text.
  *   - Qt 6: Works (Qt forces UTF-8)
  *   - Qt 5 + UTF-8 locale: Works (locale encoding matches file bytes)
  *   - Qt 5 + non-UTF-8 locale: Fails with mangling (encoding mismatch)
- *     - Windows: '?' replacement
+ *     - Windows: double encoded
  *     - Linux: null truncation
  */
 void TestUtf8Decompress::decompressUtf8Files()
