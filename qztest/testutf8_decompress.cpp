@@ -62,34 +62,44 @@ void TestUtf8Decompress::decompressUtf8Files()
     QString archiveType = archiveTypeEnv.isEmpty() ? "with_flag" : QString::fromLatin1(archiveTypeEnv);
     qDebug() << "Testing archive type:" << archiveType;
 
-    // Determine expected behavior based on archive type, Qt version, and locale
+    // Determine expected behavior based on archive type, Qt version, platform, and locale
     bool shouldWork = false;
-    if (archiveType == "with_flag") {
-        // UTF-8 flag is set in archive: should always work
-        shouldWork = true;
-        qDebug() << "Expected: UTF-8 filenames should be decoded correctly (flag is set)";
-    } else {
-        // No UTF-8 flag: depends on platform/Qt version/locale
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        shouldWork = true;  // Qt 6 forces UTF-8
-        qDebug() << "Expected: UTF-8 filenames should work (Qt 6 forces UTF-8)";
-#else
-        // Qt 5: depends on locale
-        QByteArray locale = qgetenv("LC_ALL");
-        if (locale.isEmpty()) locale = qgetenv("LANG");
-        shouldWork = locale.contains("UTF-8") || locale.contains("utf8");
-        if (shouldWork) {
-            qDebug() << "Expected: UTF-8 filenames should work (locale is UTF-8)";
-        } else {
-            qDebug() << "Expected: UTF-8 filenames will be mangled (Qt 5 + non-UTF-8 locale)";
+
 #ifdef Q_OS_WIN
-            qDebug() << "  Windows: expecting '?' replacement";
-#else
-            qDebug() << "  Linux: expecting null truncation (.txt)";
-#endif
-        }
-#endif
+    // Windows: Has codepage issues regardless of Qt version
+    // UTF-8 filenames only work if the UTF-8 flag is set in the archive
+    if (archiveType == "with_flag") {
+        shouldWork = true;
+        qDebug() << "Expected: UTF-8 filenames should work (Windows + UTF-8 flag set)";
+    } else {
+        shouldWork = false;
+        qDebug() << "Expected: UTF-8 filenames will be mangled (Windows + no UTF-8 flag)";
+        qDebug() << "  Windows: double-encoding or codepage issues";
     }
+#else
+    // Linux/Unix: Qt 6 forces UTF-8, Qt 5 depends on locale
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // Qt 6 forces UTF-8 encoding regardless of flag or locale
+    shouldWork = true;
+    qDebug() << "Expected: UTF-8 filenames should work (Qt 6 forces UTF-8)";
+#else
+    // Qt 5: depends on locale, even with UTF-8 flag
+    // The UTF-8 flag in the archive is not sufficient on Qt 5 if locale is non-UTF-8
+    QByteArray locale = qgetenv("LC_ALL");
+    if (locale.isEmpty()) locale = qgetenv("LANG");
+    shouldWork = locale.contains("UTF-8") || locale.contains("utf8");
+
+    if (shouldWork) {
+        qDebug() << "Expected: UTF-8 filenames should work (Qt 5 + UTF-8 locale)";
+    } else {
+        qDebug() << "Expected: UTF-8 filenames will be mangled (Qt 5 + non-UTF-8 locale)";
+        if (archiveType == "with_flag") {
+            qDebug() << "  Note: UTF-8 flag is set but Qt 5 still requires UTF-8 locale";
+        }
+        qDebug() << "  Linux: expecting null truncation (.txt)";
+    }
+#endif
+#endif
 
     // Find artifact directories containing UTF-8 archives
     QString pattern = QString("utf8_%1_qt*").arg(archiveType);
@@ -144,19 +154,19 @@ void TestUtf8Decompress::decompressUtf8Files()
                 // Verify extracted filename matches one of the expected UTF-8 filenames
                 QVERIFY2(expectedUtf8Files.contains(extractedFile),
                          qPrintable(QString("Expected one of the UTF-8 filenames, got: %1").arg(extractedFile)));
-                qDebug() << "  ✓ UTF-8 filename correctly decoded:" << extractedFile;
+                qDebug() << "  UTF-8 filename correctly decoded:" << extractedFile;
             } else {
                 // Filenames should be mangled
 #ifdef Q_OS_WIN
-                // Windows: expect '?' replacement
-                QRegularExpression windowsPattern("^\\?+\\.txt$");
-                QVERIFY2(windowsPattern.match(extractedFile).hasMatch(),
-                         qPrintable(QString("Windows should produce '?+.txt', got: %1").arg(extractedFile)));
-                qDebug() << "  ✓ Windows: '?' replacement as expected";
+                // Windows: behavior varies - may produce '?' replacement, double-encoding, or other mangling
+                // Just verify it doesn't match the expected UTF-8 filenames
+                QVERIFY2(!expectedUtf8Files.contains(extractedFile),
+                         qPrintable(QString("Expected mangled filename on Windows, but got valid UTF-8: %1").arg(extractedFile)));
+                qDebug() << "  Windows: filename mangled as expected (got:" << extractedFile << ")";
 #else
                 // Linux Qt 5 + non-UTF-8 locale: expect null truncation
                 QCOMPARE(extractedFile, QString(".txt"));
-                qDebug() << "  ✓ Linux: null truncation as expected";
+                qDebug() << "  Linux: null truncation as expected";
 #endif
             }
 

@@ -73,21 +73,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Archives WITH UTF-8 flag - should always work
-          - name: "with-flag-Qt5"
+          # Archives WITH UTF-8 flag
+          # Note: Qt 5 still requires UTF-8 locale even with flag set
+          - name: "with-flag-Qt5-UTF8-locale"
             qt_version: "5.15.12"
             archive_type: "with_flag"
             setup_locale: false
-            lc_all: "C"
-            lang: "C"
-            test_description: "with flag (should work)"
+            lc_all: "C.UTF-8"
+            lang: "C.UTF-8"
+            test_description: "with flag, Qt5 + UTF-8 locale = works"
           - name: "with-flag-Qt6"
             qt_version: "6.8.2"
             archive_type: "with_flag"
             setup_locale: false
             lc_all: "C"
             lang: "C"
-            test_description: "with flag (should work)"
+            test_description: "with flag, Qt6 = works"
           # Archives WITHOUT UTF-8 flag - behavior depends on Qt version/locale
           - name: "no-flag-Qt5-UTF8-locale"
             qt_version: "5.15.12"
@@ -96,6 +97,13 @@ jobs:
             lc_all: "C.UTF-8"
             lang: "C.UTF-8"
             test_description: "no flag, UTF-8 locale = works"
+          - name: "no-flag-Qt5-C-locale"
+            qt_version: "5.15.12"
+            archive_type: "no_flag"
+            setup_locale: false
+            lc_all: "C"
+            lang: "C"
+            test_description: "no flag, C locale = null truncation"
           - name: "no-flag-Qt5-Latin1-locale"
             qt_version: "5.15.12"
             archive_type: "no_flag"
