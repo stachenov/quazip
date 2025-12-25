@@ -118,7 +118,7 @@ jobs:
       - name: Run tests
         if: inputs.run_tests && !inputs.cross_extract
         env:
-          TEST_CR_COMPRESS: ${{ !inputs.test_cr_compress }}
+          TEST_CR_COMPRESS: ${{ inputs.test_cr_compress }}
           TEST_UTF8_COMPRESS: ${{ inputs.test_utf8_compress  }}
           TEST_UTF8_COMPRESS_BAD: ${{ inputs.test_utf8_compress_bad }}
           #TEST_ZIP_UNZIP_LARGE: true
