@@ -22,6 +22,15 @@ See COPYING file for the full LGPL text.
 #include "QuaCompress.h"
 #include "JlCompress.h"
 
+// Define static constexpr members for C++14 compatibility (Qt5)
+constexpr QuaCompress::CompressionStrategy QuaCompress::Storage;
+constexpr QuaCompress::CompressionStrategy QuaCompress::Fastest;
+constexpr QuaCompress::CompressionStrategy QuaCompress::Faster;
+constexpr QuaCompress::CompressionStrategy QuaCompress::Standard;
+constexpr QuaCompress::CompressionStrategy QuaCompress::Better;
+constexpr QuaCompress::CompressionStrategy QuaCompress::Best;
+constexpr QuaCompress::CompressionStrategy QuaCompress::Default;
+
 QuaCompress::QuaCompress()
     : m_options(JlCompress::Options::Default)
 {
