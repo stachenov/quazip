@@ -26,6 +26,7 @@ See COPYING file for the full LGPL text.
 #include <QtCore/QDir>
 #include <QtCore/QDirIterator>
 #include <QtCore/QFileInfo>
+#include <QtCore/QRegularExpression>
 #include <QtTest/QTest>
 
 #include <JlCompress.h>
@@ -79,11 +80,26 @@ void TestUtf8Decompress::decompressUtf8Files()
             QVERIFY2(!extractedFiles.isEmpty(), qPrintable(QString("No files found after extraction from: %1").arg(archiveFile)));
 
             // In C locale, UTF-8 filenames should be mangled (not properly decoded)
-            // We just verify that extraction doesn't crash and produces some output
+            // The behavior differs by platform when extracting UTF-8 filenames:
+            // - Windows: Unmappable characters are replaced with '?' (0x3f)
+            // - Linux: Unmappable characters are dropped entirely (null truncation)
             for (const QString &extractedFile : extractedFiles) {
                 QString filePath = extractedDir.absoluteFilePath(extractedFile);
                 QVERIFY2(QFile::exists(filePath), qPrintable(QString("Extracted file does not exist: %1").arg(filePath)));
                 qDebug() << "Found extracted file (possibly mangled):" << extractedFile;
+
+#ifdef Q_OS_WIN
+                // On Windows, expect '?' replacement: one or more '?' followed by .txt
+                // Example: "файл.txt" -> "????.txt"
+                QRegularExpression windowsPattern("^\\?+\\.txt$");
+                QVERIFY2(windowsPattern.match(extractedFile).hasMatch(),
+                         qPrintable(QString("Windows should produce pattern '?+.txt', got: %1").arg(extractedFile)));
+#else
+                // On Linux with non-UTF-8 locale, unmappable characters are dropped
+                // This results in just ".txt" (null truncation)
+                // Example: "файл.txt" -> ".txt"
+                QCOMPARE(extractedFile, QString(".txt"));
+#endif
             }
 
             // Cleanup

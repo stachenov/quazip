@@ -171,3 +171,20 @@ jobs:
           LANG: C
           TEST_UTF8_DECOMPRESS: "true"
         run: ctest --verbose -C Release
+
+  utf8-decompress-win-64:
+    name: Win-Qt-${{ matrix.qt_version }}-preset-${{ matrix.preset }}
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [ conan ]
+        qt_version: [ 5.15.2, 6.8.2 ]
+    uses: ./.github/workflows/reusable-win.yml
+    with:
+      runs_on: "win-x64"
+      arch: x64
+      qt_version: ${{ matrix.qt_version }}
+      preset: ${{ matrix.preset }}
+      pe_str: "x86-64"
+      test_cr_compress: false
+      test_utf8_decompress: true

@@ -24,6 +24,7 @@ See COPYING file for the full LGPL text.
 #include "qztest.h"
 
 #include <QtCore/QDir>
+#include <QtCore/QRegularExpression>
 #include <QtTest/QTest>
 
 #include <JlCompress.h>
@@ -75,13 +76,29 @@ void TestUtf8Compress::compressUtf8Files()
         QCOMPARE(fileList.size(), 1);
 
         if (isCompressBad) {
-            // In C locale without UTF-8 flag, show what actually happens
+            // In non-UTF-8 locale without UTF-8 flag, filenames get mangled
+            // The behavior differs by platform:
+            // - Windows: Unmappable characters are replaced with '?' (0x3f)
+            // - Linux: Unmappable characters are dropped entirely (null truncation)
             qDebug() << "Original filename:" << fileName;
             qDebug() << "Filename in archive:" << fileList[0];
             qDebug() << "Raw bytes:" << fileList[0].toLocal8Bit().toHex();
+
+            QString archivedName = fileList[0];
+
+#ifdef Q_OS_WIN
+            // On Windows, expect '?' replacement: one or more '?' followed by .txt
+            // Example: "файл.txt" -> "????.txt"
+            QRegularExpression windowsPattern("^\\?+\\.txt$");
+            QVERIFY2(windowsPattern.match(archivedName).hasMatch(),
+                     qPrintable(QString("Windows should produce pattern '?+.txt', got: %1").arg(archivedName)));
+#else
+            // On Linux with non-UTF-8 locale, unmappable characters are dropped
+            // This results in just ".txt" (null truncation)
+            // Example: "файл.txt" -> ".txt"
+            QCOMPARE(archivedName, QString(".txt"));
+#endif
             qDebug() << "---";
-            // Note: On Qt6 Linux, Qt forces UTF-8 so filenames may look correct
-            // On Qt5 or Windows with non-UTF-8 locale, we'll see actual mangling
         } else {
             // With UTF-8 flag, filename should match
             QCOMPARE(fileList[0], fileName);
