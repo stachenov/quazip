@@ -32,19 +32,70 @@ See COPYING file for the full LGPL text.
 #include <JlCompress.h>
 
 /*
- * The purpose of this test is to extract UTF-8 archives created in a UTF-8 locale
- * but extracted in a C locale environment. We expect the filenames to be mangled
- * (not properly decoded as UTF-8) since we're in a C locale.
+ * The purpose of this test is to extract UTF-8 archives and verify behavior
+ * based on archive type (with/without UTF-8 flag), platform, Qt version, and locale.
+ *
+ * Expected behavior:
+ * - Archives WITH UTF-8 flag: Should always work (flag tells us to decode as UTF-8)
+ * - Archives WITHOUT UTF-8 flag:
+ *   - Qt 6: Works (Qt forces UTF-8)
+ *   - Qt 5 + UTF-8 locale: Works (locale encoding matches file bytes)
+ *   - Qt 5 + non-UTF-8 locale: Fails with mangling (encoding mismatch)
+ *     - Windows: '?' replacement
+ *     - Linux: null truncation
  */
 void TestUtf8Decompress::decompressUtf8Files()
 {
     qDebug() << "Performing UTF-8 decompress tests in " << QDir::currentPath();
     qDebug() << "Current locale: LC_ALL=" << qgetenv("LC_ALL") << "LANG=" << qgetenv("LANG");
 
-    // Find artifact directories containing UTF-8 archives
-    QDirIterator it(QDir::currentPath(), QStringList() << "utf8_archives_*", QDir::Dirs, QDirIterator::Subdirectories);
+    // Expected UTF-8 filenames (must match testutf8_compress.cpp)
+    QStringList expectedUtf8Files;
+    expectedUtf8Files << QString::fromUtf8("файл.txt");        // Cyrillic
+    expectedUtf8Files << QString::fromUtf8("ありがとう.txt");    // Japanese
+    expectedUtf8Files << QString::fromUtf8("你好.txt");         // Chinese
+    expectedUtf8Files << QString::fromUtf8("Привет.txt");      // Cyrillic
+    expectedUtf8Files << QString::fromUtf8("测试.txt");         // Chinese
 
-    QVERIFY2(it.hasNext(), "No UTF-8 archive artifacts found");
+    // Determine archive type being tested
+    QByteArray archiveTypeEnv = qgetenv("TEST_UTF8_ARCHIVE_TYPE");
+    QString archiveType = archiveTypeEnv.isEmpty() ? "with_flag" : QString::fromLatin1(archiveTypeEnv);
+    qDebug() << "Testing archive type:" << archiveType;
+
+    // Determine expected behavior based on archive type, Qt version, and locale
+    bool shouldWork = false;
+    if (archiveType == "with_flag") {
+        // UTF-8 flag is set in archive: should always work
+        shouldWork = true;
+        qDebug() << "Expected: UTF-8 filenames should be decoded correctly (flag is set)";
+    } else {
+        // No UTF-8 flag: depends on platform/Qt version/locale
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        shouldWork = true;  // Qt 6 forces UTF-8
+        qDebug() << "Expected: UTF-8 filenames should work (Qt 6 forces UTF-8)";
+#else
+        // Qt 5: depends on locale
+        QByteArray locale = qgetenv("LC_ALL");
+        if (locale.isEmpty()) locale = qgetenv("LANG");
+        shouldWork = locale.contains("UTF-8") || locale.contains("utf8");
+        if (shouldWork) {
+            qDebug() << "Expected: UTF-8 filenames should work (locale is UTF-8)";
+        } else {
+            qDebug() << "Expected: UTF-8 filenames will be mangled (Qt 5 + non-UTF-8 locale)";
+#ifdef Q_OS_WIN
+            qDebug() << "  Windows: expecting '?' replacement";
+#else
+            qDebug() << "  Linux: expecting null truncation (.txt)";
+#endif
+        }
+#endif
+    }
+
+    // Find artifact directories containing UTF-8 archives
+    QString pattern = QString("utf8_archives_qt*");
+    QDirIterator it(QDir::currentPath(), QStringList() << pattern, QDir::Dirs, QDirIterator::Subdirectories);
+
+    QVERIFY2(it.hasNext(), qPrintable(QString("No UTF-8 archive artifacts found matching: %1").arg(pattern)));
 
     int totalArchivesProcessed = 0;
 
@@ -53,7 +104,9 @@ void TestUtf8Decompress::decompressUtf8Files()
         qDebug() << "====== Found artifact:" << artifactDir.fileName() << "======";
 
         QDir dir(artifactDir.absoluteFilePath());
-        QStringList zipFiles = dir.entryList(QStringList() << "utf8_*.zip", QDir::Files);
+        // Look for archives matching the type we're testing
+        QString zipPattern = QString("%1_*.zip").arg(archiveType);
+        QStringList zipFiles = dir.entryList(QStringList() << zipPattern, QDir::Files);
 
         QVERIFY2(!zipFiles.isEmpty(), qPrintable(QString("No UTF-8 zip files found in artifact directory: %1").arg(artifactDir.fileName())));
 
@@ -79,26 +132,31 @@ void TestUtf8Decompress::decompressUtf8Files()
             QStringList extractedFiles = extractedDir.entryList(QDir::Files | QDir::Hidden);
             QVERIFY2(!extractedFiles.isEmpty(), qPrintable(QString("No files found after extraction from: %1").arg(archiveFile)));
 
-            // In C locale, UTF-8 filenames should be mangled (not properly decoded)
-            // The behavior differs by platform when extracting UTF-8 filenames:
-            // - Windows: Unmappable characters are replaced with '?' (0x3f)
-            // - Linux: Unmappable characters are dropped entirely (null truncation)
-            for (const QString &extractedFile : extractedFiles) {
-                QString filePath = extractedDir.absoluteFilePath(extractedFile);
-                QVERIFY2(QFile::exists(filePath), qPrintable(QString("Extracted file does not exist: %1").arg(filePath)));
-                qDebug() << "Found extracted file (possibly mangled):" << extractedFile;
+            // Verify extracted filenames based on expected behavior
+            QCOMPARE(extractedFiles.size(), 1);  // Each archive contains exactly one file
+            QString extractedFile = extractedFiles.first();
+            QString filePath = extractedDir.absoluteFilePath(extractedFile);
+            QVERIFY2(QFile::exists(filePath), qPrintable(QString("Extracted file does not exist: %1").arg(filePath)));
+            qDebug() << "Extracted file:" << extractedFile << "(" << extractedFile.toUtf8().toHex() << ")";
 
+            if (shouldWork) {
+                // Filenames should be correctly decoded as UTF-8
+                // Verify extracted filename matches one of the expected UTF-8 filenames
+                QVERIFY2(expectedUtf8Files.contains(extractedFile),
+                         qPrintable(QString("Expected one of the UTF-8 filenames, got: %1").arg(extractedFile)));
+                qDebug() << "  ✓ UTF-8 filename correctly decoded:" << extractedFile;
+            } else {
+                // Filenames should be mangled
 #ifdef Q_OS_WIN
-                // On Windows, expect '?' replacement: one or more '?' followed by .txt
-                // Example: "файл.txt" -> "????.txt"
+                // Windows: expect '?' replacement
                 QRegularExpression windowsPattern("^\\?+\\.txt$");
                 QVERIFY2(windowsPattern.match(extractedFile).hasMatch(),
-                         qPrintable(QString("Windows should produce pattern '?+.txt', got: %1").arg(extractedFile)));
+                         qPrintable(QString("Windows should produce '?+.txt', got: %1").arg(extractedFile)));
+                qDebug() << "  ✓ Windows: '?' replacement as expected";
 #else
-                // On Linux with non-UTF-8 locale, unmappable characters are dropped
-                // This results in just ".txt" (null truncation)
-                // Example: "файл.txt" -> ".txt"
+                // Linux Qt 5 + non-UTF-8 locale: expect null truncation
                 QCOMPARE(extractedFile, QString(".txt"));
+                qDebug() << "  ✓ Linux: null truncation as expected";
 #endif
             }
 

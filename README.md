@@ -119,3 +119,20 @@ CMake options
 
 See [EXAMPLES.md](EXAMPLES.md) for code examples showing how to use QuaZip's three API levels: low-level QuaZip/QuaZipFile, JlCompress utility functions, and QuaCompress fluent interface.
 
+# UTF-8 Handling
+
+The UTF-8 flag sets a bit in the ZIP file.
+
+## Platform Behavior Without UTF-8 Flag
+
+If you don't set the flag and try to decompress such an archive, the behavior depends on the platform and default system encoding.  
+If your platform defaults to UTF-8 everything will just work.  
+If it doesn't, you can expect the following behavior:
+
+| Platform | Qt Version | Behavior | Example: `файл.txt` |
+|----------|-----------|----------|---------------------|
+| **Windows** | Any | Character replacement with `?` | `????.txt` |
+| **Linux** | Qt 5 | Character dropping (null truncation) | `.txt` |
+| **Linux** | Qt 6 | UTF-8 forced (preserved) | `файл.txt` |
+
+This is what was observed in QuaZip but other unzip tools might behave differently.

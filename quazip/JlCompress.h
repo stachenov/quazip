@@ -305,6 +305,10 @@ public:
       with identical names.
       \warning On failure, the archive may be left in a partially modified state
       with some files already added.
+      \warning The UTF-8 flag in options MUST match the existing archive's encoding.
+      QuaZip does not auto-detect this. If the archive was created with UTF-8 enabled,
+      you must also enable UTF-8 when adding files, otherwise the archive will have
+      inconsistent filename encodings.
 
       \param fileCompressed The name of the existing archive.
       \param files The file list to add.
@@ -361,6 +365,10 @@ public:
       \warning The archive must already exist, or the operation will fail.
       \warning On failure, the archive may be left in a partially modified state
       with some files/directories already added.
+      \warning The UTF-8 flag in options MUST match the existing archive's encoding.
+      QuaZip does not auto-detect this. If the archive was created with UTF-8 enabled,
+      you must also enable UTF-8 when adding files, otherwise the archive will have
+      inconsistent filename encodings.
 
       \param fileCompressed The name of the existing archive.
       \param dir The directory to add.
