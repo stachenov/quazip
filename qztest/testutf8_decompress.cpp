@@ -92,7 +92,7 @@ void TestUtf8Decompress::decompressUtf8Files()
     }
 
     // Find artifact directories containing UTF-8 archives
-    QString pattern = QString("utf8_archives_qt*");
+    QString pattern = QString("utf8_%1_qt*").arg(archiveType);
     QDirIterator it(QDir::currentPath(), QStringList() << pattern, QDir::Dirs, QDirIterator::Subdirectories);
 
     QVERIFY2(it.hasNext(), qPrintable(QString("No UTF-8 archive artifacts found matching: %1").arg(pattern)));
@@ -105,7 +105,7 @@ void TestUtf8Decompress::decompressUtf8Files()
 
         QDir dir(artifactDir.absoluteFilePath());
         // Look for archives matching the type we're testing
-        QString zipPattern = QString("%1_*.zip").arg(archiveType);
+        QString zipPattern = QString("utf8_%1_*.zip").arg(archiveType);
         QStringList zipFiles = dir.entryList(QStringList() << zipPattern, QDir::Files);
 
         QVERIFY2(!zipFiles.isEmpty(), qPrintable(QString("No UTF-8 zip files found in artifact directory: %1").arg(artifactDir.fileName())));
