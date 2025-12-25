@@ -122,7 +122,7 @@ public:
             return m_password;
         }
 
-        void setPassword(const QByteArray &password) {
+        void setPassword(const QByteArray& password) {
             m_password = password;
         }
 

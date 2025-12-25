@@ -283,6 +283,7 @@ void removeTestFiles(const QStringList &fileNames, const QString &dir)
 bool isPlatformUtf8()
 {
 #ifdef QUAZIP_CAN_USE_QTEXTCODEC
+    // Qt 5: Check the actual codec
     QTextCodec *defaultCodec = QTextCodec::codecForLocale();
     if (defaultCodec) {
         QByteArray codecName = defaultCodec->name().toLower();
@@ -290,10 +291,16 @@ bool isPlatformUtf8()
     }
     return false;
 #else
-    // Qt6: check locale environment
-    QByteArray locale = qgetenv("LC_ALL");
-    if (locale.isEmpty()) locale = qgetenv("LANG");
-    return locale.contains("UTF-8") || locale.contains("utf8");
+    // Qt 6: Platform-specific behavior
+#ifdef Q_OS_WIN
+    // Windows: UTF-8 support depends on the archive having UTF-8 flag set,
+    // not on the "platform" encoding. Return false to indicate platform
+    // does not guarantee UTF-8 without the flag.
+    return false;
+#else
+    // Linux/Unix: Qt 6 forces UTF-8 encoding regardless of locale
+    return true;
+#endif
 #endif
 }
 

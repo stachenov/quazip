@@ -121,18 +121,14 @@ See [EXAMPLES.md](EXAMPLES.md) for code examples showing how to use QuaZip's thr
 
 # UTF-8 Handling
 
-The UTF-8 flag sets a bit in the ZIP file.
+QuaZip supports setting the UTF-8 flag (bit 11) in ZIP file headers via `JlCompress::Options::setUtf8Enabled()` or `QuaZip::setUtf8Enabled()`. This flag tells extractors that filenames are UTF-8 encoded.
 
-## Platform Behavior Without UTF-8 Flag
+## Behavior Summary
 
-If you don't set the flag and try to decompress such an archive, the behavior depends on the platform and default system encoding.  
-If your platform defaults to UTF-8 everything will just work.  
-If it doesn't, you can expect the following behavior:
-
-| Platform | Qt Version | Behavior | Example: `файл.txt` |
-|----------|-----------|----------|---------------------|
-| **Windows** | Any | Character replacement with `?` | `????.txt` |
-| **Linux** | Qt 5 | Character dropping (null truncation) | `.txt` |
-| **Linux** | Qt 6 | UTF-8 forced (preserved) | `файл.txt` |
-
-This is what was observed in QuaZip but other unzip tools might behave differently.
+| Platform | Qt Version | UTF-8 Flag | Locale | Result                             | Example: `файл.txt` |
+|----------|-----------|-----------|--------|------------------------------------|---------------------|
+| **Windows** | Any | ✓ Set | Any | ✓ Works                            | `файл.txt` |
+| **Windows** | Any | ✗ Not set | Any | ✗ Mangled (double-encoding or ???) | `Ñ„Ð°Ð¹Ð».txt` |
+| **Linux** | Qt 6 | Any | Any | ✓ Works (Qt forces UTF-8)          | `файл.txt` |
+| **Linux** | Qt 5 | Any | UTF-8 | ✓ Works                            | `файл.txt` |
+| **Linux** | Qt 5 | Any | non-UTF-8 | ✗ Truncated at null bytes          | `.txt` |

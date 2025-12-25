@@ -112,11 +112,11 @@ void TestJlCompress::compressFileOptions_data()
                             << ""
                             << ""
                             << "";
-    QTest::newRow("simple-utf8-bad") << "jlsimplefile-utf8-bad.zip"
+    QTest::newRow("simple-utf8-no-flag") << "jlsimplefile-utf8-no-flag.zip"
                                  << QString::fromUtf8("ありがとう。.txt")
                                  << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                  << JlCompress::Options::Default
-                                 << false
+                                 << false  // UTF-8 flag disabled - tests compression without flag
                                  << QByteArray()
                                  << ""
                                  << ""
@@ -183,11 +183,8 @@ void TestJlCompress::compressFileOptions_data()
     // This means identical inputs produce different encrypted outputs each run.
     //
     // To make these deterministic (if needed in the future):
-    // - Would require modifying minizip vendor code (crypthead() in minizip_crypt.h)
+    // - Would require modifying minizip code (crypthead() in minizip_crypt.h)
     // - Add optional seed parameter through QuaZipFile → JlCompress → minizip layers
-    //
-    // Current approach: Test actual functionality (encryption/decryption works,
-    // wrong passwords fail) rather than implementation details (archive hash).
     QTest::newRow("password-simple") << "jlsimplefile-password.zip"
                                      << "test0.txt"
                                      << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
@@ -225,14 +222,6 @@ void TestJlCompress::compressFileOptions()
         QSKIP("Skipping UTF-8 test on non-UTF-8 platform");
     }
 
-#ifdef Q_OS_WIN
-    // Skip utf8-bad test on Windows - mangled filenames contain invalid characters
-    // (e.g., "??????.txt" where ? is not allowed in Windows filenames)
-    bool isUtf8BadTest = zipName == "jlsimplefile-utf8-bad.zip";
-    if (isUtf8BadTest && !isPlatformUtf8()) {
-        QSKIP("Skipping UTF-8-bad test on Windows non-UTF-8 - produces invalid filenames");
-    }
-#endif
 
     QDir curDir;
     if (curDir.exists(zipName)) {
@@ -246,21 +235,20 @@ void TestJlCompress::compressFileOptions()
     qDebug() << "Testing " << fileName;
 
     // Detect if platform defaults to UTF-8
-    bool platformIsUtf8 = false;
+    bool platformIsUtf8 = isPlatformUtf8();
     QString codecInfo;
 #ifdef QUAZIP_CAN_USE_QTEXTCODEC
     QTextCodec *defaultCodec = QTextCodec::codecForLocale();
     if (defaultCodec) {
-        QByteArray codecName = defaultCodec->name().toLower();
-        platformIsUtf8 = codecName.contains("utf-8") || codecName.contains("utf8");
         codecInfo = QString::fromLatin1(defaultCodec->name());
     }
 #else
-    // Qt6: check locale environment
-    QByteArray locale = qgetenv("LC_ALL");
-    if (locale.isEmpty()) locale = qgetenv("LANG");
-    platformIsUtf8 = locale.contains("UTF-8") || locale.contains("utf8");
-    codecInfo = QString::fromLatin1(locale);
+    // Qt 6: Platform-specific
+#ifdef Q_OS_WIN
+    codecInfo = "Windows (UTF-8 requires flag)";
+#else
+    codecInfo = "Qt6 (forces UTF-8)";
+#endif
 #endif
 
     JlCompress::Options options(dateTime, strategy, utf8, password);

@@ -36,10 +36,6 @@ on:
         required: false
         default: false
         type: boolean
-      test_utf8_compress_bad:
-        required: false
-        default: false
-        type: boolean
       test_utf8_decompress:
         required: false
         default: false
@@ -136,7 +132,6 @@ jobs:
           TEST_CR_COMPRESS: ${{ inputs.test_cr_compress }}
           TEST_UTF8_COMPRESS: ${{ inputs.test_utf8_compress  }}
           TEST_UTF8_DECOMPRESS: ${{ inputs.test_utf8_decompress  }}
-          TEST_UTF8_COMPRESS_BAD: ${{ inputs.test_utf8_compress_bad }}
           TEST_UTF8_ARCHIVE_TYPE: ${{ inputs.test_utf8_archive_type }}
           #TEST_ZIP_UNZIP_LARGE: true
           QT_ASSUME_STDERR_HAS_CONSOLE: 1 # !! qDebug() is not visible if this is not set on Win runners
