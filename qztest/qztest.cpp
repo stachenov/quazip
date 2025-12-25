@@ -352,6 +352,10 @@ int main(int argc, char **argv)
             err = qMax(err, QTest::qExec(&testQuaCompress, app.arguments()));
         }
         {
+            TestQuaExtract testQuaExtract;
+            err = qMax(err, QTest::qExec(&testQuaExtract, app.arguments()));
+        }
+        {
             TestQuaZipDir testQuaZipDir;
             err = qMax(err, QTest::qExec(&testQuaZipDir, app.arguments()));
         }

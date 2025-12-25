@@ -128,9 +128,9 @@ QStringList extracted = JlCompress::extractDir("archive.zip", "output_dir");
 QString extracted = JlCompress::extractFile("archive.zip", "document.txt", "output.txt", QByteArray("password123"));
 ```
 
-## QuaCompress API
+## Fluent API (QuaCompress/QuaExtract)
 
-Use for readable, fluent chaining of operations.
+Use for readable, type-safe fluent chaining of operations. Separate classes prevent accidentally mixing compression and extraction options.
 
 ### Compress
 
@@ -143,34 +143,43 @@ bool ok = QuaCompress()
 
 // Chain multiple options
 ok = QuaCompress()
-    .withUtf8Enabled(true)
-    .withCompression(JlCompress::Options::Best)
+    .withUtf8Enabled()
+    .withStrategy(QuaCompress::Best)
     .withPassword(QByteArray("password123"))
     .compressFile("archive.zip", "document.txt");
 
-// Compress directory with options
+// Compress directory with custom filters
 ok = QuaCompress()
-    .withUtf8Enabled(true)
-    .withCompression(JlCompress::Options::Better)
-    .compressDir("archive.zip", "my_folder", true);
+    .withUtf8Enabled()
+    .withStrategy(QuaCompress::Better)
+    .compressDir("archive.zip", "my_folder", true, QDir::Files | QDir::NoDotAndDotDot);
+
+// Add files to existing archive
+ok = QuaCompress()
+    .withUtf8Enabled()
+    .addFile("archive.zip", "new_file.txt");
 ```
 
 ### Extract
 
 ```cpp
-#include <QuaCompress.h>
+#include <QuaExtract.h>
 
 // Simple extraction
-QStringList files = QuaCompress()
+QStringList files = QuaExtract()
     .extractDir("archive.zip", "output_dir");
 
-// Extract with password using fluent API
-files = QuaCompress()
+// Extract with password
+files = QuaExtract()
     .withPassword(QByteArray("password123"))
     .extractDir("archive.zip", "output_dir");
 
+// Extract a single file
+QString extracted = QuaExtract()
+    .extractFile("archive.zip", "document.txt", "output.txt");
+
 // Get file list
-QStringList fileNames = QuaCompress()
+QStringList fileNames = QuaExtract()
     .getFileList("archive.zip");
 ```
 
@@ -178,6 +187,6 @@ QStringList fileNames = QuaCompress()
 
 - **Low-Level API**: Use when you need streaming I/O, custom error handling, or per-file control.
 - **JlCompress**: Use for simple, one-line operations; static utility pattern.
-- **QuaCompress**: Use when you want readable code with method chaining and discoverable options.
+- **QuaCompress/QuaExtract**: Similar to JlCompress but with fluent API.
 
-All three APIs support UTF-8 filenames, password encryption, and multiple compression levels. JlCompress and QuaCompress provide built-in path traversal protection when extracting archives.
+All three APIs support UTF-8 filenames, password encryption, and multiple compression levels. JlCompress and the fluent API provide built-in path traversal protection when extracting archives.

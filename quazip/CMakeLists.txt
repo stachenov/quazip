@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.13)
 set(QUAZIP_HEADERS
         JlCompress.h
         QuaCompress.h
+        QuaExtract.h
         ioapi.h
         minizip_crypt.h
         quaadler32.h
@@ -32,6 +33,7 @@ set(QUAZIP_SOURCES
         zip.c
         JlCompress.cpp
         QuaCompress.cpp
+        QuaExtract.cpp
         qioapi.cpp
         quaadler32.cpp
         quachecksum32.cpp

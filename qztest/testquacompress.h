@@ -27,18 +27,29 @@ See COPYING file for the full LGPL text.
 class TestQuaCompress: public QObject {
     Q_OBJECT
 private slots:
-    void fluentApiChaining_data();
-    void fluentApiChaining();
     void compressFile_data();
     void compressFile();
     void compressFiles_data();
     void compressFiles();
     void compressDir_data();
     void compressDir();
-    void extractDir_data();
-    void extractDir();
     void addFile_data();
     void addFile();
+    void addFiles_data();
+    void addFiles();
+    void addDir_data();
+    void addDir();
+};
+
+class TestQuaExtract: public QObject {
+    Q_OBJECT
+private slots:
+    void extractFile_data();
+    void extractFile();
+    void extractFiles_data();
+    void extractFiles();
+    void extractDir_data();
+    void extractDir();
     void getFileList_data();
     void getFileList();
 };
