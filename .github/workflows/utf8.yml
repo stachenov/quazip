@@ -106,8 +106,8 @@ jobs:
         run: |
           apt-get update
           apt-get install -y locales
-          echo "de_DE ISO-8859-1" | sudo tee -a /etc/locale.gen
-          sudo locale-gen
+          echo "de_DE ISO-8859-1" | tee -a /etc/locale.gen
+          locale-gen
 
       - name: Compress UTF-8 filenames WITHOUT UTF-8 flag in Latin1 locale
         working-directory: build
