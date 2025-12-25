@@ -222,6 +222,12 @@ void TestJlCompress::compressFileOptions()
         QSKIP("Skipping UTF-8 test on non-UTF-8 platform");
     }
 
+    // Skip tests with non-ASCII filenames on non-UTF-8 platforms
+    // Windows filesystem will mangle UTF-8 filenames to '??????' during file creation
+    if (!isPlatformUtf8() && fileName.toUtf8() != fileName.toLatin1()) {
+        QSKIP("Skipping test with non-ASCII filename on non-UTF-8 platform");
+    }
+
 
     QDir curDir;
     if (curDir.exists(zipName)) {

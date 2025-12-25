@@ -121,7 +121,7 @@ See [EXAMPLES.md](EXAMPLES.md) for code examples showing how to use QuaZip's thr
 
 # UTF-8 Handling
 
-QuaZip supports setting the UTF-8 flag (bit 11) in ZIP file headers via `JlCompress::Options::setUtf8Enabled()` or `QuaZip::setUtf8Enabled()`. This flag tells extractors that filenames are UTF-8 encoded.
+QuaZip supports setting the UTF-8 flag ZIP file via `JlCompress::Options::setUtf8Enabled()` or `QuaZip::setUtf8Enabled()`. This flag tells extractors that filenames are UTF-8 encoded.
 
 ## Behavior Summary
 
