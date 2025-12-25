@@ -132,6 +132,7 @@ jobs:
       qt_version: ${{ matrix.qt_version }}
       preset: ${{ matrix.preset }}
       pe_str: "x86-64"
+      test_cr_compress: false
       test_utf8_compress: true
       test_utf8_compress_bad: true
 

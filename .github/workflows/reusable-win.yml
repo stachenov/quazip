@@ -28,6 +28,10 @@ on:
         required: false
         default: false
         type: boolean
+      test_cr_compress:
+        required: false
+        default: true
+        type: boolean
       test_utf8_compress:
         required: false
         default: false
@@ -114,9 +118,9 @@ jobs:
       - name: Run tests
         if: inputs.run_tests && !inputs.cross_extract
         env:
-          TEST_CR_COMPRESS: "true"
-          TEST_UTF8_COMPRESS: ${{ inputs.test_utf8_compress && 'true' || 'false' }}
-          TEST_UTF8_COMPRESS_BAD: ${{ inputs.test_utf8_compress_bad && 'true' || 'false' }}
+          TEST_CR_COMPRESS: ${{ !inputs.test_cr_compress }}
+          TEST_UTF8_COMPRESS: ${{ inputs.test_utf8_compress  }}
+          TEST_UTF8_COMPRESS_BAD: ${{ inputs.test_utf8_compress_bad }}
           #TEST_ZIP_UNZIP_LARGE: true
           QT_ASSUME_STDERR_HAS_CONSOLE: 1 # !! qDebug() is not visible if this is not set on Win runners
         working-directory: ./build
