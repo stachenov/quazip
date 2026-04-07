@@ -34,10 +34,11 @@ class QuaZIODevicePrivate {
     friend class QuaZIODevice;
     QuaZIODevicePrivate(QIODevice *io, QuaZIODevice *q);
     ~QuaZIODevicePrivate();
-    QIODevice *io;
-    QuaZIODevice *q;
-    z_stream zins;
-    z_stream zouts;
+    Q_DISABLE_COPY_MOVE(QuaZIODevicePrivate)
+    QIODevice *io{};
+    QuaZIODevice *q{};
+    z_stream zins{};
+    z_stream zouts{};
     char *inBuf{nullptr};
     int inBufPos{0};
     int inBufSize{0};
@@ -159,7 +160,7 @@ QuaZIODevice::QuaZIODevice(QIODevice *io, QObject *parent):
     QIODevice(parent),
     d(new QuaZIODevicePrivate(io, this))
 {
-  connect(io, SIGNAL(readyRead()), SIGNAL(readyRead()));
+  connect(io, &QIODevice::readyRead, &QIODevice::readyRead);
 }
 
 QuaZIODevice::~QuaZIODevice()

@@ -61,14 +61,14 @@ struct QUAZIP_EXPORT QuaZipNewInfo {
    **/
   QDateTime dateTime;
   /// File internal attributes.
-  quint16 internalAttr;
+  quint16 internalAttr{};
   /// File external attributes.
   /**
     The highest 16 bits contain Unix file permissions and type (dir or
     file). The constructor QuaZipNewInfo(const QString&, const QString&)
     takes permissions from the provided file.
     */
-  quint32 externalAttr;
+  quint32 externalAttr{};
   /// File comment.
   /** Will be encoded in UTF-8 encoding.
    **/
@@ -81,7 +81,7 @@ struct QUAZIP_EXPORT QuaZipNewInfo {
   /** This is only needed if you are using raw file zipping mode, i. e.
    * adding precompressed file in the zip archive.
    **/
-  ulong uncompressedSize;
+  ulong uncompressedSize{};
   /// Constructs QuaZipNewInfo instance.
   /** Initializes name with \a name, dateTime with current date and
    * time. Attributes are initialized with zeros, comment and extra
