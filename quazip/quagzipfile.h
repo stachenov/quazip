@@ -100,7 +100,7 @@ private:
     // not implemented by design to disable copy
     QuaGzipFile(const QuaGzipFile &that);
     QuaGzipFile& operator=(const QuaGzipFile &that);
-    QuaGzipFilePrivate *d;
+    QuaGzipFilePrivate *d{};
 };
 
 #endif // QUAZIP_QUAGZIPFILE_H

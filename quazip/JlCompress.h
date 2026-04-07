@@ -111,7 +111,7 @@ public:
         // If set, used as last modified on file inside the archive.
         // If compressing a directory, used for all files.
         QDateTime m_dateTime;
-        CompressionStrategy m_compressionStrategy;
+        CompressionStrategy m_compressionStrategy{Default};
     };
 
     static bool copyData(QIODevice &inFile, QIODevice &outFile);
@@ -147,6 +147,8 @@ public:
       the root of the ZIP.
       \param recursive Whether to pack sub-directories as well or only
       files.
+      \param filters what to pack, filters are applied both when searching
+      for subdirs (if packing recursively) and when looking for files to pack
       \return true if success, false otherwise.
       */
     static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive,
@@ -160,7 +162,7 @@ public:
       the root of the ZIP.
       \param recursive Whether to pack sub-directories as well or only
       \param filters what to pack, filters are applied both when searching
-* for subdirs (if packing recursively) and when looking for files to pack
+      for subdirs (if packing recursively) and when looking for files to pack
       \param options Options for fixed file timestamp, compression level, encryption..
       files.
       \return true if success, false otherwise.

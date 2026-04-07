@@ -48,7 +48,7 @@ public:
 	quint32 value() override;
 
 private:
-	quint32 checksum;
+  quint32 checksum{};
 };
 
 #endif //QUAADLER32_H

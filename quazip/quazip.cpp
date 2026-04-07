@@ -41,21 +41,22 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 class QuaZipPrivate {
   friend class QuaZip;
   private:
-    Q_DISABLE_COPY(QuaZipPrivate)
+    ~QuaZipPrivate() = default;
+    Q_DISABLE_COPY_MOVE(QuaZipPrivate)
     /// The pointer to the corresponding QuaZip instance.
-    QuaZip *q;
+    QuaZip *q{};
     /// The codec for file names (used when UTF-8 is not enabled).
-    QuazipTextCodec *fileNameCodec;
+    QuazipTextCodec *fileNameCodec{};
     /// The codec for comments (used when UTF-8 is not enabled).
-    QuazipTextCodec *commentCodec;
+    QuazipTextCodec *commentCodec{};
     /// The archive file name.
     QString zipName;
     /// The device to access the archive.
-    QIODevice *ioDevice;
+    QIODevice *ioDevice{};
     /// The global comment.
     QString comment;
     /// The open mode.
-    QuaZip::Mode mode;
+    QuaZip::Mode mode{QuaZip::mdNotOpen};
     union {
       /// The internal handle for UNZIP modes.
       unzFile unzFile_f;
@@ -63,19 +64,19 @@ class QuaZipPrivate {
       zipFile zipFile_f;
     };
     /// Whether a current file is set.
-    bool hasCurrentFile_f;
+    bool hasCurrentFile_f{};
     /// The last error.
-    int zipError;
+    int zipError{UNZ_OK};
     /// Whether \ref QuaZip::setDataDescriptorWritingEnabled() "the data descriptor writing mode" is enabled.
-    bool dataDescriptorWritingEnabled;
+    bool dataDescriptorWritingEnabled{true};
     /// The zip64 mode.
-    bool zip64;
+    bool zip64{};
     /// The auto-close flag.
-    bool autoClose;
+    bool autoClose{true};
     /// The UTF-8 flag.
-    bool utf8;
+    bool utf8{};
     /// The OS code.
-    uint osCode;
+    uint osCode{};
     inline QuazipTextCodec *getDefaultFileNameCodec()
     {
         if (defaultFileNameCodec == nullptr) {
@@ -84,18 +85,10 @@ class QuaZipPrivate {
         return defaultFileNameCodec;
     }
     /// The constructor for the corresponding QuaZip constructor.
-    inline QuaZipPrivate(QuaZip *_q):
+    explicit inline QuaZipPrivate(QuaZip *_q):
       q(_q),
       fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QuazipTextCodec::codecForLocale()),
-      ioDevice(nullptr),
-      mode(QuaZip::mdNotOpen),
-      hasCurrentFile_f(false),
-      zipError(UNZ_OK),
-      dataDescriptorWritingEnabled(true),
-      zip64(false),
-      autoClose(true),
-      utf8(false),
       osCode(defaultOsCode)
     {
         unzFile_f = nullptr;
@@ -109,14 +102,6 @@ class QuaZipPrivate {
       fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QuazipTextCodec::codecForLocale()),
       zipName(_zipName),
-      ioDevice(nullptr),
-      mode(QuaZip::mdNotOpen),
-      hasCurrentFile_f(false),
-      zipError(UNZ_OK),
-      dataDescriptorWritingEnabled(true),
-      zip64(false),
-      autoClose(true),
-      utf8(false),
       osCode(defaultOsCode)
     {
         unzFile_f = nullptr;
@@ -130,13 +115,6 @@ class QuaZipPrivate {
       fileNameCodec(getDefaultFileNameCodec()),
       commentCodec(QuazipTextCodec::codecForLocale()),
       ioDevice(_ioDevice),
-      mode(QuaZip::mdNotOpen),
-      hasCurrentFile_f(false),
-      zipError(UNZ_OK),
-      dataDescriptorWritingEnabled(true),
-      zip64(false),
-      autoClose(true),
-      utf8(false),
       osCode(defaultOsCode)
     {
         unzFile_f = nullptr;
@@ -154,7 +132,7 @@ class QuaZipPrivate {
       bool goToFirstUnmappedFile();
       QHash<QString, unz64_file_pos> directoryCaseSensitive;
       QHash<QString, unz64_file_pos> directoryCaseInsensitive;
-      unz64_file_pos lastMappedDirectoryEntry;
+      unz64_file_pos lastMappedDirectoryEntry{};
       static QuazipTextCodec *defaultFileNameCodec;
       static uint defaultOsCode;
 };
@@ -176,7 +154,7 @@ void QuaZipPrivate::addCurrentFileToDirectoryMap(const QString &fileName)
         return;
     }
     // Adds current file to filename map as fileName
-    unz64_file_pos fileDirectoryPos;
+    unz64_file_pos fileDirectoryPos{};
     unzGetFilePos64(unzFile_f, &fileDirectoryPos);
     directoryCaseSensitive.insert(fileName, fileDirectoryPos);
     // Only add lowercase to directory map if not already there
@@ -407,15 +385,15 @@ QString QuaZip::getComment()const
   fakeThis->p->zipError=UNZ_OK;
   if(p->mode!=mdUnzip) {
     qWarning("QuaZip::getComment(): ZIP is not open in mdUnzip mode");
-    return QString();
+    return {};
   }
   unz_global_info64 globalInfo;
   QByteArray comment;
   if((fakeThis->p->zipError=unzGetGlobalInfo64(p->unzFile_f, &globalInfo))!=UNZ_OK)
-    return QString();
+    return {};
   comment.resize(globalInfo.size_comment);
   if((fakeThis->p->zipError=unzGetGlobalComment(p->unzFile_f, comment.data(), comment.size())) < 0)
-    return QString();
+    return {};
   fakeThis->p->zipError = UNZ_OK;
   unsigned flags = 0;
   return (unzGetFileFlags(p->unzFile_f, &flags) == UNZ_OK) && (flags & UNZ_ENCODING_UTF8)
@@ -570,14 +548,14 @@ QString QuaZip::getCurrentFileName()const
   fakeThis->p->zipError=UNZ_OK;
   if(p->mode!=mdUnzip) {
     qWarning("QuaZip::getCurrentFileName(): ZIP is not open in mdUnzip mode");
-    return QString();
+    return {};
   }
-  if(!isOpen()||!hasCurrentFile()) return QString();
+  if(!isOpen()||!hasCurrentFile()) return {};
   QByteArray fileName(MAX_FILE_NAME_LENGTH, 0);
   unz_file_info64 file_info;
   if((fakeThis->p->zipError=unzGetCurrentFileInfo64(p->unzFile_f, &file_info, fileName.data(), fileName.size(),
       nullptr, 0, nullptr, 0))!=UNZ_OK)
-    return QString();
+    return {};
   fileName.resize(file_info.size_filename);
   QString result = (file_info.flag & UNZ_ENCODING_UTF8)
     ? QString::fromUtf8(fileName) : p->fileNameCodec->toUnicode(fileName);
@@ -750,7 +728,7 @@ QStringList QuaZip::getFileNameList() const
 {
     QStringList list;
     if (!p->getFileInfoList(&list))
-        return QStringList();
+        return {};
     return list;
 }
 
@@ -758,7 +736,7 @@ QList<QuaZipFileInfo> QuaZip::getFileInfoList() const
 {
     QList<QuaZipFileInfo> list;
     if (!p->getFileInfoList(&list))
-        return QList<QuaZipFileInfo>();
+        return {};
     return list;
 }
 
@@ -766,7 +744,7 @@ QList<QuaZipFileInfo64> QuaZip::getFileInfoList64() const
 {
     QList<QuaZipFileInfo64> list;
     if (!p->getFileInfoList(&list))
-        return QList<QuaZipFileInfo64>();
+        return {};
     return list;
 }
 

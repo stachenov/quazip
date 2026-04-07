@@ -31,10 +31,10 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 class QuaGzipFilePrivate {
     friend class QuaGzipFile;
     QString fileName;
-    gzFile gzd;
-    inline QuaGzipFilePrivate(): gzd(nullptr) {}
-    inline QuaGzipFilePrivate(const QString &_fileName):
-        fileName(_fileName), gzd(nullptr) {}
+    gzFile gzd{};
+    inline QuaGzipFilePrivate() {}
+    explicit inline QuaGzipFilePrivate(const QString &_fileName):
+        fileName(_fileName) {}
     template<typename FileId> bool open(FileId id, 
         QIODevice::OpenMode mode, QString &error);
     gzFile open(int fd, const char *modeString);

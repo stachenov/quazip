@@ -40,35 +40,35 @@ technique known as the Pimpl (private implementation) idiom.
 class QuaZipFilePrivate {
   friend class QuaZipFile;
   private:
-    Q_DISABLE_COPY(QuaZipFilePrivate)
+    Q_DISABLE_COPY_MOVE(QuaZipFilePrivate)
     /// The pointer to the associated QuaZipFile instance.
-    QuaZipFile *q;
+    QuaZipFile *q{};
     /// The QuaZip object to work with.
-    QuaZip *zip;
+    QuaZip *zip{};
     /// The file name.
     QString fileName;
     /// Case sensitivity mode.
-    QuaZip::CaseSensitivity caseSensitivity;
+    QuaZip::CaseSensitivity caseSensitivity{QuaZip::csDefault};
     /// Whether this file is opened in the raw mode.
-    bool raw;
+    bool raw{};
     /// Write position to keep track of.
     /**
       QIODevice::pos() is broken for non-seekable devices, so we need
       our own position.
       */
-    qint64 writePos;
+    qint64 writePos{};
     /// Uncompressed size to write along with a raw file.
-    quint64 uncompressedSize;
+    quint64 uncompressedSize{};
     /// CRC to write along with a raw file.
-    quint32 crc;
+    quint32 crc{};
     /// Whether \ref zip points to an internal QuaZip instance.
     /**
       This is true if the archive was opened by name, rather than by
       supplying an existing QuaZip instance.
       */
-    bool internal;
+    bool internal{true};
     /// The last error.
-    int zipError;
+    int zipError{UNZ_OK};
     /// Resets \ref zipError.
     inline void resetZipError() const {setZipError(UNZ_OK);}
     /// Sets the zip error.
@@ -80,38 +80,19 @@ class QuaZipFilePrivate {
     void setZipError(int zipError) const;
     /// The constructor for the corresponding QuaZipFile constructor.
     inline QuaZipFilePrivate(QuaZipFile *_q):
-      q(_q),
-      zip(nullptr),
-      caseSensitivity(QuaZip::csDefault),
-      raw(false),
-      writePos(0),
-      uncompressedSize(0),
-      crc(0),
-      internal(true),
-      zipError(UNZ_OK) {}
+      q(_q)
+    {
+    }
     /// The constructor for the corresponding QuaZipFile constructor.
     inline QuaZipFilePrivate(QuaZipFile *_q, const QString &zipName):
-      q(_q),
-      caseSensitivity(QuaZip::csDefault),
-      raw(false),
-      writePos(0),
-      uncompressedSize(0),
-      crc(0),
-      internal(true),
-      zipError(UNZ_OK)
+      q(_q)
       {
         zip=new QuaZip(zipName);
       }
     /// The constructor for the corresponding QuaZipFile constructor.
     inline QuaZipFilePrivate(QuaZipFile *_q, const QString &zipName, const QString &_fileName,
         QuaZip::CaseSensitivity cs):
-      q(_q),
-      raw(false),
-      writePos(0),
-      uncompressedSize(0),
-      crc(0),
-      internal(true),
-      zipError(UNZ_OK)
+      q(_q)
       {
         zip=new QuaZip(zipName);
         this->fileName=_fileName;
@@ -123,12 +104,9 @@ class QuaZipFilePrivate {
     inline QuaZipFilePrivate(QuaZipFile *_q, QuaZip *_zip):
       q(_q),
       zip(_zip),
-      raw(false),
-      writePos(0),
-      uncompressedSize(0),
-      crc(0),
-      internal(false),
-      zipError(UNZ_OK) {}
+      internal(false)
+      {
+      }
     /// The destructor.
     inline ~QuaZipFilePrivate()
     {
@@ -188,7 +166,7 @@ QString QuaZipFile::getActualFileName()const
 {
   p->setZipError(UNZ_OK);
   if (p->zip == nullptr || (openMode() & WriteOnly))
-    return QString();
+      return {};
   QString name=p->zip->getCurrentFileName();
   if(name.isNull())
     p->setZipError(p->zip->getZipError());
@@ -544,7 +522,7 @@ QByteArray QuaZipFile::getLocalExtraField()
     int err = unzGetLocalExtrafield(p->zip->getUnzFile(), extra.data(), static_cast<uint>(extra.size()));
     if (err < 0) {
         p->setZipError(err);
-        return QByteArray();
+        return {};
     }
     return extra;
 }
