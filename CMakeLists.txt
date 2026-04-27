@@ -179,7 +179,27 @@ if(QUAZIP_BZIP2)
 
         set(QUAZIP_BZIP2_BUILD FALSE)
     elseif(QUAZIP_FETCH_LIBS)
-        clone_repo(bzip2 https://sourceware.org/git/bzip2.git)
+        include(FetchContent)
+        set(_bzip2_primary_url "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz")
+        set(_bzip2_fallback_url "https://mirror.bazel.build/sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz")
+        set(_bzip2_hash "SHA256=ab5a03176ee106d3f0fa90e381da478ddae405918153cca248e682cd0c4a2269")
+        if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24")
+            FetchContent_Declare(bzip2
+                URL "${_bzip2_primary_url}" "${_bzip2_fallback_url}"
+                URL_HASH ${_bzip2_hash}
+                SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/bzip2)
+        else()
+            FetchContent_Declare(bzip2
+                URL "${_bzip2_primary_url}"
+                URL_HASH ${_bzip2_hash}
+                SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/lib/bzip2)
+        endif()
+        FetchContent_GetProperties(bzip2 POPULATED bzip2_POPULATED)
+        if(NOT bzip2_POPULATED)
+            FetchContent_MakeAvailable(bzip2)
+        endif()
+        set(BZIP2_SOURCE_DIR ${bzip2_SOURCE_DIR})
+        set(BZIP2_BINARY_DIR ${bzip2_BINARY_DIR})
 
         # BZip2 repository does not support cmake so we have to create
         # the bzip2 library ourselves
