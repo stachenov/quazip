@@ -75,7 +75,7 @@ class QUAZIP_EXPORT QuaZipFile: public QIODevice {
   friend class QuaZipFilePrivate;
   Q_OBJECT
   private:
-    QuaZipFilePrivate *p;
+    QuaZipFilePrivate *p{};
     // these are not supported nor implemented
     QuaZipFile(const QuaZipFile& that);
     QuaZipFile& operator=(const QuaZipFile& that);

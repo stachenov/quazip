@@ -150,7 +150,7 @@ public:
                 QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot) const;
 
 private:
-    JlCompress::Options m_options;
+    JlCompress::Options m_options {JlCompress::Options::Default};
 };
 
 #endif // QUACOMPRESS_H
