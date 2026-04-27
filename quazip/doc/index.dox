@@ -50,18 +50,11 @@ Older downloads are available from
 
 \section platforms Platforms supported
 
-%QuaZip 1.1 was tested on:
-- %Qt 5.15.0 MinGW 8.1 x32
-- %Qt 5.12.9 MinGW 7.3 x32
-- %Qt 5.9.7 CentOS 7 x64
-- %Qt 4.8.7 CentOS 7 x64
-- %Qt 5.11.0 Astra Linux CE 1.6 x64
+%QuaZip 1.6 was tested on:
+- %Qt 5.15.2 on Ubuntu 22/24 LTS, Alpine, MacOS 14/15, Windows x86 and x64
+- %Qt 6.8.2 on Ubuntu 22/24 LTS, MacOS 14/15, Windows x86 and x64
 
-It should work fine on any platform supported by %Qt 4.8.7 or later.
-In theory, even versions as old as %Qt 4.6.2 might work as well, but
-aren't guaranteed to.
-
-Preliminary %Qt 6 support is available as well, but not tested at all.
+It should work fine on any platform supported by %Qt 5.14 or later.
 
 \section whats-new What is new in this version of QuaZip?
 
@@ -69,12 +62,12 @@ See the NEWS.txt file supplied with the distribution.
 
 \section Dependencies
 
-Just <a href="http://www.zlib.org/">zlib</a> and %Qt 4/5/6. Sometimes
+Just <a href="http://www.zlib.org/">zlib</a> and %Qt 5/6. Sometimes
 you can get away with using zlib library bundled into %Qt (see below).
 
 CMake-wise, you need \c ZLIB::ZLIB and one of the following:
 \li \c Qt5::Core
-\li \c Qt6::Core and \c Qt6::Core5Compat
+\li \c Qt6::Core and \c Qt6::Core5Compat (optional)
 \li \c Qt4::QtCore
 
 To build and run tests, the appropriate Test and Network submodules are needed as well.
@@ -84,16 +77,7 @@ utilities (that is, including the 'dev' or 'devel' package on some Linux distros
 
 \section building Building, testing and installing
 
-%QuaZip uses CMake since 1.0. If you used qmake to build it,
-you'll have to switch to CMake now, and it's a good thing because
-two build systems made everything confusing and inconsistent. CMake
-may be confusing, badly designed and lack good tutorials, but
-it's \em the build system at the time of the writing. Some Linux
-distros are shipped with incredibly outdated CMake versions,
-but the good news is, there are official self-contained binary
-distributions, so just grab the newest version, unpack it
-somewhere, set up PATH (or symlinks) and you're all set.
-CMake minimum version 3.15 is required to build %QuaZip 1.0.
+%QuaZip uses CMake, minimum version 3.15.
 
 \note Instructions given in this section assume that you are
 using some UNIX dialect, but the build process should be very similar
@@ -104,7 +88,7 @@ same process, maybe with some CMake adjustments not specific to
 To build the library, run:
 \verbatim
 $ cd /wherever/quazip/source/is/quazip-x.y.z
-$ cmake -S . -B wherever/you/want/your/build/to/be -D QUAZIP_QT_MAJOR_VERSION=6, 5 or 4
+$ cmake -B wherever/you/want/your/build/to/be -D QUAZIP_QT_MAJOR_VERSION=6 or 5
 $ cmake --build wherever/you/want/your/build/to/be
 \endverbatim
 
@@ -112,14 +96,6 @@ $ cmake --build wherever/you/want/your/build/to/be
 
 On Windows, it may be required to use <tt>-G "MinGW Makefiles"</tt> or something like that to convince
 CMake that you really want to use, say, MinGW and not Visual Studio, for example.
-
-It can be a pain to install zlib on Windows, so there's a possible workaround using zlib bundled into Qt itself.
-Note that this zlib is Qt's internal implementation detail, so it's more like a dirty hack, but it can be convenient.
-To enable this feature, configure %QuaZip with
-\verbatim
--D QUAZIP_USE_QT_ZLIB=ON
-\endverbatim
-This option defaults to OFF, and even when enabled, if it fails to find zlib that comes with Qt, it will fall back to looking for a stand-alone zlib.
 
 To install, run
 \verbatim
@@ -148,7 +124,7 @@ to build them.
 
 To run the tests, execute:
 \verbatim
-$ cmake --build wherever/you/want/your/build/to/be --target check
+$ ctest --verbose -C Release
 \endverbatim
 
 On some systems you may need to set PATH, LD_LIBRARY_PATH or
@@ -197,5 +173,7 @@ Old bugs may still be available at
 <a href="https://sourceforge.net/projects/quazip/">SourceForge</a>
 for reference.
 
-Copyright (C) 2005-2021 Sergei Tachenov and contributors
+This library is maintained by <a href="https://github.com/cen1">cen1</a> since 2025.
+
+Copyright (C) 2005-2026 Sergei Tachenov and contributors
 */

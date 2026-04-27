@@ -62,33 +62,6 @@ modules:
           - sed -i 's|${CMAKE_ROOT}/Modules|share/cmake|' CMakeLists.txt
 \endverbatim
 
-or on older JSON manifests: 
-\verbatim
-"modules": [
-             {
-              "name": "quazip",
-              "buildsystem": "cmake-ninja",
-              "builddir": true,
-              "config-opts": [
-                "-DCMAKE_BUILD_TYPE=MinSizeRel"
-              ],
-              "sources": [
-                {
-                  "type": "archive",
-                  "url": "https://github.com/stachenov/quazip/archive/v1.1.tar.gz",
-                  "sha256": "54edce9c11371762bd4f0003c2937b5d8806a2752dd9c0fd9085e90792612ad0"
-                },
-                {
-                  "type": "shell",
-                  "commands": [
-                    "sed -i 's|${CMAKE_ROOT}/Modules|share/cmake|' CMakeLists.txt"
-                  ]
-                }
-              ]
-            }
-          ]
-\endverbatim
-
 \section terminology Terminology
 
 “%QuaZip” means the whole library or the \c QuaZip class, depending
@@ -114,6 +87,8 @@ means file either being read or written from/to some ZIP archive.
 The main classes are QuaZip and QuaZipFile, and there's JlCompress
 that contains a lot of high-level utility methods (think of it
 as the Facade Pattern for the most common uses).
+
+Finally, there is QuaCompress which is a Fluent API wrapper of JlCompress.
 
 QuaZip is a class representing ZIP archive, QuaZipFile represents a
 file inside archive and subclasses QIODevice as well. One limitation
