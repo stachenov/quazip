@@ -1,2 +1,9 @@
 *.md5
 installdox
+latex/                                                                                                                                                                                                                                                         
+.idea/                                                                                                                                                                                                                                                         
+CMakeFiles/                                                                                                                                                                                                                                                    
+Testing/   
+build/
+build_debug/
+build_release/
