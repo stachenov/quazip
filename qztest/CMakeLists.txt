@@ -4,6 +4,7 @@ set(QZTEST_SOURCES
         testjlcp_compress.h
         testjlcp_extract.h
         testquachecksum32.h
+        testquacompress.h
         testquagzipfile.h
         testquaziodevice.h
         testquazip.h
@@ -11,11 +12,14 @@ set(QZTEST_SOURCES
         testquazipfile.h
         testquazipfileinfo.h
         testquazipnewinfo.h
+        testutf8_compress.h
+        testutf8_decompress.h
         qztest.cpp
         testjlcompress.cpp
         testjlcp_compress.cpp
         testjlcp_extract.cpp
         testquachecksum32.cpp
+        testquacompress.cpp
         testquagzipfile.cpp
         testquaziodevice.cpp
         testquazip.cpp
@@ -23,6 +27,8 @@ set(QZTEST_SOURCES
         testquazipfile.cpp
         testquazipfileinfo.cpp
         testquazipnewinfo.cpp
+        testutf8_compress.cpp
+        testutf8_decompress.cpp
 )
 
 add_executable(qztest ${QZTEST_SOURCES} qztest.qrc)

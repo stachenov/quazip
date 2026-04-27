@@ -25,6 +25,7 @@ quazip/(un)zip.h files for details, basically it's zlib license.
 #include <QtCore/QFile>
 #include <QtCore/QFlags>
 #include <QtCore/QHash>
+#include <QDebug>
 
 #include "quazip.h"
 
@@ -579,6 +580,15 @@ QString QuaZip::getCurrentFileName()const
       nullptr, 0, nullptr, 0))!=UNZ_OK)
     return QString();
   fileName.resize(file_info.size_filename);
+
+  /*if (file_info.flag & UNZ_ENCODING_UTF8) {
+    qDebug() << "Using UTF8";
+  }
+  else {
+    //QString pp = p->fileNameCodec->toUnicode(fileName);
+    qDebug() << "Using default codec";
+  }*/
+
   QString result = (file_info.flag & UNZ_ENCODING_UTF8)
     ? QString::fromUtf8(fileName) : p->fileNameCodec->toUnicode(fileName);
   if (result.isEmpty())

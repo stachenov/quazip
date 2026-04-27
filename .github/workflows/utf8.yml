@@ -1,0 +1,216 @@
+on:
+  push:
+    branches:
+      - master
+      - feature/*
+  pull_request:
+  workflow_dispatch:
+
+name: UTF-8 Filename Tests
+
+permissions: read-all
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  # Compression job - creates UTF-8 archives on UTF-8 locale system
+  # Creates TWO types of archives: with UTF-8 flag and without UTF-8 flag
+  utf8-compress:
+    runs-on: ubuntu-22.04
+    name: compress-${{ matrix.flag_type }}-Qt-${{ matrix.qt_version }}
+    container: ghcr.io/cen1/qt:${{ matrix.qt_version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        qt_version: [ 6.8.2 ]
+        flag_type: [ "with_flag", "no_flag" ]
+        include:
+          - flag_type: "with_flag"
+            flag_value: "true"
+            archive_pattern: "utf8_with_flag_*.zip"
+          - flag_type: "no_flag"
+            flag_value: "false"
+            archive_pattern: "utf8_no_flag_*.zip"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
+
+      - name: Build
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - name: Create UTF-8 archives (${{ matrix.flag_type }})
+        working-directory: build
+        env:
+          LC_ALL: C.UTF-8
+          LANG: C.UTF-8
+          TEST_UTF8_COMPRESS: "true"
+          TEST_UTF8_WITH_FLAG: ${{ matrix.flag_value }}
+        run: ctest --verbose -C Release
+
+      - name: Upload archives (${{ matrix.flag_type }})
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          name: "utf8_${{ matrix.flag_type }}_qt${{ matrix.qt_version }}"
+          path: build/quazip/${{ matrix.archive_pattern }}
+
+  # ============================================================================
+  # DECOMPRESSION TESTS - Linux
+  # Test various archive types, Qt versions, and locales
+  # ============================================================================
+
+  decompress-linux:
+    runs-on: ubuntu-22.04
+    name: decompress-Linux-${{ matrix.name }}
+    container: ghcr.io/cen1/qt:${{ matrix.qt_version }}
+    needs: [utf8-compress]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Archives WITH UTF-8 flag
+          # Note: Qt 5 still requires UTF-8 locale even with flag set
+          - name: "with-flag-Qt5-UTF8-locale"
+            qt_version: "5.15.12"
+            archive_type: "with_flag"
+            setup_locale: false
+            lc_all: "C.UTF-8"
+            lang: "C.UTF-8"
+            test_description: "with flag, Qt5 + UTF-8 locale = works"
+          - name: "with-flag-Qt6"
+            qt_version: "6.8.2"
+            archive_type: "with_flag"
+            setup_locale: false
+            lc_all: "C"
+            lang: "C"
+            test_description: "with flag, Qt6 = works"
+          # Archives WITHOUT UTF-8 flag - behavior depends on Qt version/locale
+          - name: "no-flag-Qt5-UTF8-locale"
+            qt_version: "5.15.12"
+            archive_type: "no_flag"
+            setup_locale: false
+            lc_all: "C.UTF-8"
+            lang: "C.UTF-8"
+            test_description: "no flag, UTF-8 locale = works"
+          - name: "no-flag-Qt5-C-locale"
+            qt_version: "5.15.12"
+            archive_type: "no_flag"
+            setup_locale: false
+            lc_all: "C"
+            lang: "C"
+            test_description: "no flag, C locale = null truncation"
+          - name: "no-flag-Qt5-Latin1-locale"
+            qt_version: "5.15.12"
+            archive_type: "no_flag"
+            setup_locale: true
+            lc_all: "de_DE ISO-8859-1"
+            lang: "de_DE ISO-8859-1"
+            test_description: "no flag, Latin1 = null truncation"
+          - name: "no-flag-Qt6"
+            qt_version: "6.8.2"
+            archive_type: "no_flag"
+            setup_locale: false
+            lc_all: "C"
+            lang: "C"
+            test_description: "no flag, Qt6 forces UTF-8 = works"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
+
+      - name: Build
+        run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+      - name: Setup Latin-1 locale
+        if: matrix.setup_locale
+        run: |
+          apt-get update
+          apt-get install -y locales
+          echo "de_DE ISO-8859-1" | tee -a /etc/locale.gen
+          locale-gen
+
+      - name: Download UTF-8 archives
+        uses: actions/download-artifact@v4
+        with:
+          path: build/quazip
+          merge-multiple: false
+
+      - name: Extract UTF-8 archives (${{ matrix.test_description }})
+        working-directory: build
+        env:
+          LC_ALL: ${{ matrix.lc_all }}
+          LANG: ${{ matrix.lang }}
+          TEST_UTF8_DECOMPRESS: "true"
+          TEST_UTF8_ARCHIVE_TYPE: ${{ matrix.archive_type }}
+        run: ctest --verbose -C Release
+
+  decompress-windows:
+    name: decompress-Win-${{ matrix.archive_type }}-Qt-${{ matrix.qt_version }}
+    needs: [utf8-compress]
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [ conan ]
+        qt_version: [ 5.15.2, 6.8.2 ]
+        archive_type: [ "with_flag", "no_flag" ]
+    uses: ./.github/workflows/reusable-win.yml
+    with:
+      runs_on: "win-x64"
+      arch: x64
+      qt_version: ${{ matrix.qt_version }}
+      preset: ${{ matrix.preset }}
+      pe_str: "x86-64"
+      test_cr_compress: false
+      test_utf8_decompress: true
+      test_utf8_archive_type: ${{ matrix.archive_type }}
+
+  decompress-macos:
+    runs-on: macos-${{ matrix.os_version }}
+    name: decompress-macOS-${{ matrix.os_version }}-${{ matrix.archive_type }}-Qt-${{ matrix.qt_version }}
+    needs: [utf8-compress]
+    strategy:
+      fail-fast: false
+      matrix:
+        os_version: [ 15 ]
+        qt_version: [ 6.8.2 ]
+        archive_type: [ "with_flag", "no_flag" ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: ${{ matrix.qt_version }}
+          cache: 'true'
+          cache-key-prefix: macOS-Qt-Cache-${{ matrix.qt_version }}
+          dir: ${{ github.workspace }}/Qt
+          modules: 'qt5compat'
+
+      - name: Configure CMake
+        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -B "${{github.workspace}}/build"
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+      - name: Download UTF-8 archives
+        uses: actions/download-artifact@v4
+        with:
+          path: build/quazip
+          merge-multiple: false
+
+      - name: Extract UTF-8 archives (${{ matrix.archive_type }})
+        working-directory: build
+        env:
+          TEST_UTF8_DECOMPRESS: "true"
+          TEST_UTF8_ARCHIVE_TYPE: ${{ matrix.archive_type }}
+        run: ctest --verbose -C Release

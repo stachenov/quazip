@@ -27,6 +27,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "testjlcp_compress.h"
 #include "testjlcp_extract.h"
 #include "testquachecksum32.h"
+#include "testquacompress.h"
 #include "testquagzipfile.h"
 #include "testquaziodevice.h"
 #include "testquazip.h"
@@ -34,6 +35,8 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include "testquazipfile.h"
 #include "testquazipfileinfo.h"
 #include "testquazipnewinfo.h"
+#include "testutf8_compress.h"
+#include "testutf8_decompress.h"
 
 #include <quazip.h>
 #include <quazipfile.h>
@@ -46,6 +49,10 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QRandomGenerator>
 
 #include <QtTest/QTest>
+
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+#include <QTextCodec>
+#endif
 
 bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
 {
@@ -273,55 +280,101 @@ void removeTestFiles(const QStringList &fileNames, const QString &dir)
     }
 }
 
+bool isPlatformUtf8()
+{
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+    // Qt 5: Check the actual codec
+    QTextCodec *defaultCodec = QTextCodec::codecForLocale();
+    if (defaultCodec) {
+        QByteArray codecName = defaultCodec->name().toLower();
+        return codecName.contains("utf-8") || codecName.contains("utf8");
+    }
+    return false;
+#else
+    // Qt 6: Platform-specific behavior
+#ifdef Q_OS_WIN
+    // Windows: UTF-8 support depends on the archive having UTF-8 flag set,
+    // not on the "platform" encoding. Return false to indicate platform
+    // does not guarantee UTF-8 without the flag.
+    return false;
+#else
+    // Linux/Unix: Qt 6 forces UTF-8 encoding regardless of locale
+    return true;
+#endif
+#endif
+}
+
 int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     int err = 0;
-    {
-        TestQuaZip testQuaZip;
-        err = qMax(err, QTest::qExec(&testQuaZip, app.arguments()));
-    }
-    {
-        TestQuaZipFile testQuaZipFile;
-        err = qMax(err, QTest::qExec(&testQuaZipFile, app.arguments()));
-    }
-    {
-        TestQuaChecksum32 testQuaChecksum32;
-        err = qMax(err, QTest::qExec(&testQuaChecksum32, app.arguments()));
-    }
-    {
-        TestJlCompress testJlCompress;
-        err = qMax(err, QTest::qExec(&testJlCompress, app.arguments()));
-    }
-    {
-        TestQuaZipDir testQuaZipDir;
-        err = qMax(err, QTest::qExec(&testQuaZipDir, app.arguments()));
-    }
-    {
-        TestQuaZIODevice testQuaZIODevice;
-        err = qMax(err, QTest::qExec(&testQuaZIODevice, app.arguments()));
-    }
-    {
-        TestQuaGzipFile testQuaGzipFile;
-        err = qMax(err, QTest::qExec(&testQuaGzipFile, app.arguments()));
-    }
-    {
-        TestQuaZipNewInfo testQuaZipNewInfo;
-        err = qMax(err, QTest::qExec(&testQuaZipNewInfo, app.arguments()));
-    }
-    {
-        TestQuaZipFileInfo testQuaZipFileInfo;
-        err = qMax(err, QTest::qExec(&testQuaZipFileInfo, app.arguments()));
-    }
+
     if (QString(qgetenv("TEST_CR_COMPRESS")) == "true")
     {
-      TestJlCpCompress testJlCpCompress;
-      err = qMax(err, QTest::qExec(&testJlCpCompress, app.arguments()));
+        TestJlCpCompress testJlCpCompress;
+        err = qMax(err, QTest::qExec(&testJlCpCompress, app.arguments()));
     }
-    if (QString(qgetenv("TEST_CR_DECOMPRESS")) == "true")
+    else if (QString(qgetenv("TEST_CR_DECOMPRESS")) == "true")
     {
-      TestJlCpExtract testJlCpExtract;
-      err = qMax(err, QTest::qExec(&testJlCpExtract, app.arguments()));
+        TestJlCpExtract testJlCpExtract;
+        err = qMax(err, QTest::qExec(&testJlCpExtract, app.arguments()));
+    }
+    else if (QString(qgetenv("TEST_UTF8_COMPRESS")) == "true")
+    {
+        TestUtf8Compress testUtf8Compress;
+        err = qMax(err, QTest::qExec(&testUtf8Compress, app.arguments()));
+    }
+    else if (QString(qgetenv("TEST_UTF8_DECOMPRESS")) == "true")
+    {
+        TestUtf8Decompress testUtf8Decompress;
+        err = qMax(err, QTest::qExec(&testUtf8Decompress, app.arguments()));
+    }
+    else
+    {
+        {
+            TestQuaZip testQuaZip;
+            err = qMax(err, QTest::qExec(&testQuaZip, app.arguments()));
+        }
+        {
+            TestQuaZipFile testQuaZipFile;
+            err = qMax(err, QTest::qExec(&testQuaZipFile, app.arguments()));
+        }
+        {
+            TestQuaChecksum32 testQuaChecksum32;
+            err = qMax(err, QTest::qExec(&testQuaChecksum32, app.arguments()));
+        }
+        {
+            TestJlCompress testJlCompress;
+            err = qMax(err, QTest::qExec(&testJlCompress, app.arguments()));
+        }
+        {
+            TestQuaCompress testQuaCompress;
+            err = qMax(err, QTest::qExec(&testQuaCompress, app.arguments()));
+        }
+        {
+            TestQuaExtract testQuaExtract;
+            err = qMax(err, QTest::qExec(&testQuaExtract, app.arguments()));
+        }
+        {
+            TestQuaZipDir testQuaZipDir;
+            err = qMax(err, QTest::qExec(&testQuaZipDir, app.arguments()));
+        }
+        {
+            TestQuaZIODevice testQuaZIODevice;
+            err = qMax(err, QTest::qExec(&testQuaZIODevice, app.arguments()));
+        }
+        {
+            TestQuaGzipFile testQuaGzipFile;
+            err = qMax(err, QTest::qExec(&testQuaGzipFile, app.arguments()));
+        }
+        {
+            TestQuaZipNewInfo testQuaZipNewInfo;
+            err = qMax(err, QTest::qExec(&testQuaZipNewInfo, app.arguments()));
+        }
+        {
+            TestQuaZipFileInfo testQuaZipFileInfo;
+            err = qMax(err, QTest::qExec(&testQuaZipFileInfo, app.arguments()));
+        }
     }
 
     if (err == 0) {

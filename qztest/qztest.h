@@ -51,5 +51,6 @@ extern bool createTestArchive(QIODevice *ioDevice,
                               const QStringList &fileNames,
                               QuazipTextCodec *codec,
                               const QString &dir = "tmp");
+extern bool isPlatformUtf8();
 
 #endif // QUAZIP_TEST_QZTEST_H

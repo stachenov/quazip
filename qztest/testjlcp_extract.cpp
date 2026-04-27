@@ -53,7 +53,15 @@ void TestJlCpExtract::extract()
 	QSet<QString> zipNames = {
 	  "jlsimplefile.zip",
 	  "jlsimplefile-storage.zip",
-	  "jlsimplefile-best.zip"
+	  "jlsimplefile-best.zip",
+	  "jlsimplefile-encrypted.zip",
+	  "jlsimplefile-encrypted-best.zip"
+	};
+
+	// Map of encrypted archives to their passwords
+	QMap<QString, QByteArray> passwordMap = {
+	  {"jlsimplefile-encrypted.zip", QByteArray("testpassword")},
+	  {"jlsimplefile-encrypted-best.zip", QByteArray("testpassword")}
 	};
 
     QSet<QString> fileNames = {
@@ -84,17 +92,25 @@ void TestJlCpExtract::extract()
         QVERIFY(extractedZipSet.isEmpty());
 
         for (const QString &_zipFile : zipNames) {
-        	qDebug() << "Found ZIP:" << _zipFile;
+            qDebug() << "Found ZIP:" << _zipFile;
             QFileInfo zip(target2, _zipFile);
-			QDir target3(target2.absolutePath()+"/"+zip.completeBaseName());
+	    QDir target3(target2.absolutePath()+"/"+zip.completeBaseName());
             // macos-13_qt6.8.2_sharedON_cp/cp/jlsimplefile/
-			JlCompress::extractDir(zip.absoluteFilePath(), target3.absolutePath());
 
-			QList<QString> extractedFileList = target3.entryList(QDir::Files);
-			QSet<QString> extractedFileSet(extractedFileList.begin(), extractedFileList.end());
+	    // Extract with password if this is an encrypted archive
+	    QStringList extracted;
+	    if (passwordMap.contains(_zipFile)) {
+	        extracted = JlCompress::extractDir(zip.absoluteFilePath(), target3.absolutePath(), passwordMap[_zipFile]);
+	    } else {
+	        extracted = JlCompress::extractDir(zip.absoluteFilePath(), target3.absolutePath());
+	    }
+	    QVERIFY(!extracted.isEmpty());
+
+	    QList<QString> extractedFileList = target3.entryList(QDir::Files);
+	    QSet<QString> extractedFileSet(extractedFileList.begin(), extractedFileList.end());
 
             extractedFileSet = extractedFileSet.subtract(fileNames);
-			QVERIFY(extractedFileSet.isEmpty());
+            QVERIFY(extractedFileSet.isEmpty());
 
             // Check file content
             for (const QString &fileName : extractedFileList) {
@@ -116,5 +132,5 @@ void TestJlCpExtract::extract()
                 QVERIFY(fileContent == expectedContent);
             }
         }
-	}
+    }
 }

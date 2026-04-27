@@ -115,3 +115,20 @@ CMake options
 | `QUAZIP_BZIP2_STDIO`        | Output BZIP2 errors to stdio when BZIP2 compression is enabled                                                                                                | `ON`    |
 | `QUAZIP_ENABLE_QTEXTCODEC`  | Set to OFF to explicitely disable the use of QTextCodec on Qt6 even if Core5Compat is available. This uses [QStringConverter](https://doc.qt.io/qt-6/qstringconverter.html) in the background with less supported encodings. | `ON`    |
 
+# Usage
+
+See [EXAMPLES.md](EXAMPLES.md) for code examples showing how to use QuaZip's three API levels: low-level QuaZip/QuaZipFile, JlCompress utility functions, and QuaCompress fluent interface.
+
+# UTF-8 Handling
+
+QuaZip supports setting the UTF-8 flag ZIP file via `JlCompress::Options::setUtf8Enabled()` or `QuaZip::setUtf8Enabled()`. This flag tells extractors that filenames are UTF-8 encoded.
+
+## Behavior Summary
+
+| Platform | Qt Version | UTF-8 Flag | Locale | Result                             | Example: `файл.txt` |
+|----------|-----------|-----------|--------|------------------------------------|---------------------|
+| **Windows** | Any | ✓ Set | Any | ✓ Works                            | `файл.txt` |
+| **Windows** | Any | ✗ Not set | Any | ✗ Mangled (double-encoding or ???) | `Ñ„Ð°Ð¹Ð».txt` |
+| **Linux** | Qt 6 | Any | Any | ✓ Works (Qt forces UTF-8)          | `файл.txt` |
+| **Linux** | Qt 5 | Any | UTF-8 | ✓ Works                            | `файл.txt` |
+| **Linux** | Qt 5 | Any | non-UTF-8 | ✗ Truncated at null bytes          | `.txt` |

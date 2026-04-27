@@ -54,11 +54,12 @@ bool JlCompress::compressFile(QuaZip* zip, QString fileName, QString fileDest, c
         zip->getMode()!=QuaZip::mdAdd) return false;
 
     QuaZipFile outFile(zip);
+    const char *password = options.getPassword().isEmpty() ? nullptr : options.getPassword().constData();
     if (options.getDateTime().isNull()) {
-      if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName), nullptr, 0, options.getCompressionMethod(), options.getCompressionLevel())) return false;
+      if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName), password, 0, options.getCompressionMethod(), options.getCompressionLevel())) return false;
     }
     else {
-      if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName, options.getDateTime()), nullptr, 0, options.getCompressionMethod(), options.getCompressionLevel())) return false;
+      if(!outFile.open(QIODevice::WriteOnly, QuaZipNewInfo(fileDest, fileName, options.getDateTime()), password, 0, options.getCompressionMethod(), options.getCompressionLevel())) return false;
     }
 
     QFileInfo input(fileName);
@@ -104,6 +105,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
     QDir origDirectory(origDir);
     if (dir != origDir) {
         QuaZipFile dirZipFile(zip);
+        const char *password = options.getPassword().isEmpty() ? nullptr : options.getPassword().constData();
         std::unique_ptr<QuaZipNewInfo> qzni;
         if (options.getDateTime().isNull()) {
             qzni = std::make_unique<QuaZipNewInfo>(origDirectory.relativeFilePath(dir) + QLatin1String("/"), dir);
@@ -111,7 +113,7 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
         else {
             qzni = std::make_unique<QuaZipNewInfo>(origDirectory.relativeFilePath(dir) + QLatin1String("/"), dir, options.getDateTime());
         }
-        if (!dirZipFile.open(QIODevice::WriteOnly, *qzni, nullptr, 0, 0)) {
+        if (!dirZipFile.open(QIODevice::WriteOnly, *qzni, password, 0, 0)) {
             return false;
         }
         dirZipFile.close();
@@ -145,72 +147,83 @@ bool JlCompress::compressSubDir(QuaZip* zip, QString dir, QString origDir, bool 
     return true;
 }
 
-bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest) {
-    // zip: object where to add the file
-    // filename: real file name
-    // fileincompress: file name of the compressed file
+// Internal helper for extraction with password and path traversal protection
+// Second bool is true if entry was skipped due to traversal protection
+static std::pair<bool, bool> extractFileInternal(QuaZip* zip, QString fileName, QString fileDest, const QByteArray& password, const QString& baseDir = QString()) {
+    if (!zip) return {false, false};
+    if (zip->getMode()!=QuaZip::mdUnzip) return {false, false};
 
-    if (!zip) return false;
-    if (zip->getMode()!=QuaZip::mdUnzip) return false;
+    // Path traversal protection: validate fileDest is within baseDir if baseDir is provided
+    if (!baseDir.isEmpty()) {
+        QString cleanBase = QDir::cleanPath(baseDir);
+        QDir directory(cleanBase);
+        QString absCleanBase = directory.absolutePath();
+        if (!absCleanBase.endsWith(QLatin1Char('/')))
+            absCleanBase += QLatin1Char('/');
+
+        QString absCleanPath = QDir::cleanPath(QFileInfo(fileDest).absoluteFilePath());
+        if (!absCleanPath.startsWith(absCleanBase)) {
+            return {true, true}; // success=true, wasSkipped=true (skip path traversal attempt)
+        }
+    }
 
     if (!fileName.isEmpty())
         zip->setCurrentFile(fileName);
     QuaZipFile inFile(zip);
-    if(!inFile.open(QIODevice::ReadOnly) || inFile.getZipError()!=UNZ_OK) return false;
+    // Convert QByteArray to const char* for QuaZipFile API
+    const char *pwd = password.isEmpty() ? nullptr : password.constData();
+    if(!inFile.open(QIODevice::ReadOnly, pwd) || inFile.getZipError()!=UNZ_OK) return {false, false};
 
     // Check existence of resulting file
     QDir curDir;
     if (fileDest.endsWith(QLatin1String("/"))) {
         if (!curDir.mkpath(fileDest)) {
-            return false;
+            return {false, false};
         }
     } else {
         if (!curDir.mkpath(QFileInfo(fileDest).absolutePath())) {
-            return false;
+            return {false, false};
         }
     }
 
     QuaZipFileInfo64 info;
     if (!zip->getCurrentFileInfo(&info))
-        return false;
+        return {false, false};
 
     QFile::Permissions srcPerm = info.getPermissions();
     if (fileDest.endsWith(QLatin1String("/")) && QFileInfo(fileDest).isDir()) {
         if (srcPerm != 0) {
             QFile(fileDest).setPermissions(srcPerm);
         }
-        return true;
+        return {true, false};
     }
 
     if (info.isSymbolicLink()) {
         QString target = QFile::decodeName(inFile.readAll());
-        return QFile::link(target, fileDest);
+        return {QFile::link(target, fileDest), false};
     }
 
-    // Open resulting file
     QFile outFile;
     outFile.setFileName(fileDest);
-    if(!outFile.open(QIODevice::WriteOnly)) return false;
+    if(!outFile.open(QIODevice::WriteOnly)) return {false, false};
 
-    // Copy data
-    if (!copyData(inFile, outFile) || inFile.getZipError()!=UNZ_OK) {
+    if (!JlCompress::copyData(inFile, outFile) || inFile.getZipError()!=UNZ_OK) {
         outFile.close();
-        removeFile(QStringList(fileDest));
-        return false;
+        JlCompress::removeFile(QStringList(fileDest));
+        return {false, false};
     }
     outFile.close();
 
-    // Close file
     inFile.close();
     if (inFile.getZipError()!=UNZ_OK) {
-        removeFile(QStringList(fileDest));
-        return false;
+        JlCompress::removeFile(QStringList(fileDest));
+        return {false, false};
     }
 
     if (srcPerm != 0) {
         outFile.setPermissions(srcPerm);
     }
-    return true;
+    return {true, false};
 }
 
 bool JlCompress::removeFile(QStringList listFile) {
@@ -230,6 +243,8 @@ bool JlCompress::compressFile(QString fileCompressed, QString file) {
 bool JlCompress::compressFile(QString fileCompressed, QString file, const Options& options) {
     // Create zip
     QuaZip zip(fileCompressed);
+    zip.setUtf8Enabled(options.getUtf8Enabled());
+
     QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
     if(!zip.open(QuaZip::mdCreate)) {
         QFile::remove(fileCompressed);
@@ -259,6 +274,8 @@ bool JlCompress::compressFiles(QString fileCompressed, QStringList files) {
 bool JlCompress::compressFiles(QString fileCompressed, QStringList files, const Options& options) {
   // Create zip
   QuaZip zip(fileCompressed);
+  zip.setUtf8Enabled(options.getUtf8Enabled());
+
   QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
   if(!zip.open(QuaZip::mdCreate)) {
     QFile::remove(fileCompressed);
@@ -301,6 +318,7 @@ bool JlCompress::compressDir(QString fileCompressed, QString dir,
 {
   // Create zip
   QuaZip zip(fileCompressed);
+  zip.setUtf8Enabled(options.getUtf8Enabled());
   QDir().mkpath(QFileInfo(fileCompressed).absolutePath());
   if(!zip.open(QuaZip::mdCreate)) {
     QFile::remove(fileCompressed);
@@ -344,6 +362,8 @@ bool JlCompress::addFiles(QString fileCompressed, QStringList files, const Optio
 
   // Open existing zip
   QuaZip zip(fileCompressed);
+  // Set UTF-8 flag before opening. Must match the existing archive's encoding.
+  zip.setUtf8Enabled(options.getUtf8Enabled());
   if(!zip.open(QuaZip::mdAdd)) {
     return false;
   }
@@ -382,6 +402,8 @@ bool JlCompress::addDir(QString fileCompressed, QString dir,
 
   // Open existing zip
   QuaZip zip(fileCompressed);
+  // Set UTF-8 flag before opening. Must match the existing archive's encoding.
+  zip.setUtf8Enabled(options.getUtf8Enabled());
   if(!zip.open(QuaZip::mdAdd)) {
     return false;
   }
@@ -397,13 +419,7 @@ bool JlCompress::addDir(QString fileCompressed, QString dir,
   return zip.getZipError() == 0;
 }
 
-QString JlCompress::extractFile(QString fileCompressed, QString fileName, QString fileDest) {
-    // Open zip
-    QuaZip zip(fileCompressed);
-    return extractFile(zip, fileName, fileDest);
-}
-
-QString JlCompress::extractFile(QuaZip &zip, QString fileName, QString fileDest)
+static QString extractFileSingleInternal(QuaZip &zip, QString fileName, QString fileDest, const QByteArray& password = QByteArray())
 {
     if(!zip.open(QuaZip::mdUnzip)) {
         return QString();
@@ -412,50 +428,80 @@ QString JlCompress::extractFile(QuaZip &zip, QString fileName, QString fileDest)
     // Extract file
     if (fileDest.isEmpty())
         fileDest = fileName;
-    if (!extractFile(&zip,fileName,fileDest)) {
+    std::pair<bool, bool> result = extractFileInternal(&zip, fileName, fileDest, password);
+    if (!result.first) {
         return QString();
     }
 
     // Close zip
     zip.close();
     if(zip.getZipError()!=0) {
-        removeFile(QStringList(fileDest));
+        JlCompress::removeFile(QStringList(fileDest));
         return QString();
     }
     return QFileInfo(fileDest).absoluteFilePath();
 }
 
-QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, QString dir) {
-    // Create zip
-    QuaZip zip(fileCompressed);
-    return extractFiles(zip, files, dir);
+QString JlCompress::extractFile(QString fileCompressed, QString fileName, QString fileDest) {
+    // Delegate to password-enabled version with empty password
+    return extractFile(fileCompressed, fileName, fileDest, QByteArray());
 }
 
-QStringList JlCompress::extractFiles(QuaZip &zip, const QStringList &files, const QString &dir)
+QString JlCompress::extractFile(QuaZip &zip, QString fileName, QString fileDest)
+{
+    return extractFileSingleInternal(zip, fileName, fileDest);
+}
+
+bool JlCompress::extractFile(QuaZip* zip, QString fileName, QString fileDest)
+{
+    if (!zip) return false;
+    std::pair<bool, bool> result = extractFileInternal(zip, fileName, fileDest, QByteArray());
+    return result.first;
+}
+
+QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, QString dir) {
+    // Delegate to password-enabled version with empty password
+    return extractFiles(fileCompressed, files, dir, QByteArray());
+}
+
+// Internal helper that extracts specific files from an already-constructed QuaZip object
+static QStringList extractFilesInternal(QuaZip& zip, const QStringList& files, const QString& dir, const QByteArray& password = QByteArray())
 {
     if(!zip.open(QuaZip::mdUnzip)) {
         return QStringList();
     }
 
-    // Extract file
+    // Prepare base directory for path traversal protection
+    QString cleanDir = QDir::cleanPath(dir);
+    QDir directory(cleanDir);
+    QString absCleanDir = directory.absolutePath();
+
     QStringList extracted;
     for (int i=0; i<files.count(); i++) {
         QString absPath = QDir(dir).absoluteFilePath(files.at(i));
-        if (!extractFile(&zip, files.at(i), absPath)) {
-            removeFile(extracted);
+        std::pair<bool, bool> result = extractFileInternal(&zip, files.at(i), absPath, password, absCleanDir);
+        if (!result.first) {
+            JlCompress::removeFile(extracted);
+            zip.close();
             return QStringList();
         }
-        extracted.append(absPath);
+        if (!result.second) {
+            extracted.append(absPath);
+        }
     }
 
-    // Close zip
     zip.close();
     if(zip.getZipError()!=0) {
-        removeFile(extracted);
+        JlCompress::removeFile(extracted);
         return QStringList();
     }
 
     return extracted;
+}
+
+QStringList JlCompress::extractFiles(QuaZip &zip, const QStringList &files, const QString &dir)
+{
+    return extractFilesInternal(zip, files, dir);
 }
 
 QStringList JlCompress::extractDir(QString fileCompressed, QuazipTextCodec* fileNameCodec, QString dir) {
@@ -467,10 +513,12 @@ QStringList JlCompress::extractDir(QString fileCompressed, QuazipTextCodec* file
 }
 
 QStringList JlCompress::extractDir(QString fileCompressed, QString dir) {
-    return extractDir(fileCompressed, nullptr, dir);
+    // Delegate to password-enabled version with empty password
+    return extractDir(fileCompressed, dir, QByteArray());
 }
 
-QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
+// Internal helper that extracts all files from an already-constructed QuaZip object
+static QStringList extractDirInternal(QuaZip& zip, const QString& dir, const QByteArray& password = QByteArray())
 {
     if(!zip.open(QuaZip::mdUnzip)) {
         return QStringList();
@@ -478,33 +526,38 @@ QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
     QString cleanDir = QDir::cleanPath(dir);
     QDir directory(cleanDir);
     QString absCleanDir = directory.absolutePath();
-    if (!absCleanDir.endsWith(QLatin1Char('/'))) // It only ends with / if it's the FS root.
-        absCleanDir += QLatin1Char('/');
     QStringList extracted;
     if (!zip.goToFirstFile()) {
+        zip.close();
         return QStringList();
     }
     do {
         QString name = zip.getCurrentFileName();
         QString absFilePath = directory.absoluteFilePath(name);
-        QString absCleanPath = QDir::cleanPath(absFilePath);
-        if (!absCleanPath.startsWith(absCleanDir))
-            continue;
-        if (!extractFile(&zip, QLatin1String(""), absFilePath)) {
-            removeFile(extracted);
+        // Path traversal validation is done inside extractFile
+        std::pair<bool, bool> result = extractFileInternal(&zip, QLatin1String(""), absFilePath, password, absCleanDir);
+        if (!result.first) {
+            JlCompress::removeFile(extracted);
+            zip.close();
             return QStringList();
         }
-        extracted.append(absFilePath);
+        if (!result.second) {
+            extracted.append(absFilePath);
+        }
     } while (zip.goToNextFile());
 
-    // Close zip
     zip.close();
     if(zip.getZipError()!=0) {
-        removeFile(extracted);
+        JlCompress::removeFile(extracted);
         return QStringList();
     }
 
     return extracted;
+}
+
+QStringList JlCompress::extractDir(QuaZip &zip, const QString &dir)
+{
+    return extractDirInternal(zip, dir);
 }
 
 QStringList JlCompress::getFileList(QString fileCompressed) {
@@ -572,3 +625,19 @@ QStringList JlCompress::extractFiles(QIODevice *ioDevice, QStringList files, QSt
     QuaZip zip(ioDevice);
     return extractFiles(zip, files, dir);
 } 
+
+// Extract with password support
+QString JlCompress::extractFile(QString fileCompressed, QString fileName, QString fileDest, const QByteArray& password) {
+    QuaZip zip(fileCompressed);
+    return extractFileSingleInternal(zip, fileName, fileDest, password);
+}
+
+QStringList JlCompress::extractFiles(QString fileCompressed, QStringList files, QString dir, const QByteArray& password) {
+    QuaZip zip(fileCompressed);
+    return extractFilesInternal(zip, files, dir, password);
+}
+
+QStringList JlCompress::extractDir(QString fileCompressed, QString dir, const QByteArray& password) {
+    QuaZip zip(fileCompressed);
+    return extractDirInternal(zip, dir, password);
+}

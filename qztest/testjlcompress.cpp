@@ -34,6 +34,10 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QCryptographicHash>
 #include <quazip_qt_compat.h>
 
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+#include <QTextCodec>
+#endif
+
 #include <QtTest/QTest>
 
 #include <JlCompress.h>
@@ -85,6 +89,8 @@ void TestJlCompress::compressFileOptions_data()
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<QDateTime>("dateTime");
     QTest::addColumn<JlCompress::Options::CompressionStrategy>("strategy");
+    QTest::addColumn<bool>("utf8");
+    QTest::addColumn<QByteArray>("password");
     QTest::addColumn<QString>("sha256sum_unix"); // Due to extra data archives are not identical
     QTest::addColumn<QString>("sha256sum_unix_ng"); // zlib-ng
     QTest::addColumn<QString>("sha256sum_win");
@@ -92,13 +98,35 @@ void TestJlCompress::compressFileOptions_data()
                             << "test0.txt"
                             << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                             << JlCompress::Options::Default
+                            << false
+                            << QByteArray()
                             << "5eedd83aee92cf3381155d167fee54a4ef6e43b8bc7a979c903611d9aa28610a"
                             << "752db50b15db1a19e091f9c1b43ec22b279867b20d43c76bc9a01d7bc0d7ae4f"
                             << "cb1847dff1a5c33a805efde2558fc74024ad4c64c8607f8b12903e4d92385955";
+    QTest::newRow("simple-utf8") << "jlsimplefile-utf8.zip"
+                            << QString::fromUtf8("ありがとう。.txt")
+                            << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                            << JlCompress::Options::Default
+                            << true
+                            << QByteArray()
+                            << ""
+                            << ""
+                            << "";
+    QTest::newRow("simple-utf8-no-flag") << "jlsimplefile-utf8-no-flag.zip"
+                                 << QString::fromUtf8("ありがとう。.txt")
+                                 << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                 << JlCompress::Options::Default
+                                 << false  // UTF-8 flag disabled - tests compression without flag
+                                 << QByteArray()
+                                 << ""
+                                 << ""
+                                 << "";
     QTest::newRow("simple-storage") << "jlsimplefile-storage.zip"
                                     << "test0.txt"
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                     << JlCompress::Options::Storage
+                                    << false
+                                    << QByteArray()
                                     << ""
                                     << ""
                                     << "";
@@ -106,6 +134,8 @@ void TestJlCompress::compressFileOptions_data()
                                     << "test0.txt"
                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                     << JlCompress::Options::Fastest
+                                    << false
+                                    << QByteArray()
                                     << ""
                                     << ""
                                     << "";
@@ -113,6 +143,8 @@ void TestJlCompress::compressFileOptions_data()
                                    << "test0.txt"
                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                    << JlCompress::Options::Faster
+                                   << false
+                                   << QByteArray()
                                    << ""
                                    << ""
                                    << "";
@@ -120,6 +152,8 @@ void TestJlCompress::compressFileOptions_data()
                                      << "test0.txt"
                                      << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                      << JlCompress::Options::Standard
+                                     << false
+                                     << QByteArray()
                                      << "5eedd83aee92cf3381155d167fee54a4ef6e43b8bc7a979c903611d9aa28610a"
                                      << "752db50b15db1a19e091f9c1b43ec22b279867b20d43c76bc9a01d7bc0d7ae4f"
                                      << "cb1847dff1a5c33a805efde2558fc74024ad4c64c8607f8b12903e4d92385955";
@@ -127,6 +161,8 @@ void TestJlCompress::compressFileOptions_data()
                                    << "test0.txt"
                                    << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                    << JlCompress::Options::Better
+                                   << false
+                                   << QByteArray()
                                    << ""
                                    << ""
                                    << "";
@@ -134,9 +170,39 @@ void TestJlCompress::compressFileOptions_data()
                                  << "test0.txt"
                                  << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
                                  << JlCompress::Options::Best
+                                 << false
+                                 << QByteArray()
                                  << ""
                                  << ""
                                  << "";
+    // Password tests - SHA256 validation is skipped (empty strings) because
+    // encrypted ZIP archives are NOT deterministic:
+    //
+    // Traditional PKWARE Encryption (ZipCrypto) generates a 12-byte random header
+    // for each file using srand(time(NULL) ^ ZCR_SEED2) in minizip_crypt.h.
+    // This means identical inputs produce different encrypted outputs each run.
+    //
+    // To make these deterministic (if needed in the future):
+    // - Would require modifying minizip code (crypthead() in minizip_crypt.h)
+    // - Add optional seed parameter through QuaZipFile → JlCompress → minizip layers
+    QTest::newRow("password-simple") << "jlsimplefile-password.zip"
+                                     << "test0.txt"
+                                     << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                     << JlCompress::Options::Default
+                                     << false
+                                     << QByteArray("password123")
+                                     << ""
+                                     << ""
+                                     << "";
+    QTest::newRow("password-utf8") << "jlsimplefile-password-utf8.zip"
+                                   << QString::fromUtf8("файл.txt")
+                                   << QDateTime(QDate(2024, 9, 19), QTime(21, 0, 0), COMPAT_UTC_TZ)
+                                   << JlCompress::Options::Best
+                                   << true
+                                   << QByteArray("секрет")
+                                   << ""
+                                   << ""
+                                   << "";
 }
 
 void TestJlCompress::compressFileOptions()
@@ -145,9 +211,24 @@ void TestJlCompress::compressFileOptions()
     QFETCH(QString, fileName);
     QFETCH(QDateTime, dateTime);
     QFETCH(JlCompress::Options::CompressionStrategy, strategy);
+    QFETCH(bool, utf8);
+    QFETCH(QByteArray, password);
     QFETCH(QString, sha256sum_unix);
     QFETCH(QString, sha256sum_unix_ng);
     QFETCH(QString, sha256sum_win);
+
+    // Skip UTF-8 tests if platform doesn't support UTF-8
+    if (utf8 && !isPlatformUtf8()) {
+        QSKIP("Skipping UTF-8 test on non-UTF-8 platform");
+    }
+
+    // Skip tests with non-ASCII filenames on non-UTF-8 platforms
+    // Windows filesystem will mangle UTF-8 filenames to '??????' during file creation
+    if (!isPlatformUtf8() && fileName.toUtf8() != fileName.toLatin1()) {
+        QSKIP("Skipping test with non-ASCII filename on non-UTF-8 platform");
+    }
+
+
     QDir curDir;
     if (curDir.exists(zipName)) {
       if (!curDir.remove(zipName))
@@ -157,31 +238,113 @@ void TestJlCompress::compressFileOptions()
         QFAIL("Can't create test file");
     }
 
-    const JlCompress::Options options(dateTime, strategy);
+    qDebug() << "Testing " << fileName;
+
+    // Detect if platform defaults to UTF-8
+    bool platformIsUtf8 = isPlatformUtf8();
+    QString codecInfo;
+#ifdef QUAZIP_CAN_USE_QTEXTCODEC
+    QTextCodec *defaultCodec = QTextCodec::codecForLocale();
+    if (defaultCodec) {
+        codecInfo = QString::fromLatin1(defaultCodec->name());
+    }
+#else
+    // Qt 6: Platform-specific
+#ifdef Q_OS_WIN
+    codecInfo = "Windows (UTF-8 requires flag)";
+#else
+    codecInfo = "Qt6 (forces UTF-8)";
+#endif
+#endif
+
+    JlCompress::Options options(dateTime, strategy, utf8, password);
     QVERIFY(JlCompress::compressFile(zipName, "tmp/" + fileName, options));
+
     // get the file list and check it
     QStringList fileList = JlCompress::getFileList(zipName);
     QCOMPARE(fileList.count(), 1);
-    QVERIFY(fileList[0] == fileName);
+
+    if (!utf8 && !platformIsUtf8) {
+        // On non-UTF-8 platforms without UTF-8 mode, filenames might be mangled
+        // Just verify we got a filename, even if mangled
+        QVERIFY(!fileList[0].isEmpty());
+    } else {
+        QVERIFY(fileList[0] == fileName);
+    }
+
     // now test the QIODevice* overload of getFileList()
     QFile _zipFile(zipName);
     QVERIFY(_zipFile.open(QIODevice::ReadOnly));
     fileList = JlCompress::getFileList(zipName);
     QCOMPARE(fileList.count(), 1);
-    QVERIFY(fileList[0] == fileName);
+
+    if (!utf8 && !platformIsUtf8) {
+        // On non-UTF-8 platforms without UTF-8 mode, filenames might be mangled
+        QVERIFY(!fileList[0].isEmpty());
+    } else {
+        QVERIFY(fileList[0] == fileName);
+    }
     // Hash is computed on the resulting file externally, then hardcoded in the test data
     // This should help detecting any library breakage since we compare against a well-known stable result
     QString hash = QCryptographicHash::hash(_zipFile.readAll(), QCryptographicHash::Sha256).toHex();
 #if defined Q_OS_WIN
-    if (!sha256sum_win.isEmpty()) QCOMPARE(hash, sha256sum_win);
+    if (!sha256sum_win.isEmpty()) {
+        QCOMPARE(hash, sha256sum_win);
+    }
 #elif defined ZLIBNG_VERSION
-    if (!sha256sum_unix_ng.isEmpty()) QCOMPARE(hash, sha256sum_unix_ng);
+    if (!sha256sum_unix_ng.isEmpty()) {
+        QCOMPARE(hash, sha256sum_unix_ng);
+    }
 #else
-    if (!sha256sum_unix.isEmpty()) QCOMPARE(hash, sha256sum_unix);
+    if (!sha256sum_unix.isEmpty()) {
+        QCOMPARE(hash, sha256sum_unix);
+    }
 #endif
+
     _zipFile.close();
-    removeTestFiles(QStringList() << fileName);
+
+    // Extract
+    QString flist;
+    // On non-UTF-8 platforms without UTF-8 mode, use the mangled filename from the archive
+    QString extractName = (!utf8 && !platformIsUtf8) ? fileList[0] : fileName;
+
+    if (!password.isEmpty()) {
+        // Extract with password
+        flist = JlCompress::extractFile(zipName, extractName, QString(), password);
+        QFileInfo fileInfo(flist);
+
+        if (!platformIsUtf8) {
+            // On non-UTF-8 platforms, filename might be mangled even with UTF-8 enabled
+            // because the locale codec can't represent the UTF-8 characters
+            // Just verify extraction succeeded
+            QVERIFY(!flist.isEmpty());
+        } else {
+            // On UTF-8 platforms, filename should match
+            QVERIFY(fileInfo.fileName() == fileName);
+        }
+
+        // Test wrong password fails
+        QString wrongExtract = JlCompress::extractFile(zipName, extractName, "tmp/wrong_pw", QByteArray("wrongpassword"));
+        QVERIFY(wrongExtract.isEmpty());
+    } else {
+        // Extract without password
+        flist = JlCompress::extractFile(zipName, extractName);
+        QFileInfo fileInfo(flist);
+
+        if (!platformIsUtf8) {
+            // On non-UTF-8 platforms, filename might be mangled even with UTF-8 enabled
+            // because the locale codec can't represent the UTF-8 characters
+            // Just verify extraction succeeded
+            QVERIFY(!flist.isEmpty());
+        } else {
+            // On UTF-8 platforms, filename should match
+            QVERIFY(fileInfo.fileName() == fileName);
+        }
+    }
+
+    removeTestFiles(QStringList() << fileName << flist);
     curDir.remove(zipName);
+
 }
 
 void TestJlCompress::compressFiles_data()

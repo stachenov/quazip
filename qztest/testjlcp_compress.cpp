@@ -46,15 +46,30 @@ void TestJlCpCompress::compressFileOptions_data()
     QTest::addColumn<QString>("zipName");
     QTest::addColumn<QString>("fileName");
     QTest::addColumn<JlCompress::Options::CompressionStrategy>("strategy");
+    QTest::addColumn<QByteArray>("password");
+
     QTest::newRow("simple") << "jlsimplefile.zip"
                             << "test0.txt"
-                            << JlCompress::Options::Default;
+                            << JlCompress::Options::Default
+                            << QByteArray();
     QTest::newRow("simple-storage") << "jlsimplefile-storage.zip"
                                     << "test0.txt"
-                                    << JlCompress::Options::Storage;
+                                    << JlCompress::Options::Storage
+                                    << QByteArray();
     QTest::newRow("simple-best") << "jlsimplefile-best.zip"
                                  << "test0.txt"
-                                 << JlCompress::Options::Best;
+                                 << JlCompress::Options::Best
+                                 << QByteArray();
+
+    // Encrypted archives - test cross-platform encryption compatibility
+    QTest::newRow("encrypted-default") << "jlsimplefile-encrypted.zip"
+                                       << "test0.txt"
+                                       << JlCompress::Options::Default
+                                       << QByteArray("testpassword");
+    QTest::newRow("encrypted-best") << "jlsimplefile-encrypted-best.zip"
+                                    << "test0.txt"
+                                    << JlCompress::Options::Best
+                                    << QByteArray("testpassword");
 }
 
 void TestJlCpCompress::compressFileOptions()
@@ -62,6 +77,8 @@ void TestJlCpCompress::compressFileOptions()
     QFETCH(QString, zipName);
     QFETCH(QString, fileName);
     QFETCH(JlCompress::Options::CompressionStrategy, strategy);
+    QFETCH(QByteArray, password);
+
     QDir curDir;
     if (curDir.exists(zipName)) {
       if (!curDir.remove(zipName))
@@ -71,7 +88,7 @@ void TestJlCpCompress::compressFileOptions()
         QFAIL("Can't create test file");
     }
 
-    const JlCompress::Options options(strategy);
+    const JlCompress::Options options(QDateTime(), strategy, false, password);
     QVERIFY(JlCompress::compressFile(zipName, "tmp/" + fileName, options));
 
     removeTestFiles(QStringList() << fileName);

@@ -183,7 +183,9 @@ jobs:
       - name: Run tests
         shell: cmd
         working-directory: ${{github.workspace}}/build
-        run: ctest --verbose --output-on-failure -C Release
+        env:
+          QT_ASSUME_STDERR_HAS_CONSOLE: 1 # !! qDebug() is not visible if this is not set on Win runners
+        run: ctest --extra-verbose -C Release
 
   use-qt5-zlib-windows:
     if: true
@@ -319,4 +321,6 @@ jobs:
       - name: Run tests
         shell: cmd
         working-directory: build
+        env:
+          QT_ASSUME_STDERR_HAS_CONSOLE: 1 # !! qDebug() is not visible if this is not set on Win runners
         run: ctest --extra-verbose -C Release
