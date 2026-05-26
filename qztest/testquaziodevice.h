@@ -33,6 +33,7 @@ private slots:
     void read();
     void readMany();
     void write();
+    void readyReadForwarding();
 };
 
 #endif // QUAZIP_TEST_QUAZIODEVICE_H

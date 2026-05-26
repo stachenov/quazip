@@ -131,7 +131,7 @@ public:
         // If compressing a directory, used for all files.
         QDateTime m_dateTime;
 
-        CompressionStrategy m_compressionStrategy;
+        CompressionStrategy m_compressionStrategy{Default};
 
         /* Enables UTF-8 support for filenames and comments.
          *
@@ -147,7 +147,7 @@ public:
          *   - This flag is ignored (zip is already opened).
          *   - You must call setUtf8Enabled() on the QuaZip object before open().
          * */
-        bool m_utf8Enabled;
+        bool m_utf8Enabled {};
 
         /* Password for encryption/decryption.
          *
@@ -200,6 +200,8 @@ public:
       the root of the ZIP.
       \param recursive Whether to pack sub-directories as well or only
       files.
+      \param filters what to pack, filters are applied both when searching
+      for subdirs (if packing recursively) and when looking for files to pack
       \return true if success, false otherwise.
       */
     static bool compressSubDir(QuaZip* parentZip, QString dir, QString parentDir, bool recursive,
@@ -213,7 +215,7 @@ public:
       the root of the ZIP.
       \param recursive Whether to pack sub-directories as well or only
       \param filters what to pack, filters are applied both when searching
-* for subdirs (if packing recursively) and when looking for files to pack
+      for subdirs (if packing recursively) and when looking for files to pack
       \param options Options for fixed file timestamp, compression level, encryption..
       files.
       \return true if success, false otherwise.

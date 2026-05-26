@@ -22,9 +22,7 @@ See COPYING file for the full LGPL text.
 #include "QuaExtract.h"
 #include "JlCompress.h"
 
-QuaExtract::QuaExtract()
-{
-}
+QuaExtract::QuaExtract() = default;
 
 QuaExtract& QuaExtract::withPassword(const QByteArray& password)
 {

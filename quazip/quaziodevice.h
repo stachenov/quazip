@@ -96,6 +96,6 @@ protected:
   /// Implementation of QIODevice::writeData().
   qint64 writeData(const char *data, qint64 maxSize) override;
 private:
-  QuaZIODevicePrivate *d;
+  QuaZIODevicePrivate *d{};
 };
 #endif // QUAZIP_QUAZIODEVICE_H

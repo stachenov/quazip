@@ -32,7 +32,6 @@ constexpr QuaCompress::CompressionStrategy QuaCompress::Best;
 constexpr QuaCompress::CompressionStrategy QuaCompress::Default;
 
 QuaCompress::QuaCompress()
-    : m_options(JlCompress::Options::Default)
 {
 }
 
