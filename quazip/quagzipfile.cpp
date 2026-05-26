@@ -32,7 +32,7 @@ class QuaGzipFilePrivate {
     friend class QuaGzipFile;
     QString fileName;
     gzFile gzd{};
-    inline QuaGzipFilePrivate() {}
+    inline QuaGzipFilePrivate() = default;
     explicit inline QuaGzipFilePrivate(const QString &_fileName):
         fileName(_fileName) {}
     template<typename FileId> bool open(FileId id, 

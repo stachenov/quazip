@@ -82,6 +82,34 @@ void TestQuaZIODevice::readMany()
     QVERIFY(!testDevice.isOpen());
 }
 
+void TestQuaZIODevice::readyReadForwarding()
+{
+    // A minimal QIODevice that lets us manually trigger readyRead.
+    // No Q_OBJECT needed: we only emit the signal inherited from QIODevice.
+    class SignalSource : public QIODevice {
+    public:
+        void triggerReadyRead() { emit readyRead(); }
+    protected:
+        qint64 readData(char * /*data*/, qint64 /*maxlen*/) override { return -1; }
+        qint64 writeData(const char * /*data*/, qint64 /*len*/) override { return -1; }
+    };
+
+    SignalSource io;
+    io.open(QIODevice::ReadOnly);
+
+    connect(&io, &QIODevice::readyRead, [&io]() { io.blockSignals(true); });
+
+    QuaZIODevice device(&io);
+    QVERIFY(device.open(QIODevice::ReadOnly));
+
+    int count = 0;
+    connect(&device, &QIODevice::readyRead, [&count]() { ++count; });
+
+    io.triggerReadyRead();
+
+    QCOMPARE(count, 1);
+}
+
 void TestQuaZIODevice::write()
 {
     QByteArray buf(256, 0);

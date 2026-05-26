@@ -77,7 +77,7 @@ class QuaZipPrivate {
     /// The UTF-8 flag.
     bool utf8{};
     /// The OS code.
-    uint osCode{};
+    uint osCode{defaultOsCode};
     inline QuazipTextCodec *getDefaultFileNameCodec()
     {
         if (defaultFileNameCodec == nullptr) {

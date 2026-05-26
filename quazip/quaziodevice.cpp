@@ -160,7 +160,7 @@ QuaZIODevice::QuaZIODevice(QIODevice *io, QObject *parent):
     QIODevice(parent),
     d(new QuaZIODevicePrivate(io, this))
 {
-  connect(io, &QIODevice::readyRead, &QIODevice::readyRead);
+  connect(io, &QIODevice::readyRead, this, &QIODevice::readyRead);
 }
 
 QuaZIODevice::~QuaZIODevice()

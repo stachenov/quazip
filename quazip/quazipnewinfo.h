@@ -59,7 +59,7 @@ struct QUAZIP_EXPORT QuaZipNewInfo {
    * to the source file timestamp instead of archive creating time. Use
    * setFileDateTime() or QuaZipNewInfo(const QString&, const QString&).
    **/
-  QDateTime dateTime;
+  QDateTime dateTime{};
   /// File internal attributes.
   quint16 internalAttr{};
   /// File external attributes.
