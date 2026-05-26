@@ -43,7 +43,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
   */
 class QUAZIP_EXPORT JlCompress {
 public:
-    class Options {
+    class QUAZIP_EXPORT Options {
     public:
         /**
          * The enum values refer to the comments in the open function of the quazipfile.h file.
