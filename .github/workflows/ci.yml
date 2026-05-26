@@ -98,7 +98,7 @@ jobs:
     steps:
       - name: Show OS info
         run: cat /etc/os-release
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install build tools
         run: apk add --update g++ make cmake ${{ matrix.qt_version }}-qtbase-dev
       - name: Install compat

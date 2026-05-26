@@ -49,7 +49,7 @@ jobs:
     name: Build-${{ inputs.runs_on }}-Qt-${{ inputs.qt_version }}-shared-${{ inputs.shared }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Qt6
         if: "startsWith(inputs.qt_version, '6.')"
@@ -93,7 +93,7 @@ jobs:
 
       - name: Upload cp.zip to GitHub Actions Storage
         if: inputs.run_tests && !inputs.cross_extract
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           retention-days: 1
           overwrite: true
@@ -102,7 +102,7 @@ jobs:
 
       - name: Download bundle containing cp.zip
         if: inputs.cross_extract
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: build/quazip
           merge-multiple: false
