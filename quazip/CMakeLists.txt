@@ -32,6 +32,7 @@ set(QUAZIP_SOURCES
         unzip.c
         zip.c
         JlCompress.cpp
+        JlOptions.cpp
         QuaCompress.cpp
         QuaExtract.cpp
         qioapi.cpp

@@ -34,6 +34,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
+#include <QtCore/QSharedDataPointer>
 
 /// Utility class for typical operations.
 /**
@@ -77,85 +78,31 @@ public:
         };
 
     public:
-      	explicit Options(const CompressionStrategy& strategy)
-            : m_compressionStrategy(strategy) {}
+      	explicit Options(const CompressionStrategy& strategy);
 
         explicit Options(const QDateTime& dateTime = QDateTime(),
                          const CompressionStrategy& strategy = Default,
                          bool utf8Enabled = false,
-                         const QByteArray& password = QByteArray())
-            : m_dateTime(dateTime), m_compressionStrategy(strategy), m_utf8Enabled(utf8Enabled), m_password(password) {}
+                         const QByteArray& password = QByteArray());
 
-        QDateTime getDateTime() const {
-            return m_dateTime;
-        }
+        Options(const Options& other) noexcept;
+        Options& operator=(const Options& other) noexcept;
+        ~Options();
 
-        void setDateTime(const QDateTime &dateTime) {
-            m_dateTime = dateTime;
-        }
-
-        CompressionStrategy getCompressionStrategy() const {
-            return m_compressionStrategy;
-        }
-
-        int getCompressionMethod() const {
-            return m_compressionStrategy != Default ? m_compressionStrategy >> 4 : Z_DEFLATED;
-        }
-
-        int getCompressionLevel() const {
-            return m_compressionStrategy != Default ? m_compressionStrategy & 0x0f : Z_DEFAULT_COMPRESSION;
-        }
-
-        void setCompressionStrategy(const CompressionStrategy &strategy) {
-            m_compressionStrategy = strategy;
-        }
-
-        bool getUtf8Enabled() const {
-            return m_utf8Enabled;
-        }
-
-        void setUtf8Enabled(bool utf8Enabled) {
-            m_utf8Enabled = utf8Enabled;
-        }
-
-        QByteArray getPassword() const {
-            return m_password;
-        }
-
-        void setPassword(const QByteArray& password) {
-            m_password = password;
-        }
+        QDateTime getDateTime() const;
+        void setDateTime(const QDateTime &dateTime);
+        CompressionStrategy getCompressionStrategy() const;
+        int getCompressionMethod() const;
+        int getCompressionLevel() const;
+        void setCompressionStrategy(const CompressionStrategy &strategy);
+        bool getUtf8Enabled() const;
+        void setUtf8Enabled(bool utf8Enabled);
+        QByteArray getPassword() const;
+        void setPassword(const QByteArray& password);
 
     private:
-        // If set, used as last modified on file inside the archive.
-        // If compressing a directory, used for all files.
-        QDateTime m_dateTime;
-
-        CompressionStrategy m_compressionStrategy{Default};
-
-        /* Enables UTF-8 support for filenames and comments.
-         *
-         * For methods that create new archives (compressFile, compressFiles, compressDir):
-         *   - This flag determines the encoding for all files in the new archive.
-         *
-         * For methods that add to existing archives (addFile, addFiles, addDir):
-         *   - This flag MUST match the encoding already used in the existing archive.
-         *   - QuaZip does not auto-detect the existing encoding.
-         *   - Mismatched encoding will create an inconsistent archive.
-         *
-         * For methods that receive QuaZip* zip as an argument:
-         *   - This flag is ignored (zip is already opened).
-         *   - You must call setUtf8Enabled() on the QuaZip object before open().
-         * */
-        bool m_utf8Enabled {};
-
-        /* Password for encryption/decryption.
-         *
-         * If set during compression, the files will be encrypted with this password.
-         * If set during extraction, this password will be used to decrypt the files.
-         * Empty password means no encryption/decryption.
-         * */
-        QByteArray m_password;
+        struct JlOptions;
+        QSharedDataPointer<JlOptions> d;
     };
 
     static bool copyData(QIODevice &inFile, QIODevice &outFile);

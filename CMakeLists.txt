@@ -1,12 +1,12 @@
 # require 3.15 for GNUInstallDirs
 cmake_minimum_required(VERSION 3.15...3.18)
 
-project(QuaZip VERSION 1.6.0)
+project(QuaZip VERSION 1.7.0)
 
 include(cmake/clone-repo.cmake)
 
 set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
-set(QUAZIP_LIB_SOVERSION ${QuaZip_VERSION_MAJOR})
+set(QUAZIP_LIB_SOVERSION ${QuaZip_VERSION_MAJOR}.${QuaZip_VERSION_MINOR})
 
 if(EMSCRIPTEN)
   #option(ZLIB_INCLUDE "Path to include dir" "")
