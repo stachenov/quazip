@@ -26,6 +26,7 @@ See COPYING file for the full LGPL text.
 
 #include <QByteArray>
 #include "quazip_global.h"
+#include "quazip_config.h"
 
 #ifdef QUAZIP_CAN_USE_QTEXTCODEC
 #include <QTextCodec>

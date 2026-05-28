@@ -5,6 +5,7 @@ include(GNUInstallDirs) # configurable CMAKE_INSTALL_*DIR
 cmake_minimum_required(VERSION 3.13)
 
 set(QUAZIP_HEADERS
+        ${CMAKE_CURRENT_BINARY_DIR}/quazip_config.h
         JlCompress.h
         QuaCompress.h
         QuaExtract.h
@@ -70,6 +71,7 @@ target_include_directories(${QUAZIP_LIB_TARGET_NAME} PRIVATE ${QUAZIP_INC})
 target_include_directories(${QUAZIP_LIB_TARGET_NAME} PUBLIC
 	$<BUILD_INTERFACE:${QUAZIP_SOURCE_DIR}>
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_DIR_NAME}>
 	$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${QUAZIP_INCLUDE_PATH}>
 )
