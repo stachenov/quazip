@@ -23,7 +23,7 @@ some guidelines.
 
 1. Changes should be backwards-compatible. Don't just change method names
 and their signatures randomly. Don't just remove deprecated features—some
-of them are there to keep compatibility with old Qt versions. Even Qt 4 is
+of them are there to keep compatibility with old Qt versions. Even Qt 5 is
 still supported! Unless you're working on some sort of `pre2.0` branch
 or something like that, you should keep ABI compatibility as well! Meaning,
 no adding virtual functions, no changing parameter types, even if it's
