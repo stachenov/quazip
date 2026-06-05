@@ -253,6 +253,7 @@ if(QUAZIP_ENABLE_QTEXTCODEC)
         if(Qt6Core5Compat_FOUND)
             set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} Qt6::Core5Compat)
             set(QUAZIP_TEST_QT_LIBRARIES ${QUAZIP_TEST_QT_LIBRARIES} Qt6::Core5Compat)
+            string(APPEND QUAZIP_PKGCONFIG_REQUIRES ", Qt6Core5Compat")
 
             set(QUAZIP_CAN_USE_QTEXTCODEC TRUE)
             message("-- Quazip can use QTextCodec")
