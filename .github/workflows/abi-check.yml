@@ -60,11 +60,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - base: v1.5
-            head: v1.6
+          - base: v1.6
+            head: v1.7.2
           - base: v1.6
             head: master
-          - base: v1.5
+          - base: v1.7.2
             head: master
 
     steps:
