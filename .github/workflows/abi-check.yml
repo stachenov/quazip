@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ref: [v1.5, v1.6, master]
+        ref: [v1.6, v1.7.2, master]
 
     steps:
       - uses: actions/checkout@v6
