@@ -189,7 +189,7 @@ jobs:
 
   use-qt5-zlib-windows:
     if: true
-    runs-on: windows-latest
+    runs-on: windows-2022
     name: use-qt5-zlib-windows-${{ matrix.qt_version }}
     strategy:
       fail-fast: false
