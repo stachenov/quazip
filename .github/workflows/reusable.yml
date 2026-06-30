@@ -83,6 +83,10 @@ jobs:
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+      - name: Verify Qt6Core5Compat in pkg-config file
+        if: "startsWith(inputs.qt_version, '6.') && inputs.qtextcodec != 'OFF'"
+        run: grep -q "Qt6Core5Compat" ${{github.workspace}}/build/quazip/*.pc
+
       - name: Run tests
         if: inputs.run_tests && !inputs.cross_extract
         working-directory: ${{github.workspace}}/build
