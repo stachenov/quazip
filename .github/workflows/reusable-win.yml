@@ -8,6 +8,10 @@ on:
       arch:
         required: true
         type: string
+      runner:
+        required: false
+        default: 'windows-latest'
+        type: string
       qt_version:
         required: true
         type: string
@@ -55,7 +59,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ inputs.runner }}
     name: Windows-${{ inputs.arch }}-Qt-${{ inputs.qt_version }}-Preset-${{ inputs.preset }}
     steps:
       - uses: actions/checkout@v6
