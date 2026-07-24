@@ -44,6 +44,7 @@ private slots:
     void setOsCode();
     void setDataDescriptorWritingEnabled();
     void testQIODeviceAPI();
+    void zip64WithLeadingData();
     void setZipName();
     void setIoDevice();
     void setCommentCodec();

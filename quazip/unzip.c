@@ -484,7 +484,7 @@ local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib
     ZPOS64_T uMaxBack=0xffff; /* maximum size of global comment */
     ZPOS64_T uPosFound=0;
     uLong uL;
-                ZPOS64_T relativeOffset;
+    ZPOS64_T relativeOffset;
 
     if (ZSEEK64(*pzlib_filefunc_def,filestream,0,ZLIB_FILEFUNC_SEEK_END) != 0)
         return 0;
@@ -567,7 +567,31 @@ local ZPOS64_T unz64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib
         return 0;
 
     if (uL != 0x06064b50)
-        return 0;
+    {
+        ZPOS64_T sizeEndOfCentralDirectory;
+
+        /*
+          The locator offset is relative to the start of the ZIP data, so it
+          does not include leading data in a self-extracting archive. Fall
+          back to the standard 56-byte ZIP64 end record immediately before
+          the locator.
+        */
+        if (uPosFound < 56)
+            return 0;
+        relativeOffset = uPosFound - 56;
+        if (ZSEEK64(*pzlib_filefunc_def,filestream, relativeOffset,
+                    ZLIB_FILEFUNC_SEEK_SET)!=0)
+            return 0;
+        if (unz64local_getLong(pzlib_filefunc_def,filestream,&uL)!=UNZ_OK)
+            return 0;
+        if (uL != 0x06064b50)
+            return 0;
+        if (unz64local_getLong64(pzlib_filefunc_def,filestream,
+                                 &sizeEndOfCentralDirectory)!=UNZ_OK)
+            return 0;
+        if (sizeEndOfCentralDirectory != 44)
+            return 0;
+    }
 
     return relativeOffset;
 }
