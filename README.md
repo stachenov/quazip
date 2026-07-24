@@ -106,10 +106,12 @@ CMake options
 | Option                      | Description                                                                                                                                                   | Default |
 |-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
 | `QUAZIP_QT_MAJOR_VERSION`   | Specifies which major Qt version should be searched for (6 or 5). By default it tries to find the most recent.                                                |         |
-| `BUILD_SHARED_LIBS`         | Build QuaZip as a shared library                                                                                                                              | `ON`    |
+| `BUILD_SHARED_LIBS`         | Select the default type for `QuaZip::QuaZip` and initialize the shared/static build options.                                                                    | `ON`    |
+| `QUAZIP_BUILD_SHARED`       | Build the shared library.                                                                                                                                      | `BUILD_SHARED_LIBS` |
+| `QUAZIP_BUILD_STATIC`       | Build the static library.                                                                                                                                      | opposite of `BUILD_SHARED_LIBS` |
 | `QUAZIP_LIB_FILE_NAME`      | Specifies output libname.                                                                                                                                     | `quazip<quazip-version>-qt<qt-version>` |
 | `QUAZIP_INSTALL`            | Enable installation                                                                                                                                           | `ON`    |
-| `QUAZIP_USE_QT_ZLIB`        | Use Qt's bundled zlib instead of system zlib (**not recommended**). Qt must be built with `-qt-zlib` and `-static`. Incompatible with `BUILD_SHARED_LIBS=ON`. | `OFF`   |
+| `QUAZIP_USE_QT_ZLIB`        | Use Qt's bundled zlib instead of system zlib (**not recommended**). Qt must be built with `-qt-zlib` and `-static`. Incompatible with `QUAZIP_BUILD_SHARED=ON`. | `OFF`   |
 | `QUAZIP_ENABLE_TESTS`       | Build QuaZip tests                                                                                                                                            | `OFF`   |
 | `QUAZIP_BZIP2`              | Enable BZIP2 compression                                                                                                                                      | `ON`    |
 | `QUAZIP_BZIP2_STDIO`        | Output BZIP2 errors to stdio when BZIP2 compression is enabled                                                                                                | `ON`    |
@@ -118,6 +120,11 @@ CMake options
 # Usage
 
 See [EXAMPLES.md](EXAMPLES.md) for code examples showing how to use QuaZip's three API levels: low-level QuaZip/QuaZipFile, JlCompress utility functions, and QuaCompress fluent interface.
+
+When both library types are enabled, the `QuaZip::QuaZip` CMake target follows
+`BUILD_SHARED_LIBS`; otherwise, it selects the only enabled type. The
+`QuaZip::QuaZipShared` and `QuaZip::QuaZipStatic` targets select an enabled
+library type explicitly.
 
 # UTF-8 Handling
 

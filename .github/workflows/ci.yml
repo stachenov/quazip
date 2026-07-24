@@ -24,6 +24,7 @@ jobs:
         os_version: ${{ matrix.os_version }}
         qt_version: ${{ matrix.qt_version }}
         shared: ${{ matrix.shared }}
+        dual_build: ${{ matrix.os_version == '24.04' && matrix.qt_version == '6.8.2' && matrix.shared == 'ON' }}
 
   ubuntu-zlibconst:
     if: true

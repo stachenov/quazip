@@ -1,3 +1,5 @@
+* Support building shared and static libraries in one CMake configuration.
+
 * 2023-01-22 1.4
         * Bzip2 compression support
         * Minor fixes

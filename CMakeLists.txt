@@ -22,6 +22,32 @@ else()
   option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
 endif()
 
+if(BUILD_SHARED_LIBS)
+  set(_QUAZIP_BUILD_SHARED_DEFAULT ON)
+  set(_QUAZIP_BUILD_STATIC_DEFAULT OFF)
+else()
+  set(_QUAZIP_BUILD_SHARED_DEFAULT OFF)
+  set(_QUAZIP_BUILD_STATIC_DEFAULT ON)
+endif()
+
+option(QUAZIP_BUILD_SHARED "Build QuaZip as a shared library" ${_QUAZIP_BUILD_SHARED_DEFAULT})
+option(QUAZIP_BUILD_STATIC "Build QuaZip as a static library" ${_QUAZIP_BUILD_STATIC_DEFAULT})
+
+if(EMSCRIPTEN)
+  set(QUAZIP_BUILD_SHARED OFF CACHE BOOL "Build QuaZip as a shared library" FORCE)
+  set(QUAZIP_BUILD_STATIC ON CACHE BOOL "Build QuaZip as a static library" FORCE)
+endif()
+
+if(NOT QUAZIP_BUILD_SHARED AND NOT QUAZIP_BUILD_STATIC)
+  message(FATAL_ERROR "At least one of QUAZIP_BUILD_SHARED or QUAZIP_BUILD_STATIC must be enabled.")
+endif()
+
+if(QUAZIP_BUILD_SHARED AND (BUILD_SHARED_LIBS OR NOT QUAZIP_BUILD_STATIC))
+  set(QUAZIP_PRIMARY_FLAVOR Shared)
+else()
+  set(QUAZIP_PRIMARY_FLAVOR Static)
+endif()
+
 OPTION(ZLIB_CONST "Sets ZLIB_CONST preprocessor definition" OFF)
 option(QUAZIP_ENABLE_QTEXTCODEC "Enable use of QTextCodec (requires Qt5 or Qt6 Core5Compat)" ON)
 
@@ -32,8 +58,8 @@ option(QUAZIP_BZIP2_STDIO "Output BZIP2 errors to stdio" ON)
 option(QUAZIP_FETCH_LIBS "Enables fetching third-party libraries if not found" ${WIN32})
 option(QUAZIP_FORCE_FETCH_LIBS "Enables fetching third-party libraries always" OFF)
 
-if (QUAZIP_USE_QT_ZLIB AND BUILD_SHARED_LIBS)
-    message(FATAL_ERROR "Using BUILD_SHARED_LIBS=ON together with QUAZIP_USE_QT_ZLIB=ON is not supported." )
+if (QUAZIP_USE_QT_ZLIB AND QUAZIP_BUILD_SHARED)
+    message(FATAL_ERROR "Using QUAZIP_BUILD_SHARED=ON together with QUAZIP_USE_QT_ZLIB=ON is not supported." )
 endif()
 
 # Set the default value of `${QUAZIP_QT_MAJOR_VERSION}`.
@@ -73,6 +99,9 @@ set(QUAZIP_PACKAGE_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION})
 
 message(STATUS "QUAZIP_QT_MAJOR_VERSION set to ${QUAZIP_QT_MAJOR_VERSION}")
 message(STATUS "CMAKE_CXX_STANDARD set to ${CMAKE_CXX_STANDARD}")
+message(STATUS "QUAZIP_BUILD_SHARED set to ${QUAZIP_BUILD_SHARED}")
+message(STATUS "QUAZIP_BUILD_STATIC set to ${QUAZIP_BUILD_STATIC}")
+message(STATUS "QUAZIP_PRIMARY_FLAVOR set to ${QUAZIP_PRIMARY_FLAVOR}")
 
 if(QUAZIP_QT_MAJOR_VERSION EQUAL 6)
     find_package(Qt6 REQUIRED COMPONENTS Core 

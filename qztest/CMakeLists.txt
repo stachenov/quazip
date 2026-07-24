@@ -52,7 +52,7 @@ add_test(NAME qztest_all
 )
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} --verbose DEPENDS qztest)
 
-if (WIN32 AND BUILD_SHARED_LIBS)
+if (WIN32 AND QUAZIP_PRIMARY_FLAVOR STREQUAL "Shared")
 	message(STATUS "Setting up windeployqt")
 	set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 	include(windeployqt)

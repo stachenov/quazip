@@ -25,7 +25,10 @@ target_link_libraries(whatever-your-target-is QuaZip::QuaZip)
 \endverbatim
 
 In the latter case, you may want to set BUILD_SHARED_LIBS to NO
-to link statically.
+to link statically. You can also enable both QUAZIP_BUILD_SHARED and
+QUAZIP_BUILD_STATIC in the same configuration. When both are enabled, the
+QuaZip::QuaZip target follows BUILD_SHARED_LIBS, while QuaZip::QuaZipShared
+and QuaZip::QuaZipStatic select a library type explicitly.
 
 In all cases, if %QuaZip is linked statically, it automatically
 defines QUAZIP_STATIC whenever your link to it, which disables

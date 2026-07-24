@@ -109,8 +109,8 @@ which allows to install them in parallel.
 To reconfigure (for another %Qt version or release/debug, or anything else), just nuke the whole build directory
 and repeat everything.
 
-By default, %QuaZip compiles as a DLL/SO, but respects the standard BUILD_SHARED_LIBS CMake option, adjusting
-its imports/exports accordingly.
+By default, %QuaZip compiles as a DLL/SO, but respects the standard BUILD_SHARED_LIBS CMake option. Set
+QUAZIP_BUILD_SHARED and QUAZIP_BUILD_STATIC to build either or both library types in one configuration.
 
 Binary compatibility is guaranteed between minor releases starting
 with version 1.0, thanks to the Pimpl idiom. That is, the next binary

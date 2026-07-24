@@ -15,6 +15,10 @@ on:
         required: false
         default: "ON"
         type: string
+      dual_build:
+        required: false
+        default: false
+        type: boolean
       zlib_const:
         required: false
         default: "OFF"
@@ -46,7 +50,7 @@ env:
 jobs:
   build:
     runs-on:  ${{ inputs.runs_on }}
-    name: Build-${{ inputs.runs_on }}-Qt-${{ inputs.qt_version }}-shared-${{ inputs.shared }}
+    name: Build-${{ inputs.runs_on }}-Qt-${{ inputs.qt_version }}-shared-${{ inputs.shared }}${{ inputs.dual_build && '-dual' || '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -78,7 +82,24 @@ jobs:
           zlib1g-dev libbz2-dev
 
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ inputs.shared }} -DQUAZIP_ENABLE_TESTS=ON -DZLIB_CONST=${{ inputs.zlib_const }} -DQUAZIP_ENABLE_QTEXTCODEC=${{ inputs.qtextcodec }} -B "${{github.workspace}}/build"
+        shell: bash
+        run: |
+          cmake_args=(
+            "-DCMAKE_BUILD_TYPE=${BUILD_TYPE}"
+            "-DBUILD_SHARED_LIBS=${{ inputs.shared }}"
+            "-DQUAZIP_ENABLE_TESTS=ON"
+            "-DZLIB_CONST=${{ inputs.zlib_const }}"
+            "-DQUAZIP_ENABLE_QTEXTCODEC=${{ inputs.qtextcodec }}"
+            -B "${GITHUB_WORKSPACE}/build"
+          )
+          if [[ "${{ inputs.dual_build }}" == "true" ]]; then
+            cmake_args+=(
+              "-DQUAZIP_BUILD_SHARED=ON"
+              "-DQUAZIP_BUILD_STATIC=ON"
+              "-DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/install"
+            )
+          fi
+          cmake "${cmake_args[@]}"
 
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
@@ -95,13 +116,28 @@ jobs:
           #TEST_ZIP_UNZIP_LARGE: true
         run: ctest --verbose
 
+      - name: Verify installed dual build
+        if: inputs.dual_build
+        run: |
+          cmake --install "${GITHUB_WORKSPACE}/build" --config "${BUILD_TYPE}"
+          cmake \
+            -S "${GITHUB_WORKSPACE}/cmake/dual-build-consumer" \
+            -B "${GITHUB_WORKSPACE}/consumer-build" \
+            -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+            -DCMAKE_PREFIX_PATH="${GITHUB_WORKSPACE}/install"
+          cmake --build "${GITHUB_WORKSPACE}/consumer-build" --config "${BUILD_TYPE}"
+          ctest \
+            --test-dir "${GITHUB_WORKSPACE}/consumer-build" \
+            --build-config "${BUILD_TYPE}" \
+            --output-on-failure
+
       - name: Upload cp.zip to GitHub Actions Storage
         if: inputs.run_tests && !inputs.cross_extract
         uses: actions/upload-artifact@v7
         with:
           retention-days: 1
           overwrite: true
-          name: "${{ inputs.runs_on }}_qt${{ inputs.qt_version }}_shared${{ inputs.shared }}_cp"
+          name: "${{ inputs.runs_on }}_qt${{ inputs.qt_version }}_shared${{ inputs.shared }}${{ inputs.dual_build && '_dual' || '' }}_cp"
           path: build/quazip/cp.zip
 
       - name: Download bundle containing cp.zip
