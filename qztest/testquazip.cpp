@@ -340,6 +340,92 @@ void TestQuaZip::testQIODeviceAPI()
     curDir.remove(zipName);
 }
 
+void TestQuaZip::zip64WithLeadingData()
+{
+    const QByteArray contents("contents");
+    QByteArray archive;
+    QBuffer archiveBuffer(&archive);
+    QuaZip zip(&archiveBuffer);
+    QVERIFY(zip.open(QuaZip::mdCreate));
+    QuaZipFile archiveFile(&zip);
+    QVERIFY(archiveFile.open(QIODevice::WriteOnly, QuaZipNewInfo("test.txt")));
+    QCOMPARE(archiveFile.write(contents), static_cast<qint64>(contents.size()));
+    archiveFile.close();
+    zip.close();
+
+    const QByteArray endOfCentralDirectory = QByteArray::fromHex("504b0506");
+    const int endOfCentralDirectoryOffset = archive.lastIndexOf(endOfCentralDirectory);
+    QVERIFY(endOfCentralDirectoryOffset >= 0);
+
+    QBuffer archiveReader(&archive);
+    QVERIFY(archiveReader.open(QIODevice::ReadOnly));
+    QVERIFY(archiveReader.seek(endOfCentralDirectoryOffset + 8));
+    QDataStream archiveStream(&archiveReader);
+    archiveStream.setByteOrder(QDataStream::LittleEndian);
+    quint16 entryCount = 0;
+    quint32 centralDirectorySize = 0;
+    quint32 centralDirectoryOffset = 0;
+    archiveStream >> entryCount;
+    QVERIFY(archiveReader.seek(endOfCentralDirectoryOffset + 12));
+    archiveStream >> centralDirectorySize;
+    archiveStream >> centralDirectoryOffset;
+    QCOMPARE(entryCount, static_cast<quint16>(1));
+    archiveReader.close();
+
+    QByteArray zip64EndRecords;
+    QBuffer zip64EndRecordsBuffer(&zip64EndRecords);
+    QVERIFY(zip64EndRecordsBuffer.open(QIODevice::WriteOnly));
+    QDataStream zip64Stream(&zip64EndRecordsBuffer);
+    zip64Stream.setByteOrder(QDataStream::LittleEndian);
+    zip64Stream
+            << static_cast<quint32>(0x06064b50)
+            << static_cast<quint64>(44)
+            << static_cast<quint16>(45)
+            << static_cast<quint16>(45)
+            << static_cast<quint32>(0)
+            << static_cast<quint32>(0)
+            << static_cast<quint64>(entryCount)
+            << static_cast<quint64>(entryCount)
+            << static_cast<quint64>(centralDirectorySize)
+            << static_cast<quint64>(centralDirectoryOffset)
+            << static_cast<quint32>(0x07064b50)
+            << static_cast<quint32>(0)
+            << static_cast<quint64>(endOfCentralDirectoryOffset)
+            << static_cast<quint32>(1);
+    zip64EndRecordsBuffer.close();
+    QCOMPARE(zip64EndRecords.size(), 76);
+
+    QByteArray regularEndRecord = archive.mid(endOfCentralDirectoryOffset);
+    QBuffer regularEndRecordBuffer(&regularEndRecord);
+    QVERIFY(regularEndRecordBuffer.open(QIODevice::ReadWrite));
+    QVERIFY(regularEndRecordBuffer.seek(8));
+    QDataStream regularEndRecordStream(&regularEndRecordBuffer);
+    regularEndRecordStream.setByteOrder(QDataStream::LittleEndian);
+    regularEndRecordStream
+            << static_cast<quint16>(0xffff)
+            << static_cast<quint16>(0xffff)
+            << static_cast<quint32>(0xffffffff)
+            << static_cast<quint32>(0xffffffff);
+    regularEndRecordBuffer.close();
+
+    const QByteArray leadingData("self-extractor");
+    QByteArray selfExtractingArchive = leadingData
+            + archive.left(endOfCentralDirectoryOffset)
+            + zip64EndRecords
+            + regularEndRecord;
+    QBuffer selfExtractingArchiveBuffer(&selfExtractingArchive);
+    QuaZip selfExtractingZip(&selfExtractingArchiveBuffer);
+    QVERIFY(selfExtractingZip.open(QuaZip::mdUnzip));
+    QCOMPARE(selfExtractingZip.getEntriesCount(), static_cast<qint64>(1));
+    QVERIFY(selfExtractingZip.goToFirstFile());
+    QCOMPARE(selfExtractingZip.getCurrentFileName(), QString("test.txt"));
+    QuaZipFile extractedFile(&selfExtractingZip);
+    QVERIFY(extractedFile.open(QIODevice::ReadOnly));
+    QCOMPARE(extractedFile.readAll(), contents);
+    extractedFile.close();
+    selfExtractingZip.close();
+}
+
 void TestQuaZip::setZipName()
 {
     QuaZip zip;
