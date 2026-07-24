@@ -132,6 +132,7 @@ jobs:
       qt_version: ${{ matrix.qt_version }}
       preset: ${{ matrix.preset }}
       pe_str: "x86-64"
+      dual_build: ${{ matrix.qt_version == '6.8.2' && matrix.preset == 'conan' }}
 
   windows-x86:
     if: true

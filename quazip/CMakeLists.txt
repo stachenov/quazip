@@ -54,37 +54,53 @@ set(QUAZIP_INCLUDE_PATH ${QUAZIP_DIR_NAME}/quazip)
 set(QUAZIP_INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake)
 set(QUAZIP_PKGCONFIG_NAME quazip${QuaZip_VERSION_MAJOR}-qt${QUAZIP_QT_MAJOR_VERSION})
 
-set(QUAZIP_OBJECT_TARGET_NAME QuaZipObjects)
-add_library(${QUAZIP_OBJECT_TARGET_NAME} OBJECT ${QUAZIP_SOURCES})
-set_target_properties(${QUAZIP_OBJECT_TARGET_NAME} PROPERTIES
-    POSITION_INDEPENDENT_CODE ${QUAZIP_BUILD_SHARED}
-)
-target_include_directories(${QUAZIP_OBJECT_TARGET_NAME} PRIVATE
-    ${QUAZIP_INC}
-    ${QUAZIP_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-)
-target_link_libraries(${QUAZIP_OBJECT_TARGET_NAME} PRIVATE
-    ${QUAZIP_LIB_LIBRARIES}
-    ${QUAZIP_LIB}
-)
-target_link_directories(${QUAZIP_OBJECT_TARGET_NAME} PRIVATE ${QUAZIP_LBD})
+function(quazip_add_object_library target_name compile_definition)
+    add_library(${target_name} OBJECT ${QUAZIP_SOURCES})
+    set_target_properties(${target_name} PROPERTIES
+        POSITION_INDEPENDENT_CODE ${QUAZIP_BUILD_SHARED}
+    )
+    target_include_directories(${target_name} PRIVATE
+        ${QUAZIP_INC}
+        ${QUAZIP_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    target_link_libraries(${target_name} PRIVATE
+        ${QUAZIP_LIB_LIBRARIES}
+        ${QUAZIP_LIB}
+    )
+    target_link_directories(${target_name} PRIVATE ${QUAZIP_LBD})
+    target_compile_definitions(${target_name} PRIVATE ${compile_definition})
 
-# The object files need export annotations whenever a shared library is built.
-# Static consumers still receive QUAZIP_STATIC through their selected target.
-if(QUAZIP_BUILD_SHARED)
-    target_compile_definitions(${QUAZIP_OBJECT_TARGET_NAME} PRIVATE QUAZIP_BUILD)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${target_name} PRIVATE -Wshadow -Werror=shadow)
+    endif()
+endfunction()
+
+set(QUAZIP_SHARED_OBJECT_TARGET_NAME QuaZipObjects)
+set(QUAZIP_STATIC_OBJECT_TARGET_NAME QuaZipObjects)
+
+# Windows embeds dllexport directives in object files. Sharing those objects
+# with a static library would make downstream binaries export QuaZip symbols,
+# so a Windows dual build needs separate shared and static object sets.
+if(WIN32 AND QUAZIP_BUILD_SHARED AND QUAZIP_BUILD_STATIC)
+    set(QUAZIP_SHARED_OBJECT_TARGET_NAME QuaZipSharedObjects)
+    set(QUAZIP_STATIC_OBJECT_TARGET_NAME QuaZipStaticObjects)
+    quazip_add_object_library(${QUAZIP_SHARED_OBJECT_TARGET_NAME} QUAZIP_BUILD)
+    quazip_add_object_library(${QUAZIP_STATIC_OBJECT_TARGET_NAME} QUAZIP_STATIC)
+elseif(QUAZIP_BUILD_SHARED)
+    quazip_add_object_library(${QUAZIP_SHARED_OBJECT_TARGET_NAME} QUAZIP_BUILD)
 else()
-    target_compile_definitions(${QUAZIP_OBJECT_TARGET_NAME} PRIVATE QUAZIP_STATIC)
-endif()
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(${QUAZIP_OBJECT_TARGET_NAME} PRIVATE -Wshadow -Werror=shadow)
+    quazip_add_object_library(${QUAZIP_STATIC_OBJECT_TARGET_NAME} QUAZIP_STATIC)
 endif()
 
 function(quazip_add_library target_name library_type output_name export_name)
-    add_library(${target_name} ${library_type} $<TARGET_OBJECTS:${QUAZIP_OBJECT_TARGET_NAME}>)
+    if(library_type STREQUAL "SHARED")
+        set(quazip_object_target ${QUAZIP_SHARED_OBJECT_TARGET_NAME})
+    else()
+        set(quazip_object_target ${QUAZIP_STATIC_OBJECT_TARGET_NAME})
+    endif()
+    add_library(${target_name} ${library_type} $<TARGET_OBJECTS:${quazip_object_target}>)
     set_target_properties(${target_name} PROPERTIES
         OUTPUT_NAME ${output_name}
         EXPORT_NAME ${export_name}

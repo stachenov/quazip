@@ -24,6 +24,10 @@ on:
       pe_str:
         required: true
         type: string
+      dual_build:
+        required: false
+        default: false
+        type: boolean
       run_tests:
         required: false
         default: true
@@ -60,7 +64,7 @@ env:
 jobs:
   build:
     runs-on: ${{ inputs.runner }}
-    name: Windows-${{ inputs.arch }}-Qt-${{ inputs.qt_version }}-Preset-${{ inputs.preset }}
+    name: Windows-${{ inputs.arch }}-Qt-${{ inputs.qt_version }}-Preset-${{ inputs.preset }}${{ inputs.dual_build && '-dual' || '' }}
     steps:
       - uses: actions/checkout@v6
 
@@ -104,7 +108,7 @@ jobs:
 
       - name: Configure
         shell: cmd
-        run: cmake --preset ${{ inputs.preset }} -DQUAZIP_ENABLE_TESTS=ON
+        run: cmake --preset ${{ inputs.preset }} -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_BUILD_SHARED=ON -DQUAZIP_BUILD_STATIC=${{ inputs.dual_build && 'ON' || 'OFF' }} -DCMAKE_INSTALL_PREFIX="${{github.workspace}}/install"
 
       - name: Build
         shell: cmd
@@ -141,6 +145,81 @@ jobs:
           QT_ASSUME_STDERR_HAS_CONSOLE: 1 # !! qDebug() is not visible if this is not set on Win runners
         working-directory: ./build
         run: ctest --verbose -C Release
+
+      - name: Verify installed dual build
+        if: inputs.dual_build
+        shell: pwsh
+        run: |
+          $toolchainArgs = @()
+          if ("${{ inputs.preset }}" -like "conan*") {
+            $toolchainArgs += "-DCMAKE_TOOLCHAIN_FILE=${env:GITHUB_WORKSPACE}/build/conan_toolchain.cmake"
+            $toolchainArgs += "-DCMAKE_POLICY_DEFAULT_CMP0091=NEW"
+          } elseif ("${{ inputs.preset }}" -like "vcpkg*") {
+            $triplet = "${{ inputs.arch }}" -eq "x86" ? "x86-windows" : "x64-windows"
+            $toolchainArgs += "-DCMAKE_TOOLCHAIN_FILE=${env:VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            $toolchainArgs += "-DVCPKG_TARGET_TRIPLET=${triplet}"
+            $toolchainArgs += "-DVCPKG_HOST_TRIPLET=${triplet}"
+          }
+
+          cmake --install "${env:GITHUB_WORKSPACE}/build" --config Release
+          if ($LASTEXITCODE -ne 0) {
+            throw "QuaZip installation failed"
+          }
+          cmake `
+            -S "${env:GITHUB_WORKSPACE}/cmake/dual-build-consumer" `
+            -B "${env:GITHUB_WORKSPACE}/consumer-build" `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_PREFIX_PATH="${env:GITHUB_WORKSPACE}/install" `
+            @toolchainArgs
+          if ($LASTEXITCODE -ne 0) {
+            throw "Dual-build consumer configuration failed"
+          }
+          cmake --build "${env:GITHUB_WORKSPACE}/consumer-build" --config Release
+          if ($LASTEXITCODE -ne 0) {
+            throw "Dual-build consumer compilation failed"
+          }
+
+          $env:PATH = "${env:GITHUB_WORKSPACE}/install/bin;${env:PATH}"
+          ctest `
+            --test-dir "${env:GITHUB_WORKSPACE}/consumer-build" `
+            --build-config Release `
+            --output-on-failure
+          if ($LASTEXITCODE -ne 0) {
+            throw "Dual-build consumer tests failed"
+          }
+
+          $staticLibrary = Get-ChildItem `
+            "${env:GITHUB_WORKSPACE}/install/lib" `
+            -Filter "*-static.lib" |
+            Select-Object -First 1
+          if (-not $staticLibrary) {
+            throw "Installed static QuaZip library was not found"
+          }
+          $directives = & dumpbin /directives $staticLibrary.FullName
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not inspect the static QuaZip library"
+          }
+          if ($directives -match "/EXPORT:") {
+            throw "Static QuaZip library contains DLL export directives"
+          }
+
+          $staticConsumer = Get-ChildItem `
+            "${env:GITHUB_WORKSPACE}/consumer-build" `
+            -Recurse `
+            -Filter "consumerStatic.exe" |
+            Select-Object -First 1
+          if (-not $staticConsumer) {
+            throw "Static consumer executable was not found"
+          }
+          $exports = & dumpbin /exports $staticConsumer.FullName
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not inspect the static consumer executable"
+          }
+          $exportRows = $exports |
+            Select-String "^\s+\d+\s+[0-9A-F]+\s+[0-9A-F]+\s+"
+          if ($exportRows -match "QuaZip|JlCompress") {
+            throw "Static consumer unexpectedly exports QuaZip symbols"
+          }
 
       - name: Upload cp.zip to GitHub Actions Storage
         if: inputs.run_tests && !inputs.cross_extract
