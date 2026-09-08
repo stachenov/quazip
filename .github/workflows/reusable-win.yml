@@ -48,6 +48,10 @@ on:
         required: false
         default: "with_flag"
         type: string
+      flavor:
+        required: false
+        default: "both"
+        type: string
     secrets:
       GH_TOKEN:
         required: false
@@ -100,11 +104,21 @@ jobs:
       - name: Install dependencies with Conan
         if: contains(inputs.preset, 'conan')
         shell: cmd
-        run: conan install . -of build -s build_type=Release -o *:shared=False --build=missing ${{ inputs.arch == 'x86' && '-s:h arch=x86' || '' }}
+        run: |
+          conan install . -of build -s build_type=Release -o *:shared=False --build=missing ${{ inputs.arch == 'x86' && '-s:h arch=x86' || '' }}
 
       - name: Configure
         shell: cmd
-        run: cmake --preset ${{ inputs.preset }} -DQUAZIP_ENABLE_TESTS=ON
+        run: |
+          if "${{ inputs.flavor }}" == "both" (
+            set "BUILD_FLAGS=-DQUAZIP_BUILD_STATIC=ON -DQUAZIP_BUILD_SHARED=ON"
+          ) else if "${{ inputs.flavor }}" == "shared" (
+            set "BUILD_FLAGS=-DQUAZIP_BUILD_STATIC=OFF -DQUAZIP_BUILD_SHARED=ON"
+          ) else if "${{ inputs.flavor }}" == "static" (
+            set "BUILD_FLAGS=-DQUAZIP_BUILD_STATIC=ON -DQUAZIP_BUILD_SHARED=OFF"
+          )
+
+          cmake --preset ${{ inputs.preset }} -DQUAZIP_ENABLE_TESTS=ON %BUILD_FLAGS%
 
       - name: Build
         shell: cmd
@@ -117,7 +131,7 @@ jobs:
 
       - name: Check PE
         shell: bash
-        working-directory: ./build/quazip/Release
+        working-directory: ${{ github.workspace }}/build/quazip/Release
         run: |
           DLL_NAME="quazip1-qt${{ startsWith(inputs.qt_version, '6') && '6' || '5' }}.dll"
           file "$DLL_NAME"

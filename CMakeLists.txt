@@ -1,26 +1,58 @@
 # require 3.15 for GNUInstallDirs
 cmake_minimum_required(VERSION 3.15...3.18)
 
+set(MASTER_PROJECT OFF)
+set(SUBPROJECT ON)
+
+if (NOT DEFINED PROJECT_NAME)
+    set(MASTER_PROJECT ON)
+    set(SUBPROJECT OFF)
+endif()
+
 project(QuaZip VERSION 1.7.2)
 
 include(cmake/clone-repo.cmake)
+include(CMakeDependentOption)
 
 set(QUAZIP_LIB_VERSION ${QuaZip_VERSION})
 set(QUAZIP_LIB_SOVERSION ${QuaZip_VERSION_MAJOR}.${QuaZip_VERSION_MINOR})
 
-if(EMSCRIPTEN)
-  #option(ZLIB_INCLUDE "Path to include dir" "")
-  #option(ZLIB_LIBRARY "Path to library dir" "")
-  option(BUILD_SHARED_LIBS "" OFF)
-  option(QUAZIP_INSTALL "" OFF)
-  option(QUAZIP_USE_QT_ZLIB "" OFF)
-  option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
-else()
-  option(BUILD_SHARED_LIBS "" ON)
-  option(QUAZIP_INSTALL "" ON)
-  option(QUAZIP_USE_QT_ZLIB "" OFF)
-  option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
+# Emscripten should only use static libs
+if (EMSCRIPTEN)
+    set(BUILD_SHARED_LIBS OFF)
 endif()
+
+# If BUILD_SHARED_LIBS is undefined, set it based on whether
+# we are the top-level project or a subproject
+if (NOT DEFINED BUILD_SHARED_LIBS)
+    set(BUILD_SHARED_LIBS ${MASTER_PROJECT})
+endif()
+
+# default to only building the specific library type requested by
+# BUILD_SHARED_LIBS, this should generally be ON for top-level builds
+# and OFF for submodule/subproject builds
+if (BUILD_SHARED_LIBS)
+    set(static_default OFF)
+else()
+    set(static_default ON)
+endif()
+
+cmake_dependent_option(QUAZIP_BUILD_SHARED "Build QuaZip as a shared library"
+    ${BUILD_SHARED_LIBS} "NOT EMSCRIPTEN" OFF)
+cmake_dependent_option(QUAZIP_BUILD_STATIC "Build QuaZip as a static library"
+    ${static_default} "NOT EMSCRIPTEN" ON)
+
+# avoid conflict b/t dll import lib and static lib on MSVC
+if(CMAKE_STATIC_LIBRARY_PREFIX STREQUAL "" AND
+   CMAKE_STATIC_LIBRARY_SUFFIX STREQUAL ".lib")
+    set(QUAZIP_STATIC_SUFFIX "-static")
+endif()
+
+# Other options
+option(QUAZIP_INSTALL "" ${MASTER_PROJECT})
+
+option(QUAZIP_USE_QT_ZLIB "" OFF)
+option(QUAZIP_ENABLE_TESTS "Build QuaZip tests" OFF)
 
 OPTION(ZLIB_CONST "Sets ZLIB_CONST preprocessor definition" OFF)
 option(QUAZIP_ENABLE_QTEXTCODEC "Enable use of QTextCodec (requires Qt5 or Qt6 Core5Compat)" ON)
@@ -32,8 +64,8 @@ option(QUAZIP_BZIP2_STDIO "Output BZIP2 errors to stdio" ON)
 option(QUAZIP_FETCH_LIBS "Enables fetching third-party libraries if not found" ${WIN32})
 option(QUAZIP_FORCE_FETCH_LIBS "Enables fetching third-party libraries always" OFF)
 
-if (QUAZIP_USE_QT_ZLIB AND BUILD_SHARED_LIBS)
-    message(FATAL_ERROR "Using BUILD_SHARED_LIBS=ON together with QUAZIP_USE_QT_ZLIB=ON is not supported." )
+if (QUAZIP_USE_QT_ZLIB AND QUAZIP_BUILD_SHARED)
+    message(FATAL_ERROR "Using QUAZIP_BUILD_SHARED=ON together with QUAZIP_USE_QT_ZLIB=ON is not supported." )
 endif()
 
 # Set the default value of `${QUAZIP_QT_MAJOR_VERSION}`.
@@ -64,9 +96,11 @@ set(CMAKE_DEBUG_POSTFIX d)
 
 set(QUAZIP_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(QUAZIP_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+
 if(NOT QUAZIP_LIB_FILE_NAME)
 	set(QUAZIP_LIB_FILE_NAME quazip${QuaZip_VERSION_MAJOR}-qt${QUAZIP_QT_MAJOR_VERSION})
 endif()
+
 set(QUAZIP_LIB_TARGET_NAME QuaZip)
 set(QUAZIP_DIR_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION}-${QUAZIP_LIB_VERSION})
 set(QUAZIP_PACKAGE_NAME QuaZip-Qt${QUAZIP_QT_MAJOR_VERSION})
@@ -75,9 +109,10 @@ message(STATUS "QUAZIP_QT_MAJOR_VERSION set to ${QUAZIP_QT_MAJOR_VERSION}")
 message(STATUS "CMAKE_CXX_STANDARD set to ${CMAKE_CXX_STANDARD}")
 
 if(QUAZIP_QT_MAJOR_VERSION EQUAL 6)
-    find_package(Qt6 REQUIRED COMPONENTS Core 
+    find_package(Qt6 REQUIRED COMPONENTS Core
             OPTIONAL_COMPONENTS Network Test)
     message(STATUS "Found Qt version ${Qt6_VERSION} at ${Qt6_DIR}")
+
     set(QUAZIP_QT_ZLIB_COMPONENT BundledZLIB)
     set(QUAZIP_QT_ZLIB_HEADER_COMPONENT ZlibPrivate)
     set(QUAZIP_LIB_LIBRARIES Qt6::Core )
@@ -87,6 +122,7 @@ elseif(QUAZIP_QT_MAJOR_VERSION EQUAL 5)
     find_package(Qt5 REQUIRED COMPONENTS Core
             OPTIONAL_COMPONENTS Network Test)
     message(STATUS "Found Qt version ${Qt5_VERSION} at ${Qt5_DIR}")
+
     set(QUAZIP_QT_ZLIB_COMPONENT Zlib)
     set(QUAZIP_LIB_LIBRARIES Qt5::Core)
     set(QUAZIP_TEST_QT_LIBRARIES Qt5::Core Qt5::Network Qt5::Test)
@@ -126,7 +162,6 @@ if(QUAZIP_QT_ZLIB_USED AND QUAZIP_QT_ZLIB_COMPONENT STREQUAL BundledZLIB)
 endif()
 
 if(NOT QUAZIP_QT_ZLIB_USED)
-
     if(EMSCRIPTEN)
       if(NOT DEFINED ZLIB_LIBRARY)
         message(WARNING "ZLIB_LIBRARY is not set")
