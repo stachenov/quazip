@@ -1,0 +1,71 @@
+on:
+  push:
+    branches:
+      - master
+      - feature/*
+  pull_request:
+
+name: Consumers
+permissions: read-all
+
+jobs:
+  installed-consumers:
+    name: Installed consumers-Qt6-${{ matrix.flavor }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        flavor: [default, static, both, reuse]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build zlib1g-dev libbz2-dev \
+            qt6-base-dev qt6-5compat-dev
+
+      - name: Build and install QuaZip
+        shell: bash
+        run: |
+          case "${{ matrix.flavor }}" in
+            default) flags=() ;;
+            static) flags=(-DBUILD_SHARED_LIBS=OFF) ;;
+            both) flags=(-DQUAZIP_BUILD_SHARED=ON -DQUAZIP_BUILD_STATIC=ON) ;;
+            reuse) flags=(-DQUAZIP_BUILD_SHARED=ON -DQUAZIP_BUILD_STATIC=ON -DQUAZIP_REUSE_OBJECTS=ON) ;;
+          esac
+          cmake -S . -B build-package -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DQUAZIP_QT_MAJOR_VERSION=6 \
+            -DQUAZIP_FETCH_LIBS=OFF \
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+            -DCMAKE_C_VISIBILITY_PRESET=hidden \
+            -DCMAKE_CXX_VISIBILITY_PRESET=hidden \
+            -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON \
+            -DCMAKE_INSTALL_PREFIX="${{ runner.temp }}/quazip-install" \
+            "${flags[@]}"
+          cmake --build build-package --parallel 2
+          cmake --install build-package
+
+      - name: Check installed target visibility across directories
+        run: |
+          cmake -S qztest/cmake/target-scope -B build-target-scope \
+            -DQUAZIP_QT_MAJOR_VERSION=6 \
+            -DCMAKE_PREFIX_PATH="${{ runner.temp }}/quazip-install"
+
+      - name: Build and test standalone consumers
+        shell: bash
+        run: |
+          for example in default combined; do
+            flags=()
+            if [[ "$example" == combined && "${{ matrix.flavor }}" == reuse ]]; then
+              flags=(-DEXAMPLE_EXPECT_SYMBOL_LEAKS=ON)
+            fi
+            cmake -S "qztest/examples/$example" -B "build-example-$example" -G Ninja \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DQUAZIP_QT_MAJOR_VERSION=6 \
+              -DCMAKE_PREFIX_PATH="${{ runner.temp }}/quazip-install" \
+              "${flags[@]}"
+            cmake --build "build-example-$example" --parallel 2
+            ctest --test-dir "build-example-$example" --verbose
+          done

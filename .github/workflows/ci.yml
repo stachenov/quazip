@@ -11,19 +11,19 @@ permissions: read-all
 jobs:
   ubuntu:
     if: true
-    name: Ubuntu-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    name: Ubuntu-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.flavor }}
     strategy:
       fail-fast: false
       matrix:
         os_version: [22.04, 24.04]
         qt_version: [5.15.2, 6.8.2]
-        shared: [ON, OFF]
+        flavor: [both, shared, static]
     uses: ./.github/workflows/reusable.yml
     with:
         runs_on: ubuntu-${{ matrix.os_version }}
         os_version: ${{ matrix.os_version }}
         qt_version: ${{ matrix.qt_version }}
-        shared: ${{ matrix.shared }}
+        flavor: ${{ matrix.flavor }}
 
   ubuntu-zlibconst:
     if: true
@@ -33,12 +33,13 @@ jobs:
       matrix:
         os_version: [ 24.04 ]
         qt_version: [ 6.8.2 ]
+        flavor: [shared]
     uses: ./.github/workflows/reusable.yml
     with:
       runs_on: ubuntu-${{ matrix.os_version }}
       os_version: ${{ matrix.os_version }}
       qt_version: ${{ matrix.qt_version }}
-      shared: "ON"
+      flavor: ${{ matrix.flavor }}
       zlib_const: "ON"
 
   # Qt6 with Qt5Compat but explicitly disabled QTextCodec support
@@ -50,23 +51,24 @@ jobs:
       matrix:
         os_version: [ 24.04 ]
         qt_version: [ 6.8.2 ]
+        flavor: [shared]
     uses: ./.github/workflows/reusable.yml
     with:
       runs_on: ubuntu-${{ matrix.os_version }}
       os_version: ${{ matrix.os_version }}
       qt_version: ${{ matrix.qt_version }}
-      shared: "ON"
+      flavor: ${{ matrix.flavor }}
       qtextcodec: 'OFF'
 
   macos:
     if: true
-    name: macos-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    name: macos-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.flavor }}
     strategy:
       fail-fast: false
       matrix:
         os_version: [15, 14, 15-intel]
         qt_version: [6.8.2, 5.15.2]
-        shared: [ON, OFF]
+        flavor: [both, shared, static]
         exclude:
           - os_version: 14
             qt_version: 5.15.2 #Not available due to ARM arch
@@ -77,7 +79,7 @@ jobs:
       runs_on: macos-${{ matrix.os_version }}
       os_version: ${{ matrix.os_version }}
       qt_version: ${{ matrix.qt_version }}
-      shared: ${{ matrix.shared }}
+      flavor: ${{ matrix.flavor }}
 
   alpine:
     if: true
@@ -123,6 +125,7 @@ jobs:
       matrix:
         preset: [ conan, vcpkg ]
         qt_version: [ 5.15.2, 6.8.2 ]
+        flavor: [ both, shared, static ]
     uses: ./.github/workflows/reusable-win.yml
     with:
       runs_on: "win-x64"
@@ -140,6 +143,7 @@ jobs:
       matrix:
         preset: [ conan_x86, vcpkg_x86 ]
         qt_version: [ 5.15.2 ]
+        flavor: [shared]
     uses: ./.github/workflows/reusable-win.yml
     with:
       runs_on: "win-x86"
@@ -152,38 +156,38 @@ jobs:
   # Cross platform extraction jobs
   ubuntu-ci-extract:
     if: true
-    name: extract-Ubuntu-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    name: extract-Ubuntu-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.flavor }}
     strategy:
       fail-fast: false
       matrix:
         os_version: [ 24.04 ]
         qt_version: [ 6.8.2 ]
-        shared: [ ON ]
+        flavor: [ shared ]
     uses: ./.github/workflows/reusable.yml
     needs: [ ubuntu, macos, windows-x64, windows-x86 ]
     with:
       runs_on: ubuntu-${{ matrix.os_version }}
       os_version: ${{ matrix.os_version }}
       qt_version: ${{ matrix.qt_version }}
-      shared: ${{ matrix.shared }}
+      flavor: ${{ matrix.flavor }}
       cross_extract: true
 
   macos-ci-extract:
     if: true
-    name: extract-macos-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.shared }}
+    name: extract-macos-${{ matrix.os_version }}-Qt-${{ matrix.qt_version }}-shared-${{ matrix.flavor }}
     strategy:
       fail-fast: false
       matrix:
         os_version: [ 15 ]
         qt_version: [ 6.8.2 ]
-        shared: [ ON ]
+        flavor: [ shared ]
     uses: ./.github/workflows/reusable.yml
     needs: [ ubuntu, macos, windows-x64, windows-x86 ]
     with:
       runs_on: macos-${{ matrix.os_version }}
       os_version: ${{ matrix.os_version }}
       qt_version: ${{ matrix.qt_version }}
-      shared: ${{ matrix.shared }}
+      flavor: ${{ matrix.flavor }}
       cross_extract: true
 
   windows-x64-ci-extract:
@@ -194,6 +198,7 @@ jobs:
       matrix:
         preset: [ vcpkg ]
         qt_version: [ 6.8.2 ]
+        flavor: [shared]
     uses: ./.github/workflows/reusable-win.yml
     needs: [ ubuntu, macos, windows-x64, windows-x86 ]
     with:

@@ -106,14 +106,62 @@ CMake options
 | Option                      | Description                                                                                                                                                   | Default |
 |-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
 | `QUAZIP_QT_MAJOR_VERSION`   | Specifies which major Qt version should be searched for (6 or 5). By default it tries to find the most recent.                                                |         |
-| `BUILD_SHARED_LIBS`         | Build QuaZip as a shared library                                                                                                                              | `ON`    |
+| `BUILD_SHARED_LIBS`         | Usual choice for a fresh build: `ON` builds shared, `OFF` builds static. Overridden by the two options below.                                                 | `ON` standalone, `OFF` as a subproject |
+| `QUAZIP_BUILD_SHARED`       | Explicitly enable/disable the shared library. Forced off on Emscripten.                                                                                       | Initial value of `BUILD_SHARED_LIBS` |
+| `QUAZIP_BUILD_STATIC`       | Explicitly enable/disable the static library. Enable both options to build both variants. Forced on on Emscripten.                                            | Opposite of initial `BUILD_SHARED_LIBS` |
+| `QUAZIP_REUSE_OBJECTS`      | Reuse shared-library objects for static output when building both. See visibility tradeoff below; ignored for single-variant builds.                          | `OFF` |
 | `QUAZIP_LIB_FILE_NAME`      | Specifies output libname.                                                                                                                                     | `quazip<quazip-version>-qt<qt-version>` |
-| `QUAZIP_INSTALL`            | Enable installation                                                                                                                                           | `ON`    |
-| `QUAZIP_USE_QT_ZLIB`        | Use Qt's bundled zlib instead of system zlib (**not recommended**). Qt must be built with `-qt-zlib` and `-static`. Incompatible with `BUILD_SHARED_LIBS=ON`. | `OFF`   |
+| `QUAZIP_INSTALL`            | Enable installation                                                                                                                                           | `ON` for standalone builds, `OFF` as a subproject |
+| `QUAZIP_USE_QT_ZLIB`        | Use Qt's bundled zlib instead of system zlib (**not recommended**). Qt must be built with `-qt-zlib` and `-static`. Incompatible with `QUAZIP_BUILD_SHARED=ON`. | `OFF`   |
 | `QUAZIP_ENABLE_TESTS`       | Build QuaZip tests                                                                                                                                            | `OFF`   |
 | `QUAZIP_BZIP2`              | Enable BZIP2 compression                                                                                                                                      | `ON`    |
 | `QUAZIP_BZIP2_STDIO`        | Output BZIP2 errors to stdio when BZIP2 compression is enabled                                                                                                | `ON`    |
 | `QUAZIP_ENABLE_QTEXTCODEC`  | Set to OFF to explicitely disable the use of QTextCodec on Qt6 even if Core5Compat is available. This uses [QStringConverter](https://doc.qt.io/qt-6/qstringconverter.html) in the background with less supported encodings. | `ON`    |
+
+### Optional combined shared/static builds
+
+QuaZip builds one variant by default. To opt into both:
+
+```sh
+cmake -S . -B build-both -DQUAZIP_BUILD_SHARED=ON -DQUAZIP_BUILD_STATIC=ON
+cmake --build build-both
+cmake --install build-both --prefix /path/to/quazip
+```
+
+Each variant compiles separately unless you also set `QUAZIP_REUSE_OBJECTS=ON`.
+Reuse compiles once but retains shared export annotations and PIC in the static
+archive. Embedding it in another shared library can leak QuaZip symbols, even
+with hidden visibility, causing symbol collisions or interposition. On Windows,
+objects pulled from the archive retain `__declspec(dllexport)`, exporting their
+annotated symbols from consuming DLLs **and executables**; visibility settings
+do not remove these annotations. Enable reuse only if you accept this tradeoff.
+
+Targets exposed by `find_package` and `add_subdirectory`:
+
+| Variants built | `QuaZip::QuaZip` | `QuaZip::QuaZip_static` |
+|----------------|-----------------|------------------------|
+| Shared only | Shared | Unavailable |
+| Static only | Static | Unavailable |
+| Both | Shared | Static |
+
+Consumer-side `BUILD_SHARED_LIBS` does not change these mappings. To select static
+when available, falling back to shared for shared-only packages:
+
+```cmake
+find_package(QuaZip-Qt6 CONFIG REQUIRED)
+if(TARGET QuaZip::QuaZip_static)
+    target_link_libraries(myapp PRIVATE QuaZip::QuaZip_static)
+else()
+    target_link_libraries(myapp PRIVATE QuaZip::QuaZip)
+endif()
+```
+
+Exporting a dependency on `QuaZip::QuaZip_static`
+requires downstream packages to provide that target too; static-only packages
+do not. Packagers should account for these target and visibility tradeoffs,
+which downstream users inherit without opting in themselves.
+
+See also [qztest/examples](qztest/examples/README.md).
 
 # Usage
 

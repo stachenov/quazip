@@ -11,9 +11,9 @@ on:
       qt_version:
         required: true
         type: string
-      shared:
+      flavor:
         required: false
-        default: "ON"
+        default: "both"
         type: string
       zlib_const:
         required: false
@@ -78,7 +78,16 @@ jobs:
           zlib1g-dev libbz2-dev
 
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=${{ inputs.shared }} -DQUAZIP_ENABLE_TESTS=ON -DZLIB_CONST=${{ inputs.zlib_const }} -DQUAZIP_ENABLE_QTEXTCODEC=${{ inputs.qtextcodec }} -B "${{github.workspace}}/build"
+        run: |
+          case "${{ inputs.flavor }}" in
+            both) set -- -DQUAZIP_BUILD_STATIC=ON -DQUAZIP_BUILD_SHARED=ON ;;
+            shared) set -- -DQUAZIP_BUILD_STATIC=OFF -DQUAZIP_BUILD_SHARED=ON ;;
+            static) set -- -DQUAZIP_BUILD_STATIC=ON -DQUAZIP_BUILD_SHARED=OFF ;;
+          esac
+
+          cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" $@ -DQUAZIP_ENABLE_TESTS=ON \
+            -DZLIB_CONST=${{ inputs.zlib_const }} -DQUAZIP_ENABLE_QTEXTCODEC=${{ inputs.qtextcodec }} \
+            -B "${{github.workspace}}/build"
 
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}

@@ -29,8 +29,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Install ninja
+        run: apt-get install -y ninja-build
+
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build
+        run: |
+          cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON \
+            -DQUAZIP_USE_QT_ZLIB=ON -DCMAKE_PREFIX_PATH="/usr/local/Qt-${{ matrix.qt_version }}" -B build -GNinja
 
       - name: Build
         run: cmake --build build --config ${{env.BUILD_TYPE}}
@@ -174,7 +179,11 @@ jobs:
         run: cmake --install .
 
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DQUAZIP_QT_MAJOR_VERSION=6 -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -B "${{github.workspace}}/build" -DCMAKE_PREFIX_PATH="${{github.workspace}}\Qt"
+        shell: cmd
+        run: |
+          cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DQUAZIP_QT_MAJOR_VERSION=6 -DBUILD_SHARED_LIBS=OFF ^
+            -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -B "${{github.workspace}}/build" ^
+            -DCMAKE_PREFIX_PATH="${{github.workspace}}\Qt" -GNinja
 
       - name: Build
         shell: cmd
@@ -313,7 +322,10 @@ jobs:
         run: nmake install
 
       - name: Configure CMake
-        run: cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DQUAZIP_QT_MAJOR_VERSION=5 -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON -DQUAZIP_USE_QT_ZLIB=ON -B build -DCMAKE_PREFIX_PATH="${{github.workspace}}\Qt"
+        shell: cmd
+        run: |
+          cmake -DCMAKE_BUILD_TYPE="${{env.BUILD_TYPE}}" -DQUAZIP_QT_MAJOR_VERSION=5 -DBUILD_SHARED_LIBS=OFF -DQUAZIP_ENABLE_TESTS=ON ^
+            -DQUAZIP_USE_QT_ZLIB=ON -B build -DCMAKE_PREFIX_PATH="${{github.workspace}}\Qt" -GNinja
 
       - name: Build
         run: cmake --build build --config ${{env.BUILD_TYPE}}
